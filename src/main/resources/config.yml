@@ -1,0 +1,21 @@
+api:
+  url: "http://example.com/api"
+  key: "XXXX0000XXXX0000XXXX00_00XXXX000"
+# must be super-admin key with auth,user:read
+spawn:
+  world: null
+  x: null
+  y: null
+  z: null
+# set null to use server default spawn
+lang:
+  logined: "You have login in."
+  success: "login success"
+  need_login: "Enter your password"
+  errors:
+    server: "Server caused some problem.Report it to Server Admin and try later"
+    key: "Please Check api.key [key]"
+    url: "Please Check api.url [url]"
+    no_user: "No such user in Xenforo"
+    time_out: "You use too much time"
+    name_incorrect: "Username incorrect.Try \"[correct]\"?"
