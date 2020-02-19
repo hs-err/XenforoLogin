@@ -5,4 +5,4 @@ api-version: 1.13
 authors: [logos]
 description: Support login with xenforo.
 website: https://mohist.red/
-depend: [ProtocolLib]
+softdepend: [ProtocolLib]

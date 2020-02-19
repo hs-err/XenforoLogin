@@ -8,14 +8,63 @@ spawn:
   y: null
   z: null
 # set null to use server default spawn
+tp:
+  tp_spawn_before_login: true
+# should tp to spawn before login in?
+# to protect location and Nether Portal
+  tp_back_after_login: true
+# should tp to last quit location after login in?
+secure:
+  hidden_bagpack: true
+# protect information about backpack
+  show_tips_time: 5
+# when should show a tip
+  max_login_time: 30
+# when kick player who have not login in
+  cancell_chat_after_login: false
+event:
+# If you don't know what means below,do NOT modify them.
+  PlayerMoveEvent: true
+  PlayerItemConsumeEvent: true
+  PlayerItemDamageEvent: true
+  PlayerItemHeldEvent: true
+  PlayerItemMendEvent: true
+  PlayerPickupArrowEvent: true
+  PlayerPickupItemEvent: true
+  PlayerPortalEvent: true
+  PlayerCommandPreprocessEvent: true
+  PlayerRecipeDiscoverEvent: true
+  PlayerShearEntityEvent: true
+  PlayerSwapHandItemsEvent: true
+  PlayerTakeLecternBookEvent: true
+  PlayerToggleFlightEvent: true
+  PlayerToggleSneakEvent: true
+  PlayerToggleSprintEvent: true
+  PlayerVelocityEvent: true
+  BlockBreakEvent: true
+  BlockDamageEvent: true
+  BlockDropItemEvent: true
+  BlockFertilizeEvent: true
+  BlockMultiPlaceEvent: true
+  BlockPlaceEvent: true
+  SignChangeEvent: true
+  PlayerLeashEntityEvent: true
+  PlayerDeathEvent: true
+  InventoryClickEvent: true
+  InventoryDragEvent: true
+  InventoryOpenEvent: true
+  TradeSelectEvent: true
+  RaidTriggerEvent: true
+  EntityDamageEvent: true
+  EntityDamageByEntityEvent: true
 lang:
-  logined: "You have login in."
-  success: "login success"
-  need_login: "Enter your password"
+  logined: "§6[§1XenforoLogin§6]§1§f You have login in."
+  success: "§6[§1XenforoLogin§6]§1§f login success"
+  need_login: "§6[§1XenforoLogin§6]§1§f Enter your password"
   errors:
-    server: "Server caused some problem.Report it to Server Admin and try later"
-    key: "Please Check api.key [key]"
-    url: "Please Check api.url [url]"
-    no_user: "No such user in Xenforo"
-    time_out: "You use too much time"
-    name_incorrect: "Username incorrect.Try \"[correct]\"?"
+    server: "§6[§1XenforoLogin§6]§1§f Server caused some problem.Report it to Server Admin and try later"
+    key: "§6[§1XenforoLogin§6]§1§f Please Check api.key [key]"
+    url: "§6[§1XenforoLogin§6]§1§f Please Check api.url [url]"
+    no_user: "§6[§1XenforoLogin§6]§1§f No such user in Xenforo"
+    time_out: "§6[§1XenforoLogin§6]§1§f You use too much time"
+    name_incorrect: "§6[§1XenforoLogin§6]§1§f Username incorrect.Try \"[correct]\"?"
