@@ -10,15 +10,21 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.interfaces.ForumSystem;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
+import static org.bukkit.Bukkit.getWorld;
 
 public class XenforoSystem implements ForumSystem {
 
@@ -64,38 +70,43 @@ public class XenforoSystem implements ForumSystem {
                 }
             };
 
-            String result = Request.Post(XenforoLogin.instance.api_url + "/auth")
+            String result = Request.Post(url + "/auth")
                     .bodyForm(Form.form().add("login", player.getName())
                             .add("password", password).build())
-                    .addHeader("XF-Api-Key", XenforoLogin.instance.api_key)
+                    .addHeader("XF-Api-Key", key)
                     .execute().handleResponse(responseHandler);
 
 
             if (result == null) {
-                throw new ClientProtocolException("Unexpected response: null");
+                return ResultType.SERVER_ERROR;
             }
             JsonParser parse = new JsonParser();
             JsonObject json = parse.parse(result).getAsJsonObject();
             if (json == null) {
-                throw new ClientProtocolException("Unexpected json: null");
+                return ResultType.SERVER_ERROR;
             }
             if (json.get("success") != null && json.get("success").getAsBoolean()) {
                 json.get("user").getAsJsonObject().get("username").getAsString();
                 if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
                     return ResultType.OK;
                 } else {
-                    return ResultType.PASSWORD_INCORRECT
-                            .inheritedObject(json.get("user").getAsJsonObject().get("username").getAsString());
+                    return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
+                            "correct", json.getAsJsonObject("exact").get("username").getAsString()));
                 }
             } else {
                 JsonArray errors = json.get("errors").getAsJsonArray();
-                int k = errors.size();
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < k; i++) {
-                    JsonObject error = errors.get(i).getAsJsonObject();
-                    sb.append(XenforoLogin.instance.langFile("errors." + error.get("code").getAsString(), ImmutableMap.of(
-                            "message", error.get("message").getAsString()
-                    )));
+                if(errors.size()>0) {
+                    if(errors.get(0).getAsJsonObject().get("code").equals("incorrect_password")){
+                        return ResultType.PASSWORD_INCORRECT;
+                    }else if(errors.get(0).getAsJsonObject().get("code").equals("requested_user_x_not_found")){
+                        return ResultType.NO_USER;
+                    }else{
+                        return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
+                                "code", errors.get(0).getAsJsonObject().get("code"),
+                                "message",errors.get(0).getAsJsonObject().get("message")));
+                    }
+                }else{
+                    return ResultType.SERVER_ERROR;
                 }
                 return ResultType.SERVER_ERROR.inheritedObject(sb.toString());
             }
@@ -108,6 +119,51 @@ public class XenforoSystem implements ForumSystem {
     @Nonnull
     @Override
     public ResultType join(Player player) {
-        return ResultType.SERVER_ERROR;
+        ResponseHandler<String> responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity) : null;
+            } else if (status == 401) {
+                getLogger().warning( XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                        "key", key)));
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            } else if (status == 404) {
+                getLogger().warning( XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                        "url", url)));
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+
+            }
+        };
+        String result;
+        try {
+            result = Request.Get(url + "/users/find-name?username=" +
+                    URLEncoder.encode(player.getName(), "UTF-8"))
+                    .addHeader("XF-Api-Key", key)
+                    .execute().handleResponse(responseHandler);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        if (result == null) {
+            new ClientProtocolException("Unexpected response: null").printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        JsonParser parse = new JsonParser();
+        JsonObject json = parse.parse(result).getAsJsonObject();
+        if (json == null) {
+            new ClientProtocolException("Unexpected json: null").printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        if (json.get("exact").isJsonNull()) {
+            return ResultType.NO_USER;
+        }
+        if (!json.getAsJsonObject("exact").get("username").getAsString().equals(player.getName())) {
+            return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
+                    "correct", json.getAsJsonObject("exact").get("username").getAsString()));
+        }
+        return ResultType.OK;
     }
 }
