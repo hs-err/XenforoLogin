@@ -30,12 +30,12 @@ import static org.bukkit.Bukkit.getWorld;
 
 public final class XenforoLogin extends JavaPlugin implements Listener {
 
+    public static XenforoLogin instance;
     public ConcurrentMap<Integer, Boolean> logged_in;
     public FileConfiguration config;
     public FileConfiguration location_data;
     public File location_file;
     public Location default_location;
-    public static XenforoLogin instance;
     private ListenerProtocolEvent listenerProtocolEvent;
 
     @Override
@@ -85,7 +85,7 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     }
 
     private void hookProtocolLib() {
-        if (ListenerProtocolEvent.isAvailable() && config.getBoolean("secure.hide_inventory", true)) {
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && config.getBoolean("secure.hide_inventory", true)) {
             listenerProtocolEvent = new ListenerProtocolEvent();
             getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
         }
@@ -126,7 +126,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         }
         sendBlankInventoryPacket(event.getPlayer());
         new Thread(() -> {
-            // TODO: 执行player join
             int f = 0;
             int s = config.getInt("secure.show_tips_time", 5);
             int t = config.getInt("secure.max_login_time", 30);
