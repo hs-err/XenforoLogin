@@ -2,19 +2,15 @@ package red.mohist.xenforologin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.reflections.Reflections;
 import red.mohist.xenforologin.forums.ForumSystems;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
@@ -168,6 +164,8 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
             location_data.set(event.getPlayer().getUniqueId().toString() + ".x", leave_location.getX());
             location_data.set(event.getPlayer().getUniqueId().toString() + ".y", leave_location.getY());
             location_data.set(event.getPlayer().getUniqueId().toString() + ".z", leave_location.getZ());
+            location_data.set(event.getPlayer().getUniqueId().toString() + ".yaw", leave_location.getYaw());
+            location_data.set(event.getPlayer().getUniqueId().toString() + ".pitch", leave_location.getPitch());
             location_data.save(location_file);
         }
         logged_in.remove(event.getPlayer().hashCode());
@@ -206,8 +204,9 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         if (listenerProtocolEvent != null)
             listenerProtocolEvent.sendBlankInventoryPacket(player);
     }
-    public void login(Player player){
-        try{
+
+    public void login(Player player) {
+        try {
             if (config.getBoolean("event.tp_back_after_login", true)) {
                 location_data.load(location_file);
                 Location spawn_location = Objects.requireNonNull(getWorld("world")).getSpawnLocation();
@@ -220,15 +219,25 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                         XenforoLogin.instance.location_data.getDouble(
                                 player.getUniqueId().toString() + ".y", spawn_location.getY()),
                         XenforoLogin.instance.location_data.getDouble(
-                                player.getUniqueId().toString() + ".z", spawn_location.getZ())
+                                player.getUniqueId().toString() + ".z", spawn_location.getZ()),
+                        (float) XenforoLogin.instance.location_data.getDouble(
+                                player.getUniqueId().toString() + ".yaw", spawn_location.getYaw()),
+                        (float) XenforoLogin.instance.location_data.getDouble(
+                                player.getUniqueId().toString() + ".pitch", spawn_location.getPitch())
                 );
-                player.teleportAsync(leave_location);
+                try {
+                    player.teleportAsync(leave_location);
+                } catch (NoSuchMethodError e) {
+                    XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
+                    XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
+                    Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player.teleport(leave_location));
+                }
             }
             logged_in.put(player.hashCode(), true);
             player.updateInventory();
             XenforoLogin.instance.getLogger().info("Logging in " + player.getUniqueId());
             player.sendMessage(XenforoLogin.instance.langFile("success"));
-        }catch(Throwable e){
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
