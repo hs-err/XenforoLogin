@@ -16,6 +16,10 @@ public class ForumSystems {
                 cs = new XenforoSystem(XenforoLogin.instance.config.getString("api.xenforo.url"),
                         XenforoLogin.instance.config.getString("api.xenforo.key"));
                 break;
+            case "discuz":
+                cs = new DiscuzSystem(XenforoLogin.instance.config.getString("api.xenforo.url"),
+                        XenforoLogin.instance.config.getString("api.xenforo.key"));
+                break;
             default:
                 cs = null;
         }
