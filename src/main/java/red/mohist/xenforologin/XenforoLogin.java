@@ -264,5 +264,9 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
     }
+
+    public void asyncPlayerPreLoginActive() {
+        isAsyncPlayerPreLoginActive = true;
+    }
 }
 

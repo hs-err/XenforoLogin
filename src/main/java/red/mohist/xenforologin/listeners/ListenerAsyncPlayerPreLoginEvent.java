@@ -11,6 +11,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        XenforoLogin.instance.asyncPlayerPreLoginActive();
         ResultType resultType = ForumSystems.getCurrentSystem()
                 .join(event.getName())
                 .shouldLogin(false);
