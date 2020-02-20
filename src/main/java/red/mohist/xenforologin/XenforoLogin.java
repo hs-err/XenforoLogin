@@ -40,6 +40,7 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     private ListenerProtocolEvent listenerProtocolEvent;
 
     private boolean isAsyncPlayerPreLoginEnabled = false;
+    private boolean isAsyncPlayerPreLoginActive = false;
 
     @Override
     public void onEnable() {
@@ -58,6 +59,8 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
 
     private void registerListeners() {
         {
+            isAsyncPlayerPreLoginEnabled = false;
+            isAsyncPlayerPreLoginActive = false;
             int unavailableCount = 0;
             Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.xenforologin.listeners")
                     .getSubTypesOf(BukkitAPIListener.class);
@@ -124,24 +127,33 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnJoin(PlayerJoinEvent event) {
-        logged_in.put(event.getPlayer().hashCode(), false);
-        if (config.getBoolean("tp.tp_spawn_before_login", true)) {
-            try {
-                event.getPlayer().teleportAsync(default_location);
-            } catch (NoSuchMethodError e) {
-                XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
-                XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
-                Bukkit.getScheduler().runTask(XenforoLogin.instance, () ->
-                        event.getPlayer().teleport(default_location));
-            }
-        }
-        sendBlankInventoryPacket(event.getPlayer());
+        if (isAsyncPlayerPreLoginEnabled ^ isAsyncPlayerPreLoginActive)
+            XenforoLogin.instance.getLogger().warning(
+                    "AsyncPlayerPreLogin listener is register but not active. This may cause issues. ");
         new Thread(() -> {
-            if (!isAsyncPlayerPreLoginEnabled)
-                ResultTypeUtils.handle(event.getPlayer(),
+            if (!(isAsyncPlayerPreLoginEnabled && isAsyncPlayerPreLoginActive)) {
+                boolean result = ResultTypeUtils.handle(event.getPlayer(),
                         ForumSystems.getCurrentSystem()
                                 .join(event.getPlayer())
                                 .shouldLogin(false));
+                if (!result) {
+                    XenforoLogin.instance.getLogger().warning(
+                            event.getPlayer().getName() + " didn't pass AccountExists test");
+                    return;
+                }
+            }
+            logged_in.put(event.getPlayer().hashCode(), false);
+            if (config.getBoolean("tp.tp_spawn_before_login", true)) {
+                try {
+                    event.getPlayer().teleportAsync(default_location);
+                } catch (NoSuchMethodError e) {
+                    XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
+                    XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
+                    Bukkit.getScheduler().runTask(XenforoLogin.instance, () ->
+                            event.getPlayer().teleport(default_location));
+                }
+            }
+            sendBlankInventoryPacket(event.getPlayer());
             int f = 0;
             int s = config.getInt("secure.show_tips_time", 5);
             int t = config.getInt("secure.max_login_time", 30);

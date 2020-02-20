@@ -7,35 +7,36 @@ import red.mohist.xenforologin.enums.ResultType;
 
 public class ResultTypeUtils {
 
-    public static void handle(Player player, ResultType resultType) {
+    public static boolean handle(Player player, ResultType resultType) {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
                     XenforoLogin.instance.login(player);
                 }
-                break;
+                return true;
             case PASSWORD_INCORRECT:
                 Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
                         .kickPlayer(XenforoLogin.instance.langFile("errors.password")));
-                break;
+                return false;
             case ERROR_NAME:
                 Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
                         .kickPlayer(XenforoLogin.instance.langFile("errors.name_incorrect",
                                 resultType.getInheritedObject())));
-                break;
+                return false;
             case NO_USER:
                 Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
                         .kickPlayer(XenforoLogin.instance.langFile("errors.no_user")));
-                break;
+                return false;
             case UNKNOWN:
                 Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
                         .kickPlayer(XenforoLogin.instance.langFile("errors.unknown",
                                 resultType.getInheritedObject())));
-                break;
+                return false;
             case SERVER_ERROR:
                 Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
                         .kickPlayer(XenforoLogin.instance.langFile("errors.server")));
-                break;
+                return false;
         }
+        return false;
     }
 }
