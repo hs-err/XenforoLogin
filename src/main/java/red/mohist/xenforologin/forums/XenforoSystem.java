@@ -46,6 +46,7 @@ public class XenforoSystem implements ForumSystem {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public ResultType login(Player player, String password) {
         try {
             ResponseHandler<String> responseHandler = response -> {
@@ -111,6 +112,13 @@ public class XenforoSystem implements ForumSystem {
     @Nonnull
     @Override
     public ResultType join(Player player) {
+        return join(player.getName());
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings("deprecation")
+    public ResultType join(String name) {
         ResponseHandler<String> responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
@@ -128,7 +136,7 @@ public class XenforoSystem implements ForumSystem {
         String result;
         try {
             result = Request.Get(url + "/users/find-name?username=" +
-                    URLEncoder.encode(player.getName(), "UTF-8"))
+                    URLEncoder.encode(name, "UTF-8"))
                     .addHeader("XF-Api-Key", key)
                     .execute().handleResponse(responseHandler);
         } catch (IOException e) {
@@ -148,7 +156,7 @@ public class XenforoSystem implements ForumSystem {
         if (json.get("exact").isJsonNull()) {
             return ResultType.NO_USER;
         }
-        if (!json.getAsJsonObject("exact").get("username").getAsString().equals(player.getName())) {
+        if (!json.getAsJsonObject("exact").get("username").getAsString().equals(name)) {
             return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
                     "correct", json.getAsJsonObject("exact").get("username").getAsString()));
         }

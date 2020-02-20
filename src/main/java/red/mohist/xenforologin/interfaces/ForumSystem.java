@@ -21,4 +21,7 @@ public interface ForumSystem {
     @Nonnull
     ResultType join(Player player);
 
+    @Nonnull
+    ResultType join(String name);
+
 }
