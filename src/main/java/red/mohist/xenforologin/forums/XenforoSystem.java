@@ -10,7 +10,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
@@ -19,12 +18,9 @@ import red.mohist.xenforologin.interfaces.ForumSystem;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
-import static org.bukkit.Bukkit.getWorld;
 
 public class XenforoSystem implements ForumSystem {
 
@@ -95,20 +91,19 @@ public class XenforoSystem implements ForumSystem {
                 }
             } else {
                 JsonArray errors = json.get("errors").getAsJsonArray();
-                if(errors.size()>0) {
-                    if(errors.get(0).getAsJsonObject().get("code").equals("incorrect_password")){
+                if (errors.size() > 0) {
+                    if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("incorrect_password")) {
                         return ResultType.PASSWORD_INCORRECT;
-                    }else if(errors.get(0).getAsJsonObject().get("code").equals("requested_user_x_not_found")){
+                    } else if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("requested_user_x_not_found")) {
                         return ResultType.NO_USER;
-                    }else{
+                    } else {
                         return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
                                 "code", errors.get(0).getAsJsonObject().get("code"),
-                                "message",errors.get(0).getAsJsonObject().get("message")));
+                                "message", errors.get(0).getAsJsonObject().get("message")));
                     }
-                }else{
+                } else {
                     return ResultType.SERVER_ERROR;
                 }
-                return ResultType.SERVER_ERROR.inheritedObject(sb.toString());
             }
         } catch (Exception e) {
             getLogger().log(Level.WARNING, "Error while checking player " + player.getName() + " data", e);
@@ -125,11 +120,11 @@ public class XenforoSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 401) {
-                getLogger().warning( XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                         "key", key)));
                 throw new ClientProtocolException("Unexpected response status: " + status);
             } else if (status == 404) {
-                getLogger().warning( XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
                         "url", url)));
                 throw new ClientProtocolException("Unexpected response status: " + status);
             } else {
