@@ -22,7 +22,7 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
         } else if (resultType == ResultType.ERROR_NAME) {
             XenforoLogin.instance.getLogger().warning(
                     event.getAddress() + " " +
-                            String.valueOf(resultType.getInheritedObject()) + " tried to use " +
+                            resultType.getInheritedObject() + " tried to use " +
                             event.getName() + " to join the server.");
             event.disallow(
                     AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
