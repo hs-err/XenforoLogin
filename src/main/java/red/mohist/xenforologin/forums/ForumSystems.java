@@ -14,13 +14,17 @@ public class ForumSystems {
         switch (Objects.requireNonNull(XenforoLogin.instance.config.getString("api.system", "xenforo"))) {
             case "xenforo":
                 cs = new XenforoSystem(XenforoLogin.instance.config.getString("api.xenforo.url"),
-                        XenforoLogin.instance.config.getString("api.xenforo.url"));
+                        XenforoLogin.instance.config.getString("api.xenforo.key"));
                 break;
             default:
                 cs = null;
         }
         if (cs == null) throw new NullPointerException();
         currentSystem = cs;
+    }
+
+    public static ForumSystem getCurrentSystem() {
+        return currentSystem;
     }
 
 }
