@@ -22,6 +22,7 @@ import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
 
+@SuppressWarnings("unused")
 public class XenforoSystem implements ForumSystem {
 
     private final String url;
@@ -54,11 +55,11 @@ public class XenforoSystem implements ForumSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
                     XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
-                            "key", XenforoLogin.instance.api_key)));
+                            "key", key)));
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 } else if (status == 404) {
                     XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
-                            "url", XenforoLogin.instance.api_url)));
+                            "url", url)));
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 } else {
                     throw new ClientProtocolException("Unexpected response status: " + status);

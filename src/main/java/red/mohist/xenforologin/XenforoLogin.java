@@ -1,13 +1,5 @@
 package red.mohist.xenforologin;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.util.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,14 +13,14 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.reflections.Reflections;
-import red.mohist.xenforologin.enums.ResultType;
+import red.mohist.xenforologin.forums.ForumSystems;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -38,8 +30,6 @@ import static org.bukkit.Bukkit.getWorld;
 
 public final class XenforoLogin extends JavaPlugin implements Listener {
 
-    public String api_url;
-    public String api_key;
     public ConcurrentMap<Integer, Boolean> logged_in;
     public FileConfiguration config;
     public FileConfiguration location_data;
@@ -55,6 +45,8 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         logged_in = new ConcurrentHashMap<>();
         saveDefaultConfig();
         loadConfig();
+
+        ForumSystems.reloadConfig();
 
         hookProtocolLib();
 
@@ -112,9 +104,9 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
             }
         }
         location_data = YamlConfiguration.loadConfiguration(location_file);
-        Location spawn_location = getWorld("world").getSpawnLocation();
+        Location spawn_location = Objects.requireNonNull(getWorld("world")).getSpawnLocation();
         default_location = new Location(
-                getWorld(config.getString("spawn.world", "world")),
+                getWorld(Objects.requireNonNull(config.getString("spawn.world", "world"))),
                 config.getDouble("spawn.x", spawn_location.getX()),
                 config.getDouble("spawn.y", spawn_location.getY()),
                 config.getDouble("spawn.z", spawn_location.getZ())
