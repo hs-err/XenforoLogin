@@ -15,5 +15,5 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       env:
-        JAVA_OPTS: -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true 
+        MAVEN_OPTS: -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true 
       run: mvn -B package --file pom.xml
