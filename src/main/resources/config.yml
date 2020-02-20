@@ -1,8 +1,9 @@
 api:
   system: "xenforo"
-  url: "http://example.com/api"
-  # An API-Key with auth, user:read permission
-  key: "XXXX0000XXXX0000XXXX00_00XXXX000"
+  xenforo:
+    url: "http://example.com/api"
+    # An API-Key with auth, user:read permission
+    key: "XXXX0000XXXX0000XXXX00_00XXXX000"
 
 # Set null to use server default spawn
 spawn:
