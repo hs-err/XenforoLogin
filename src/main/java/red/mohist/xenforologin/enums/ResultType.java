@@ -1,7 +1,7 @@
 package red.mohist.xenforologin.enums;
 
 public enum ResultType {
-    OK, SERVER_ERROR, PASSWORD_INCORRECT;
+    OK, SERVER_ERROR, PASSWORD_INCORRECT,ERROR_NAME,NO_USER,UNKNOWN;
 
     Object inheritedObject;
 

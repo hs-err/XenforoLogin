@@ -20,8 +20,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
             return;
         }
         event.setCancelled(true);
-
-
+        // TODO: 执行login/register
     }
 
     @Override

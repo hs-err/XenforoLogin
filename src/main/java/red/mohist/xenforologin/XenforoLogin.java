@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.reflections.Reflections;
+import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
 
@@ -133,58 +134,7 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         }
         sendBlankInventoryPacket(event.getPlayer());
         new Thread(() -> {
-            ResponseHandler<String> responseHandler = response -> {
-                int status = response.getStatusLine().getStatusCode();
-                if (status == 200) {
-                    HttpEntity entity = response.getEntity();
-                    return entity != null ? EntityUtils.toString(entity) : null;
-                } else if (status == 401) {
-                    getLogger().warning(langFile("errors.key", ImmutableMap.of(
-                            "key", api_key)));
-                    throw new ClientProtocolException("Unexpected response status: " + status);
-                } else if (status == 404) {
-                    getLogger().warning(langFile("errors.url", ImmutableMap.of(
-                            "url", api_url)));
-                    throw new ClientProtocolException("Unexpected response status: " + status);
-                } else {
-                    throw new ClientProtocolException("Unexpected response status: " + status);
-
-                }
-            };
-            String result;
-            try {
-                result = Request.Get(api_url + "/users/find-name?username=" +
-                        URLEncoder.encode(event.getPlayer().getName(), "UTF-8"))
-                        .addHeader("XF-Api-Key", api_key)
-                        .execute().handleResponse(responseHandler);
-            } catch (IOException e) {
-                kick(event.getPlayer(), langFile("errors.server"));
-                e.printStackTrace();
-                return;
-            }
-            if (result == null) {
-                kick(event.getPlayer(), langFile("errors.server"));
-                new ClientProtocolException("Unexpected response: null").printStackTrace();
-                return;
-            }
-            JsonParser parse = new JsonParser();
-            JsonObject json = parse.parse(result).getAsJsonObject();
-            if (json == null) {
-                kick(event.getPlayer(), langFile("errors.server"));
-                new ClientProtocolException("Unexpected json: null").printStackTrace();
-                return;
-            }
-            if (json.get("exact").isJsonNull()) {
-                kick(event.getPlayer(), langFile("errors.no_user"));
-                return;
-            }
-            if (!json.getAsJsonObject("exact").get("username").getAsString().equals(event.getPlayer().getName())) {
-                kick(event.getPlayer(),
-                        langFile("errors.name_incorrect", ImmutableMap.of(
-                                "message", "Username incorrect.",
-                                "correct", json.getAsJsonObject("exact").get("username").getAsString())));
-                return;
-            }
+            // TODO: 执行player join
             int f = 0;
             int s = config.getInt("secure.show_tips_time", 5);
             int t = config.getInt("secure.max_login_time", 30);
@@ -256,7 +206,7 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
             listenerProtocolEvent.sendBlankInventoryPacket(player);
     }
 
-    private void kick(Player player, String reason) {
+    public void kick(Player player, String reason) {
         new BukkitRunnable() {
             @Override
             public void run() {

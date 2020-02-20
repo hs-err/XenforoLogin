@@ -17,6 +17,8 @@ import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.interfaces.ForumSystem;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -68,67 +70,99 @@ public class XenforoSystem implements ForumSystem {
                 }
             };
 
-            String result = Request.Post(XenforoLogin.instance.api_url + "/auth")
+            String result = Request.Post(url + "/auth")
                     .bodyForm(Form.form().add("login", player.getName())
                             .add("password", password).build())
-                    .addHeader("XF-Api-Key", XenforoLogin.instance.api_key)
+                    .addHeader("XF-Api-Key", key)
                     .execute().handleResponse(responseHandler);
 
 
             if (result == null) {
-                throw new ClientProtocolException("Unexpected response: null");
+                return ResultType.SERVER_ERROR;
             }
             JsonParser parse = new JsonParser();
             JsonObject json = parse.parse(result).getAsJsonObject();
             if (json == null) {
-                throw new ClientProtocolException("Unexpected json: null");
+                return ResultType.SERVER_ERROR;
             }
             if (json.get("success") != null && json.get("success").getAsBoolean()) {
                 json.get("user").getAsJsonObject().get("username").getAsString();
                 if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
-                    XenforoLogin.instance.logged_in.put(player.hashCode(), true);
-                    if (XenforoLogin.instance.config.getBoolean("event.tp_back_after_login", true)) {
-                        XenforoLogin.instance.location_data.load(XenforoLogin.instance.location_file);
-                        Location spawn_location = Objects.requireNonNull(getWorld("world")).getSpawnLocation();
-                        Location leave_location = new Location(
-                                getWorld(UUID.fromString(Objects.requireNonNull(XenforoLogin.instance.location_data.getString(
-                                        player.getUniqueId().toString() + ".world",
-                                        spawn_location.getWorld().getUID().toString())))),
-                                XenforoLogin.instance.location_data.getDouble(player.getUniqueId().toString() + ".x", spawn_location.getX()),
-                                XenforoLogin.instance.location_data.getDouble(player.getUniqueId().toString() + ".y", spawn_location.getY()),
-                                XenforoLogin.instance.location_data.getDouble(player.getUniqueId().toString() + ".z", spawn_location.getZ())
-                        );
-                        player.teleportAsync(leave_location);
-                    }
-                    player.updateInventory();
-                    XenforoLogin.instance.getLogger().info("Logging in " + player.getUniqueId());
-                    player.sendMessage(XenforoLogin.instance.langFile("success"));
+                    return ResultType.OK;
                 } else {
-                    player.kickPlayer(XenforoLogin.instance.langFile("errors.name_incorrect", ImmutableMap.of(
-                            "message", "Username incorrect.",
-                            "correct", json.get("user").getAsJsonObject().get("username").getAsString()
-                    )));
+                    return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
+                            "correct", json.getAsJsonObject("exact").get("username").getAsString()));
                 }
             } else {
                 JsonArray errors = json.get("errors").getAsJsonArray();
-                int k = errors.size();
-                for (int i = 0; i < k; i++) {
-                    JsonObject error = errors.get(i).getAsJsonObject();
-                    player.sendMessage(XenforoLogin.instance.langFile("errors." + error.get("code").getAsString(), ImmutableMap.of(
-                            "message", error.get("message").getAsString()
-                    )));
+                if(errors.size()>0) {
+                    if(errors.get(0).getAsJsonObject().get("code").equals("incorrect_password")){
+                        return ResultType.PASSWORD_INCORRECT;
+                    }else if(errors.get(0).getAsJsonObject().get("code").equals("requested_user_x_not_found")){
+                        return ResultType.NO_USER;
+                    }else{
+                        return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
+                                "code", errors.get(0).getAsJsonObject().get("code"),
+                                "message",errors.get(0).getAsJsonObject().get("message")));
+                    }
+                }else{
+                    return ResultType.SERVER_ERROR;
                 }
             }
         } catch (Exception e) {
             getLogger().log(Level.WARNING, "Error while checking player " + player.getName() + " data", e);
             return ResultType.SERVER_ERROR;
         }
-        return ResultType.OK;
     }
 
     @Nonnull
     @Override
     public ResultType join(Player player) {
-        return null;
+        ResponseHandler<String> responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity) : null;
+            } else if (status == 401) {
+                getLogger().warning( XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                        "key", key)));
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            } else if (status == 404) {
+                getLogger().warning( XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                        "url", url)));
+                throw new ClientProtocolException("Unexpected response status: " + status);
+            } else {
+                throw new ClientProtocolException("Unexpected response status: " + status);
+
+            }
+        };
+        String result;
+        try {
+            result = Request.Get(url + "/users/find-name?username=" +
+                    URLEncoder.encode(player.getName(), "UTF-8"))
+                    .addHeader("XF-Api-Key", key)
+                    .execute().handleResponse(responseHandler);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        if (result == null) {
+            new ClientProtocolException("Unexpected response: null").printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        JsonParser parse = new JsonParser();
+        JsonObject json = parse.parse(result).getAsJsonObject();
+        if (json == null) {
+            new ClientProtocolException("Unexpected json: null").printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        if (json.get("exact").isJsonNull()) {
+            return ResultType.NO_USER;
+        }
+        if (!json.getAsJsonObject("exact").get("username").getAsString().equals(player.getName())) {
+            return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
+                    "correct", json.getAsJsonObject("exact").get("username").getAsString()));
+        }
+        return ResultType.OK;
     }
 }
