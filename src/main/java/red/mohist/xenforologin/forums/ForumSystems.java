@@ -10,15 +10,14 @@ public class ForumSystems {
 
     public static void reloadConfig() {
         ForumSystem cs;
-        //noinspection SwitchStatementWithTooFewBranches
         switch (Objects.requireNonNull(XenforoLogin.instance.config.getString("api.system", "xenforo"))) {
             case "xenforo":
                 cs = new XenforoSystem(XenforoLogin.instance.config.getString("api.xenforo.url"),
                         XenforoLogin.instance.config.getString("api.xenforo.key"));
                 break;
             case "discuz":
-                cs = new DiscuzSystem(XenforoLogin.instance.config.getString("api.xenforo.url"),
-                        XenforoLogin.instance.config.getString("api.xenforo.key"));
+                cs = new DiscuzSystem(XenforoLogin.instance.config.getString("api.discuz.url"),
+                        XenforoLogin.instance.config.getString("api.discuz.key"));
                 break;
             default:
                 cs = null;

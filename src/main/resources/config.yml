@@ -1,9 +1,13 @@
 api:
-  system: "xenforo"
-  xenforo:
+  system: "xenforo" # xenforo or discuz
+  xenforo: # Configurations for xenforo
     url: "http://example.com/api"
     # An API-Key with auth, user:read permission
-    key: "XXXX0000XXXX0000XXXX00_00XXXX000"
+    key: "YOUR_KEY_HERE"
+  discuz: # Configurations for discuz
+    url: "http://example.com/XenforoLogin.php"
+    # Application key
+    key: "YOUR_KEY_HERE"
 
 # Set null to use server default spawn
 spawn:

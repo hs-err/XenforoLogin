@@ -45,11 +45,12 @@ public class DiscuzSystem implements ForumSystem {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public ResultType login(Player player, String password) {
         try {
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();
-                if (status == 200 ) {
+                if (status == 200) {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 404) {
@@ -59,7 +60,7 @@ public class DiscuzSystem implements ForumSystem {
                 return null;
             };
 
-            String result = Request.Post(url+"?action=login")
+            String result = Request.Post(url + "?action=login")
                     .bodyForm(Form.form().add("login", player.getName())
                             .add("password", password).build())
                     .addHeader("UC-Api-Key", key)
@@ -90,7 +91,7 @@ public class DiscuzSystem implements ForumSystem {
                     } else if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("requested_user_x_not_found")) {
                         return ResultType.NO_USER;
                     } else {
-                        if(errors.get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")){
+                        if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")) {
                             XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                                     "key", key)));
                             return ResultType.SERVER_ERROR;
@@ -132,7 +133,7 @@ public class DiscuzSystem implements ForumSystem {
         };
         String result;
         try {
-            result = Request.Post(url+"?action=join")
+            result = Request.Post(url + "?action=join")
                     .bodyForm(Form.form().add("login", name)
                             .build())
                     .addHeader("UC-Api-Key", key)
@@ -151,10 +152,10 @@ public class DiscuzSystem implements ForumSystem {
             new ClientProtocolException("Unexpected json: null").printStackTrace();
             return ResultType.SERVER_ERROR;
         }
-        if (json.get("exact")!= null && json.get("exact").isJsonNull()) {
+        if (json.get("exact") != null && json.get("exact").isJsonNull()) {
             return ResultType.NO_USER;
         }
-        if(json.get("errors") != null && json.get("errors").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")){
+        if (json.get("errors") != null && json.get("errors").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")) {
             XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                     "key", key)));
             return ResultType.SERVER_ERROR;
