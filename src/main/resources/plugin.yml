@@ -1,6 +1,6 @@
 name: XenforoLogin
 version: ${project.version}
-main: red.mohist.xenforologin.Main
+main: red.mohist.xenforologin.XenforoLogin
 authors:
   - logos
   - ishland

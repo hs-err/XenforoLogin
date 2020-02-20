@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import red.mohist.xenforologin.Main;
+import red.mohist.xenforologin.XenforoLogin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -24,11 +24,11 @@ public class ListenerProtocolEvent {
     public ListenerProtocolEvent() {
         protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.addPacketListener(
-                new PacketAdapter(Main.instance, ListenerPriority.LOWEST,
+                new PacketAdapter(XenforoLogin.instance, ListenerPriority.LOWEST,
                         PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Server.SET_SLOT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        if (event.getPacket().getIntegers().read(0) == 0 && Main.instance.needCancelled(event.getPlayer())) {
+                        if (event.getPacket().getIntegers().read(0) == 0 && XenforoLogin.instance.needCancelled(event.getPlayer())) {
                             event.setCancelled(true);
                         }
                     }

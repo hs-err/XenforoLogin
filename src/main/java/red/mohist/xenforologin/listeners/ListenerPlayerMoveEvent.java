@@ -4,17 +4,17 @@ import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
-import red.mohist.xenforologin.Main;
+import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 
 
 public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
-        if (Main.instance.needCancelled(event.getPlayer())) {
+        if (XenforoLogin.instance.needCancelled(event.getPlayer())) {
             Location location = event.getTo();
-            location.setX(Main.instance.default_location.getX());
-            location.setZ(Main.instance.default_location.getZ());
+            location.setX(XenforoLogin.instance.default_location.getX());
+            location.setZ(XenforoLogin.instance.default_location.getZ());
             event.setTo(location);
         }
     }

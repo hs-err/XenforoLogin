@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.bukkit.Bukkit.getPluginManager;
 import static org.bukkit.Bukkit.getWorld;
 
-public final class Main extends JavaPlugin implements Listener {
+public final class XenforoLogin extends JavaPlugin implements Listener {
 
     public String api_url;
     public String api_key;
@@ -44,7 +44,7 @@ public final class Main extends JavaPlugin implements Listener {
     public FileConfiguration location_data;
     public File location_file;
     public Location default_location;
-    public static Main instance;
+    public static XenforoLogin instance;
     private ListenerProtocolEvent listenerProtocolEvent;
 
     @Override

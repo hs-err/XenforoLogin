@@ -12,7 +12,7 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import red.mohist.xenforologin.Main;
+import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.interfaces.ForumSystem;
 
@@ -55,12 +55,12 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
-                    Main.instance.getLogger().warning(Main.instance.langFile("errors.key", ImmutableMap.of(
-                            "key", Main.instance.api_key)));
+                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                            "key", XenforoLogin.instance.api_key)));
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 } else if (status == 404) {
-                    Main.instance.getLogger().warning(Main.instance.langFile("errors.url", ImmutableMap.of(
-                            "url", Main.instance.api_url)));
+                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                            "url", XenforoLogin.instance.api_url)));
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 } else {
                     throw new ClientProtocolException("Unexpected response status: " + status);
@@ -68,10 +68,10 @@ public class XenforoSystem implements ForumSystem {
                 }
             };
 
-            String result = Request.Post(Main.instance.api_url + "/auth")
+            String result = Request.Post(XenforoLogin.instance.api_url + "/auth")
                     .bodyForm(Form.form().add("login", player.getName())
                             .add("password", password).build())
-                    .addHeader("XF-Api-Key", Main.instance.api_key)
+                    .addHeader("XF-Api-Key", XenforoLogin.instance.api_key)
                     .execute().handleResponse(responseHandler);
 
 
@@ -86,25 +86,25 @@ public class XenforoSystem implements ForumSystem {
             if (json.get("success") != null && json.get("success").getAsBoolean()) {
                 json.get("user").getAsJsonObject().get("username").getAsString();
                 if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
-                    Main.instance.logged_in.put(player.hashCode(), true);
-                    if (Main.instance.config.getBoolean("event.tp_back_after_login", true)) {
-                        Main.instance.location_data.load(Main.instance.location_file);
+                    XenforoLogin.instance.logged_in.put(player.hashCode(), true);
+                    if (XenforoLogin.instance.config.getBoolean("event.tp_back_after_login", true)) {
+                        XenforoLogin.instance.location_data.load(XenforoLogin.instance.location_file);
                         Location spawn_location = Objects.requireNonNull(getWorld("world")).getSpawnLocation();
                         Location leave_location = new Location(
-                                getWorld(UUID.fromString(Objects.requireNonNull(Main.instance.location_data.getString(
+                                getWorld(UUID.fromString(Objects.requireNonNull(XenforoLogin.instance.location_data.getString(
                                         player.getUniqueId().toString() + ".world",
                                         spawn_location.getWorld().getUID().toString())))),
-                                Main.instance.location_data.getDouble(player.getUniqueId().toString() + ".x", spawn_location.getX()),
-                                Main.instance.location_data.getDouble(player.getUniqueId().toString() + ".y", spawn_location.getY()),
-                                Main.instance.location_data.getDouble(player.getUniqueId().toString() + ".z", spawn_location.getZ())
+                                XenforoLogin.instance.location_data.getDouble(player.getUniqueId().toString() + ".x", spawn_location.getX()),
+                                XenforoLogin.instance.location_data.getDouble(player.getUniqueId().toString() + ".y", spawn_location.getY()),
+                                XenforoLogin.instance.location_data.getDouble(player.getUniqueId().toString() + ".z", spawn_location.getZ())
                         );
                         player.teleportAsync(leave_location);
                     }
                     player.updateInventory();
-                    Main.instance.getLogger().info("Logging in " + player.getUniqueId());
-                    player.sendMessage(Main.instance.langFile("success"));
+                    XenforoLogin.instance.getLogger().info("Logging in " + player.getUniqueId());
+                    player.sendMessage(XenforoLogin.instance.langFile("success"));
                 } else {
-                    player.kickPlayer(Main.instance.langFile("errors.name_incorrect", ImmutableMap.of(
+                    player.kickPlayer(XenforoLogin.instance.langFile("errors.name_incorrect", ImmutableMap.of(
                             "message", "Username incorrect.",
                             "correct", json.get("user").getAsJsonObject().get("username").getAsString()
                     )));
@@ -114,7 +114,7 @@ public class XenforoSystem implements ForumSystem {
                 int k = errors.size();
                 for (int i = 0; i < k; i++) {
                     JsonObject error = errors.get(i).getAsJsonObject();
-                    player.sendMessage(Main.instance.langFile("errors." + error.get("code").getAsString(), ImmutableMap.of(
+                    player.sendMessage(XenforoLogin.instance.langFile("errors." + error.get("code").getAsString(), ImmutableMap.of(
                             "message", error.get("message").getAsString()
                     )));
                 }
