@@ -14,20 +14,34 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
         ResultType resultType = ForumSystems.getCurrentSystem()
                 .join(event.getName())
                 .shouldLogin(false);
-        if (resultType == ResultType.OK)
+        if (resultType == ResultType.OK) {
+            XenforoLogin.instance.getLogger().info(
+                    event.getAddress() + " " +
+                            event.getName() + " passed AccountExists test");
             event.allow();
-        else if (resultType == ResultType.ERROR_NAME)
+        } else if (resultType == ResultType.ERROR_NAME) {
+            XenforoLogin.instance.getLogger().warning(
+                    event.getAddress() + " " +
+                            String.valueOf(resultType.getInheritedObject()) + " tried to use " +
+                            event.getName() + " to join the server.");
             event.disallow(
                     AsyncPlayerPreLoginEvent.Result.KICK_BANNED,
                     XenforoLogin.instance.langFile("errors.name_incorrect", resultType.getInheritedObject()));
-        else if (resultType == ResultType.NO_USER)
+        } else if (resultType == ResultType.NO_USER) {
+            XenforoLogin.instance.getLogger().warning(
+                    event.getAddress() + " " +
+                            event.getName() + " is not registered at the forum.");
             event.disallow(
                     AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
                     XenforoLogin.instance.langFile("errors.no_user"));
-        else if (resultType == ResultType.SERVER_ERROR)
+        } else if (resultType == ResultType.SERVER_ERROR) {
+            XenforoLogin.instance.getLogger().warning(
+                    event.getAddress() + " " +
+                            event.getName() + " tried to join but an internal error occurred.");
             event.disallow(
                     AsyncPlayerPreLoginEvent.Result.KICK_FULL,
                     XenforoLogin.instance.langFile("errors.server"));
+        }
     }
 
     @Override
