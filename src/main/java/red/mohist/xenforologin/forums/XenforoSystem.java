@@ -56,15 +56,11 @@ public class XenforoSystem implements ForumSystem {
                 } else if (status == 403) {
                     XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                             "key", key)));
-                    throw new ClientProtocolException("Unexpected response status: " + status);
                 } else if (status == 404) {
                     XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
                             "url", url)));
-                    throw new ClientProtocolException("Unexpected response status: " + status);
-                } else {
-                    throw new ClientProtocolException("Unexpected response status: " + status);
-
                 }
+                return null;
             };
 
             String result = Request.Post(url + "/auth")
@@ -99,8 +95,8 @@ public class XenforoSystem implements ForumSystem {
                         return ResultType.NO_USER;
                     } else {
                         return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
-                                "code", errors.get(0).getAsJsonObject().get("code"),
-                                "message", errors.get(0).getAsJsonObject().get("message")));
+                                "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
+                                "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
                     }
                 } else {
                     return ResultType.SERVER_ERROR;
@@ -123,15 +119,11 @@ public class XenforoSystem implements ForumSystem {
             } else if (status == 401) {
                 getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                         "key", key)));
-                throw new ClientProtocolException("Unexpected response status: " + status);
             } else if (status == 404) {
                 getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
                         "url", url)));
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-
             }
+            return null;
         };
         String result;
         try {

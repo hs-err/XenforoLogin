@@ -2,13 +2,16 @@ package red.mohist.xenforologin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,6 +25,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -126,7 +130,11 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         }
         sendBlankInventoryPacket(event.getPlayer());
         new Thread(() -> {
-            // TODO: 执行player join
+            ForumSystems
+                    .getCurrentSystem()
+                    .join(event.getPlayer())
+                    .setLogin(false)
+                    .handle(event.getPlayer());
             int f = 0;
             int s = config.getInt("secure.show_tips_time", 5);
             int t = config.getInt("secure.max_login_time", 30);
@@ -146,7 +154,8 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                     return;
                 }
             }
-            kick(event.getPlayer(), langFile("errors.time_out"));
+            Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> event.getPlayer()
+                    .kickPlayer(langFile("errors.time_out")));
 
         }).start();
     }
@@ -197,14 +206,31 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         if (listenerProtocolEvent != null)
             listenerProtocolEvent.sendBlankInventoryPacket(player);
     }
-
-    public void kick(Player player, String reason) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                player.kickPlayer(reason);
+    public void login(Player player){
+        try{
+            if (config.getBoolean("event.tp_back_after_login", true)) {
+                location_data.load(location_file);
+                Location spawn_location = Objects.requireNonNull(getWorld("world")).getSpawnLocation();
+                Location leave_location = new Location(
+                        getWorld(UUID.fromString(Objects.requireNonNull(location_data.getString(
+                                player.getUniqueId().toString() + ".world",
+                                spawn_location.getWorld().getUID().toString())))),
+                        XenforoLogin.instance.location_data.getDouble(
+                                player.getUniqueId().toString() + ".x", spawn_location.getX()),
+                        XenforoLogin.instance.location_data.getDouble(
+                                player.getUniqueId().toString() + ".y", spawn_location.getY()),
+                        XenforoLogin.instance.location_data.getDouble(
+                                player.getUniqueId().toString() + ".z", spawn_location.getZ())
+                );
+                player.teleportAsync(leave_location);
             }
-        }.runTask(this);
+            logged_in.put(player.hashCode(), true);
+            player.updateInventory();
+            XenforoLogin.instance.getLogger().info("Logging in " + player.getUniqueId());
+            player.sendMessage(XenforoLogin.instance.langFile("success"));
+        }catch(Throwable e){
+            e.printStackTrace();
+        }
     }
 }
 

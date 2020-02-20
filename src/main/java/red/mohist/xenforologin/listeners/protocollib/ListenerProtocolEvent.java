@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListenerProtocolEvent {
-    final ProtocolManager protocolManager;
+    private ProtocolManager protocolManager;
 
     public ListenerProtocolEvent() {
         protocolManager = ProtocolLibrary.getProtocolManager();
