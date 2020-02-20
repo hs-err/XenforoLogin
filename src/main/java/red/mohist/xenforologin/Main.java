@@ -47,40 +47,20 @@ public final class Main extends JavaPlugin implements Listener {
     public static Main instance;
     private ListenerProtocolEvent listenerProtocolEvent;
 
-    @SuppressWarnings({"ConstantConditions"})
     @Override
     public void onEnable() {
         getLogger().info("Hello, XenforoLogin!");
         instance = this;
         logged_in = new ConcurrentHashMap<>();
         saveDefaultConfig();
-        config = getConfig();
-        location_file = new File(getDataFolder(), "player_location.yml");
-        if (!location_file.exists()) {
-            try {
-                if (!location_file.createNewFile()) {
-                    throw new IOException("File can't be created.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        location_data = YamlConfiguration.loadConfiguration(location_file);
-        api_url = config.getString("api.url");
-        api_key = config.getString("api.key");
-        Location spawn_location = getWorld("world").getSpawnLocation();
-        default_location = new Location(
-                getWorld(config.getString("spawn.world", "world")),
-                config.getDouble("spawn.x", spawn_location.getX()),
-                config.getDouble("spawn.y", spawn_location.getY()),
-                config.getDouble("spawn.z", spawn_location.getZ())
-        );
+        loadConfig();
 
-        if (ListenerProtocolEvent.isAvailable() && config.getBoolean("secure.hide_inventory", true)) {
-            listenerProtocolEvent = new ListenerProtocolEvent();
-            getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
-        }
+        hookProtocolLib();
 
+        registerListeners();
+    }
+
+    private void registerListeners() {
         {
             int unavailableCount = 0;
             //noinspection SpellCheckingInspection
@@ -108,10 +88,36 @@ public final class Main extends JavaPlugin implements Listener {
                 getLogger().warning("Error count: " + unavailableCount);
             }
         }
-
-        // getLogger().info("API URL: " + api_url);
-        // getLogger().info("API KEY: " + api_key);
         getPluginManager().registerEvents(this, this);
+    }
+
+    private void hookProtocolLib() {
+        if (ListenerProtocolEvent.isAvailable() && config.getBoolean("secure.hide_inventory", true)) {
+            listenerProtocolEvent = new ListenerProtocolEvent();
+            getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
+        }
+    }
+
+    private void loadConfig() {
+        config = getConfig();
+        location_file = new File(getDataFolder(), "player_location.yml");
+        if (!location_file.exists()) {
+            try {
+                if (!location_file.createNewFile()) {
+                    throw new IOException("File can't be created.");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        location_data = YamlConfiguration.loadConfiguration(location_file);
+        Location spawn_location = getWorld("world").getSpawnLocation();
+        default_location = new Location(
+                getWorld(config.getString("spawn.world", "world")),
+                config.getDouble("spawn.x", spawn_location.getX()),
+                config.getDouble("spawn.y", spawn_location.getY()),
+                config.getDouble("spawn.z", spawn_location.getZ())
+        );
     }
 
     @Override
