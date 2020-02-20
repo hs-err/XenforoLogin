@@ -11,7 +11,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
-        if (Main.instance.needcancelled(event.getPlayer())) {
+        if (Main.instance.needCancelled(event.getPlayer())) {
             Location location = event.getTo();
             location.setX(Main.instance.default_location.getX());
             location.setZ(Main.instance.default_location.getZ());

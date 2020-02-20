@@ -9,7 +9,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerPlayerLeashEntityEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerLeashEntityEvent(PlayerLeashEntityEvent event) {
-        if (Main.instance.needcancelled(event.getPlayer())) {
+        if (Main.instance.needCancelled(event.getPlayer())) {
             event.setCancelled(true);
         }
     }

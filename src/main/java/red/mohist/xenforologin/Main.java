@@ -1,40 +1,36 @@
 package red.mohist.xenforologin;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.reflections.Reflections;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
+import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static org.bukkit.Bukkit.getPluginManager;
 import static org.bukkit.Bukkit.getWorld;
@@ -43,20 +39,20 @@ public final class Main extends JavaPlugin implements Listener {
 
     public String api_url;
     public String api_key;
-    public HashMap<Integer, Boolean> logined;
+    public ConcurrentMap<Integer, Boolean> logged_in;
     public FileConfiguration config;
     public FileConfiguration location_data;
     public File location_file;
     public Location default_location;
     public static Main instance;
-    private Object ListenerProtocolEvent;
+    private ListenerProtocolEvent listenerProtocolEvent;
 
-    @SuppressWarnings({"ConstantConditions", "deprecation"})
+    @SuppressWarnings({"ConstantConditions"})
     @Override
     public void onEnable() {
-        getLogger().info("Hello,XenforoLogin!");
+        getLogger().info("Hello, XenforoLogin!");
         instance = this;
-        logined = new HashMap<>();
+        logged_in = new ConcurrentHashMap<>();
         saveDefaultConfig();
         config = getConfig();
         location_file = new File(getDataFolder(), "player_location.yml");
@@ -80,22 +76,37 @@ public final class Main extends JavaPlugin implements Listener {
                 config.getDouble("spawn.z", spawn_location.getZ())
         );
 
-        //noinspection SpellCheckingInspection
-        Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.xenforologin.listeners")
-                .getSubTypesOf(BukkitAPIListener.class);
-        for (Class<? extends BukkitAPIListener> clazz : classes) {
-            BukkitAPIListener listener;
-            try {
-                listener = clazz.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
-                getLogger().warning(clazz.getName() + " is not available.");
-                continue;
+        if (ListenerProtocolEvent.isAvailable() && config.getBoolean("secure.hide_inventory", true)) {
+            listenerProtocolEvent = new ListenerProtocolEvent();
+            getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
+        }
+
+        {
+            int unavailableCount = 0;
+            //noinspection SpellCheckingInspection
+            Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.xenforologin.listeners")
+                    .getSubTypesOf(BukkitAPIListener.class);
+            for (Class<? extends BukkitAPIListener> clazz : classes) {
+                BukkitAPIListener listener;
+                try {
+                    listener = clazz.getDeclaredConstructor().newInstance();
+                } catch (Exception e) {
+                    getLogger().warning(clazz.getName() + " is not available.");
+                    unavailableCount++;
+                    continue;
+                }
+                if (!listener.isAvailable()) {
+                    getLogger().warning(clazz.getName() + " is not available.");
+                    unavailableCount++;
+                    continue;
+                }
+                Bukkit.getPluginManager().registerEvents(listener, this);
             }
-            if (!listener.isAvailable()) {
-                getLogger().warning(clazz.getName() + " is not available.");
-                continue;
+            if (unavailableCount > 0) {
+                getLogger().warning("Warning: Some features in this plugin is not available on this version of bukkit");
+                getLogger().warning("If your encountered errors, do NOT report to XenforoLogin.");
+                getLogger().warning("Error count: " + unavailableCount);
             }
-            Bukkit.getPluginManager().registerEvents(listener, this);
         }
 
         // getLogger().info("API URL: " + api_url);
@@ -109,90 +120,8 @@ public final class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChat(AsyncPlayerChatEvent event) throws IOException, InvalidConfigurationException {
-        if (!needcancelled(event.getPlayer())) {
-            if (config.getBoolean("secure.cancell_chat_after_login", false)) {
-                event.getPlayer().sendMessage(t("logined"));
-                event.setCancelled(true);
-            }
-            return;
-        }
-        event.setCancelled(true);
-        ResponseHandler<String> responseHandler = response -> {
-            int status = response.getStatusLine().getStatusCode();
-            if (status == 200 || status == 400) {
-                HttpEntity entity = response.getEntity();
-                return entity != null ? EntityUtils.toString(entity) : null;
-            } else if (status == 403) {
-                getLogger().warning(t("errors.key", ImmutableMap.of(
-                        "key", api_key)));
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            } else if (status == 404) {
-                getLogger().warning(t("errors.url", ImmutableMap.of(
-                        "url", api_url)));
-                throw new ClientProtocolException("Unexpected response status: " + status);
-            } else {
-                throw new ClientProtocolException("Unexpected response status: " + status);
-
-            }
-        };
-        String result = Request.Post(api_url + "/auth")
-                .bodyForm(Form.form().add("login", event.getPlayer().getName())
-                        .add("password", event.getMessage()).build())
-                .addHeader("XF-Api-Key", api_key)
-                .execute().handleResponse(responseHandler);
-
-
-        if (result == null) {
-            throw new ClientProtocolException("Unexpected response: null");
-        }
-        JsonParser parse = new JsonParser();
-        JsonObject json = parse.parse(result).getAsJsonObject();
-        if (json == null) {
-            throw new ClientProtocolException("Unexpected json: null");
-        }
-        if (json.get("success") != null && json.get("success").getAsBoolean()) {
-            json.get("user").getAsJsonObject().get("username").getAsString();
-            if (json.get("user").getAsJsonObject().get("username").getAsString().equals(event.getPlayer().getName())) {
-                logined.put(event.getPlayer().hashCode(), true);
-                if (config.getBoolean("event.tp_back_after_login", true)) {
-                    location_data.load(location_file);
-                    Location spawn_location = getWorld("world").getSpawnLocation();
-                    Location leave_location = new Location(
-                            getWorld(UUID.fromString(location_data.getString(
-                                    event.getPlayer().getUniqueId().toString() + ".world",
-                                    spawn_location.getWorld().getUID().toString()))),
-                            location_data.getDouble(event.getPlayer().getUniqueId().toString() + ".x", spawn_location.getX()),
-                            location_data.getDouble(event.getPlayer().getUniqueId().toString() + ".y", spawn_location.getY()),
-                            location_data.getDouble(event.getPlayer().getUniqueId().toString() + ".z", spawn_location.getZ())
-                    );
-                    event.getPlayer().teleportAsync(leave_location);
-                }
-                event.getPlayer().updateInventory();
-                getLogger().info("set true: " + event.getPlayer().getUniqueId());
-                event.getPlayer().sendMessage(t("success"));
-            } else {
-                event.getPlayer().kickPlayer(t("errors.name_incorrect", ImmutableMap.of(
-                        "message", "Username incorrect.",
-                        "correct", json.get("user").getAsJsonObject().get("username").getAsString()
-                )));
-            }
-        } else {
-            JsonArray errors = json.get("errors").getAsJsonArray();
-            int k = errors.size();
-            for (int i = 0; i < k; i++) {
-                JsonObject error = errors.get(i).getAsJsonObject();
-                event.getPlayer().sendMessage(t("errors." + error.get("code").getAsString(), ImmutableMap.of(
-                        "message", error.get("message").getAsString()
-                )));
-            }
-        }
-
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
     public void OnJoin(PlayerJoinEvent event) {
-        logined.put(event.getPlayer().hashCode(), false);
+        logged_in.put(event.getPlayer().hashCode(), false);
         if (config.getBoolean("tp.tp_spawn_before_login", true)) {
             event.getPlayer().teleport(default_location);
         }
@@ -204,11 +133,11 @@ public final class Main extends JavaPlugin implements Listener {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 401) {
-                    getLogger().warning(t("errors.key", ImmutableMap.of(
+                    getLogger().warning(langFile("errors.key", ImmutableMap.of(
                             "key", api_key)));
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 } else if (status == 404) {
-                    getLogger().warning(t("errors.url", ImmutableMap.of(
+                    getLogger().warning(langFile("errors.url", ImmutableMap.of(
                             "url", api_url)));
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 } else {
@@ -216,34 +145,36 @@ public final class Main extends JavaPlugin implements Listener {
 
                 }
             };
-            String result = null;
+            String result;
             try {
                 result = Request.Get(api_url + "/users/find-name?username=" +
                         URLEncoder.encode(event.getPlayer().getName(), "UTF-8"))
                         .addHeader("XF-Api-Key", api_key)
                         .execute().handleResponse(responseHandler);
             } catch (IOException e) {
-                kick(event.getPlayer(), t("errors.server"));
+                kick(event.getPlayer(), langFile("errors.server"));
                 e.printStackTrace();
                 return;
             }
             if (result == null) {
-                kick(event.getPlayer(), t("errors.server"));
+                kick(event.getPlayer(), langFile("errors.server"));
                 new ClientProtocolException("Unexpected response: null").printStackTrace();
+                return;
             }
             JsonParser parse = new JsonParser();
             JsonObject json = parse.parse(result).getAsJsonObject();
             if (json == null) {
-                kick(event.getPlayer(), t("errors.server"));
+                kick(event.getPlayer(), langFile("errors.server"));
                 new ClientProtocolException("Unexpected json: null").printStackTrace();
+                return;
             }
             if (json.get("exact").isJsonNull()) {
-                kick(event.getPlayer(), t("errors.no_user"));
+                kick(event.getPlayer(), langFile("errors.no_user"));
                 return;
             }
             if (!json.getAsJsonObject("exact").get("username").getAsString().equals(event.getPlayer().getName())) {
                 kick(event.getPlayer(),
-                        t("errors.name_incorrect", ImmutableMap.of(
+                        langFile("errors.name_incorrect", ImmutableMap.of(
                                 "message", "Username incorrect.",
                                 "correct", json.getAsJsonObject("exact").get("username").getAsString())));
                 return;
@@ -253,7 +184,7 @@ public final class Main extends JavaPlugin implements Listener {
             int t = config.getInt("secure.max_login_time", 30);
             while (true) {
                 sendBlankInventoryPacket(event.getPlayer());
-                event.getPlayer().sendMessage(t("need_login"));
+                event.getPlayer().sendMessage(langFile("need_login"));
                 try {
                     Thread.sleep(s * 1000);
                     f += s;
@@ -263,11 +194,11 @@ public final class Main extends JavaPlugin implements Listener {
                 if (f > t) {
                     break;
                 }
-                if (!event.getPlayer().isOnline() || !needcancelled(event.getPlayer())) {
+                if (!event.getPlayer().isOnline() || !needCancelled(event.getPlayer())) {
                     return;
                 }
             }
-            kick(event.getPlayer(), t("errors.time_out"));
+            kick(event.getPlayer(), langFile("errors.time_out"));
 
         }).start();
     }
@@ -275,21 +206,21 @@ public final class Main extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnQuit(PlayerQuitEvent event) throws IOException {
         Location leave_location = event.getPlayer().getLocation();
-        if (!needcancelled(event.getPlayer())) {
+        if (!needCancelled(event.getPlayer())) {
             location_data.set(event.getPlayer().getUniqueId().toString() + ".world", leave_location.getWorld().getUID().toString());
             location_data.set(event.getPlayer().getUniqueId().toString() + ".x", leave_location.getX());
             location_data.set(event.getPlayer().getUniqueId().toString() + ".y", leave_location.getY());
             location_data.set(event.getPlayer().getUniqueId().toString() + ".z", leave_location.getZ());
             location_data.save(location_file);
         }
-        logined.remove(event.getPlayer().hashCode());
+        logged_in.remove(event.getPlayer().hashCode());
     }
 
-    public boolean needcancelled(Player player) {
-        return !logined.getOrDefault(player.hashCode(), false);
+    public boolean needCancelled(Player player) {
+        return !logged_in.getOrDefault(player.hashCode(), false);
     }
 
-    private String t(String key) {
+    public String langFile(String key) {
         String result = config.getString("lang." + key);
         if (result == null) {
             return key;
@@ -297,7 +228,7 @@ public final class Main extends JavaPlugin implements Listener {
         return result;
     }
 
-    private String t(String key, Map<String, String> data) {
+    public String langFile(String key, Map<String, String> data) {
         String result = config.getString("lang." + key);
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder(key);
@@ -315,16 +246,8 @@ public final class Main extends JavaPlugin implements Listener {
     }
 
     private void sendBlankInventoryPacket(Player player) {
-        if (ListenerProtocolEvent != null) {
-            try {
-                ListenerProtocolEvent
-                        .getClass()
-                        .getMethod("sendBlankInventoryPacket", new Class[]{Player.class})
-                        .invoke(ListenerProtocolEvent, player);
-            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
+        if (listenerProtocolEvent != null)
+            listenerProtocolEvent.sendBlankInventoryPacket(player);
     }
 
     private void kick(Player player, String reason) {

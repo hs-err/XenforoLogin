@@ -9,7 +9,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerPlayerDeathEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerDeathEvent(PlayerDeathEvent event) {
-        if (Main.instance.needcancelled(event.getEntity())) {
+        if (Main.instance.needCancelled(event.getEntity())) {
             event.setCancelled(true);
         }
     }

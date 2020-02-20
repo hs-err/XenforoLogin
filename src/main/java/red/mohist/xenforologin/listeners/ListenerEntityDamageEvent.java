@@ -12,7 +12,7 @@ public class ListenerEntityDamageEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnEntityDamageEvent(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
-            if (Main.instance.needcancelled((Player) event.getEntity())) {
+            if (Main.instance.needCancelled((Player) event.getEntity())) {
                 event.setCancelled(true);
             }
         }

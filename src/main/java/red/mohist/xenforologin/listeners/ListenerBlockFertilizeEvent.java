@@ -9,7 +9,8 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerBlockFertilizeEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnBlockFertilizeEvent(BlockFertilizeEvent event) {
-        if (Main.instance.needcancelled(event.getPlayer())) {
+        if (event.getPlayer() == null) return;
+        if (Main.instance.needCancelled(event.getPlayer())) {
             event.setCancelled(true);
         }
     }

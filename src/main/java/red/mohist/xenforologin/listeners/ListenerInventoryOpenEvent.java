@@ -10,7 +10,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerInventoryOpenEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnInventoryOpenEvent(InventoryOpenEvent event) {
-        if (Main.instance.needcancelled((Player) event.getPlayer())) {
+        if (Main.instance.needCancelled((Player) event.getPlayer())) {
             event.setCancelled(true);
         }
     }

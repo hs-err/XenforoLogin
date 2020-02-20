@@ -2,9 +2,6 @@
 
 Use UserInfo from xenforo to login in Minecraft.
 
-Warning: It depends on ProtocolLib
-Warning: It only supports paper-1.15.2 now
-
 ## How to Install?
 
 ### 1. Create an API key.
@@ -30,6 +27,4 @@ It may like: http://example.com/api
 Then change api.key to you created in step.1.
 
 ## TODO
-### 1. Support more version
-### 2. Chooseable ProtocolLib
-### 3. Support register in game.
+### 1. Support register in game.

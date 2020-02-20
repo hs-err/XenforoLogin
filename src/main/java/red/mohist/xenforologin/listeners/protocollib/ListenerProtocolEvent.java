@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ListenerProtocolEvent {
-    ProtocolManager protocolManager;
+    final ProtocolManager protocolManager;
 
     public ListenerProtocolEvent() {
         protocolManager = ProtocolLibrary.getProtocolManager();
@@ -27,11 +28,15 @@ public class ListenerProtocolEvent {
                         PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Server.SET_SLOT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        if (event.getPacket().getIntegers().read(0) == 0 && Main.instance.needcancelled(event.getPlayer())) {
+                        if (event.getPacket().getIntegers().read(0) == 0 && Main.instance.needCancelled(event.getPlayer())) {
                             event.setCancelled(true);
                         }
                     }
                 });
+    }
+
+    public static boolean isAvailable() {
+        return Bukkit.getPluginManager().getPlugin("ProtocolLib") != null;
     }
 
     public void sendBlankInventoryPacket(Player player) {

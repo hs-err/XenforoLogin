@@ -9,7 +9,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerBlockBreakEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnBlockBreakEvent(BlockBreakEvent event) {
-        if (Main.instance.needcancelled(event.getPlayer())) {
+        if (Main.instance.needCancelled(event.getPlayer())) {
             event.setCancelled(true);
         }
     }

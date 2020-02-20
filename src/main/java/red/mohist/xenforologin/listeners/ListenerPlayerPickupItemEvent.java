@@ -10,7 +10,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerPlayerPickupItemEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerPickupItemEvent(PlayerPickupItemEvent event) {
-        if (Main.instance.needcancelled(event.getPlayer())) {
+        if (Main.instance.needCancelled(event.getPlayer())) {
             event.setCancelled(true);
         }
     }

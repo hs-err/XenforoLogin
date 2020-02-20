@@ -10,7 +10,7 @@ import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 public class ListenerTradeSelectEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnTradeSelectEvent(TradeSelectEvent event) {
-        if (Main.instance.needcancelled((Player) event.getWhoClicked())) {
+        if (Main.instance.needCancelled((Player) event.getWhoClicked())) {
             event.setCancelled(true);
         }
     }

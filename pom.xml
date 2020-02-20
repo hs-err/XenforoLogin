@@ -54,11 +54,11 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
+            <id>PaperMC-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>sonatype</id>
+            <id>SonaType-repo</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
