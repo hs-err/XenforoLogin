@@ -1,4 +1,4 @@
-package red.mohist.xenforologin.forums;
+package red.mohist.xenforologin.forums.implementations;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
@@ -17,7 +17,6 @@ import red.mohist.xenforologin.interfaces.ForumSystem;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;

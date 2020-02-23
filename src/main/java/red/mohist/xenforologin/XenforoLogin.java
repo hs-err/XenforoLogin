@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 import red.mohist.xenforologin.enums.StatusType;
@@ -22,10 +21,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.bukkit.Bukkit.getPluginManager;
 import static org.bukkit.Bukkit.getWorld;
 
-public final class XenforoLogin extends JavaPlugin implements Listener {
+public final class XenforoLogin extends JavaPlugin {
 
     public static XenforoLogin instance;
     public ConcurrentMap<UUID, StatusType> logged_in;
@@ -77,7 +75,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                 getLogger().warning("Error count: " + unavailableCount);
             }
         }
-        getPluginManager().registerEvents(this, this);
     }
 
     private void hookProtocolLib() {

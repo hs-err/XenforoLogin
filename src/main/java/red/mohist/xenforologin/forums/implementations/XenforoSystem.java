@@ -1,4 +1,4 @@
-package red.mohist.xenforologin.forums;
+package red.mohist.xenforologin.forums.implementations;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
@@ -40,6 +40,7 @@ public class XenforoSystem implements ForumSystem {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public ResultType register(Player player, String password, String email) {
         try {
             ResponseHandler<String> responseHandler = response -> {

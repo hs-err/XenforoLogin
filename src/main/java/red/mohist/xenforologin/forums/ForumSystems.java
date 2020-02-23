@@ -1,6 +1,8 @@
 package red.mohist.xenforologin.forums;
 
 import red.mohist.xenforologin.XenforoLogin;
+import red.mohist.xenforologin.forums.implementations.DiscuzSystem;
+import red.mohist.xenforologin.forums.implementations.XenforoSystem;
 import red.mohist.xenforologin.interfaces.ForumSystem;
 
 import java.util.Objects;
