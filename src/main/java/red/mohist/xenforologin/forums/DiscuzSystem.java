@@ -17,6 +17,7 @@ import red.mohist.xenforologin.interfaces.ForumSystem;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -40,8 +41,9 @@ public class DiscuzSystem implements ForumSystem {
     @Nonnull
     @Override
     public ResultType register(Player player, String password, String email) {
-        return ResultType.SERVER_ERROR;
+        return ResultType.NO_USER;
     }
+
 
     @Nonnull
     @Override
