@@ -23,7 +23,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
             return;
         }
         event.setCancelled(true);
-        StatusType status=XenforoLogin.instance.logged_in.get(event.getPlayer().getName());
+        StatusType status=XenforoLogin.instance.logged_in.get(event.getPlayer().getUniqueId());
         switch(status){
             case NEED_CHECK:
                 event.getPlayer().sendMessage(XenforoLogin.instance.langFile("need_check"));
@@ -36,7 +36,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
                 break;
             case NEED_REGISTER_EMAIL:
                 if(isEmail(event.getMessage())){
-                    XenforoLogin.instance.logged_in.put(event.getPlayer().getName(), StatusType.NEED_REGISTER_PASSWORD.setEmail(event.getMessage()));
+                    XenforoLogin.instance.logged_in.put(event.getPlayer().getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(event.getMessage()));
                     XenforoLogin.instance.message(event.getPlayer());
                 }else{
                     event.getPlayer().sendMessage(XenforoLogin.instance.langFile("errors.email"));
@@ -44,7 +44,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
                 break;
             case NEED_REGISTER_PASSWORD:
                 XenforoLogin.instance.logged_in.put(
-                        event.getPlayer().getName(),
+                        event.getPlayer().getUniqueId(),
                         StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(event.getMessage()));
                 XenforoLogin.instance.message(event.getPlayer());
                 break;
@@ -56,16 +56,16 @@ public class ListenerChatEvent implements BukkitAPIListener {
                                     .shouldLogin(true));
                     if (result) {
                         XenforoLogin.instance.logged_in.put(
-                                event.getPlayer().getName(),StatusType.LOGINED);
+                                event.getPlayer().getUniqueId(),StatusType.LOGINED);
                     }else{
                         XenforoLogin.instance.logged_in.put(
-                                event.getPlayer().getName(),StatusType.NEED_REGISTER_EMAIL);
+                                event.getPlayer().getUniqueId(),StatusType.NEED_REGISTER_EMAIL);
                         XenforoLogin.instance.message(event.getPlayer());
                     }
                 }else{
                     event.getPlayer().sendMessage(XenforoLogin.instance.langFile("errors.confirm"));
                     XenforoLogin.instance.logged_in.put(
-                            event.getPlayer().getName(),StatusType.NEED_REGISTER_PASSWORD);
+                            event.getPlayer().getUniqueId(),StatusType.NEED_REGISTER_PASSWORD);
                     XenforoLogin.instance.message(event.getPlayer());
                 }
                 break;
