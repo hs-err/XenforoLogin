@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -16,7 +15,6 @@ import red.mohist.xenforologin.enums.StatusType;
 import red.mohist.xenforologin.forums.ForumSystems;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
-import red.mohist.xenforologin.utils.ResultTypeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -117,76 +115,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void OnJoin(PlayerJoinEvent event) {
-        sendBlankInventoryPacket(event.getPlayer());
-        if (!logged_in.containsKey(event.getPlayer().getUniqueId())) {
-            getLogger().warning("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
-            getLogger().warning("It's not a bug. Do NOT report this.");
-        }
-        if (config.getBoolean("tp.tp_spawn_before_login", true)) {
-            try {
-                event.getPlayer().teleportAsync(default_location);
-            } catch (NoSuchMethodError e) {
-                XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
-                XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
-                getLogger().warning("It's not a bug. Do NOT report this.");
-                Bukkit.getScheduler().runTask(XenforoLogin.instance, () ->
-                        event.getPlayer().teleport(default_location));
-            }
-        }
-        new Thread(() -> {
-            if (!logged_in.containsKey(event.getPlayer().getUniqueId())) {
-                boolean result = ResultTypeUtils.handle(event.getPlayer(),
-                        ForumSystems.getCurrentSystem()
-                                .join(event.getPlayer())
-                                .shouldLogin(false));
-                if (!result) {
-                    XenforoLogin.instance.getLogger().warning(
-                            event.getPlayer().getName() + " didn't pass AccountExists test");
-                    return;
-                }
-                message(event.getPlayer());
-            }
-            sendBlankInventoryPacket(event.getPlayer());
-            int f = 0;
-            int s = config.getInt("secure.show_tips_time", 5);
-            int t = config.getInt("secure.max_login_time", 30);
-            while (true) {
-                sendBlankInventoryPacket(event.getPlayer());
-                switch (logged_in.get(event.getPlayer().getUniqueId())) {
-                    case NEED_LOGIN:
-                        event.getPlayer().sendMessage(langFile("need_login"));
-                        break;
-                    case NEED_REGISTER_EMAIL:
-                        event.getPlayer().sendMessage(langFile("register_email"));
-                        break;
-                    case NEED_REGISTER_PASSWORD:
-                        event.getPlayer().sendMessage(langFile("register_password"));
-                        break;
-                    case NEED_REGISTER_CONFIRM:
-                        event.getPlayer().sendMessage(langFile("register_password_confirm"));
-                        break;
-                }
-                try {
-                    Thread.sleep(s * 1000);
-                    f += s;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (f > t && logged_in.get(event.getPlayer().getUniqueId()) == StatusType.NEED_LOGIN) {
-                    break;
-                }
-                if (!event.getPlayer().isOnline() || !needCancelled(event.getPlayer())) {
-                    return;
-                }
-            }
-            Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> event.getPlayer()
-                    .kickPlayer(langFile("errors.time_out")));
-
-        }).start();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
