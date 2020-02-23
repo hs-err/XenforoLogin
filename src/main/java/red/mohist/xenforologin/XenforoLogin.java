@@ -8,10 +8,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
+import red.mohist.xenforologin.enums.ResultType;
+import red.mohist.xenforologin.enums.StatusType;
 import red.mohist.xenforologin.forums.ForumSystems;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
@@ -26,21 +29,17 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static org.bukkit.Bukkit.getPluginManager;
-import static org.bukkit.Bukkit.getWorld;
+import static org.bukkit.Bukkit.*;
 
 public final class XenforoLogin extends JavaPlugin implements Listener {
 
     public static XenforoLogin instance;
-    public ConcurrentMap<Integer, Boolean> logged_in;
+    public ConcurrentMap<String, StatusType> logged_in;
     public FileConfiguration config;
     public FileConfiguration location_data;
     public File location_file;
     public Location default_location;
     private ListenerProtocolEvent listenerProtocolEvent;
-
-    private boolean isAsyncPlayerPreLoginEnabled = false;
-    private boolean isAsyncPlayerPreLoginActive = false;
 
     @Override
     public void onEnable() {
@@ -59,8 +58,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
 
     private void registerListeners() {
         {
-            isAsyncPlayerPreLoginEnabled = false;
-            isAsyncPlayerPreLoginActive = false;
             int unavailableCount = 0;
             Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.xenforologin.listeners")
                     .getSubTypesOf(BukkitAPIListener.class);
@@ -78,8 +75,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                     unavailableCount++;
                     continue;
                 }
-                if (listener.getClass().getName().equals("red.mohist.xenforologin.listeners.ListenerAsyncPlayerPreLoginEvent"))
-                    isAsyncPlayerPreLoginEnabled = true;
                 Bukkit.getPluginManager().registerEvents(listener, this);
             }
             if (unavailableCount > 0) {
@@ -124,14 +119,64 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
     }
-
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void Onjoin(AsyncPlayerPreLoginEvent event){
+        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL,langFile("errors.server"));
+        if(logged_in.containsKey(event.getName())){
+            return;
+        }
+        ResultType resultType = ForumSystems.getCurrentSystem()
+                .join(event.getName())
+                .shouldLogin(false);
+        switch (resultType) {
+            case OK:
+                logged_in.put(event.getName(), StatusType.NEED_LOGIN);
+                event.allow();
+                break;
+            case ERROR_NAME:
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                        langFile("errors.name_incorrect",
+                                resultType.getInheritedObject()));
+                break;
+            case NO_USER:
+                if(config.getBoolean("api.register",false)){
+                    event.allow();
+                    logged_in.put(event.getName(), StatusType.NEED_REGISTER_EMAIL);
+                }else{
+                    event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                            langFile("errors.no_user"));
+                }
+                break;
+            case UNKNOWN:
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                        langFile("errors.unknown", resultType.getInheritedObject()));
+                break;
+            case SERVER_ERROR:
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+                        langFile("errors.server"));
+                break;
+        }
+    }
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnJoin(PlayerJoinEvent event) {
-        if (isAsyncPlayerPreLoginEnabled ^ isAsyncPlayerPreLoginActive)
-            XenforoLogin.instance.getLogger().warning(
-                    "AsyncPlayerPreLogin listener is register but not active. This may cause issues. ");
+        sendBlankInventoryPacket(event.getPlayer());
+        if(!logged_in.containsKey(event.getPlayer().getName())){
+            getLogger().warning("AsyncPlayerPreLoginEvent don't effect.It may cause some secure problem!");
+            getLogger().warning("It's not a bug.DON'T report this.");
+        }
+        if (config.getBoolean("tp.tp_spawn_before_login", true)) {
+            try {
+                event.getPlayer().teleportAsync(default_location);
+            } catch (NoSuchMethodError e) {
+                XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
+                XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
+                getLogger().warning("It's not a bug.DON'T report this.");
+                Bukkit.getScheduler().runTask(XenforoLogin.instance, () ->
+                        event.getPlayer().teleport(default_location));
+            }
+        }
         new Thread(() -> {
-            if (!(isAsyncPlayerPreLoginEnabled && isAsyncPlayerPreLoginActive)) {
+            if(logged_in.get(event.getPlayer().getName())!=StatusType.NEED_CHECK){
                 boolean result = ResultTypeUtils.handle(event.getPlayer(),
                         ForumSystems.getCurrentSystem()
                                 .join(event.getPlayer())
@@ -141,17 +186,7 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                             event.getPlayer().getName() + " didn't pass AccountExists test");
                     return;
                 }
-            }
-            logged_in.put(event.getPlayer().hashCode(), false);
-            if (config.getBoolean("tp.tp_spawn_before_login", true)) {
-                try {
-                    event.getPlayer().teleportAsync(default_location);
-                } catch (NoSuchMethodError e) {
-                    XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
-                    XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
-                    Bukkit.getScheduler().runTask(XenforoLogin.instance, () ->
-                            event.getPlayer().teleport(default_location));
-                }
+                message(event.getPlayer());
             }
             sendBlankInventoryPacket(event.getPlayer());
             int f = 0;
@@ -159,14 +194,27 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
             int t = config.getInt("secure.max_login_time", 30);
             while (true) {
                 sendBlankInventoryPacket(event.getPlayer());
-                event.getPlayer().sendMessage(langFile("need_login"));
+                switch (logged_in.get(event.getPlayer().getName())){
+                    case NEED_LOGIN:
+                        event.getPlayer().sendMessage(langFile("need_login"));
+                        break;
+                    case NEED_REGISTER_EMAIL:
+                        event.getPlayer().sendMessage(langFile("register_email"));
+                        break;
+                    case NEED_REGISTER_PASSWORD:
+                        event.getPlayer().sendMessage(langFile("register_password"));
+                        break;
+                    case NEED_REGISTER_CONFIRM:
+                        event.getPlayer().sendMessage(langFile("register_password_confirm"));
+                        break;
+                }
                 try {
                     Thread.sleep(s * 1000);
                     f += s;
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (f > t) {
+                if (f > t && logged_in.get(event.getPlayer().getName())==StatusType.NEED_LOGIN) {
                     break;
                 }
                 if (!event.getPlayer().isOnline() || !needCancelled(event.getPlayer())) {
@@ -183,19 +231,19 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     public void OnQuit(PlayerQuitEvent event) throws IOException {
         Location leave_location = event.getPlayer().getLocation();
         if (!needCancelled(event.getPlayer())) {
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".world", leave_location.getWorld().getUID().toString());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".x", leave_location.getX());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".y", leave_location.getY());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".z", leave_location.getZ());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".yaw", leave_location.getYaw());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".pitch", leave_location.getPitch());
+            location_data.set(event.getPlayer().getName() + ".world", leave_location.getWorld().getUID().toString());
+            location_data.set(event.getPlayer().getName() + ".x", leave_location.getX());
+            location_data.set(event.getPlayer().getName() + ".y", leave_location.getY());
+            location_data.set(event.getPlayer().getName() + ".z", leave_location.getZ());
+            location_data.set(event.getPlayer().getName() + ".yaw", leave_location.getYaw());
+            location_data.set(event.getPlayer().getName() + ".pitch", leave_location.getPitch());
             location_data.save(location_file);
         }
-        logged_in.remove(event.getPlayer().hashCode());
+        logged_in.remove(event.getPlayer().getName());
     }
 
     public boolean needCancelled(Player player) {
-        return !logged_in.getOrDefault(player.hashCode(), false);
+        return !logged_in.getOrDefault(player.getName(), StatusType.NEED_LOGIN).equals(StatusType.LOGINED);
     }
 
     public String langFile(String key) {
@@ -235,18 +283,18 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                 Location spawn_location = Objects.requireNonNull(getWorld("world")).getSpawnLocation();
                 Location leave_location = new Location(
                         getWorld(UUID.fromString(Objects.requireNonNull(location_data.getString(
-                                player.getUniqueId().toString() + ".world",
+                                player.getName() + ".world",
                                 spawn_location.getWorld().getUID().toString())))),
                         XenforoLogin.instance.location_data.getDouble(
-                                player.getUniqueId().toString() + ".x", spawn_location.getX()),
+                                player.getName() + ".x", spawn_location.getX()),
                         XenforoLogin.instance.location_data.getDouble(
-                                player.getUniqueId().toString() + ".y", spawn_location.getY()),
+                                player.getName() + ".y", spawn_location.getY()),
                         XenforoLogin.instance.location_data.getDouble(
-                                player.getUniqueId().toString() + ".z", spawn_location.getZ()),
+                                player.getName() + ".z", spawn_location.getZ()),
                         (float) XenforoLogin.instance.location_data.getDouble(
-                                player.getUniqueId().toString() + ".yaw", spawn_location.getYaw()),
+                                player.getName() + ".yaw", spawn_location.getYaw()),
                         (float) XenforoLogin.instance.location_data.getDouble(
-                                player.getUniqueId().toString() + ".pitch", spawn_location.getPitch())
+                                player.getName() + ".pitch", spawn_location.getPitch())
                 );
                 try {
                     player.teleportAsync(leave_location);
@@ -256,17 +304,30 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
                     Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player.teleport(leave_location));
                 }
             }
-            logged_in.put(player.hashCode(), true);
+            logged_in.put(player.getName(), StatusType.LOGINED);
             player.updateInventory();
-            XenforoLogin.instance.getLogger().info("Logging in " + player.getUniqueId());
+            XenforoLogin.instance.getLogger().info("Logging in " + player.getName());
             player.sendMessage(XenforoLogin.instance.langFile("success"));
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
-    public void asyncPlayerPreLoginActive() {
-        isAsyncPlayerPreLoginActive = true;
+    public void message(Player player){
+        switch (logged_in.get(player.getName())){
+            case NEED_LOGIN:
+                player.sendMessage(langFile("need_login"));
+                break;
+            case NEED_REGISTER_EMAIL:
+                player.sendMessage(langFile("register_email"));
+                break;
+            case NEED_REGISTER_PASSWORD:
+                player.sendMessage(langFile("register_password"));
+                break;
+            case NEED_REGISTER_CONFIRM:
+                player.sendMessage(langFile("register_password_confirm"));
+                break;
+        }
     }
 }
 

@@ -41,7 +41,63 @@ public class XenforoSystem implements ForumSystem {
     @Nonnull
     @Override
     public ResultType register(Player player, String password, String email) {
-        return ResultType.SERVER_ERROR;
+        try {
+            ResponseHandler<String> responseHandler = response -> {
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200 || status == 400) {
+                    HttpEntity entity = response.getEntity();
+                    return entity != null ? EntityUtils.toString(entity) : null;
+                } else if (status == 401) {
+                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                            "key", key)));
+                } else if (status == 404) {
+                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                            "url", url)));
+                }
+                return null;
+            };
+
+            String result = Request.Post(url + "/users")
+                    .bodyForm(Form.form().add("username", player.getName())
+                            .add("password", password)
+                            .add("email",email).build())
+                    .addHeader("XF-Api-Key", key)
+                    .addHeader("XF-Api-User", "1")
+                    .execute().handleResponse(responseHandler);
+
+            if (result == null) {
+                return ResultType.SERVER_ERROR;
+            }
+            JsonParser parse = new JsonParser();
+            JsonObject json = parse.parse(result).getAsJsonObject();
+            if (json == null) {
+                return ResultType.SERVER_ERROR;
+            }
+            if (json.get("success") != null && json.get("success").getAsBoolean()) {
+                return ResultType.OK;
+            } else {
+                JsonArray errors = json.get("errors").getAsJsonArray();
+                if (errors.size() > 0) {
+                    switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
+                        case "usernames_must_be_unique":
+                            return ResultType.USER_EXIST;
+                        case "please_enter_valid_email":
+                            return ResultType.EMAIL_WRONG;
+                        case "email_addresses_must_be_unique":
+                            return ResultType.EMAIL_EXIST;
+                        default:
+                            return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
+                                    "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
+                                    "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
+                    }
+                } else {
+                    return ResultType.SERVER_ERROR;
+                }
+            }
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, "Error while register player " + player.getName() + " data", e);
+            return ResultType.SERVER_ERROR;
+        }
     }
 
     @Nonnull
@@ -90,14 +146,15 @@ public class XenforoSystem implements ForumSystem {
             } else {
                 JsonArray errors = json.get("errors").getAsJsonArray();
                 if (errors.size() > 0) {
-                    if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("incorrect_password")) {
-                        return ResultType.PASSWORD_INCORRECT;
-                    } else if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("requested_user_x_not_found")) {
-                        return ResultType.NO_USER;
-                    } else {
-                        return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
-                                "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
-                                "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
+                    switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
+                        case "incorrect_password":
+                            return ResultType.PASSWORD_INCORRECT;
+                        case "requested_user_x_not_found":
+                            return ResultType.NO_USER;
+                        default:
+                            return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
+                                    "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
+                                    "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
                     }
                 } else {
                     return ResultType.SERVER_ERROR;

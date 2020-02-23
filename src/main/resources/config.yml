@@ -1,5 +1,8 @@
 api:
   system: "xenforo" # xenforo or discuz
+  # Can register in game?
+  # Not support register discuz account.
+  register: true
   xenforo: # Configurations for xenforo
     url: "http://example.com/api"
     # An API-Key with auth, user:read permission
@@ -10,6 +13,7 @@ api:
     key: "YOUR_KEY_HERE"
 
 # Set null to use server default spawn
+# Set y to -255 ? Have a try ~.~
 spawn:
   world: null
   x: null
@@ -30,11 +34,16 @@ secure:
   # do NOT touch
   cancel_chat_after_login: false
 lang:
+  register_email: "§6[§1XenforoLogin§6]§1§f Please send your email to register."
+  register_password: "§6[§1XenforoLogin§6]§1§f Please send your password."
+  register_password_confirm: "§6[§1XenforoLogin§6]§1§f Please send your password again."
   logged_in: "§6[§1XenforoLogin§6]§1§f You have already logged in."
   success: "§6[§1XenforoLogin§6]§1§f Logged in successfully."
   need_login: "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat."
   errors:
+    email: "§6[§1XenforoLogin§6]§1§f Wrong Email."
     server: "§6[§1XenforoLogin§6]§1§f There is an issue when connecting to the server, contact the administrator."
+    confirm: "§6[§1XenforoLogin§6]§1§f You send the different password."
     password: "§6[§1XenforoLogin§6]§1§f Wrong password."
     key: "§6[§1XenforoLogin§6]§1§f Please Check api.key [key]"
     url: "§6[§1XenforoLogin§6]§1§f Please Check api.url [url]"
@@ -42,3 +51,5 @@ lang:
     time_out: "§6[§1XenforoLogin§6]§1§f Login timed out!"
     name_incorrect: "§6[§1XenforoLogin§6]§1§f You should use \"[correct]\", not this to login."
     unknown: "§6[§1XenforoLogin§6]§1§f Unknown error.Web send \"[message]\""
+    mail_exist: "§6[§1XenforoLogin§6]§1§f Email have registered.Try another?"
+    user_exist: "§6[§1XenforoLogin§6]§1§f Username have registered.Try another?"
