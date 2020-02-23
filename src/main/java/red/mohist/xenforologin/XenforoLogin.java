@@ -5,10 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 import red.mohist.xenforologin.enums.StatusType;
@@ -115,21 +112,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void OnQuit(PlayerQuitEvent event) throws IOException {
-        Location leave_location = event.getPlayer().getLocation();
-        if (!needCancelled(event.getPlayer())) {
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".world", leave_location.getWorld().getUID().toString());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".x", leave_location.getX());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".y", leave_location.getY());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".z", leave_location.getZ());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".yaw", leave_location.getYaw());
-            location_data.set(event.getPlayer().getUniqueId().toString() + ".pitch", leave_location.getPitch());
-            location_data.save(location_file);
-        }
-        logged_in.remove(event.getPlayer().getUniqueId());
     }
 
     public boolean needCancelled(Player player) {

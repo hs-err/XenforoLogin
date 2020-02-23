@@ -13,7 +13,7 @@ import red.mohist.xenforologin.utils.ResultTypeUtils;
 public class ListenerPlayerJoinEvent implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void OnJoin(PlayerJoinEvent event) {
+    public void OnPlayerJoinEvent(PlayerJoinEvent event) {
         XenforoLogin.instance.sendBlankInventoryPacket(event.getPlayer());
         if (!XenforoLogin.instance.logged_in.containsKey(event.getPlayer().getUniqueId())) {
             XenforoLogin.instance.getLogger().warning("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
