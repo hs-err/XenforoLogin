@@ -13,7 +13,6 @@ api:
     key: "YOUR_KEY_HERE"
 
 # Set null to use server default spawn
-# Set y to -255 ? Have a try ~.~
 spawn:
   world: null
   x: null
