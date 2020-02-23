@@ -8,14 +8,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 import red.mohist.xenforologin.forums.ForumSystems;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
-import red.mohist.xenforologin.utils.ResultTypeUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,8 +37,8 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     public Location default_location;
     private ListenerProtocolEvent listenerProtocolEvent;
 
-    private boolean isAsyncPlayerPreLoginEnabled = false;
-    private boolean isAsyncPlayerPreLoginActive = false;
+    public boolean isAsyncPlayerPreLoginEnabled = false;
+    public boolean isAsyncPlayerPreLoginActive = false;
 
     @Override
     public void onEnable() {
@@ -126,60 +124,6 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void OnJoin(PlayerJoinEvent event) {
-        if (isAsyncPlayerPreLoginEnabled ^ isAsyncPlayerPreLoginActive)
-            XenforoLogin.instance.getLogger().warning(
-                    "AsyncPlayerPreLogin listener is register but not active. This may cause issues. ");
-        new Thread(() -> {
-            if (!(isAsyncPlayerPreLoginEnabled && isAsyncPlayerPreLoginActive)) {
-                boolean result = ResultTypeUtils.handle(event.getPlayer(),
-                        ForumSystems.getCurrentSystem()
-                                .join(event.getPlayer())
-                                .shouldLogin(false));
-                if (!result) {
-                    XenforoLogin.instance.getLogger().warning(
-                            event.getPlayer().getName() + " didn't pass AccountExists test");
-                    return;
-                }
-            }
-            logged_in.put(event.getPlayer().hashCode(), false);
-            if (config.getBoolean("tp.tp_spawn_before_login", true)) {
-                try {
-                    event.getPlayer().teleportAsync(default_location);
-                } catch (NoSuchMethodError e) {
-                    XenforoLogin.instance.getLogger().warning("Cannot find method " + e.getMessage());
-                    XenforoLogin.instance.getLogger().warning("Using synchronized teleport");
-                    Bukkit.getScheduler().runTask(XenforoLogin.instance, () ->
-                            event.getPlayer().teleport(default_location));
-                }
-            }
-            sendBlankInventoryPacket(event.getPlayer());
-            int f = 0;
-            int s = config.getInt("secure.show_tips_time", 5);
-            int t = config.getInt("secure.max_login_time", 30);
-            while (true) {
-                sendBlankInventoryPacket(event.getPlayer());
-                event.getPlayer().sendMessage(langFile("need_login"));
-                try {
-                    Thread.sleep(s * 1000);
-                    f += s;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                if (f > t) {
-                    break;
-                }
-                if (!event.getPlayer().isOnline() || !needCancelled(event.getPlayer())) {
-                    return;
-                }
-            }
-            Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> event.getPlayer()
-                    .kickPlayer(langFile("errors.time_out")));
-
-        }).start();
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
     public void OnQuit(PlayerQuitEvent event) throws IOException {
         Location leave_location = event.getPlayer().getLocation();
         if (!needCancelled(event.getPlayer())) {
@@ -223,7 +167,7 @@ public final class XenforoLogin extends JavaPlugin implements Listener {
         return result;
     }
 
-    private void sendBlankInventoryPacket(Player player) {
+    public void sendBlankInventoryPacket(Player player) {
         if (listenerProtocolEvent != null)
             listenerProtocolEvent.sendBlankInventoryPacket(player);
     }
