@@ -12,7 +12,8 @@ public class LoginTicker implements Runnable {
     private static Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
 
     public static void register() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(XenforoLogin.instance, new LoginTicker(), 0, 1);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+                XenforoLogin.instance, new LoginTicker(), 0, LoginTickPlayer.showTipTime);
     }
 
     public static void add(Player player) {
