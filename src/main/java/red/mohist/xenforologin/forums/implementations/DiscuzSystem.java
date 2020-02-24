@@ -13,7 +13,7 @@ import org.apache.http.util.EntityUtils;
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
-import red.mohist.xenforologin.interfaces.ForumSystem;
+import red.mohist.xenforologin.forums.ForumSystem;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

@@ -23,8 +23,8 @@ public class ListenerChatEvent implements BukkitAPIListener {
             return;
         }
         event.setCancelled(true);
-        StatusType status=XenforoLogin.instance.logged_in.get(event.getPlayer().getUniqueId());
-        switch(status){
+        StatusType status = XenforoLogin.instance.logged_in.get(event.getPlayer().getUniqueId());
+        switch (status) {
             case NEED_CHECK:
                 event.getPlayer().sendMessage(XenforoLogin.instance.langFile("need_check"));
                 break;
@@ -35,10 +35,10 @@ public class ListenerChatEvent implements BukkitAPIListener {
                                 .shouldLogin(true));
                 break;
             case NEED_REGISTER_EMAIL:
-                if(isEmail(event.getMessage())){
+                if (isEmail(event.getMessage())) {
                     XenforoLogin.instance.logged_in.put(event.getPlayer().getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(event.getMessage()));
                     XenforoLogin.instance.message(event.getPlayer());
-                }else{
+                } else {
                     event.getPlayer().sendMessage(XenforoLogin.instance.langFile("errors.email"));
                 }
                 break;
@@ -49,34 +49,36 @@ public class ListenerChatEvent implements BukkitAPIListener {
                 XenforoLogin.instance.message(event.getPlayer());
                 break;
             case NEED_REGISTER_CONFIRM:
-                if(event.getMessage().equals(status.password)){
+                if (event.getMessage().equals(status.password)) {
                     boolean result = ResultTypeUtils.handle(event.getPlayer(),
                             ForumSystems.getCurrentSystem()
-                                    .register(event.getPlayer(),status.password,status.email)
+                                    .register(event.getPlayer(), status.password, status.email)
                                     .shouldLogin(true));
                     if (result) {
                         XenforoLogin.instance.logged_in.put(
-                                event.getPlayer().getUniqueId(),StatusType.LOGINED);
-                    }else{
+                                event.getPlayer().getUniqueId(), StatusType.LOGGED_IN);
+                    } else {
                         XenforoLogin.instance.logged_in.put(
-                                event.getPlayer().getUniqueId(),StatusType.NEED_REGISTER_EMAIL);
+                                event.getPlayer().getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                         XenforoLogin.instance.message(event.getPlayer());
                     }
-                }else{
+                } else {
                     event.getPlayer().sendMessage(XenforoLogin.instance.langFile("errors.confirm"));
                     XenforoLogin.instance.logged_in.put(
-                            event.getPlayer().getUniqueId(),StatusType.NEED_REGISTER_PASSWORD);
+                            event.getPlayer().getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
                     XenforoLogin.instance.message(event.getPlayer());
                 }
                 break;
         }
-}
+    }
 
     @Override
-    public void eventClass() { AsyncPlayerChatEvent.class.getName(); }
+    public void eventClass() {
+        AsyncPlayerChatEvent.class.getName();
+    }
 
-    public boolean isEmail(String email){
-        if (null==email || "".equals(email)){
+    public boolean isEmail(String email) {
+        if (null == email || "".equals(email)) {
             return false;
         }
         Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,10}");

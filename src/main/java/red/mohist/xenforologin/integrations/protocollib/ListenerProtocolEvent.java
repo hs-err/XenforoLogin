@@ -1,4 +1,4 @@
-package red.mohist.xenforologin.listeners.protocollib;
+package red.mohist.xenforologin.integrations.protocollib;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;

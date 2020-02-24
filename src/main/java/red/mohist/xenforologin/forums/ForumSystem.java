@@ -1,4 +1,4 @@
-package red.mohist.xenforologin.interfaces;
+package red.mohist.xenforologin.forums;
 
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.enums.ResultType;

@@ -9,8 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 import red.mohist.xenforologin.enums.StatusType;
 import red.mohist.xenforologin.forums.ForumSystems;
+import red.mohist.xenforologin.integrations.protocollib.ListenerProtocolEvent;
 import red.mohist.xenforologin.interfaces.BukkitAPIListener;
-import red.mohist.xenforologin.listeners.protocollib.ListenerProtocolEvent;
+import red.mohist.xenforologin.utils.LoginTicker;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +50,7 @@ public final class XenforoLogin extends JavaPlugin {
     }
 
     private void registerListeners() {
+        LoginTicker.register();
         {
             int unavailableCount = 0;
             Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.xenforologin.listeners")
@@ -112,7 +114,7 @@ public final class XenforoLogin extends JavaPlugin {
     }
 
     public boolean needCancelled(Player player) {
-        return !logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN).equals(StatusType.LOGINED);
+        return !logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN).equals(StatusType.LOGGED_IN);
     }
 
     public String langFile(String key) {
@@ -173,7 +175,7 @@ public final class XenforoLogin extends JavaPlugin {
                     Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player.teleport(leave_location));
                 }
             }
-            logged_in.put(player.getUniqueId(), StatusType.LOGINED);
+            logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
             player.updateInventory();
             XenforoLogin.instance.getLogger().info("Logging in " + player.getName());
             player.sendMessage(XenforoLogin.instance.langFile("success"));

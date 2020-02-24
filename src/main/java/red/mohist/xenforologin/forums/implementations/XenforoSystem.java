@@ -13,7 +13,7 @@ import org.apache.http.util.EntityUtils;
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
-import red.mohist.xenforologin.interfaces.ForumSystem;
+import red.mohist.xenforologin.forums.ForumSystem;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class XenforoSystem implements ForumSystem {
             String result = Request.Post(url + "/users")
                     .bodyForm(Form.form().add("username", player.getName())
                             .add("password", password)
-                            .add("email",email).build())
+                            .add("email", email).build())
                     .addHeader("XF-Api-Key", key)
                     .addHeader("XF-Api-User", "1")
                     .execute().handleResponse(responseHandler);
@@ -80,6 +80,7 @@ public class XenforoSystem implements ForumSystem {
                 JsonArray errors = json.get("errors").getAsJsonArray();
                 if (errors.size() > 0) {
                     switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
+                        //noinspection SpellCheckingInspection
                         case "usernames_must_be_unique":
                             return ResultType.USER_EXIST;
                         case "please_enter_valid_email":

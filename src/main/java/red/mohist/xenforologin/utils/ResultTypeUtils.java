@@ -13,7 +13,7 @@ public class ResultTypeUtils {
             case OK:
                 if (resultType.isShouldLogin()) {
                     XenforoLogin.instance.login(player);
-                }else{
+                } else {
                     XenforoLogin.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                     XenforoLogin.instance.message(player);
                 }
@@ -28,9 +28,9 @@ public class ResultTypeUtils {
                                 resultType.getInheritedObject())));
                 return false;
             case NO_USER:
-                if(XenforoLogin.instance.config.getBoolean("api.register",false)){
+                if (XenforoLogin.instance.config.getBoolean("api.register", false)) {
                     XenforoLogin.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                }else{
+                } else {
                     Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
                             .kickPlayer(XenforoLogin.instance.langFile("errors.no_user")));
                 }
