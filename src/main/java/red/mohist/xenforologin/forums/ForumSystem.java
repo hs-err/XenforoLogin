@@ -2,6 +2,7 @@ package red.mohist.xenforologin.forums;
 
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.enums.ResultType;
+import red.mohist.xenforologin.modules.PlayerInfo;
 
 import javax.annotation.Nonnull;
 
@@ -12,14 +13,14 @@ public interface ForumSystem {
 
     @SuppressWarnings({"SameReturnValue", "unused"})
     @Nonnull
-    ResultType register(Player player, String password, String email);
+    ResultType register(PlayerInfo player, String password, String email);
 
     @Nonnull
-    ResultType login(Player player, String password);
+    ResultType login(PlayerInfo player, String password);
 
     @SuppressWarnings("unused")
     @Nonnull
-    ResultType join(Player player);
+    ResultType join(PlayerInfo player);
 
     @Nonnull
     ResultType join(String name);

@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.forums.ForumSystem;
+import red.mohist.xenforologin.modules.PlayerInfo;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class XenforoSystem implements ForumSystem {
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public ResultType register(Player player, String password, String email) {
+    public ResultType register(PlayerInfo player, String password, String email) {
         try {
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();
@@ -49,17 +50,17 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 401) {
-                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                             "key", key)));
                 } else if (status == 404) {
-                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
                             "url", url)));
                 }
                 return null;
             };
 
             String result = Request.Post(url + "/users")
-                    .bodyForm(Form.form().add("username", player.getName())
+                    .bodyForm(Form.form().add("username", player.username)
                             .add("password", password)
                             .add("email", email).build())
                     .addHeader("XF-Api-Key", key)
@@ -97,7 +98,7 @@ public class XenforoSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            getLogger().log(Level.WARNING, "Error while register player " + player.getName() + " data", e);
+            getLogger().log(Level.WARNING, "Error while register player " + player.username + " data", e);
             return ResultType.SERVER_ERROR;
         }
     }
@@ -105,7 +106,7 @@ public class XenforoSystem implements ForumSystem {
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public ResultType login(Player player, String password) {
+    public ResultType login(PlayerInfo player, String password) {
         try {
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();
@@ -113,17 +114,17 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
-                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                             "key", key)));
                 } else if (status == 404) {
-                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
                             "url", url)));
                 }
                 return null;
             };
 
             String result = Request.Post(url + "/auth")
-                    .bodyForm(Form.form().add("login", player.getName())
+                    .bodyForm(Form.form().add("login", player.username)
                             .add("password", password).build())
                     .addHeader("XF-Api-Key", key)
                     .execute().handleResponse(responseHandler);
@@ -139,7 +140,7 @@ public class XenforoSystem implements ForumSystem {
             }
             if (json.get("success") != null && json.get("success").getAsBoolean()) {
                 json.get("user").getAsJsonObject().get("username").getAsString();
-                if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
+                if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.username)) {
                     return ResultType.OK;
                 } else {
                     return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
@@ -163,15 +164,15 @@ public class XenforoSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            getLogger().log(Level.WARNING, "Error while checking player " + player.getName() + " data", e);
+            getLogger().log(Level.WARNING, "Error while checking player " + player.username + " data", e);
             return ResultType.SERVER_ERROR;
         }
     }
 
     @Nonnull
     @Override
-    public ResultType join(Player player) {
-        return join(player.getName());
+    public ResultType join(PlayerInfo player) {
+        return join(player.username);
     }
 
     @Nonnull

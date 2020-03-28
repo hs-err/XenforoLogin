@@ -11,6 +11,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import red.mohist.xenforologin.BukkitLoader;
 import red.mohist.xenforologin.XenforoLogin;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,11 +24,12 @@ public class ListenerProtocolEvent {
     public ListenerProtocolEvent() {
         protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.addPacketListener(
-                new PacketAdapter(XenforoLogin.instance, ListenerPriority.LOWEST,
+                new PacketAdapter(BukkitLoader.instance, ListenerPriority.LOWEST,
                         PacketType.Play.Server.WINDOW_ITEMS, PacketType.Play.Server.SET_SLOT) {
                     @Override
                     public void onPacketSending(PacketEvent event) {
-                        if (event.getPacket().getIntegers().read(0) == 0 && XenforoLogin.instance.needCancelled(event.getPlayer())) {
+                        if (event.getPacket().getIntegers().read(0) == 0
+                                && XenforoLogin.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
                             event.setCancelled(true);
                         }
                     }

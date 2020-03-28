@@ -11,14 +11,14 @@ public class ForumSystems {
 
     public static void reloadConfig() {
         ForumSystem cs;
-        switch (Objects.requireNonNull(XenforoLogin.instance.config.getString("api.system", "xenforo"))) {
+        switch ((String) Objects.requireNonNull(XenforoLogin.instance.api.getConfigValue("api.system", "xenforo"))) {
             case "xenforo":
-                cs = new XenforoSystem(XenforoLogin.instance.config.getString("api.xenforo.url"),
-                        XenforoLogin.instance.config.getString("api.xenforo.key"));
+                cs = new XenforoSystem((String) XenforoLogin.instance.api.getConfigValue("api.xenforo.url"),
+                        (String) XenforoLogin.instance.api.getConfigValue("api.xenforo.key"));
                 break;
             case "discuz":
-                cs = new DiscuzSystem(XenforoLogin.instance.config.getString("api.discuz.url"),
-                        XenforoLogin.instance.config.getString("api.discuz.key"));
+                cs = new DiscuzSystem((String) XenforoLogin.instance.api.getConfigValue("api.discuz.url"),
+                        (String) XenforoLogin.instance.api.getConfigValue("api.discuz.key"));
                 break;
             default:
                 cs = null;

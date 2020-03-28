@@ -5,44 +5,40 @@ import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.enums.StatusType;
+import red.mohist.xenforologin.modules.PlayerInfo;
 
 public class ResultTypeUtils {
 
-    public static boolean handle(Player player, ResultType resultType) {
+    public static boolean handle(PlayerInfo player, ResultType resultType) {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
                     XenforoLogin.instance.login(player);
                 } else {
-                    XenforoLogin.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
+                    XenforoLogin.instance.logged_in.put(player.uuid, StatusType.NEED_LOGIN);
                     XenforoLogin.instance.message(player);
                 }
                 return true;
             case PASSWORD_INCORRECT:
-                Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
-                        .kickPlayer(XenforoLogin.instance.langFile("errors.password")));
+                player.kick(XenforoLogin.instance.langFile("errors.password"));
                 return false;
             case ERROR_NAME:
-                Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
-                        .kickPlayer(XenforoLogin.instance.langFile("errors.name_incorrect",
-                                resultType.getInheritedObject())));
+                player.kick(XenforoLogin.instance.langFile("errors.name_incorrect",
+                        resultType.getInheritedObject()));
                 return false;
             case NO_USER:
-                if (XenforoLogin.instance.config.getBoolean("api.register", false)) {
-                    XenforoLogin.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                if (XenforoLogin.instance.api.getConfigValue("api.register", "false").equals("true")) {
+                    XenforoLogin.instance.logged_in.put(player.uuid, StatusType.NEED_REGISTER_EMAIL);
                 } else {
-                    Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
-                            .kickPlayer(XenforoLogin.instance.langFile("errors.no_user")));
+                    player.kick(XenforoLogin.instance.langFile("errors.no_user"));
                 }
                 return true;
             case UNKNOWN:
-                Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
-                        .kickPlayer(XenforoLogin.instance.langFile("errors.unknown",
-                                resultType.getInheritedObject())));
+                player.kick(XenforoLogin.instance.langFile("errors.unknown",
+                                resultType.getInheritedObject()));
                 return false;
             case SERVER_ERROR:
-                Bukkit.getScheduler().runTask(XenforoLogin.instance, () -> player
-                        .kickPlayer(XenforoLogin.instance.langFile("errors.server")));
+                player.kick(XenforoLogin.instance.langFile("errors.server"));
                 return false;
             case USER_EXIST:
                 player.sendMessage(XenforoLogin.instance.langFile("errors.user_exist"));

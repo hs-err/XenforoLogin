@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.enums.ResultType;
 import red.mohist.xenforologin.forums.ForumSystem;
+import red.mohist.xenforologin.modules.PlayerInfo;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class DiscuzSystem implements ForumSystem {
 
     @Nonnull
     @Override
-    public ResultType register(Player player, String password, String email) {
+    public ResultType register(PlayerInfo player, String password, String email) {
         return ResultType.NO_USER;
     }
 
@@ -47,7 +48,7 @@ public class DiscuzSystem implements ForumSystem {
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")
-    public ResultType login(Player player, String password) {
+    public ResultType login(PlayerInfo player, String password) {
         try {
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();
@@ -55,14 +56,14 @@ public class DiscuzSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 404) {
-                    XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
                             "url", url)));
                 }
                 return null;
             };
 
             String result = Request.Post(url + "?action=login")
-                    .bodyForm(Form.form().add("login", player.getName())
+                    .bodyForm(Form.form().add("login", player.username)
                             .add("password", password).build())
                     .addHeader("UC-Api-Key", key)
                     .execute().handleResponse(responseHandler);
@@ -78,7 +79,7 @@ public class DiscuzSystem implements ForumSystem {
             }
             if (json.get("success") != null && json.get("success").getAsBoolean()) {
                 json.get("user").getAsJsonObject().get("username").getAsString();
-                if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
+                if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.username)) {
                     return ResultType.OK;
                 } else {
                     return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
@@ -93,7 +94,7 @@ public class DiscuzSystem implements ForumSystem {
                         return ResultType.NO_USER;
                     } else {
                         if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")) {
-                            XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                            XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                                     "key", key)));
                             return ResultType.SERVER_ERROR;
                         }
@@ -106,15 +107,15 @@ public class DiscuzSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            getLogger().log(Level.WARNING, "Error while checking player " + player.getName() + " data", e);
+            getLogger().log(Level.WARNING, "Error while checking player " + player.username + " data", e);
             return ResultType.SERVER_ERROR;
         }
     }
 
     @Nonnull
     @Override
-    public ResultType join(Player player) {
-        return join(player.getName());
+    public ResultType join(PlayerInfo player) {
+        return join(player.username);
     }
 
     @Nonnull
@@ -157,7 +158,7 @@ public class DiscuzSystem implements ForumSystem {
             return ResultType.NO_USER;
         }
         if (json.get("errors") != null && json.get("errors").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")) {
-            XenforoLogin.instance.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+            XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
                     "key", key)));
             return ResultType.SERVER_ERROR;
         }
