@@ -6,15 +6,19 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="core" />
-        <module name="bukkit" />
+        <module name="XenforoLogin-Bukkit" />
+        <module name="XenforoLogin-Core" />
+        <module name="XenforoLogin-All" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="all" target="1.8" />
-      <module name="bukkit" target="1.8" />
-      <module name="core" target="1.8" />
+      <module name="Parent" target="1.8" />
       <module name="XenforoLogin" target="1.8" />
+      <module name="XenforoLogin-All" target="1.8" />
+      <module name="XenforoLogin-Bukkit" target="1.8" />
+      <module name="XenforoLogin-Core" target="1.8" />
+      <module name="XenforoLogin-Parent" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -5,16 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>red.mohist.xenforologin</groupId>
-    <artifactId>all</artifactId>
+    <artifactId>XenforoLogin-Parent</artifactId>
     <version>1.2-SNAPSHOT</version> <!-- Change the version at properties -->
 
     <modules>
-        <module>core</module>
-        <module>bukkit</module>
+        <module>XenforoLogin-Bukkit</module>
+        <module>XenforoLogin-Core</module>
+        <module>XenforoLogin-All</module>
     </modules>
     <packaging>pom</packaging>
-
-    <name>XenforoLogin</name>
 
     <description>Support login with xenforo and many other systems.</description>
     <properties>
@@ -31,30 +30,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.7.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <relocations>
-                        <relocation>
-                            <pattern>com.google.gson</pattern>
-                            <shadedPattern>red.mohist.xenforologin.libs.gson</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <resources>
