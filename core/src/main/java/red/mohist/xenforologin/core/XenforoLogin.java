@@ -28,7 +28,7 @@ public final class XenforoLogin {
 
     public XenforoLogin(LoaderAPI loaderAPI) {
         instance = this;
-        api=loaderAPI;
+        api = loaderAPI;
         logged_in = new ConcurrentHashMap<>();
         loadConfig();
 
@@ -36,7 +36,7 @@ public final class XenforoLogin {
     }
 
     private void loadConfig() {
-        LocationInfo spawn_location= api.getSpawn("world");
+        LocationInfo spawn_location = api.getSpawn("world");
         default_location = new LocationInfo(
                 (String) api.getConfigValue("spawn.world", "world"),
                 (Double) api.getConfigValue("spawn.x", spawn_location.x),
@@ -78,22 +78,22 @@ public final class XenforoLogin {
 
     public void login(PlayerInfo player) {
         try {
-            if (api.getConfigValue("event.tp_back_after_login","true").equals("true")) {
+            if (api.getConfigValue("event.tp_back_after_login", "true").equals("true")) {
                 api.getConfigValue("player_location");
                 LocationInfo spawn_location = api.getSpawn("world");
                 player.teleport(new LocationInfo(
-                        (String) api.getConfigValue("player_location",player.uuid+".world",spawn_location.world),
-                        (Double) api.getConfigValue("player_location",player.uuid+".x",spawn_location.x),
-                        (Double) api.getConfigValue("player_location",player.uuid+".y",spawn_location.y),
-                        (Double) api.getConfigValue("player_location",player.uuid+".y",spawn_location.z),
-                        (Float) api.getConfigValue("player_location",player.uuid+".yaw",spawn_location.yaw),
-                        (Float) api.getConfigValue("player_location",player.uuid+".pitch",spawn_location.pitch)
+                        (String) api.getConfigValue("player_location", player.uuid + ".world", spawn_location.world),
+                        (Double) api.getConfigValue("player_location", player.uuid + ".x", spawn_location.x),
+                        (Double) api.getConfigValue("player_location", player.uuid + ".y", spawn_location.y),
+                        (Double) api.getConfigValue("player_location", player.uuid + ".y", spawn_location.z),
+                        (Float) api.getConfigValue("player_location", player.uuid + ".yaw", spawn_location.yaw),
+                        (Float) api.getConfigValue("player_location", player.uuid + ".pitch", spawn_location.pitch)
                 ));
             }
             logged_in.put(player.uuid, StatusType.LOGGED_IN);
             api.login(player);
             api.info("Logging in " + player.username);
-            api.sendMessage(player,XenforoLogin.instance.langFile("success"));
+            api.sendMessage(player, XenforoLogin.instance.langFile("success"));
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -115,19 +115,21 @@ public final class XenforoLogin {
                 break;
         }
     }
-    public void onQuit(PlayerInfo player){
+
+    public void onQuit(PlayerInfo player) {
         LocationInfo leave_location = player.getLocation();
         if (!needCancelled(player)) {
-            api.setConfigValue("player_location",player.uuid.toString() + ".world", leave_location.world);
-            api.setConfigValue("player_location",player.uuid.toString() + ".x", leave_location.x);
-            api.setConfigValue("player_location",player.uuid.toString() + ".y", leave_location.y);
-            api.setConfigValue("player_location",player.uuid.toString() + ".z", leave_location.z);
-            api.setConfigValue("player_location",player.uuid.toString() + ".yaw", leave_location.yaw);
-            api.setConfigValue("player_location",player.uuid.toString() + ".pitch", leave_location.pitch);
+            api.setConfigValue("player_location", player.uuid.toString() + ".world", leave_location.world);
+            api.setConfigValue("player_location", player.uuid.toString() + ".x", leave_location.x);
+            api.setConfigValue("player_location", player.uuid.toString() + ".y", leave_location.y);
+            api.setConfigValue("player_location", player.uuid.toString() + ".z", leave_location.z);
+            api.setConfigValue("player_location", player.uuid.toString() + ".yaw", leave_location.yaw);
+            api.setConfigValue("player_location", player.uuid.toString() + ".pitch", leave_location.pitch);
         }
         logged_in.remove(player.uuid);
     }
-    public String canJoin(PlayerInfo player){
+
+    public String canJoin(PlayerInfo player) {
         if (XenforoLogin.instance.logged_in.containsKey(player.uuid)) {
             return null;
         }
@@ -140,9 +142,9 @@ public final class XenforoLogin {
                 return null;
             case ERROR_NAME:
                 return XenforoLogin.instance.langFile("errors.name_incorrect",
-                                resultType.getInheritedObject());
+                        resultType.getInheritedObject());
             case NO_USER:
-                if (XenforoLogin.instance.api.getConfigValue("api.register", "false")=="true") {
+                if (XenforoLogin.instance.api.getConfigValue("api.register", "false") == "true") {
                     XenforoLogin.instance.logged_in.put(player.uuid, StatusType.NEED_REGISTER_EMAIL);
                     return null;
                 } else {
@@ -153,7 +155,8 @@ public final class XenforoLogin {
         }
         return XenforoLogin.instance.langFile("errors.server");
     }
-    public void onChat(PlayerInfo player,String message){
+
+    public void onChat(PlayerInfo player, String message) {
         StatusType status = XenforoLogin.instance.logged_in.get(player.uuid);
         switch (status) {
             case NEED_CHECK:
@@ -194,7 +197,7 @@ public final class XenforoLogin {
                         XenforoLogin.instance.message(player);
                     }
                 } else {
-                   player.sendMessage(XenforoLogin.instance.langFile("errors.confirm"));
+                    player.sendMessage(XenforoLogin.instance.langFile("errors.confirm"));
                     XenforoLogin.instance.logged_in.put(
                             player.uuid, StatusType.NEED_REGISTER_PASSWORD);
                     XenforoLogin.instance.message(player);
@@ -202,6 +205,7 @@ public final class XenforoLogin {
                 break;
         }
     }
+
     public boolean isEmail(String email) {
         if (null == email || "".equals(email)) {
             return false;

@@ -18,7 +18,7 @@ public class ListenerPlayerJoinEvent implements Listener {
             BukkitLoader.instance.warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             BukkitLoader.instance.warn("It's not a bug. Do NOT report this.");
         }
-        if (BukkitLoader.instance.getConfigValue("tp.tp_spawn_before_login", "true")=="true") {
+        if (BukkitLoader.instance.getConfigValue("tp.tp_spawn_before_login", "true") == "true") {
             event.getPlayer().teleport(new Location(
                     getWorld(XenforoLogin.instance.default_location.world),
                     XenforoLogin.instance.default_location.x,

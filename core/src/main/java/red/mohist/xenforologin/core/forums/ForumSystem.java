@@ -7,10 +7,10 @@ import javax.annotation.Nonnull;
 
 public interface ForumSystem {
 
-    @SuppressWarnings({"SameReturnValue", "unused"})
+    @SuppressWarnings({ "SameReturnValue", "unused" })
     boolean isAvailable();
 
-    @SuppressWarnings({"SameReturnValue", "unused"})
+    @SuppressWarnings({ "SameReturnValue", "unused" })
     @Nonnull
     ResultType register(PlayerInfo player, String password, String email);
 

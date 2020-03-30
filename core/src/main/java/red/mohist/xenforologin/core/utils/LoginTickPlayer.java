@@ -1,6 +1,5 @@
 package red.mohist.xenforologin.core.utils;
 
-import org.bukkit.entity.Player;
 import red.mohist.xenforologin.core.XenforoLogin;
 import red.mohist.xenforologin.core.enums.StatusType;
 import red.mohist.xenforologin.core.forums.ForumSystems;

@@ -27,16 +27,17 @@ import java.util.logging.Level;
 import static org.bukkit.Bukkit.getPlayer;
 import static org.bukkit.Bukkit.getWorld;
 
-public class BukkitLoader extends JavaPlugin implements LoaderAPI{
+public class BukkitLoader extends JavaPlugin implements LoaderAPI {
     public static BukkitLoader instance;
     public ConcurrentMap<UUID, StatusType> logged_in;
     public FileConfiguration config;
     public LocationInfo default_location;
     public XenforoLogin xenforoLogin;
     private ListenerProtocolEvent listenerProtocolEvent;
+
     @Override
     public void onEnable() {
-        instance=this;
+        instance = this;
         getLogger().info("Hello, XenforoLogin!");
         saveDefaultConfig();
 
@@ -46,7 +47,7 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
 
         registerListeners();
 
-        xenforoLogin=new XenforoLogin(this);
+        xenforoLogin = new XenforoLogin(this);
     }
 
     private void hookProtocolLib() {
@@ -85,6 +86,7 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
             }
         }
     }
+
     public void sendBlankInventoryPacket(Player player) {
         if (listenerProtocolEvent != null)
             listenerProtocolEvent.sendBlankInventoryPacket(player);
@@ -114,7 +116,7 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
 
     @Override
     public void teleport(PlayerInfo player, LocationInfo location) {
-        Location leave_location=new Location(
+        Location leave_location = new Location(
                 getWorld(location.world),
                 location.x,
                 location.y,
@@ -149,7 +151,7 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
 
     @Override
     public void info(String message) {
-        getLogger().log(Level.FINE,message);
+        getLogger().log(Level.FINE, message);
     }
 
     @Override
@@ -164,13 +166,13 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
 
     @Override
     public Object getConfigValue(String key, Object def) {
-        return getConfig().get(key,def);
+        return getConfig().get(key, def);
     }
 
     @Override
     public Object getConfigValue(String file, String key, Object def) {
         File io;
-        io = new File(getDataFolder(), file+".yml");
+        io = new File(getDataFolder(), file + ".yml");
         if (!io.exists()) {
             try {
                 if (!io.createNewFile()) {
@@ -180,16 +182,16 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
                 e.printStackTrace();
             }
         }
-        return YamlConfiguration.loadConfiguration(io).get(key,def);
+        return YamlConfiguration.loadConfiguration(io).get(key, def);
     }
 
     @Override
     public void setConfigValue(String file, String key, Object value) {
         FileConfiguration data;
         File io;
-        io = new File(getDataFolder(), file+".yml");
-        data=YamlConfiguration.loadConfiguration(io);
-        data.set(key,value);
+        io = new File(getDataFolder(), file + ".yml");
+        data = YamlConfiguration.loadConfiguration(io);
+        data.set(key, value);
         try {
             data.save(io);
         } catch (IOException e) {
@@ -201,13 +203,14 @@ public class BukkitLoader extends JavaPlugin implements LoaderAPI{
     public void login(PlayerInfo player) {
         Objects.requireNonNull(getPlayer(player.uuid)).updateInventory();
     }
-    public PlayerInfo player2info(Player player){
+
+    public PlayerInfo player2info(Player player) {
         String ip;
-        try{
-            ip=player.getAddress().getHostName();
-        }catch (Exception e){
-            ip="0.0.0.0";
+        try {
+            ip = player.getAddress().getHostName();
+        } catch (Exception e) {
+            ip = "0.0.0.0";
         }
-        return new PlayerInfo(player.getName(),player.getUniqueId(), ip);
+        return new PlayerInfo(player.getName(), player.getUniqueId(), ip);
     }
 }

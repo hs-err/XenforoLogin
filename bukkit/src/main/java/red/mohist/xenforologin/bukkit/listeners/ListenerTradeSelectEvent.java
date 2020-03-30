@@ -11,7 +11,7 @@ import red.mohist.xenforologin.core.interfaces.BukkitAPIListener;
 public class ListenerTradeSelectEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnTradeSelectEvent(TradeSelectEvent event) {
-        if (XenforoLogin.instance.needCancelled(BukkitLoader.instance.player2info((Player)event.getWhoClicked()))) {
+        if (XenforoLogin.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getWhoClicked()))) {
             event.setCancelled(true);
         }
     }

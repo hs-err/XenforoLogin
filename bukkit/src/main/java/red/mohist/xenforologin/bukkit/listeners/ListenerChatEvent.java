@@ -18,7 +18,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
             return;
         }
         event.setCancelled(true);
-        XenforoLogin.instance.onChat(BukkitLoader.instance.player2info(event.getPlayer()),event.getMessage());
+        XenforoLogin.instance.onChat(BukkitLoader.instance.player2info(event.getPlayer()), event.getMessage());
     }
 
     @Override

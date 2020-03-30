@@ -11,9 +11,9 @@ public class ListenerAsyncPlayerPreLoginEvent implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
-        String canjoin=XenforoLogin.instance.canJoin(new PlayerInfo(event.getName(),event.getUniqueId(),event.getAddress().getHostName()));
-        if(canjoin!=null){
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER,canjoin);
+        String canjoin = XenforoLogin.instance.canJoin(new PlayerInfo(event.getName(), event.getUniqueId(), event.getAddress().getHostName()));
+        if (canjoin != null) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, canjoin);
         }
     }
 }

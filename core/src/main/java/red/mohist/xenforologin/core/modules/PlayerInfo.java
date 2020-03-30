@@ -9,21 +9,26 @@ public class PlayerInfo {
     public String username;
     public UUID uuid;
     public String ip;
-    public void sendMessage(String message){
-        XenforoLogin.instance.api.sendMessage(this,message);
+
+    public PlayerInfo(String username, UUID uuid, String ip) {
+        this.username = username;
+        this.uuid = uuid;
+        this.ip = ip;
     }
-    public void teleport(LocationInfo location){
-        XenforoLogin.instance.api.teleport(this,location);
+
+    public void sendMessage(String message) {
+        XenforoLogin.instance.api.sendMessage(this, message);
     }
-    public void kick(String message){
-        XenforoLogin.instance.api.kickPlayer(this,message);
+
+    public void teleport(LocationInfo location) {
+        XenforoLogin.instance.api.teleport(this, location);
     }
-    public LocationInfo getLocation(){
+
+    public void kick(String message) {
+        XenforoLogin.instance.api.kickPlayer(this, message);
+    }
+
+    public LocationInfo getLocation() {
         return XenforoLogin.instance.api.getLocation(this);
-    }
-    public PlayerInfo(String username, UUID uuid, String ip){
-        this.username=username;
-        this.uuid=uuid;
-        this.ip=ip;
     }
 }

@@ -13,7 +13,7 @@ public class ListenerEntityDamageEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnEntityDamageEvent(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
-            if (XenforoLogin.instance.needCancelled(BukkitLoader.instance.player2info((Player)event.getEntity()))) {
+            if (XenforoLogin.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getEntity()))) {
                 event.setCancelled(true);
             }
         }

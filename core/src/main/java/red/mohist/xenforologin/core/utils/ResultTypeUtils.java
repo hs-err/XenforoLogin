@@ -33,7 +33,7 @@ public class ResultTypeUtils {
                 return true;
             case UNKNOWN:
                 player.kick(XenforoLogin.instance.langFile("errors.unknown",
-                                resultType.getInheritedObject()));
+                        resultType.getInheritedObject()));
                 return false;
             case SERVER_ERROR:
                 player.kick(XenforoLogin.instance.langFile("errors.server"));
