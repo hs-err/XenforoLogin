@@ -1,9 +1,0 @@
-name: XenforoLogin
-version: ${project.version}
-main: red.mohist.xenforologin.XenforoLogin
-authors:
-  - logos
-  - ishland
-description: Support login with xenforo.
-website: https://mohist.red/
-softdepend: [ProtocolLib]
