@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/XenforoLogin-All/XenforoLogin-All.iml" filepath="$PROJECT_DIR$/XenforoLogin-All/XenforoLogin-All.iml" />
       <module fileurl="file://$PROJECT_DIR$/XenforoLogin-Bukkit/XenforoLogin-Bukkit.iml" filepath="$PROJECT_DIR$/XenforoLogin-Bukkit/XenforoLogin-Bukkit.iml" />
       <module fileurl="file://$PROJECT_DIR$/XenforoLogin-Core/XenforoLogin-Core.iml" filepath="$PROJECT_DIR$/XenforoLogin-Core/XenforoLogin-Core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/XenforoLogin-Fabric/XenforoLogin-Fabric.iml" filepath="$PROJECT_DIR$/XenforoLogin-Fabric/XenforoLogin-Fabric.iml" />
     </modules>
   </component>
 </project>
