@@ -158,7 +158,7 @@ public final class XenforoLoginCore {
                 return XenforoLoginCore.instance.langFile("errors.name_incorrect",
                         resultType.getInheritedObject());
             case NO_USER:
-                if (XenforoLoginCore.instance.api.getConfigValue("api.register", "false") == "true") {
+                if ((boolean)XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
                     XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
                 } else {

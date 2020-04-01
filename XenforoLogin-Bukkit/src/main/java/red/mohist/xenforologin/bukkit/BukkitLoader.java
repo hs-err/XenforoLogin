@@ -18,6 +18,7 @@ import red.mohist.xenforologin.core.utils.LoginTicker;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Set;
 
@@ -88,6 +89,14 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         if (listenerProtocolEvent != null) {
             listenerProtocolEvent.sendBlankInventoryPacket(player);
         }
+    }
+
+    @Override
+    public String getConfigPath(String filename) {
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdir();
+        }
+        return Paths.get(getDataFolder().getPath(),filename).toString();
     }
 
     @Override

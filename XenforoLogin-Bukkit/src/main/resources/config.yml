@@ -12,8 +12,20 @@ api:
     # Application key
     key: "YOUR_KEY_HERE"
   sqlite: # Configurations for sqlite
-    path: "http://example.com/XenforoLogin.php"
-    # Full path to sqlite db
+    # Path to sqlite db
+    path: "Users.db"
+    # is full path?
+    absolute: false
+    # table name in db
+    table_name: "users"
+    # emain field in db
+    email_field: "email"
+    # username field in db
+    username_field: "username"
+    # password field in db
+    password_field: "password"
+    # password hash type
+    password_hash: "plain"
 
 # Set null to use server default spawn
 spawn:

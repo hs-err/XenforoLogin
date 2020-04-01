@@ -22,7 +22,13 @@ public class ForumSystems {
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.discuz.key"));
                 break;
             case "sqlite":
-                cs = new SqliteSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.path"));
+                cs = new SqliteSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.path"),
+                        (boolean) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.absolute",false),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.table_name"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.email_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.username_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_hash"));
                 break;
             default:
                 cs = null;
