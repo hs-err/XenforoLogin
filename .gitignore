@@ -1,5 +1,6 @@
 .idea/libraries
 /XenforoLogin-Core/build/
-/XenforoLogin-Bukkit/build/classes/
-/.gradle/
 /XenforoLogin-Bukkit/build/
+/.gradle/
+/XenforoLogin-All/build/
+/XenforoLogin-Fabric/build/
