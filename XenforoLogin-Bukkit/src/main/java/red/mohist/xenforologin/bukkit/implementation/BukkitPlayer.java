@@ -45,7 +45,7 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
-        handle.kickPlayer(message);
+        Bukkit.getScheduler().runTask(BukkitLoader.instance, () -> handle.kickPlayer(message));
     }
 
     @Override
