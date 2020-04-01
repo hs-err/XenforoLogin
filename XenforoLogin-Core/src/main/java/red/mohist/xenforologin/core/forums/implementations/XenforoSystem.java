@@ -188,11 +188,13 @@ public class XenforoSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 401) {
-                XenforoLoginCore.instance.api.getLogger().warning(XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
-                        "key", key)));
+                XenforoLoginCore.instance.api.getLogger().warning(
+                        XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                                "key", key)));
             } else if (status == 404) {
-                XenforoLoginCore.instance.api.getLogger().warning(XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
-                        "url", url)));
+                XenforoLoginCore.instance.api.getLogger().warning(
+                        XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                                "url", url)));
             }
             return null;
         };

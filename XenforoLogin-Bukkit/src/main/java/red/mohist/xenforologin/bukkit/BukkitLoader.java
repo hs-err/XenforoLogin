@@ -11,7 +11,6 @@ import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
 import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.bukkit.protocollib.ListenerProtocolEvent;
 import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.enums.StatusType;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
@@ -21,14 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
-    public ConcurrentMap<UUID, StatusType> logged_in;
     public FileConfiguration config;
-    public LocationInfo default_location;
     public XenforoLoginCore xenforoLoginCore;
     private ListenerProtocolEvent listenerProtocolEvent;
 

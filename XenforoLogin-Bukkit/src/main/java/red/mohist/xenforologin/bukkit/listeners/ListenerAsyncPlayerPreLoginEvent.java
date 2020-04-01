@@ -14,7 +14,7 @@ public class ListenerAsyncPlayerPreLoginEvent implements Listener {
         String canjoin = XenforoLoginCore.instance.canJoin(new BukkitPlainPlayer(
                 event.getName(), event.getUniqueId(), event.getAddress()));
         if (canjoin != null) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, canjoin);
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canjoin);
         }
     }
 }
