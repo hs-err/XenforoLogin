@@ -33,6 +33,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         getLogger().info("Hello, XenforoLogin!");
 
         saveDefaultConfig();
+        config = getConfig();
 
         xenforoLoginCore = new XenforoLoginCore(this);
 
