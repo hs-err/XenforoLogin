@@ -7,9 +7,6 @@ import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 
 import javax.annotation.Nonnull;
-import javax.xml.transform.Result;
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
 import java.sql.*;
 
 public class SqliteSystem implements ForumSystem {
@@ -52,14 +49,14 @@ public class SqliteSystem implements ForumSystem {
     @Override
     public ResultType register(AbstractPlayer player, String password, String email) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+username_field+"`)=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower("+username_field+")=? LIMIT 1;");
             pps.setString(1,player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if(rs.next()){
                 return ResultType.USER_EXIST;
             }
 
-            pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+email_field+"`)=? LIMIT 1;");
+            pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower("+email_field+")=? LIMIT 1;");
             pps.setString(1,email);
             rs = pps.executeQuery();
             if(rs.next()){
@@ -67,7 +64,7 @@ public class SqliteSystem implements ForumSystem {
             }
 
             pps = connection.prepareStatement(
-                    "INSERT INTO "+table_name+" (`"+email_field+"`, `"+username_field+"`, `"+password_field+"`) VALUES (?, ?, ?);");
+                    "INSERT INTO "+table_name+" ("+email_field+", "+username_field+", "+password_field+") VALUES (?, ?, ?);");
             pps.setString(1,email);
             pps.setString(2,player.getName());
             pps.setString(3,password);
@@ -84,7 +81,7 @@ public class SqliteSystem implements ForumSystem {
     @Override
     public ResultType login(AbstractPlayer player, String password) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+username_field+"`)=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower("+username_field+")=? LIMIT 1;");
             pps.setString(1,player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if(!rs.next()){
@@ -114,7 +111,7 @@ public class SqliteSystem implements ForumSystem {
     @Override
     public ResultType join(String name) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+username_field+"`)=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower("+username_field+")=? LIMIT 1;");
             pps.setString(1,name.toLowerCase());
             ResultSet rs = pps.executeQuery();
             XenforoLoginCore.instance.api.getLogger().info(pps.toString());
