@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
+import red.mohist.xenforologin.bukkit.implementation.BukkitPlainPlayer;
 import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.utils.LoginTicker;
@@ -19,6 +20,10 @@ public class ListenerPlayerJoinEvent implements Listener {
         if (!XenforoLoginCore.instance.logged_in.containsKey(event.getPlayer().getUniqueId())) {
             BukkitLoader.instance.getLogger().warning("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             BukkitLoader.instance.getLogger().warning("It's not a bug. Do NOT report this.");
+            String canjoin = XenforoLoginCore.instance.canJoin(BukkitLoader.instance.player2info(event.getPlayer()));
+            if(canjoin==null){
+                event.getPlayer().kickPlayer(canjoin);
+            }
         }
         if (BukkitLoader.instance.getConfigValue("tp.tp_spawn_before_login", "true") == "true") {
             event.getPlayer().teleport(new Location(
