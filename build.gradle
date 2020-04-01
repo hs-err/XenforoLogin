@@ -4,6 +4,7 @@
 
 plugins {
     id 'war'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
 allprojects {
@@ -36,15 +37,21 @@ subprojects {
 
     sourceCompatibility = '1.8'
 
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                from(components.java)
-            }
-        }
-    }
-
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
 }
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    providedCompile project(":XenforoLogin-Core")
+    providedCompile project(":XenforoLogin-Bukkit")
+    providedCompile project(":XenforoLogin-Fabric")
+}
+
+assemble.dependsOn(shadowJar)
+

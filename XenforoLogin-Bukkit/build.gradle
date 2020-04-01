@@ -4,6 +4,7 @@
 
 plugins {
     id 'war'
+    id 'com.github.johnrengelman.shadow'
 }
 
 dependencies {
@@ -11,3 +12,6 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
     providedCompile project(':XenforoLogin-Core')
 }
+
+assemble.dependsOn(shadowJar)
+

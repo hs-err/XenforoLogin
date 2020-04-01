@@ -10,7 +10,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/XenforoLogin-All" />
             <option value="$PROJECT_DIR$/XenforoLogin-Bukkit" />
             <option value="$PROJECT_DIR$/XenforoLogin-Core" />
             <option value="$PROJECT_DIR$/XenforoLogin-Fabric" />
