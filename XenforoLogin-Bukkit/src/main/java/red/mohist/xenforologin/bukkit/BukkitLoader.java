@@ -10,9 +10,8 @@ import org.reflections.Reflections;
 import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
 import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.bukkit.protocollib.ListenerProtocolEvent;
-import red.mohist.xenforologin.core.XenforoLogin;
+import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.StatusType;
-import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
@@ -30,22 +29,26 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public ConcurrentMap<UUID, StatusType> logged_in;
     public FileConfiguration config;
     public LocationInfo default_location;
-    public XenforoLogin xenforoLogin;
+    public XenforoLoginCore xenforoLoginCore;
     private ListenerProtocolEvent listenerProtocolEvent;
 
     @Override
     public void onEnable() {
         instance = this;
         getLogger().info("Hello, XenforoLogin!");
+
         saveDefaultConfig();
 
-        ForumSystems.reloadConfig();
+        xenforoLoginCore = new XenforoLoginCore(this);
 
         hookProtocolLib();
 
         registerListeners();
+    }
 
-        xenforoLogin = new XenforoLogin(this);
+    @Override
+    public void onDisable() {
+        xenforoLoginCore.onDisable();
     }
 
     private void hookProtocolLib() {
@@ -128,6 +131,11 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     @Override
+    public int getConfigValueInt(String key, int def) {
+        return getConfig().getInt(key, def);
+    }
+
+    @Override
     public void setConfigValue(String file, String key, Object value) {
         FileConfiguration data;
         File io;
@@ -143,7 +151,12 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public void login(AbstractPlayer player) {
-        Objects.requireNonNull(Bukkit.getPlayer(player.uuid)).updateInventory();
+        Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).updateInventory();
+    }
+
+    @Override
+    public void sendBlankInventoryPacket(AbstractPlayer player) {
+        listenerProtocolEvent.sendBlankInventoryPacket(Bukkit.getPlayer(player.getUniqueId()));
     }
 
     public AbstractPlayer player2info(Player player) {

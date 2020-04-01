@@ -10,7 +10,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import red.mohist.xenforologin.core.XenforoLogin;
+import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
@@ -47,17 +47,19 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 401) {
-                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
-                            "key", key)));
+                    XenforoLoginCore.instance.api.getLogger().warning(
+                            XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                                    "key", key)));
                 } else if (status == 404) {
-                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
-                            "url", url)));
+                    XenforoLoginCore.instance.api.getLogger().warning(
+                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                                    "url", url)));
                 }
                 return null;
             };
 
             String result = Request.Post(url + "/users")
-                    .bodyForm(Form.form().add("username", player.username)
+                    .bodyForm(Form.form().add("username", player.getName())
                             .add("password", password)
                             .add("email", email).build())
                     .addHeader("XF-Api-Key", key)
@@ -95,7 +97,8 @@ public class XenforoSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            XenforoLogin.instance.api.getLogger().log(Level.WARNING, "Error while register player " + player.username + " data", e);
+            XenforoLoginCore.instance.api.getLogger().log(Level.WARNING,
+                    "Error while register player " + player.getName() + " data", e);
             return ResultType.SERVER_ERROR;
         }
     }
@@ -111,17 +114,19 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
-                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
-                            "key", key)));
+                    XenforoLoginCore.instance.api.getLogger().warning(
+                            XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                                    "key", key)));
                 } else if (status == 404) {
-                    XenforoLogin.instance.api.warn(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
-                            "url", url)));
+                    XenforoLoginCore.instance.api.getLogger().warning(
+                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                                    "url", url)));
                 }
                 return null;
             };
 
             String result = Request.Post(url + "/auth")
-                    .bodyForm(Form.form().add("login", player.username)
+                    .bodyForm(Form.form().add("login", player.getName())
                             .add("password", password).build())
                     .addHeader("XF-Api-Key", key)
                     .execute().handleResponse(responseHandler);
@@ -137,7 +142,7 @@ public class XenforoSystem implements ForumSystem {
             }
             if (json.get("success") != null && json.get("success").getAsBoolean()) {
                 json.get("user").getAsJsonObject().get("username").getAsString();
-                if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.username)) {
+                if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
                     return ResultType.OK;
                 } else {
                     return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
@@ -161,8 +166,8 @@ public class XenforoSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            XenforoLogin.instance.api.getLogger()
-                    .log(Level.WARNING, "Error while checking player " + player.username + " data", e);
+            XenforoLoginCore.instance.api.getLogger()
+                    .log(Level.WARNING, "Error while checking player " + player.getName() + " data", e);
             return ResultType.SERVER_ERROR;
         }
     }
@@ -170,7 +175,7 @@ public class XenforoSystem implements ForumSystem {
     @Nonnull
     @Override
     public ResultType join(AbstractPlayer player) {
-        return join(player.username);
+        return join(player.getName());
     }
 
     @Nonnull
@@ -183,10 +188,10 @@ public class XenforoSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 401) {
-                XenforoLogin.instance.api.getLogger().warning(XenforoLogin.instance.langFile("errors.key", ImmutableMap.of(
+                XenforoLoginCore.instance.api.getLogger().warning(XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
                         "key", key)));
             } else if (status == 404) {
-                XenforoLogin.instance.api.getLogger().warning(XenforoLogin.instance.langFile("errors.url", ImmutableMap.of(
+                XenforoLoginCore.instance.api.getLogger().warning(XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
                         "url", url)));
             }
             return null;

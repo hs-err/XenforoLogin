@@ -17,7 +17,11 @@ public interface PlatformAdapter {
 
     Object getConfigValue(String file, String key, Object def);
 
+    int getConfigValueInt(String key, int def);
+
     void setConfigValue(String file, String key, Object value);
 
     void login(AbstractPlayer player);
+
+    void sendBlankInventoryPacket(AbstractPlayer player);
 }

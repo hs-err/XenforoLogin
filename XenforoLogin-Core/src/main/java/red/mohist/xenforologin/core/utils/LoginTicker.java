@@ -1,27 +1,37 @@
 package red.mohist.xenforologin.core.utils;
 
 import com.google.common.collect.Sets;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import red.mohist.xenforologin.core.XenforoLogin;
+import red.mohist.xenforologin.core.modules.AbstractPlayer;
 
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class LoginTicker implements Runnable {
+public class LoginTicker {
 
+    public static TimerTask task = null;
     private static Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
 
     public static void register() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
-                XenforoLogin.instance, new LoginTicker(), 0, LoginTickPlayer.showTipTime);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LoginTicker.run();
+            }
+        }, 1000, LoginTickPlayer.showTipTime);
     }
 
-    public static void add(Player player) {
+    public static void add(AbstractPlayer player) {
         tickers.add(new LoginTickPlayer(player));
     }
 
-    @Override
-    public void run() {
+    public static void run() {
         tickers.removeIf(current -> current.tick() == LoginTickPlayer.TickResult.DONE);
+    }
+
+    public static void unregister() {
+        if (task != null)
+            task.cancel();
+        task = null;
     }
 }

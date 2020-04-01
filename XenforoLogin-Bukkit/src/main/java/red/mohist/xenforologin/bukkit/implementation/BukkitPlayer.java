@@ -11,29 +11,33 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public class BukkitPlayer extends AbstractPlayer {
-    private final Player holder;
+    private final Player handle;
 
-    public BukkitPlayer(Player holder) {
-        super(holder.getName(), holder.getUniqueId(), Objects.requireNonNull(holder.getAddress()).getAddress());
-        this.holder = holder;
+    public BukkitPlayer(Player handle) {
+        super(handle.getName(), handle.getUniqueId(), Objects.requireNonNull(handle.getAddress()).getAddress());
+        this.handle = handle;
+    }
+
+    public Player getHandle() {
+        return handle;
     }
 
     @Override
     public void sendMessage(String message) {
-        holder.sendMessage(message);
+        handle.sendMessage(message);
     }
 
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
         try {
-            return holder.teleportAsync(new Location(Bukkit.getWorld(location.world),
+            return handle.teleportAsync(new Location(Bukkit.getWorld(location.world),
                     location.x, location.y, location.z, location.yaw, location.pitch));
         } catch (NoSuchMethodError error) {
             BukkitLoader.instance.getSLF4JLogger()
                     .debug("You are not running Paper? Using synchronized teleport.", error);
             CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
             Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
-                    booleanCompletableFuture.complete(holder.teleport(new Location(Bukkit.getWorld(location.world),
+                    booleanCompletableFuture.complete(handle.teleport(new Location(Bukkit.getWorld(location.world),
                             location.x, location.y, location.z, location.yaw, location.pitch))));
             return booleanCompletableFuture;
         }
@@ -41,12 +45,12 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
-        holder.kickPlayer(message);
+        handle.kickPlayer(message);
     }
 
     @Override
     public LocationInfo getLocation() {
-        final Location holderLocation = holder.getLocation();
+        final Location holderLocation = handle.getLocation();
         return new LocationInfo(
                 holderLocation.getWorld().getName(),
                 holderLocation.getX(),
@@ -55,5 +59,10 @@ public class BukkitPlayer extends AbstractPlayer {
                 holderLocation.getYaw(),
                 holderLocation.getPitch()
         );
+    }
+
+    @Override
+    public boolean isOnline() {
+        return handle.isOnline();
     }
 }

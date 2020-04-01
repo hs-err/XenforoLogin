@@ -11,8 +11,8 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import red.mohist.xenforologin.XenforoLogin;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
+import red.mohist.xenforologin.core.XenforoLoginCore;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class ListenerProtocolEvent {
                     @Override
                     public void onPacketSending(PacketEvent event) {
                         if (event.getPacket().getIntegers().read(0) == 0
-                                && XenforoLogin.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+                                && XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
                             event.setCancelled(true);
                         }
                     }

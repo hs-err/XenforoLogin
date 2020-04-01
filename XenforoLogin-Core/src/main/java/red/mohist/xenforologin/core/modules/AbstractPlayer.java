@@ -6,14 +6,26 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractPlayer {
-    public String username;
-    public UUID uuid;
-    public InetAddress ip;
+    private String name;
+    private UUID uuid;
+    private InetAddress address;
 
-    public AbstractPlayer(String username, UUID uuid, InetAddress ip) {
-        this.username = username;
+    public AbstractPlayer(String name, UUID uuid, InetAddress address) {
+        this.name = name;
         this.uuid = uuid;
-        this.ip = ip;
+        this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public InetAddress getAddress() {
+        return address;
+    }
+
+    public UUID getUniqueId() {
+        return uuid;
     }
 
     public abstract void sendMessage(String message);
@@ -23,4 +35,6 @@ public abstract class AbstractPlayer {
     public abstract void kick(String message);
 
     public abstract LocationInfo getLocation();
+
+    public abstract boolean isOnline();
 }

@@ -1,6 +1,6 @@
 package red.mohist.xenforologin.core.utils;
 
-import red.mohist.xenforologin.core.XenforoLogin;
+import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.enums.StatusType;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
@@ -11,41 +11,41 @@ public class ResultTypeUtils {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
-                    XenforoLogin.instance.login(player);
+                    XenforoLoginCore.instance.login(player);
                 } else {
-                    XenforoLogin.instance.logged_in.put(player.uuid, StatusType.NEED_LOGIN);
-                    XenforoLogin.instance.message(player);
+                    XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
+                    XenforoLoginCore.instance.message(player);
                 }
                 return true;
             case PASSWORD_INCORRECT:
-                player.kick(XenforoLogin.instance.langFile("errors.password"));
+                player.kick(XenforoLoginCore.instance.langFile("errors.password"));
                 return false;
             case ERROR_NAME:
-                player.kick(XenforoLogin.instance.langFile("errors.name_incorrect",
+                player.kick(XenforoLoginCore.instance.langFile("errors.name_incorrect",
                         resultType.getInheritedObject()));
                 return false;
             case NO_USER:
-                if (XenforoLogin.instance.api.getConfigValue("api.register", "false").equals("true")) {
-                    XenforoLogin.instance.logged_in.put(player.uuid, StatusType.NEED_REGISTER_EMAIL);
+                if (XenforoLoginCore.instance.api.getConfigValue("api.register", "false").equals("true")) {
+                    XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 } else {
-                    player.kick(XenforoLogin.instance.langFile("errors.no_user"));
+                    player.kick(XenforoLoginCore.instance.langFile("errors.no_user"));
                 }
                 return true;
             case UNKNOWN:
-                player.kick(XenforoLogin.instance.langFile("errors.unknown",
+                player.kick(XenforoLoginCore.instance.langFile("errors.unknown",
                         resultType.getInheritedObject()));
                 return false;
             case SERVER_ERROR:
-                player.kick(XenforoLogin.instance.langFile("errors.server"));
+                player.kick(XenforoLoginCore.instance.langFile("errors.server"));
                 return false;
             case USER_EXIST:
-                player.sendMessage(XenforoLogin.instance.langFile("errors.user_exist"));
+                player.sendMessage(XenforoLoginCore.instance.langFile("errors.user_exist"));
                 return false;
             case EMAIL_WRONG:
-                player.sendMessage(XenforoLogin.instance.langFile("errors.email"));
+                player.sendMessage(XenforoLoginCore.instance.langFile("errors.email"));
                 return false;
             case EMAIL_EXIST:
-                player.sendMessage(XenforoLogin.instance.langFile("errors.mail_exist"));
+                player.sendMessage(XenforoLoginCore.instance.langFile("errors.mail_exist"));
                 return false;
         }
         return false;
