@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <annotationProcessing>
-      <profile name="Maven default annotation processors profile" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="XenforoLogin-Bukkit" />
-        <module name="XenforoLogin-Core" />
-        <module name="XenforoLogin-All" />
-      </profile>
-    </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="all" target="1.8" />
       <module name="Parent" target="1.8" />
@@ -18,7 +8,7 @@
       <module name="XenforoLogin-All" target="1.8" />
       <module name="XenforoLogin-Bukkit" target="1.8" />
       <module name="XenforoLogin-Core" target="1.8" />
-      <module name="XenforoLogin-Parent" target="1.8" />
+      <module name="XenforoLogin-Fabric" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
