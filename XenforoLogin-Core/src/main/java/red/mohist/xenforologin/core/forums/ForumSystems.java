@@ -2,6 +2,7 @@ package red.mohist.xenforologin.core.forums;
 
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.forums.implementations.DiscuzSystem;
+import red.mohist.xenforologin.core.forums.implementations.SqliteSystem;
 import red.mohist.xenforologin.core.forums.implementations.XenforoSystem;
 
 import java.util.Objects;
@@ -19,6 +20,9 @@ public class ForumSystems {
             case "discuz":
                 cs = new DiscuzSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.discuz.url"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.discuz.key"));
+                break;
+            case "sqlite":
+                cs = new SqliteSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.path"));
                 break;
             default:
                 cs = null;

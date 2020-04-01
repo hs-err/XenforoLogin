@@ -1,5 +1,5 @@
 api:
-  system: "xenforo" # xenforo or discuz
+  system: "xenforo" # xenforo  discuz sqlite
   # Can register in game?
   # Not support register discuz account.
   register: true
@@ -11,6 +11,9 @@ api:
     url: "http://example.com/XenforoLogin.php"
     # Application key
     key: "YOUR_KEY_HERE"
+  sqlite: # Configurations for sqlite
+    path: "http://example.com/XenforoLogin.php"
+    # Full path to sqlite db
 
 # Set null to use server default spawn
 spawn:
