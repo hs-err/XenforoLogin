@@ -31,7 +31,7 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
                 event.getPlayer().kickPlayer(canjoin);
             }
         }
-        if (BukkitLoader.instance.getConfigValue("tp.tp_spawn_before_login", "true") == "true") {
+        if ((boolean)BukkitLoader.instance.getConfigValue("tp.tp_spawn_before_login", true)) {
             event.getPlayer().teleport(new Location(
                     Bukkit.getWorld(XenforoLoginCore.instance.default_location.world),
                     XenforoLoginCore.instance.default_location.x,

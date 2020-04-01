@@ -11,4 +11,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.6'
     compile 'com.google.code.findbugs:jsr305:3.0.2'
     compileOnly 'com.google.guava:guava:28.2-jre'
+    implementation 'org.xerial:sqlite-jdbc:3.30.1'
 }

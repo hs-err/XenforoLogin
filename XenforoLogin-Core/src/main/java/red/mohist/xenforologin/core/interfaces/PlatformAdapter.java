@@ -16,6 +16,8 @@ public interface PlatformAdapter {
 
     Logger getLogger();
 
+    String getConfigPath(String filename);
+
     LocationInfo getSpawn(String world);
 
     Object getConfigValue(String key);
