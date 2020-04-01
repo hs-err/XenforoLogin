@@ -33,8 +33,6 @@ public class LoginTickPlayer {
             }
             XenforoLoginCore.instance.message(player);
         }
-        XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
-        XenforoLoginCore.instance.message(player);
         if ((System.currentTimeMillis() - startTime) / 1000 > loginTimeout
                 && XenforoLoginCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
             return TickResult.CONTINUE;
@@ -42,6 +40,8 @@ public class LoginTickPlayer {
         if (!player.isOnline() || !XenforoLoginCore.instance.needCancelled(player)) {
             return TickResult.DONE;
         }
+        XenforoLoginCore.instance.message(player);
+        XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
         return TickResult.CONTINUE;
     }
 

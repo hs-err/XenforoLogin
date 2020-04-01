@@ -9,7 +9,6 @@ import red.mohist.xenforologin.core.modules.LocationInfo;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 import red.mohist.xenforologin.core.utils.ResultTypeUtils;
 
-import java.io.File;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +21,6 @@ public final class XenforoLoginCore {
     public static XenforoLoginCore instance;
     public PlatformAdapter api;
     public ConcurrentMap<UUID, StatusType> logged_in;
-    public File location_file;
     public LocationInfo default_location;
 
     public XenforoLoginCore(PlatformAdapter platformAdapter) {
