@@ -4,14 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
 import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
+import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 
-public class ListenerPlayerJoinEvent implements Listener {
+public class ListenerPlayerJoinEvent implements BukkitAPIListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerJoinEvent(PlayerJoinEvent event) {
@@ -37,4 +37,8 @@ public class ListenerPlayerJoinEvent implements Listener {
         LoginTicker.add(new BukkitPlayer(event.getPlayer()));
     }
 
+    @Override
+    public void eventClass() {
+        PlayerJoinEvent.class.getName();
+    }
 }
