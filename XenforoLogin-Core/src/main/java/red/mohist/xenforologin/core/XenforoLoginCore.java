@@ -94,10 +94,10 @@ public final class XenforoLoginCore {
                                 String.format("%s.y", player.getUniqueId()), spawn_location.y),
                         (Double) api.getConfigValue("player_location",
                                 String.format("%s.y", player.getUniqueId()), spawn_location.z),
-                        (Float) api.getConfigValue("player_location",
-                                String.format("%s.yaw", player.getUniqueId()), spawn_location.yaw),
-                        (Float) api.getConfigValue("player_location",
-                                String.format("%s.pitch", player.getUniqueId()), spawn_location.pitch)
+                        ((Double) api.getConfigValue("player_location",
+                                String.format("%s.yaw", player.getUniqueId()), spawn_location.yaw)).floatValue(),
+                        ((Double) api.getConfigValue("player_location",
+                                String.format("%s.pitch", player.getUniqueId()), spawn_location.pitch)).floatValue()
                 ));
             }
             logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
