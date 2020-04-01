@@ -85,8 +85,9 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     public void sendBlankInventoryPacket(Player player) {
-        if (listenerProtocolEvent != null)
+        if (listenerProtocolEvent != null) {
             listenerProtocolEvent.sendBlankInventoryPacket(player);
+        }
     }
 
     @Override
@@ -152,7 +153,12 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
-        listenerProtocolEvent.sendBlankInventoryPacket(Bukkit.getPlayer(player.getUniqueId()));
+        if(listenerProtocolEvent!=null) {
+            Player p=Bukkit.getPlayer(player.getUniqueId());
+            if(p!=null){
+                sendBlankInventoryPacket(p);
+            }
+        }
     }
 
     public AbstractPlayer player2info(Player player) {
