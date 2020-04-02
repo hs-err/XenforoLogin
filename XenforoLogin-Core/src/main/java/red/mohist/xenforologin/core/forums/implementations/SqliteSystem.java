@@ -114,7 +114,6 @@ public class SqliteSystem implements ForumSystem {
             PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower("+username_field+")=? LIMIT 1;");
             pps.setString(1,name.toLowerCase());
             ResultSet rs = pps.executeQuery();
-            XenforoLoginCore.instance.api.getLogger().info(pps.toString());
             if(!rs.next()){
                 return ResultType.NO_USER;
             }

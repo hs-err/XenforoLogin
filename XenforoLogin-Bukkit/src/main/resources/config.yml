@@ -1,5 +1,5 @@
 api:
-  system: "xenforo" # xenforo  discuz sqlite
+  system: "sqlite" # xenforo  discuz sqlite
   # Can register in game?
   # Not support register discuz account.
   register: true
@@ -41,6 +41,10 @@ teleport:
 secure:
   # protect information about backpack
   hide_inventory: true
+  # should use spectator during login?
+  spectator_login: true
+  # default gamemode[0,1,2,3]
+  default_gamemode: 0
   # when should show a tip
   show_tips_time: 5
   # when kick player who have not login in

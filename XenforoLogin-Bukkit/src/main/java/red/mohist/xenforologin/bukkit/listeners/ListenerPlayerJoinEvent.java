@@ -8,6 +8,7 @@
 package red.mohist.xenforologin.bukkit.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,6 +41,9 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
                     XenforoLoginCore.instance.default_location.yaw,
                     XenforoLoginCore.instance.default_location.pitch
             ));
+        }
+        if ((boolean)BukkitLoader.instance.getConfigValue("secure.spectator_login", true)) {
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
         }
         LoginTicker.add(new BukkitPlayer(event.getPlayer()));
     }

@@ -8,7 +8,9 @@
 package red.mohist.xenforologin.bukkit.implementation;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
@@ -63,6 +65,30 @@ public class BukkitPlainPlayer extends AbstractPlayer {
                 location.getYaw(),
                 location.getPitch()
         );
+    }
+
+    @Override
+    public int getGamemode() {
+        Player player=Bukkit.getPlayer(getUniqueId());
+        if(player!=null){
+            return player.getGameMode().getValue();
+        }else{
+            BukkitLoader.instance.getLogger().warning("fail to get gamemode");
+            return 0;
+        }
+    }
+
+    @Override
+    public void setGamemode(int gamemode) {
+        Player player=Bukkit.getPlayer(getUniqueId());
+        if(player!=null){
+            GameMode gm=GameMode.getByValue(gamemode);
+            if(gm!=null) {
+                player.setGameMode(gm);
+            }else{
+                BukkitLoader.instance.getLogger().warning("fail to set gamemode"+gamemode);
+            }
+        }
     }
 
     @Override
