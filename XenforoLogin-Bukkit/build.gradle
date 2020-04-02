@@ -20,5 +20,9 @@ dependencies {
     providedCompile project(':XenforoLogin-Core')
 }
 
+processResources {
+    expand(version: version)
+}
+
 assemble.dependsOn(shadowJar)
 

@@ -7,11 +7,13 @@
 
 package red.mohist.xenforologin.fabric;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.DedicatedServerModInitializer;
 
-public class FabricLoader implements ModInitializer {
+@SuppressWarnings("unused")
+public class FabricLoader implements DedicatedServerModInitializer {
+
     @Override
-    public void onInitialize() {
+    public void onInitializeServer() {
         System.out.println("Hello world!");
     }
 }

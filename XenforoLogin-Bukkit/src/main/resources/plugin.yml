@@ -1,5 +1,5 @@
 name: XenforoLogin
-version: ${project.version}
+version: ${version}
 main: red.mohist.xenforologin.bukkit.BukkitLoader
 authors:
   - logos
