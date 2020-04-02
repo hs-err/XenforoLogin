@@ -7,6 +7,7 @@
 
 package red.mohist.xenforologin.bukkit.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,10 +21,18 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
         if (XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
-            Location location = event.getTo();
-            location.setX(XenforoLoginCore.instance.default_location.x);
-            location.setZ(XenforoLoginCore.instance.default_location.z);
-            event.setTo(location);
+            if ((boolean)BukkitLoader.instance.getConfigValue("teleport.tp_spawn_before_login", true)) {
+                Location location = event.getTo();
+                location.setX(XenforoLoginCore.instance.default_location.x);
+                location.setZ(XenforoLoginCore.instance.default_location.z);
+                event.setTo(location);
+            }else{
+                Location back = event.getFrom();
+                Location location = event.getTo();
+                location.setX(back.getX());
+                location.setZ(back.getZ());
+                event.setTo(location);
+            }
         }
     }
 

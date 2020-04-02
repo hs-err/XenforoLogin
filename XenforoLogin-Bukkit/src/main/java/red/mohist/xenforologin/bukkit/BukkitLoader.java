@@ -149,6 +149,16 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     @Override
+    public double getConfigValueDouble(String key, double def) {
+        return getConfig().getDouble(key, def);
+    }
+
+    @Override
+    public float getConfigValueFloat(String key, float def) {
+        return (float) getConfig().getDouble(key, def);
+    }
+
+    @Override
     public void setConfigValue(String file, String key, Object value) {
         FileConfiguration data;
         File io;

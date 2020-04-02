@@ -59,11 +59,11 @@ public final class XenforoLoginCore {
         LocationInfo spawn_location = api.getSpawn("world");
         default_location = new LocationInfo(
                 (String) api.getConfigValue("spawn.world", "world"),
-                (Double) api.getConfigValue("spawn.x", spawn_location.x),
-                (Double) api.getConfigValue("spawn.y", spawn_location.y),
-                (Double) api.getConfigValue("spawn.z", spawn_location.z),
-                (Float) api.getConfigValue("spawn.yaw", spawn_location.yaw),
-                (Float) api.getConfigValue("spawn.pitch", spawn_location.pitch)
+                api.getConfigValueDouble("spawn.x", spawn_location.x),
+                api.getConfigValueDouble("spawn.y", spawn_location.y),
+                api.getConfigValueDouble("spawn.z", spawn_location.z),
+                api.getConfigValueFloat("spawn.yaw",spawn_location.yaw),
+                api.getConfigValueFloat("spawn.pitch",spawn_location.pitch)
         );
     }
 
@@ -97,8 +97,9 @@ public final class XenforoLoginCore {
     }
 
     public void login(AbstractPlayer player) {
+        logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
-            if ((boolean)api.getConfigValue("event.tp_back_after_login", true)) {
+            if ((boolean)api.getConfigValue("teleport.tp_back_after_login", true)) {
                 api.getConfigValue("player_location");
                 LocationInfo spawn_location = api.getSpawn("world");
                 PreparedStatement pps = connection.prepareStatement("SELECT * FROM locations WHERE uuid=? LIMIT 1;");
@@ -122,7 +123,6 @@ public final class XenforoLoginCore {
                     }
                 }
             }
-            logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
             api.login(player);
             api.getLogger().info("Logging in " + player.getUniqueId());
             player.sendMessage(XenforoLoginCore.instance.langFile("success"));
