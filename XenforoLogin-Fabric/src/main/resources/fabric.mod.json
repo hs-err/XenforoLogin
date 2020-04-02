@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "xenforologin",
+  "version": "${version}",
+  "name": "XenforoLogin-Fabric",
+  "description": "Use your Xenforo account to login Minecraft.",
+  "authors": [
+    "logos",
+    "ishland"
+  ],
+  "contact": {
+    "homepage": "https://mohist.red/",
+    "sources": "https://github.com/Mohist-Community/XenforoLogin"
+  },
+  "license": "LGPLv3",
+  "icon": "",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "red.mohist.xenforologin.fabric.FabricLoader"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.15.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

@@ -1,7 +1,7 @@
 .idea/libraries
 /XenforoLogin-Core/build/
 /XenforoLogin-Bukkit/build/
-/.gradle/
+.gradle/
 /XenforoLogin-All/build/
 /XenforoLogin-Fabric/build/
 /build/

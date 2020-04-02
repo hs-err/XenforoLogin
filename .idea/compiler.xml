@@ -19,8 +19,6 @@
       <module name="XenforoLogin-Parent.XenforoLogin-Core.test" target="1.8" />
       <module name="XenforoLogin-Parent.XenforoLogin-Fabric.main" target="1.8" />
       <module name="XenforoLogin-Parent.XenforoLogin-Fabric.test" target="1.8" />
-      <module name="XenforoLogin.XenforoLogin-Fabric.main" target="1.8" />
-      <module name="XenforoLogin.XenforoLogin-Fabric.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
