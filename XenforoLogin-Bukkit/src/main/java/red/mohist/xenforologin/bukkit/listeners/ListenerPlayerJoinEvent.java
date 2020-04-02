@@ -8,6 +8,7 @@
 package red.mohist.xenforologin.bukkit.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +17,7 @@ import red.mohist.xenforologin.bukkit.BukkitLoader;
 import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
 import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.core.XenforoLoginCore;
+import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 
 public class ListenerPlayerJoinEvent implements BukkitAPIListener {
@@ -26,12 +28,15 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
         if (!XenforoLoginCore.instance.logged_in.containsKey(event.getPlayer().getUniqueId())) {
             BukkitLoader.instance.getLogger().warning("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             BukkitLoader.instance.getLogger().warning("It's not a bug. Do NOT report this.");
-            String canjoin = XenforoLoginCore.instance.canJoin(BukkitLoader.instance.player2info(event.getPlayer()));
-            if (canjoin == null) {
-                event.getPlayer().kickPlayer(canjoin);
-            }
+            new Thread(()->{
+                AbstractPlayer player=BukkitLoader.instance.player2info(event.getPlayer());
+                String canjoin = XenforoLoginCore.instance.canJoin(player);
+                if (canjoin == null) {
+                    player.kick(canjoin);
+                }
+            }).start();
         }
-        if ((boolean)BukkitLoader.instance.getConfigValue("tp.tp_spawn_before_login", true)) {
+        if ((boolean)BukkitLoader.instance.getConfigValue("teleport.tp_spawn_before_login", true)) {
             event.getPlayer().teleport(new Location(
                     Bukkit.getWorld(XenforoLoginCore.instance.default_location.world),
                     XenforoLoginCore.instance.default_location.x,
@@ -40,6 +45,9 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
                     XenforoLoginCore.instance.default_location.yaw,
                     XenforoLoginCore.instance.default_location.pitch
             ));
+        }
+        if ((boolean)BukkitLoader.instance.getConfigValue("secure.spectator_login", true)) {
+            event.getPlayer().setGameMode(GameMode.SPECTATOR);
         }
         LoginTicker.add(new BukkitPlayer(event.getPlayer()));
     }

@@ -44,7 +44,7 @@ public class LoginTickPlayer {
         }
         if ((now - startTime) / 1000 > loginTimeout
                 && XenforoLoginCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
-            player.kick(XenforoLoginCore.instance.langFile("time_out"));
+            player.kick(XenforoLoginCore.instance.langFile("errors.time_out"));
             return TickResult.DONE;
         }
         if (!player.isOnline() || !XenforoLoginCore.instance.needCancelled(player)) {

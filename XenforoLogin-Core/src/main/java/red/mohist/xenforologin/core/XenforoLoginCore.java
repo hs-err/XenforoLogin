@@ -43,7 +43,7 @@ public final class XenforoLoginCore {
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + XenforoLoginCore.instance.api.getConfigPath("Locations.db"));
             if(!connection.getMetaData().getTables(null,null,"locations",new String[]{ "TABLE" }).next()){
-                PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,PRIMARY KEY (uuid));");
+                PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
             }
         }catch (SQLException e){
@@ -59,11 +59,11 @@ public final class XenforoLoginCore {
         LocationInfo spawn_location = api.getSpawn("world");
         default_location = new LocationInfo(
                 (String) api.getConfigValue("spawn.world", "world"),
-                (Double) api.getConfigValue("spawn.x", spawn_location.x),
-                (Double) api.getConfigValue("spawn.y", spawn_location.y),
-                (Double) api.getConfigValue("spawn.z", spawn_location.z),
-                (Float) api.getConfigValue("spawn.yaw", spawn_location.yaw),
-                (Float) api.getConfigValue("spawn.pitch", spawn_location.pitch)
+                api.getConfigValueDouble("spawn.x", spawn_location.x),
+                api.getConfigValueDouble("spawn.y", spawn_location.y),
+                api.getConfigValueDouble("spawn.z", spawn_location.z),
+                api.getConfigValueFloat("spawn.yaw",spawn_location.yaw),
+                api.getConfigValueFloat("spawn.pitch",spawn_location.pitch)
         );
     }
 
@@ -97,16 +97,19 @@ public final class XenforoLoginCore {
     }
 
     public void login(AbstractPlayer player) {
+        logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
-            if ((boolean)api.getConfigValue("event.tp_back_after_login", true)) {
-                api.getConfigValue("player_location");
-                LocationInfo spawn_location = api.getSpawn("world");
-                PreparedStatement pps = connection.prepareStatement("SELECT * FROM locations WHERE uuid=? LIMIT 1;");
-                pps.setString(1,player.getUniqueId().toString());
-                ResultSet rs = pps.executeQuery();
-                if(!rs.next()){
-                    player.teleport(default_location);
-                }else {
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM locations WHERE uuid=? LIMIT 1;");
+            pps.setString(1,player.getUniqueId().toString());
+            ResultSet rs = pps.executeQuery();
+            if(!rs.next()){
+                if ((boolean)api.getConfigValue("teleport.tp_back_after_login", true)) {
+                    LocationInfo spawn_location = api.getSpawn("world");
+                    player.teleport(spawn_location);
+                }
+                player.setGamemode(api.getConfigValueInt("secure.default_gamemode",0));
+            }else {
+                if ((boolean)api.getConfigValue("teleport.tp_back_after_login", true)) {
                     try {
                         player.teleport(new LocationInfo(
                                 rs.getString("world"),
@@ -117,18 +120,20 @@ public final class XenforoLoginCore {
                                 rs.getFloat("pitch")
                         ));
                     }catch(Exception e){
-                        player.teleport(default_location);
+                        LocationInfo spawn_location = api.getSpawn("world");
+                        player.teleport(spawn_location);
                         api.getLogger().warning("Fail tp a player.Have you change the world?");
                     }
                 }
+                player.setGamemode(rs.getInt("mode"));
             }
-            logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
-            api.login(player);
-            api.getLogger().info("Logging in " + player.getUniqueId());
-            player.sendMessage(XenforoLoginCore.instance.langFile("success"));
         } catch (Throwable e) {
+            player.setGamemode(api.getConfigValueInt("secure.default_gamemode",0));
             e.printStackTrace();
         }
+        api.login(player);
+        api.getLogger().info("Logging in " + player.getUniqueId());
+        player.sendMessage(XenforoLoginCore.instance.langFile("success"));
     }
 
     public void message(AbstractPlayer player) {
@@ -151,12 +156,11 @@ public final class XenforoLoginCore {
     public void onQuit(AbstractPlayer player) {
         LocationInfo leave_location = player.getLocation();
         if (!needCancelled(player)) {
-            // DELETE FROM locations WHERE uuid = ?;
             try {
                 PreparedStatement pps = connection.prepareStatement("DELETE FROM locations WHERE uuid = ?;");
                 pps.setString(1, player.getUniqueId().toString());
                 pps.executeUpdate();
-                pps = connection.prepareStatement("INSERT INTO locations(uuid, world, x, y, z, yaw, pitch) VALUES (?, ?, ?, ?, ?, ?, ?);");
+                pps = connection.prepareStatement("INSERT INTO locations(uuid, world, x, y, z, yaw, pitch,mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
                 pps.setString(1, player.getUniqueId().toString());
                 pps.setString(2,leave_location.world);
                 pps.setDouble(3,leave_location.x);
@@ -164,6 +168,7 @@ public final class XenforoLoginCore {
                 pps.setDouble(5,leave_location.z);
                 pps.setFloat(6,leave_location.yaw);
                 pps.setFloat(7,leave_location.pitch);
+                pps.setInt(8,player.getGamemode());
                 pps.executeUpdate();
             }catch (SQLException e){
                 api.getLogger().warning("Fail to save location.");
@@ -206,6 +211,8 @@ public final class XenforoLoginCore {
                 player.sendMessage(XenforoLoginCore.instance.langFile("need_check"));
                 break;
             case NEED_LOGIN:
+                XenforoLoginCore.instance.logged_in.put(
+                        player.getUniqueId(), StatusType.HANDLE);
                 ResultTypeUtils.handle(player,
                         ForumSystems.getCurrentSystem()
                                 .login(player, message)
@@ -226,6 +233,8 @@ public final class XenforoLoginCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
+                XenforoLoginCore.instance.logged_in.put(
+                        player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
                     boolean result = ResultTypeUtils.handle(player,
                             ForumSystems.getCurrentSystem()
@@ -245,6 +254,9 @@ public final class XenforoLoginCore {
                             player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
                     XenforoLoginCore.instance.message(player);
                 }
+                break;
+            case HANDLE:
+                player.sendMessage(XenforoLoginCore.instance.langFile("errors.handle"));
                 break;
         }
     }

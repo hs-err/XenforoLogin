@@ -46,13 +46,11 @@ public class ResultTypeUtils {
                 player.kick(XenforoLoginCore.instance.langFile("errors.server"));
                 return false;
             case USER_EXIST:
-                player.sendMessage(XenforoLoginCore.instance.langFile("errors.user_exist"));
+                player.kick(XenforoLoginCore.instance.langFile("errors.user_exist"));
                 return false;
             case EMAIL_WRONG:
-                player.sendMessage(XenforoLoginCore.instance.langFile("errors.email"));
-                return false;
             case EMAIL_EXIST:
-                player.sendMessage(XenforoLoginCore.instance.langFile("errors.mail_exist"));
+                XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 return false;
         }
         return false;

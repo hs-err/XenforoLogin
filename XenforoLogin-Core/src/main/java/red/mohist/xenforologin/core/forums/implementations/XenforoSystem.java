@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -77,7 +78,14 @@ public class XenforoSystem implements ForumSystem {
                 return ResultType.SERVER_ERROR;
             }
             JsonParser parse = new JsonParser();
-            JsonObject json = parse.parse(result).getAsJsonObject();
+            JsonObject json;
+            try {
+                json = parse.parse(result).getAsJsonObject();
+            }catch (JsonSyntaxException e){
+                XenforoLoginCore.instance.api.getLogger().warning(result);
+                e.printStackTrace();
+                return ResultType.SERVER_ERROR;
+            }
             if (json == null) {
                 return ResultType.SERVER_ERROR;
             }
@@ -143,7 +151,14 @@ public class XenforoSystem implements ForumSystem {
                 return ResultType.SERVER_ERROR;
             }
             JsonParser parse = new JsonParser();
-            JsonObject json = parse.parse(result).getAsJsonObject();
+            JsonObject json;
+            try {
+                json = parse.parse(result).getAsJsonObject();
+            }catch (JsonSyntaxException e){
+                XenforoLoginCore.instance.api.getLogger().warning(result);
+                e.printStackTrace();
+                return ResultType.SERVER_ERROR;
+            }
             if (json == null) {
                 return ResultType.SERVER_ERROR;
             }
@@ -220,7 +235,14 @@ public class XenforoSystem implements ForumSystem {
             return ResultType.SERVER_ERROR;
         }
         JsonParser parse = new JsonParser();
-        JsonObject json = parse.parse(result).getAsJsonObject();
+        JsonObject json;
+        try {
+            json = parse.parse(result).getAsJsonObject();
+        }catch (JsonSyntaxException e){
+            XenforoLoginCore.instance.api.getLogger().warning(result);
+            e.printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
         if (json == null) {
             new ClientProtocolException("Unexpected json: null").printStackTrace();
             return ResultType.SERVER_ERROR;

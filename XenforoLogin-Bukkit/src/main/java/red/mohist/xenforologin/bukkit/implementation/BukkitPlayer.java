@@ -8,6 +8,7 @@
 package red.mohist.xenforologin.bukkit.implementation;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
@@ -39,9 +40,9 @@ public class BukkitPlayer extends AbstractPlayer {
         try {
             return handle.teleportAsync(new Location(Bukkit.getWorld(location.world),
                     location.x, location.y, location.z, location.yaw, location.pitch));
-        } catch (NoSuchMethodError error) {
-            BukkitLoader.instance.getSLF4JLogger()
-                    .debug("You are not running Paper? Using synchronized teleport.", error);
+        } catch (NoSuchMethodError e) {
+            BukkitLoader.instance.getLogger()
+                    .warning("You are not running Paper? Using synchronized teleport.");
             CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
             Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
                     booleanCompletableFuture.complete(handle.teleport(new Location(Bukkit.getWorld(location.world),
@@ -66,6 +67,22 @@ public class BukkitPlayer extends AbstractPlayer {
                 holderLocation.getYaw(),
                 holderLocation.getPitch()
         );
+    }
+
+    @Override
+    public int getGamemode() {
+        return handle.getGameMode().getValue();
+    }
+
+    @Override
+    public void setGamemode(int gamemode) {
+        GameMode gm=GameMode.getByValue(gamemode);
+        if(gm!=null) {
+            Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
+                    handle.setGameMode(gm));
+        }else{
+            BukkitLoader.instance.getLogger().warning("fail to set gamemode"+gamemode);
+        }
     }
 
     @Override
