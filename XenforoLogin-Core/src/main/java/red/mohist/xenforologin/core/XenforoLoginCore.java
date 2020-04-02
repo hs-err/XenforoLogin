@@ -211,6 +211,8 @@ public final class XenforoLoginCore {
                 player.sendMessage(XenforoLoginCore.instance.langFile("need_check"));
                 break;
             case NEED_LOGIN:
+                XenforoLoginCore.instance.logged_in.put(
+                        player.getUniqueId(), StatusType.HANDLE);
                 ResultTypeUtils.handle(player,
                         ForumSystems.getCurrentSystem()
                                 .login(player, message)
@@ -231,6 +233,8 @@ public final class XenforoLoginCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
+                XenforoLoginCore.instance.logged_in.put(
+                        player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
                     boolean result = ResultTypeUtils.handle(player,
                             ForumSystems.getCurrentSystem()
@@ -250,6 +254,9 @@ public final class XenforoLoginCore {
                             player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
                     XenforoLoginCore.instance.message(player);
                 }
+                break;
+            case HANDLE:
+                player.sendMessage(XenforoLoginCore.instance.langFile("errors.handle"));
                 break;
         }
     }

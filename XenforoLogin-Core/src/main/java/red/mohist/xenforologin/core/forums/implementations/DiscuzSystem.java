@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -44,8 +45,71 @@ public class DiscuzSystem implements ForumSystem {
 
     @Nonnull
     @Override
+    @SuppressWarnings("deprecation")
     public ResultType register(AbstractPlayer player, String password, String email) {
-        return ResultType.NO_USER;
+        try {
+            ResponseHandler<String> responseHandler = response -> {
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200) {
+                    HttpEntity entity = response.getEntity();
+                    return entity != null ? EntityUtils.toString(entity) : null;
+                } else if (status == 404) {
+                    XenforoLoginCore.instance.api.getLogger().warning(
+                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                                    "url", url)));
+                }
+                return null;
+            };
+
+            String result = Request.Post(url + "?action=register")
+                    .bodyForm(Form.form().add("username", player.getName())
+                            .add("password", password)
+                            .add("email", email).build())
+                    .addHeader("UC-Api-Key", key)
+                    .execute().handleResponse(responseHandler);
+
+            if (result == null) {
+                return ResultType.SERVER_ERROR;
+            }
+            JsonParser parse = new JsonParser();
+            JsonObject json;
+            try {
+                json = parse.parse(result).getAsJsonObject();
+            }catch (JsonSyntaxException e){
+                XenforoLoginCore.instance.api.getLogger().warning(result);
+                e.printStackTrace();
+                return ResultType.SERVER_ERROR;
+            }
+            if (json == null) {
+                return ResultType.SERVER_ERROR;
+            }
+            if (json.get("success") != null && json.get("success").getAsBoolean()) {
+                return ResultType.OK;
+            } else {
+                JsonArray errors = json.get("errors").getAsJsonArray();
+                if (errors.size() > 0) {
+                    switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
+                        //noinspection SpellCheckingInspection
+                        case "usernames_must_be_unique":
+                            return ResultType.USER_EXIST;
+                        case "please_enter_valid_email":
+                            return ResultType.EMAIL_WRONG;
+                        case "email_addresses_must_be_unique":
+                            return ResultType.EMAIL_EXIST;
+                        default:
+                            return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
+                                    "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
+                                    "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
+                    }
+                } else {
+                    return ResultType.SERVER_ERROR;
+                }
+            }
+        } catch (Exception e) {
+            XenforoLoginCore.instance.api.getLogger().log(Level.WARNING,
+                    "Error while register player " + player.getName() + " data", e);
+            return ResultType.SERVER_ERROR;
+        }
     }
 
 
@@ -78,7 +142,14 @@ public class DiscuzSystem implements ForumSystem {
                 return ResultType.SERVER_ERROR;
             }
             JsonParser parse = new JsonParser();
-            JsonObject json = parse.parse(result).getAsJsonObject();
+            JsonObject json;
+            try {
+                json = parse.parse(result).getAsJsonObject();
+            }catch (JsonSyntaxException e){
+                XenforoLoginCore.instance.api.getLogger().warning(result);
+                e.printStackTrace();
+                return ResultType.SERVER_ERROR;
+            }
             if (json == null) {
                 return ResultType.SERVER_ERROR;
             }
@@ -158,9 +229,15 @@ public class DiscuzSystem implements ForumSystem {
             return ResultType.SERVER_ERROR;
         }
         JsonParser parse = new JsonParser();
-        JsonObject json = parse.parse(result).getAsJsonObject();
-        if (json == null) {
-            new ClientProtocolException("Unexpected json: null").printStackTrace();
+        JsonObject json;
+        try {
+            json = parse.parse(result).getAsJsonObject();
+        }catch (JsonSyntaxException e){
+            XenforoLoginCore.instance.api.getLogger().warning(result);
+            e.printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        if(json == null){
             return ResultType.SERVER_ERROR;
         }
         if (json.get("exact") != null && json.get("exact").isJsonNull()) {

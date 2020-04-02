@@ -62,6 +62,7 @@ lang:
     email: "§6[§1XenforoLogin§6]§1§f Wrong Email."
     server: "§6[§1XenforoLogin§6]§1§f There is an issue when connecting to the server, contact the administrator."
     confirm: "§6[§1XenforoLogin§6]§1§f You send the different password."
+    handle: "§6[§1XenforoLogin§6]§1§f Sorry,We will finish your request soon.If it takes too much time,contact the administrator."
     password: "§6[§1XenforoLogin§6]§1§f Wrong password."
     key: "§6[§1XenforoLogin§6]§1§f Please Check api.key [key]"
     url: "§6[§1XenforoLogin§6]§1§f Please Check api.url [url]"

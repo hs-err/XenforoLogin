@@ -40,9 +40,9 @@ public class BukkitPlayer extends AbstractPlayer {
         try {
             return handle.teleportAsync(new Location(Bukkit.getWorld(location.world),
                     location.x, location.y, location.z, location.yaw, location.pitch));
-        } catch (NoSuchMethodError error) {
-            BukkitLoader.instance.getSLF4JLogger()
-                    .debug("You are not running Paper? Using synchronized teleport.", error);
+        } catch (NoSuchMethodError e) {
+            BukkitLoader.instance.getLogger()
+                    .warning("You are not running Paper? Using synchronized teleport.");
             CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
             Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
                     booleanCompletableFuture.complete(handle.teleport(new Location(Bukkit.getWorld(location.world),

@@ -8,7 +8,7 @@
 package red.mohist.xenforologin.core.enums;
 
 public enum StatusType {
-    NEED_CHECK, NEED_LOGIN, NEED_REGISTER_EMAIL, NEED_REGISTER_PASSWORD, NEED_REGISTER_CONFIRM, LOGGED_IN;
+    NEED_CHECK, NEED_LOGIN, NEED_REGISTER_EMAIL, NEED_REGISTER_PASSWORD, NEED_REGISTER_CONFIRM, LOGGED_IN, HANDLE;
     public String email;
     public String password;
 
