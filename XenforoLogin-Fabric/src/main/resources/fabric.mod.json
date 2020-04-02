@@ -20,6 +20,9 @@
       "red.mohist.xenforologin.fabric.FabricLoader"
     ]
   },
+  "mixins": [
+    "fabric.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.7.4",
     "fabric": "*",
