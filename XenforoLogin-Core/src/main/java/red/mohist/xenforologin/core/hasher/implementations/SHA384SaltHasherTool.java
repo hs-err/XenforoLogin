@@ -9,17 +9,17 @@ package red.mohist.xenforologin.core.hasher.implementations;
 
 import red.mohist.xenforologin.core.hasher.HasherTool;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-public class PlainSaltHasherTool extends HasherTool {
-    public PlainSaltHasherTool(int saltLength) {
+public class SHA384SaltHasherTool extends SHA384HasherTool {
+    public SHA384SaltHasherTool(int saltLength) {
         super(saltLength);
     }
 
     @Override
     public boolean needSalt() {
         return true;
-    }
-    public boolean verify(String hash, String data, String salt) {
-        return hash(hash(data) + salt).equals(hash);
     }
 }

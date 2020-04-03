@@ -8,6 +8,7 @@
 package red.mohist.xenforologin.core.hasher;
 
 import javax.annotation.Nonnull;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class HasherTool {
@@ -17,32 +18,26 @@ public class HasherTool {
         this.saltLength = saltLength;
     }
 
-    @Nonnull
     public String hash(String data) {
         return data;
     }
 
-    @Nonnull
     public String hash(String data, String salt) {
         return hash(hash(data) + salt);
     }
 
-    @Nonnull
     public boolean verify(String hash, String data) {
-        return hash(data).equals(hash);
+        return hash(data).toLowerCase().equals(hash.toLowerCase());
     }
 
-    @Nonnull
     public boolean verify(String hash, String data, String salt) {
-        return hash(hash(data) + salt).equals(hash);
+        return hash(hash(data) + salt).toLowerCase().equals(hash.toLowerCase());
     }
 
-    @Nonnull
     public boolean needSalt() {
         return false;
     }
 
-    @Nonnull
     public String generateSalt() {
         String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random1 = new Random();
