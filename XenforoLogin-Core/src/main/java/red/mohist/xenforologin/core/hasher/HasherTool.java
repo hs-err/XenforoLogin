@@ -12,36 +12,43 @@ import java.util.Random;
 
 public class HasherTool {
     protected int saltLength;
-    public HasherTool(int saltLength){
-        this.saltLength=saltLength;
+
+    public HasherTool(int saltLength) {
+        this.saltLength = saltLength;
     }
+
     @Nonnull
-    public String hash(String data){
+    public String hash(String data) {
         return data;
     }
+
     @Nonnull
-    public String hash(String data,String salt){
-        return hash(hash(data)+salt);
+    public String hash(String data, String salt) {
+        return hash(hash(data) + salt);
     }
+
     @Nonnull
     public boolean verify(String hash, String data) {
         return hash(data).equals(hash);
     }
+
     @Nonnull
-    public boolean verify(String hash, String data,String salt){
-        return hash(hash(data)+salt).equals(hash);
+    public boolean verify(String hash, String data, String salt) {
+        return hash(hash(data) + salt).equals(hash);
     }
+
     @Nonnull
-    public boolean needSalt(){
+    public boolean needSalt() {
         return false;
     }
+
     @Nonnull
-    public String  generateSalt(){
-        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random1=new Random();
-        StringBuffer sb=new StringBuffer();
+    public String generateSalt() {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random1 = new Random();
+        StringBuffer sb = new StringBuffer();
         for (int i = 0; i < saltLength; i++) {
-            int number=random1.nextInt(str.length());
+            int number = random1.nextInt(str.length());
             char charAt = str.charAt(number);
             sb.append(charAt);
         }

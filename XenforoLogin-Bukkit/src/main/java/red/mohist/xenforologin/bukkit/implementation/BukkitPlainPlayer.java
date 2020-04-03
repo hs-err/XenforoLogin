@@ -69,10 +69,10 @@ public class BukkitPlainPlayer extends AbstractPlayer {
 
     @Override
     public int getGamemode() {
-        Player player=Bukkit.getPlayer(getUniqueId());
-        if(player!=null){
+        Player player = Bukkit.getPlayer(getUniqueId());
+        if (player != null) {
             return player.getGameMode().getValue();
-        }else{
+        } else {
             BukkitLoader.instance.getLogger().warning("fail to get gamemode");
             return 0;
         }
@@ -80,13 +80,13 @@ public class BukkitPlainPlayer extends AbstractPlayer {
 
     @Override
     public void setGamemode(int gamemode) {
-        Player player=Bukkit.getPlayer(getUniqueId());
-        if(player!=null){
-            GameMode gm=GameMode.getByValue(gamemode);
-            if(gm!=null) {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        if (player != null) {
+            GameMode gm = GameMode.getByValue(gamemode);
+            if (gm != null) {
                 player.setGameMode(gm);
-            }else{
-                BukkitLoader.instance.getLogger().warning("fail to set gamemode"+gamemode);
+            } else {
+                BukkitLoader.instance.getLogger().warning("fail to set gamemode" + gamemode);
             }
         }
     }

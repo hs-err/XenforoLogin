@@ -32,7 +32,7 @@ public class ResultTypeUtils {
                         resultType.getInheritedObject()));
                 return false;
             case NO_USER:
-                if ((boolean)XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
+                if ((boolean) XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
                     XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 } else {
                     player.kick(XenforoLoginCore.instance.langFile("errors.no_user"));

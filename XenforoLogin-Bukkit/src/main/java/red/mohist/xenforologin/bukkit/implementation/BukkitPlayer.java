@@ -76,12 +76,12 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public void setGamemode(int gamemode) {
-        GameMode gm=GameMode.getByValue(gamemode);
-        if(gm!=null) {
+        GameMode gm = GameMode.getByValue(gamemode);
+        if (gm != null) {
             Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
                     handle.setGameMode(gm));
-        }else{
-            BukkitLoader.instance.getLogger().warning("fail to set gamemode"+gamemode);
+        } else {
+            BukkitLoader.instance.getLogger().warning("fail to set gamemode" + gamemode);
         }
     }
 

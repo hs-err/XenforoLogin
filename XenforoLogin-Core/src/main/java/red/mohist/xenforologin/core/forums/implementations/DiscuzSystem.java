@@ -70,7 +70,7 @@ public class DiscuzSystem implements ForumSystem {
             JsonObject json;
             try {
                 json = parse.parse(result).getAsJsonObject();
-            }catch (JsonSyntaxException e){
+            } catch (JsonSyntaxException e) {
                 XenforoLoginCore.instance.api.getLogger().warning(result);
                 e.printStackTrace();
                 return ResultType.SERVER_ERROR;
@@ -140,7 +140,7 @@ public class DiscuzSystem implements ForumSystem {
             JsonObject json;
             try {
                 json = parse.parse(result).getAsJsonObject();
-            }catch (JsonSyntaxException e){
+            } catch (JsonSyntaxException e) {
                 XenforoLoginCore.instance.api.getLogger().warning(result);
                 e.printStackTrace();
                 return ResultType.SERVER_ERROR;
@@ -227,12 +227,12 @@ public class DiscuzSystem implements ForumSystem {
         JsonObject json;
         try {
             json = parse.parse(result).getAsJsonObject();
-        }catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             XenforoLoginCore.instance.api.getLogger().warning(result);
             e.printStackTrace();
             return ResultType.SERVER_ERROR;
         }
-        if(json == null){
+        if (json == null) {
             return ResultType.SERVER_ERROR;
         }
         if (json.get("exact") != null && json.get("exact").isJsonNull()) {

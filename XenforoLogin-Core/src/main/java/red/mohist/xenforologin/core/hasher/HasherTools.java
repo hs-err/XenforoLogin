@@ -13,7 +13,7 @@ import red.mohist.xenforologin.core.hasher.implementations.PlainSaltHasherTool;
 public class HasherTools {
     private static HasherTool currentHasherTool = null;
 
-    public static void loadHasher(String name,int saltLength) {
+    public static void loadHasher(String name, int saltLength) {
         HasherTool cs;
         switch (name) {
             case "plain":

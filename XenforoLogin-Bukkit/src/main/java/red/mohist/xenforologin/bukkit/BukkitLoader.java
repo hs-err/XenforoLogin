@@ -103,7 +103,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
         }
-        return Paths.get(getDataFolder().getPath(),filename).toString();
+        return Paths.get(getDataFolder().getPath(), filename).toString();
     }
 
     @Override
@@ -179,9 +179,9 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
-        if(listenerProtocolEvent!=null) {
-            Player p=Bukkit.getPlayer(player.getUniqueId());
-            if(p!=null){
+        if (listenerProtocolEvent != null) {
+            Player p = Bukkit.getPlayer(player.getUniqueId());
+            if (p != null) {
                 sendBlankInventoryPacket(p);
             }
         }

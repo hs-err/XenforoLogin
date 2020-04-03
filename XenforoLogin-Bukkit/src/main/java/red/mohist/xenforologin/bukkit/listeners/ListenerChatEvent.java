@@ -18,7 +18,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
         if (!XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
-            if ((boolean)BukkitLoader.instance.getConfigValue("secure.cancel_chat_after_login", false)) {
+            if ((boolean) BukkitLoader.instance.getConfigValue("secure.cancel_chat_after_login", false)) {
                 event.getPlayer().sendMessage(XenforoLoginCore.instance.langFile("logged_in"));
                 event.setCancelled(true);
             }

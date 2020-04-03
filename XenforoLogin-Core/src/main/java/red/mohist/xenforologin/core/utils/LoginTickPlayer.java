@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class LoginTickPlayer {
 
     static final int showTipTime = XenforoLoginCore.instance.api.getConfigValueInt("secure.show_tips_time", 5);
-    long lastTipTime=0;
+    long lastTipTime = 0;
     long startTime = System.currentTimeMillis();
     int loginTimeout = XenforoLoginCore.instance.api.getConfigValueInt("secure.max_login_time", 30);
     @Nonnull
@@ -29,7 +29,7 @@ public class LoginTickPlayer {
 
 
     public TickResult tick() {
-        long now=System.currentTimeMillis();
+        long now = System.currentTimeMillis();
         if (!XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())) {
             boolean result = ResultTypeUtils.handle(player,
                     ForumSystems.getCurrentSystem()
@@ -50,8 +50,8 @@ public class LoginTickPlayer {
         if (!player.isOnline() || !XenforoLoginCore.instance.needCancelled(player)) {
             return TickResult.DONE;
         }
-        if( (now - lastTipTime)/1000 > showTipTime){
-            lastTipTime=now;
+        if ((now - lastTipTime) / 1000 > showTipTime) {
+            lastTipTime = now;
             XenforoLoginCore.instance.message(player);
             XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
         }

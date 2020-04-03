@@ -28,15 +28,15 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
         if (!XenforoLoginCore.instance.logged_in.containsKey(event.getPlayer().getUniqueId())) {
             BukkitLoader.instance.getLogger().warning("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             BukkitLoader.instance.getLogger().warning("It's not a bug. Do NOT report this.");
-            new Thread(()->{
-                AbstractPlayer player=BukkitLoader.instance.player2info(event.getPlayer());
+            new Thread(() -> {
+                AbstractPlayer player = BukkitLoader.instance.player2info(event.getPlayer());
                 String canjoin = XenforoLoginCore.instance.canJoin(player);
                 if (canjoin == null) {
                     player.kick(canjoin);
                 }
             }).start();
         }
-        if ((boolean)BukkitLoader.instance.getConfigValue("teleport.tp_spawn_before_login", true)) {
+        if ((boolean) BukkitLoader.instance.getConfigValue("teleport.tp_spawn_before_login", true)) {
             event.getPlayer().teleport(new Location(
                     Bukkit.getWorld(XenforoLoginCore.instance.default_location.world),
                     XenforoLoginCore.instance.default_location.x,
@@ -46,7 +46,7 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
                     XenforoLoginCore.instance.default_location.pitch
             ));
         }
-        if ((boolean)BukkitLoader.instance.getConfigValue("secure.spectator_login", true)) {
+        if ((boolean) BukkitLoader.instance.getConfigValue("secure.spectator_login", true)) {
             event.getPlayer().setGameMode(GameMode.SPECTATOR);
         }
         LoginTicker.add(new BukkitPlayer(event.getPlayer()));

@@ -28,9 +28,10 @@ import java.io.IOException;
 public class WebSystem implements ForumSystem {
     private String url;
     private String key;
-    public WebSystem(String url, String key){
-        this.url=url;
-        this.key=key;
+
+    public WebSystem(String url, String key) {
+        this.url = url;
+        this.key = key;
     }
 
     @Nonnull
@@ -51,10 +52,10 @@ public class WebSystem implements ForumSystem {
         String result;
         try {
             result = Request.Post(url)
-                    .bodyForm(Form.form().add("action","register")
-                            .add("email",email)
+                    .bodyForm(Form.form().add("action", "register")
+                            .add("email", email)
                             .add("username", player.getName())
-                            .add("password",password).build())
+                            .add("password", password).build())
                     .addHeader("XenforoLogin-Key", key)
                     .execute().handleResponse(responseHandler);
         } catch (IOException e) {
@@ -69,12 +70,12 @@ public class WebSystem implements ForumSystem {
         JsonObject json;
         try {
             json = parse.parse(result).getAsJsonObject();
-        }catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
         }
-        if(json == null){
+        if (json == null) {
             XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
@@ -89,7 +90,7 @@ public class WebSystem implements ForumSystem {
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
         }
-        switch (json.get("result").getAsString()){
+        switch (json.get("result").getAsString()) {
             case "ok":
                 return ResultType.OK;
             case "user_exist":
@@ -147,9 +148,9 @@ public class WebSystem implements ForumSystem {
         String result;
         try {
             result = Request.Post(url)
-                    .bodyForm(Form.form().add("action","login")
+                    .bodyForm(Form.form().add("action", "login")
                             .add("username", player.getName())
-                            .add("password",password).build())
+                            .add("password", password).build())
                     .addHeader("XenforoLogin-Key", key)
                     .execute().handleResponse(responseHandler);
         } catch (IOException e) {
@@ -164,12 +165,12 @@ public class WebSystem implements ForumSystem {
         JsonObject json;
         try {
             json = parse.parse(result).getAsJsonObject();
-        }catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
         }
-        if(json == null){
+        if (json == null) {
             XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
@@ -184,7 +185,7 @@ public class WebSystem implements ForumSystem {
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
         }
-        switch (json.get("result").getAsString()){
+        switch (json.get("result").getAsString()) {
             case "ok":
                 return ResultType.OK;
             case "name_incorrect":
@@ -259,7 +260,7 @@ public class WebSystem implements ForumSystem {
         String result;
         try {
             result = Request.Post(url)
-                    .bodyForm(Form.form().add("action","join")
+                    .bodyForm(Form.form().add("action", "join")
                             .add("username", name).build())
                     .addHeader("XenforoLogin-Key", key)
                     .execute().handleResponse(responseHandler);
@@ -275,12 +276,12 @@ public class WebSystem implements ForumSystem {
         JsonObject json;
         try {
             json = parse.parse(result).getAsJsonObject();
-        }catch (JsonSyntaxException e){
+        } catch (JsonSyntaxException e) {
             XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
         }
-        if(json == null){
+        if (json == null) {
             XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
@@ -295,7 +296,7 @@ public class WebSystem implements ForumSystem {
             XenforoLoginCore.instance.api.getLogger().warning(result);
             return ResultType.SERVER_ERROR;
         }
-        switch (json.get("result").getAsString()){
+        switch (json.get("result").getAsString()) {
             case "ok":
                 return ResultType.OK;
             case "name_incorrect":

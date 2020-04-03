@@ -27,7 +27,9 @@ public interface PlatformAdapter {
     Object getConfigValue(String file, String key, Object def);
 
     int getConfigValueInt(String key, int def);
+
     double getConfigValueDouble(String key, double def);
+
     float getConfigValueFloat(String key, float def);
 
     void setConfigValue(String file, String key, Object value);

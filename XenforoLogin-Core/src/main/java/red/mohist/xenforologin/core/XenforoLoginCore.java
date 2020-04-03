@@ -42,11 +42,11 @@ public final class XenforoLoginCore {
         LoginTicker.register();
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + XenforoLoginCore.instance.api.getConfigPath("Locations.db"));
-            if(!connection.getMetaData().getTables(null,null,"locations",new String[]{ "TABLE" }).next()){
+            if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -62,8 +62,8 @@ public final class XenforoLoginCore {
                 api.getConfigValueDouble("spawn.x", spawn_location.x),
                 api.getConfigValueDouble("spawn.y", spawn_location.y),
                 api.getConfigValueDouble("spawn.z", spawn_location.z),
-                api.getConfigValueFloat("spawn.yaw",spawn_location.yaw),
-                api.getConfigValueFloat("spawn.pitch",spawn_location.pitch)
+                api.getConfigValueFloat("spawn.yaw", spawn_location.yaw),
+                api.getConfigValueFloat("spawn.pitch", spawn_location.pitch)
         );
     }
 
@@ -100,16 +100,16 @@ public final class XenforoLoginCore {
         logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
             PreparedStatement pps = connection.prepareStatement("SELECT * FROM locations WHERE uuid=? LIMIT 1;");
-            pps.setString(1,player.getUniqueId().toString());
+            pps.setString(1, player.getUniqueId().toString());
             ResultSet rs = pps.executeQuery();
-            if(!rs.next()){
-                if ((boolean)api.getConfigValue("teleport.tp_back_after_login", true)) {
+            if (!rs.next()) {
+                if ((boolean) api.getConfigValue("teleport.tp_back_after_login", true)) {
                     LocationInfo spawn_location = api.getSpawn("world");
                     player.teleport(spawn_location);
                 }
-                player.setGamemode(api.getConfigValueInt("secure.default_gamemode",0));
-            }else {
-                if ((boolean)api.getConfigValue("teleport.tp_back_after_login", true)) {
+                player.setGamemode(api.getConfigValueInt("secure.default_gamemode", 0));
+            } else {
+                if ((boolean) api.getConfigValue("teleport.tp_back_after_login", true)) {
                     try {
                         player.teleport(new LocationInfo(
                                 rs.getString("world"),
@@ -119,7 +119,7 @@ public final class XenforoLoginCore {
                                 rs.getFloat("yaw"),
                                 rs.getFloat("pitch")
                         ));
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         LocationInfo spawn_location = api.getSpawn("world");
                         player.teleport(spawn_location);
                         api.getLogger().warning("Fail tp a player.Have you change the world?");
@@ -128,7 +128,7 @@ public final class XenforoLoginCore {
                 player.setGamemode(rs.getInt("mode"));
             }
         } catch (Throwable e) {
-            player.setGamemode(api.getConfigValueInt("secure.default_gamemode",0));
+            player.setGamemode(api.getConfigValueInt("secure.default_gamemode", 0));
             e.printStackTrace();
         }
         api.login(player);
@@ -162,15 +162,15 @@ public final class XenforoLoginCore {
                 pps.executeUpdate();
                 pps = connection.prepareStatement("INSERT INTO locations(uuid, world, x, y, z, yaw, pitch,mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
                 pps.setString(1, player.getUniqueId().toString());
-                pps.setString(2,leave_location.world);
-                pps.setDouble(3,leave_location.x);
-                pps.setDouble(4,leave_location.y);
-                pps.setDouble(5,leave_location.z);
-                pps.setFloat(6,leave_location.yaw);
-                pps.setFloat(7,leave_location.pitch);
-                pps.setInt(8,player.getGamemode());
+                pps.setString(2, leave_location.world);
+                pps.setDouble(3, leave_location.x);
+                pps.setDouble(4, leave_location.y);
+                pps.setDouble(5, leave_location.z);
+                pps.setFloat(6, leave_location.yaw);
+                pps.setFloat(7, leave_location.pitch);
+                pps.setInt(8, player.getGamemode());
                 pps.executeUpdate();
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 api.getLogger().warning("Fail to save location.");
             }
         }
@@ -192,7 +192,7 @@ public final class XenforoLoginCore {
                 return XenforoLoginCore.instance.langFile("errors.name_incorrect",
                         resultType.getInheritedObject());
             case NO_USER:
-                if ((boolean)XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
+                if ((boolean) XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
                     XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
                 } else {
