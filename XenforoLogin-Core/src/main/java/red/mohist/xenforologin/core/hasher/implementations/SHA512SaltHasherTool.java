@@ -7,12 +7,6 @@
 
 package red.mohist.xenforologin.core.hasher.implementations;
 
-import red.mohist.xenforologin.core.hasher.HasherTool;
-
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 public class SHA512SaltHasherTool extends SHA512HasherTool {
     public SHA512SaltHasherTool(int saltLength) {
         super(saltLength);
