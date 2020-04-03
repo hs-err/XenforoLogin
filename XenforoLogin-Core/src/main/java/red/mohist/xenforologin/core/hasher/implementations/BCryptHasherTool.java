@@ -1,6 +1,8 @@
 /*
  * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
  *
+ * You are not permitted to interfere any protection that prevents loading in CatServer
+ *
  * Copyright (c) 2020 Mohist-Community.
  *
  */
@@ -17,11 +19,11 @@ public class BCryptHasherTool extends HasherTool {
 
     @Override
     public String hash(String data) {
-        return BCrypt.hashpw(data,BCrypt.gensalt());
+        return BCrypt.hashpw(data, BCrypt.gensalt());
     }
 
     @Override
     public boolean verify(String hash, String data) {
-        return BCrypt.checkpw(data,hash);
+        return BCrypt.checkpw(data, hash);
     }
 }

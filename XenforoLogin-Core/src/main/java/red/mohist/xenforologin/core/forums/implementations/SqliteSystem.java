@@ -1,6 +1,8 @@
 /*
  * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
  *
+ * You are not permitted to interfere any protection that prevents loading in CatServer
+ *
  * Copyright (c) 2020 Mohist-Community.
  *
  */
@@ -47,7 +49,7 @@ public class SqliteSystem implements ForumSystem {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + XenforoLoginCore.instance.api.getConfigPath(path));
                 XenforoLoginCore.instance.api.getLogger().info(XenforoLoginCore.instance.api.getConfigPath(path));
             }
-            if (!connection.getMetaData().getTables(null, null, tableName, new String[] { "TABLE" }).next()) {
+            if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
@@ -58,7 +60,6 @@ public class SqliteSystem implements ForumSystem {
                 }
                 pps.executeUpdate();
             }
-            ;
         } catch (SQLException e) {
             e.printStackTrace();
         }

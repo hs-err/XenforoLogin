@@ -1,6 +1,8 @@
 /*
  * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
  *
+ * You are not permitted to interfere any protection that prevents loading in CatServer
+ *
  * Copyright (c) 2020 Mohist-Community.
  *
  */
@@ -42,7 +44,7 @@ public final class XenforoLoginCore {
         LoginTicker.register();
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + XenforoLoginCore.instance.api.getConfigPath("Locations.db"));
-            if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
+            if (!connection.getMetaData().getTables(null, null, "locations", new String[]{"TABLE"}).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
             }
