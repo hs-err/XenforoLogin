@@ -38,11 +38,6 @@ public class DiscuzSystem implements ForumSystem {
         this.key = key;
     }
 
-    @Override
-    public boolean isAvailable() {
-        return false;
-    }
-
     @Nonnull
     @Override
     @SuppressWarnings("deprecation")

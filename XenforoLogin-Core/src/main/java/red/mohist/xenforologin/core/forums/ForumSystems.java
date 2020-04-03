@@ -33,6 +33,8 @@ public class ForumSystems {
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.email_field"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.username_field"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.salt_field"),
+                        XenforoLoginCore.instance.api.getConfigValueInt("api.sqlite.salt_length",6),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_hash"));
                 break;
             case "web":
@@ -48,6 +50,8 @@ public class ForumSystems {
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.email_field"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.username_field"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.salt_field"),
+                        XenforoLoginCore.instance.api.getConfigValueInt("api.mysql.salt_length",6),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password_hash"));
                 break;
             default:

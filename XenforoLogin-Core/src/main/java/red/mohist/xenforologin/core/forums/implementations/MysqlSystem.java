@@ -8,9 +8,10 @@
 package red.mohist.xenforologin.core.forums.implementations;
 
 import com.google.common.collect.ImmutableMap;
-import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
+import red.mohist.xenforologin.core.hasher.HasherTool;
+import red.mohist.xenforologin.core.hasher.HasherTools;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 
 import javax.annotation.Nonnull;
@@ -22,26 +23,40 @@ public class MysqlSystem implements ForumSystem {
     private String username;
     private String password;
     private String database;
-    private String table_name;
-    private String email_field;
-    private String username_field;
-    private String password_field;
-    private String password_hash;
-    public MysqlSystem(String host, String username,String password, String database,String table_name, String email_field, String username_field, String password_field, String password_hash) {
+    private String tableName;
+    private String emailField;
+    private String usernameField;
+    private String passwordField;
+    private String saltField;
+    private int saltLength;
+    private String passwordHash;
+    private HasherTool hasherTool;
+    public MysqlSystem(String host, String username,String password, String database,String tableName, String emailField, String usernameField, String passwordField,String saltField,int saltLength,String passwordHash){
         this.host=host;
         this.username=username;
         this.password=password;
         this.database=database;
-        this.table_name=table_name;
-        this.email_field=email_field;
-        this.username_field=username_field;
-        this.password_field=password_field;
-        this.password_hash=password_hash;
+        this.tableName=tableName;
+        this.emailField=emailField;
+        this.usernameField=usernameField;
+        this.passwordField=passwordField;
+        this.saltField=saltField;
+        this.saltLength=saltLength;
+        this.passwordHash=passwordHash;
+        HasherTools.loadHasher(passwordHash,saltLength);
+        this.hasherTool = HasherTools.getCurrentSystem();
         try {
             connection = DriverManager.getConnection("jdbc:mysql://"+host+"/"+database+"?useSSL=false&serverTimezone=UTC",username,password);
-            if(!connection.getMetaData().getTables(null,null,table_name,new String[]{ "TABLE" }).next()){
-                PreparedStatement pps = connection.prepareStatement(
-                        "CREATE TABLE "+table_name+" (`id` int(11) NOT NULL AUTO_INCREMENT,`"+email_field+"` varchar(255) NOT NULL,`"+username_field+"` varchar(32) NOT NULL,`"+password_field+"` varchar(255) NOT NULL, PRIMARY KEY (`id`,`username`));");
+            if(!connection.getMetaData().getTables(null,null,tableName,new String[]{ "TABLE" }).next()){
+                PreparedStatement pps;
+                if(hasherTool.needSalt()) {
+                    pps = connection.prepareStatement(
+                            "CREATE TABLE " + tableName + " (`id` int(11) NOT NULL AUTO_INCREMENT,`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL,`" + saltField + "` varchar(32) NOT NULL, PRIMARY KEY (`id`,`"+usernameField+"`));");
+
+                }else {
+                    pps = connection.prepareStatement(
+                            "CREATE TABLE " + tableName + " (`id` int(11) NOT NULL AUTO_INCREMENT,`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL, PRIMARY KEY (`id`,`"+usernameField+"`));");
+                }
                 pps.executeUpdate();
             }
         }catch (SQLException e){
@@ -49,34 +64,39 @@ public class MysqlSystem implements ForumSystem {
         }
     }
 
-    @Override
-    public boolean isAvailable() {
-        return false;
-    }
-
     @Nonnull
     @Override
     public ResultType register(AbstractPlayer player, String password, String email) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+username_field+"`)=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+tableName+" WHERE lower(`"+usernameField+"`)=? LIMIT 1;");
             pps.setString(1,player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if(rs.next()){
                 return ResultType.USER_EXIST;
             }
 
-            pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+email_field+"`)=? LIMIT 1;");
+            pps = connection.prepareStatement("SELECT * FROM "+tableName+" WHERE lower(`"+emailField+"`)=? LIMIT 1;");
             pps.setString(1,email);
             rs = pps.executeQuery();
             if(rs.next()){
                 return ResultType.EMAIL_EXIST;
             }
 
-            pps = connection.prepareStatement(
-                    "INSERT INTO "+table_name+" (`"+email_field+"`, `"+username_field+"`, `"+password_field+"`) VALUES (?, ?, ?);");
-            pps.setString(1,email);
-            pps.setString(2,player.getName());
-            pps.setString(3,password);
+            if(hasherTool.needSalt()){
+                String salt= hasherTool.generateSalt();
+                pps = connection.prepareStatement(
+                        "INSERT INTO "+tableName+" (`"+emailField+"`, `"+usernameField+"`, `"+passwordField+"`,`"+saltField+"`) VALUES (?, ?, ?, ?);");
+                pps.setString(1,email);
+                pps.setString(2,player.getName());
+                pps.setString(3, hasherTool.hash(password,salt));
+                pps.setString(4,salt);
+            }else{
+                pps = connection.prepareStatement(
+                        "INSERT INTO "+tableName+" (`"+emailField+"`, `"+usernameField+"`, `"+passwordField+"`) VALUES (?, ?, ?);");
+                pps.setString(1,email);
+                pps.setString(2,player.getName());
+                pps.setString(3,password);
+            }
             pps.executeUpdate();
 
             return ResultType.OK;
@@ -90,18 +110,24 @@ public class MysqlSystem implements ForumSystem {
     @Override
     public ResultType login(AbstractPlayer player, String password) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+username_field+"`)=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+tableName+" WHERE lower(`"+usernameField+"`)=? LIMIT 1;");
             pps.setString(1,player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if(!rs.next()){
                 return ResultType.NO_USER;
             }
-            if(!rs.getString("username").equals(player.getName())){
+            if(!rs.getString(usernameField).equals(player.getName())){
                 return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                        "correct", rs.getString("username")));
+                        "correct", rs.getString(usernameField)));
             }
-            if(!rs.getString("password").equals(password)){
-                return ResultType.PASSWORD_INCORRECT;
+            if(hasherTool.needSalt()) {
+                if (!hasherTool.verify(rs.getString(passwordField), password, rs.getString(saltField))) {
+                    return ResultType.PASSWORD_INCORRECT;
+                }
+            }else{
+                if (!hasherTool.verify(rs.getString(passwordField), password)) {
+                    return ResultType.PASSWORD_INCORRECT;
+                }
             }
             return ResultType.OK;
         }catch (SQLException e){
@@ -120,15 +146,15 @@ public class MysqlSystem implements ForumSystem {
     @Override
     public ResultType join(String name) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+table_name+" WHERE lower(`"+username_field+"`)=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM "+tableName+" WHERE lower(`"+usernameField+"`)=? LIMIT 1;");
             pps.setString(1,name.toLowerCase());
             ResultSet rs = pps.executeQuery();
             if(!rs.next()){
                 return ResultType.NO_USER;
             }
-            if(!rs.getString("username").equals(name)){
+            if(!rs.getString(usernameField).equals(name)){
                 return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                        "correct", rs.getString("username")));
+                        "correct", rs.getString(usernameField)));
             }
             return ResultType.OK;
         }catch (SQLException e){

@@ -24,6 +24,10 @@ api:
     username_field: "username"
     # password field in db
     password_field: "password"
+    # salt field in db(only use in password_hash need)
+    salt_field: "salt"
+    # salt length
+    salt_length: 6
     # password hash type
     password_hash: "plain"
   mysql: # Configurations for mysql
@@ -43,6 +47,10 @@ api:
     username_field: "username"
     # password field in db
     password_field: "password"
+    # salt field in db(only use in password_hash need)
+    salt_field: "salt"
+    # salt length
+    salt_length: 6
     # password hash type
     password_hash: "plain"
 

@@ -32,10 +32,6 @@ public class WebSystem implements ForumSystem {
         this.url=url;
         this.key=key;
     }
-    @Override
-    public boolean isAvailable() {
-        return false;
-    }
 
     @Nonnull
     @Override
