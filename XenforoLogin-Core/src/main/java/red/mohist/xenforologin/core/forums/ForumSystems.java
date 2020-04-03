@@ -10,6 +10,7 @@ package red.mohist.xenforologin.core.forums;
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.forums.implementations.DiscuzSystem;
 import red.mohist.xenforologin.core.forums.implementations.SqliteSystem;
+import red.mohist.xenforologin.core.forums.implementations.WebSystem;
 import red.mohist.xenforologin.core.forums.implementations.XenforoSystem;
 
 import java.util.Objects;
@@ -36,6 +37,10 @@ public class ForumSystems {
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.username_field"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_field"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_hash"));
+                break;
+            case "web":
+                cs=new WebSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.web.url"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.web.key"));
                 break;
             default:
                 cs = null;
