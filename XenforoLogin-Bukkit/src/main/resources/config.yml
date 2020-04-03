@@ -26,6 +26,25 @@ api:
     password_field: "password"
     # password hash type
     password_hash: "plain"
+  mysql: # Configurations for mysql
+    # host to mysql db
+    host: "localhost:3306"
+    # mysql username
+    username: "xenforoLogin"
+    # mysql password
+    password: "W8xMxJyYcxdmY33G"
+    # database name
+    database: "xenforoLogin"
+    # table name in db
+    table_name: "users"
+    # emain field in db
+    email_field: "email"
+    # username field in db
+    username_field: "username"
+    # password field in db
+    password_field: "password"
+    # password hash type
+    password_hash: "plain"
 
 # Set null to use server default spawn
 spawn:

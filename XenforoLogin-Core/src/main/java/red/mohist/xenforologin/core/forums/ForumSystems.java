@@ -8,10 +8,7 @@
 package red.mohist.xenforologin.core.forums;
 
 import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.forums.implementations.DiscuzSystem;
-import red.mohist.xenforologin.core.forums.implementations.SqliteSystem;
-import red.mohist.xenforologin.core.forums.implementations.WebSystem;
-import red.mohist.xenforologin.core.forums.implementations.XenforoSystem;
+import red.mohist.xenforologin.core.forums.implementations.*;
 
 import java.util.Objects;
 
@@ -41,6 +38,17 @@ public class ForumSystems {
             case "web":
                 cs=new WebSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.web.url"),
                         (String) XenforoLoginCore.instance.api.getConfigValue("api.web.key"));
+                break;
+            case "mysql":
+                cs = new MysqlSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.host"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.username"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.database"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.table_name"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.email_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.username_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password_field"),
+                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password_hash"));
                 break;
             default:
                 cs = null;
