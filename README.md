@@ -22,6 +22,7 @@ Prevent minecraft username stealing with Xenforo and more.
 
 ## Planned features
 - Support for fabric servers.
+- Support for sponge platform
 - Hashing support.
 - Session login.
 
