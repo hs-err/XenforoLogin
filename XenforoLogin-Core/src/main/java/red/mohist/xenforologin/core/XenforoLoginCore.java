@@ -34,7 +34,49 @@ public final class XenforoLoginCore {
     public LocationInfo default_location;
     private Connection connection;
 
+    @SuppressWarnings("unused")
     public XenforoLoginCore(PlatformAdapter platformAdapter) {
+        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+        String a0="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+        try {
+            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+            String a1="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            if (Class.forName("catserver.server.CatServer") != null) {
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a2="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                System.out.println("======================== [ Secure Check ] ========================");
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a3="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                System.out.println("万分抱歉，本插件未对CatServer作任何测试，尚不能保证能正常使用。");
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a4="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                System.out.println("出于保护您的服务器安全的考虑，XenforoLogin已经停止载入。");
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a5="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                System.out.println("如果你需要使用本插件，建议使用Mohist服务端，我们完成了良好的适配。");
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a6="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                System.out.println("==================================================================");
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a7="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                System.exit(-1);
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a8="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            }
+            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+            String a9="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+        } catch (ClassNotFoundException ignored) {
+            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+            String a10="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+        } catch (Exception e) {
+            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+            String a11="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            e.printStackTrace();
+            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+            String a12="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+        }
+        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+        String a13="WARN You are not permitted to interfere any protection that prevents loading in CatServer";
         instance = this;
         api = platformAdapter;
         logged_in = new ConcurrentHashMap<>();

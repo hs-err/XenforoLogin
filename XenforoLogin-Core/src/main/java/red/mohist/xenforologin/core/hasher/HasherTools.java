@@ -34,9 +34,6 @@ public class HasherTools {
             case "Plain":
                 cs = new PlainHasherTool(saltLength);
                 break;
-            case "PlainSalt":
-                cs = new PlainSaltHasherTool(saltLength);
-                break;
             case "SHA1":
                 cs = new SHA1HasherTool(saltLength);
                 break;
