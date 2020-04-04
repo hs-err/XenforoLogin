@@ -51,9 +51,9 @@ api:
     # SHA256     | Available   | Using SHA256 algorithm to store password.
     # SHA256Salt | Available   | Using SHA256 algorithm to store password with salt.
     # SHA384     | Available   | Using SHA384 algorithm to store password.
-    # SHA384Salt | Available   | sha384(sha384(password)+salt) .SHOULD use it to protect password
+    # SHA384Salt | Available   | Using SHA384 algorithm to store password with salt.
     # SHA512     | Available   | Using SHA512 algorithm to store password.
-    # SHA512Salt | Available   | sha512(sha512(password)+salt) .SHOULD use it to protect password
+    # SHA512Salt | Available   | Using SHA512 algorithm to store password with salt.
     password_hash: "BCrypt"
   mysql: # Configurations for mysql
     # host to mysql db
@@ -97,9 +97,9 @@ api:
     # SHA256     | Available   | Using SHA256 algorithm to store password.
     # SHA256Salt | Available   | Using SHA256 algorithm to store password with salt.
     # SHA384     | Available   | Using SHA384 algorithm to store password.
-    # SHA384Salt | Available   | sha384(sha384(password)+salt) .SHOULD use it to protect password
+    # SHA384Salt | Available   | Using SHA384 algorithm to store password with salt.
     # SHA512     | Available   | Using SHA512 algorithm to store password.
-    # SHA512Salt | Available   | sha512(sha512(password)+salt) .SHOULD use it to protect password
+    # SHA512Salt | Available   | Using SHA512 algorithm to store password with salt.
     password_hash: "BCrypt"
 
 # Set null to use server default spawn
