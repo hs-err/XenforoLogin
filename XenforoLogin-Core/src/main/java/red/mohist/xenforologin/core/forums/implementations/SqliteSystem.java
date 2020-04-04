@@ -27,6 +27,8 @@ public class SqliteSystem implements ForumSystem {
     private String usernameField;
     private String passwordField;
     private String saltField;
+    private int saltLength;
+    private String passwordHash;
     private HasherTool hasherTool;
 
     public SqliteSystem(String path, boolean absolute, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
@@ -35,6 +37,8 @@ public class SqliteSystem implements ForumSystem {
         this.usernameField = usernameField;
         this.passwordField = passwordField;
         this.saltField = saltField;
+        this.saltLength = saltLength;
+        this.passwordHash = passwordHash;
         HasherTools.loadHasher(passwordHash, saltLength);
         hasherTool = HasherTools.getCurrentSystem();
         try {
@@ -49,10 +53,10 @@ public class SqliteSystem implements ForumSystem {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL,`" + saltField + "` TEXT NOT NULL, PRIMARY KEY (`" + usernameField + "`));");
+                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL,`" + saltField + "` TEXT NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
                 } else {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL, PRIMARY KEY (`" + usernameField + "`));");
+                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
                 }
                 pps.executeUpdate();
             }
