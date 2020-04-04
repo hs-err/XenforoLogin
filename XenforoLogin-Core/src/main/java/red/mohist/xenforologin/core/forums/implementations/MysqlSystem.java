@@ -21,31 +21,19 @@ import java.sql.*;
 
 public class MysqlSystem implements ForumSystem {
     private Connection connection;
-    private String host;
-    private String username;
-    private String password;
-    private String database;
     private String tableName;
     private String emailField;
     private String usernameField;
     private String passwordField;
     private String saltField;
-    private int saltLength;
-    private String passwordHash;
     private HasherTool hasherTool;
 
     public MysqlSystem(String host, String username, String password, String database, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
-        this.host = host;
-        this.username = username;
-        this.password = password;
-        this.database = database;
         this.tableName = tableName;
         this.emailField = emailField;
         this.usernameField = usernameField;
         this.passwordField = passwordField;
         this.saltField = saltField;
-        this.saltLength = saltLength;
-        this.passwordHash = passwordHash;
         HasherTools.loadHasher(passwordHash, saltLength);
         this.hasherTool = HasherTools.getCurrentSystem();
         try {
@@ -54,11 +42,11 @@ public class MysqlSystem implements ForumSystem {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`id` int(11) NOT NULL AUTO_INCREMENT,`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL,`" + saltField + "` varchar(32) NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
+                            "CREATE TABLE " + tableName + " (`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL,`" + saltField + "` varchar(32) NOT NULL, PRIMARY KEY (`" + usernameField + "`));");
 
                 } else {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`id` int(11) NOT NULL AUTO_INCREMENT,`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
+                            "CREATE TABLE " + tableName + " (`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL, PRIMARY KEY (`" + usernameField + "`));");
                 }
                 pps.executeUpdate();
             }
