@@ -1,0 +1,149 @@
+api:
+  # Define backend system to use
+  # Possible values: xenforo discuz sqlite
+  system: "sqlite"
+  # Can register in game?
+  # Discuz registration hasn't been implemented yet
+  register: true
+  xenforo: # Configurations for xenforo
+    url: "http://example.com/api"
+    # An API-Key with auth, user:read permission
+    key: "YOUR_KEY_HERE"
+  discuz: # Configurations for discuz
+    url: "http://example.com/XenforoLogin.php"
+    # Application key
+    key: "YOUR_KEY_HERE"
+  sqlite: # Configurations for sqlite
+    # Path to sqlite db
+    path: "Users.db"
+    # Whether it is absolute path
+    absolute: false
+    # Table name in db
+    table_name: "users"
+    # Email field in db
+    email_field: "email"
+    # Username field in db
+    username_field: "username"
+    # :assword field in db
+    password_field: "password"
+    # Salt field in db (only for password hashing)
+    salt_field: "SALTTTTTTTTTTTTTTTTTTTTTTTTTT"
+    # Salt length
+    salt_length: 6
+    # password hash type
+    # Name       | State       | Description
+    # BCrypt     | Default     | Used for most of php website apps,
+    #                            such as Xenforo, Laravel, ThinkPHP,
+    #                            the same as PHP password_hash and password_verify
+    # Plain      | Deprecated  | Deprecated.
+    #                            Save password directly in plain text.
+    #                            NEVER use it unless you knows what you are doing!
+    # MD5        | Deprecated  | Deprecated.
+    #                            Using MD5 algorithm to store password.
+    # MD5Salt    | Deprecated  | Deprecated.
+    #                            Using MD5 algorithm to store password with salt.
+    # SHA1       | Deprecated  | Deprecated.
+    #                            Using SHA1 algorithm to store password.
+    # SHA1Salt   | Deprecated  | Deprecated.
+    #                          | Using SHA1 algorithm to store password with salt.
+    # SHA224     | Available   | Using SHA224 algorithm to store password.
+    # SHA224Salt | Available   | Using SHA224 algorithm to store password with salt.
+    # SHA256     | Available   | Using SHA256 algorithm to store password.
+    # SHA256Salt | Available   | Using SHA256 algorithm to store password with salt.
+    # SHA384     | Available   | Using SHA384 algorithm to store password.
+    # SHA384Salt | Available   | sha384(sha384(password)+salt) .SHOULD use it to protect password
+    # SHA512     | Available   | Using SHA512 algorithm to store password.
+    # SHA512Salt | Available   | sha512(sha512(password)+salt) .SHOULD use it to protect password
+    password_hash: "BCrypt"
+  mysql: # Configurations for mysql
+    # host to mysql db
+    host: "localhost:3306"
+    # mysql username
+    username: "xenforoLogin"
+    # mysql password
+    password: "W8xMxJyYcxdmY33G"
+    # database name
+    database: "xenforoLogin"
+    # table name in db
+    table_name: "users"
+    # emain field in db
+    email_field: "email"
+    # username field in db
+    username_field: "username"
+    # password field in db
+    password_field: "password"
+    # Salt field in db (only for password hashing)
+    salt_field: "ImSalt"
+    # Salt length
+    salt_length: 6
+    # password hash type
+    # Name       | State       | Description
+    # BCrypt     | Default     | Used for most of php website apps,
+    #                            such as Xenforo, Laravel, ThinkPHP,
+    #                            the same as PHP password_hash and password_verify
+    # Plain      | Deprecated  | Deprecated.
+    #                            Save password directly in plain text.
+    #                            NEVER use it unless you knows what you are doing!
+    # MD5        | Deprecated  | Deprecated.
+    #                            Using MD5 algorithm to store password.
+    # MD5Salt    | Deprecated  | Deprecated.
+    #                            Using MD5 algorithm to store password with salt.
+    # SHA1       | Deprecated  | Deprecated.
+    #                            Using SHA1 algorithm to store password.
+    # SHA1Salt   | Deprecated  | Deprecated.
+    #                          | Using SHA1 algorithm to store password with salt.
+    # SHA224     | Available   | Using SHA224 algorithm to store password.
+    # SHA224Salt | Available   | Using SHA224 algorithm to store password with salt.
+    # SHA256     | Available   | Using SHA256 algorithm to store password.
+    # SHA256Salt | Available   | Using SHA256 algorithm to store password with salt.
+    # SHA384     | Available   | Using SHA384 algorithm to store password.
+    # SHA384Salt | Available   | sha384(sha384(password)+salt) .SHOULD use it to protect password
+    # SHA512     | Available   | Using SHA512 algorithm to store password.
+    # SHA512Salt | Available   | sha512(sha512(password)+salt) .SHOULD use it to protect password
+    password_hash: "BCrypt"
+
+# Set null to use server default spawn
+spawn:
+  world: null
+  x: null
+  y: null
+  z: null
+teleport:
+  # should tp to spawn before login in?
+  tp_spawn_before_login: true
+  # should tp to last quit location after login in?
+  tp_back_after_login: true
+secure:
+  # protect information about backpack
+  hide_inventory: true
+  # should use spectator during login?
+  spectator_login: true
+  # default gamemode[0,1,2,3]
+  default_gamemode: 0
+  # when should show a tip
+  show_tips_time: 5
+  # when kick player who have not login in
+  max_login_time: 30
+  # do NOT touch
+  cancel_chat_after_login: false
+lang:
+  register_email: "§6[§1XenforoLogin§6]§1§f Please send your email to register."
+  register_password: "§6[§1XenforoLogin§6]§1§f Please send your password."
+  register_password_confirm: "§6[§1XenforoLogin§6]§1§f Please send your password again."
+  logged_in: "§6[§1XenforoLogin§6]§1§f You have already logged in."
+  success: "§6[§1XenforoLogin§6]§1§f Logged in successfully."
+  need_login: "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat."
+  errors:
+    email: "§6[§1XenforoLogin§6]§1§f Wrong Email."
+    server: "§6[§1XenforoLogin§6]§1§f There is an issue when connecting to the server, contact the administrator."
+    confirm: "§6[§1XenforoLogin§6]§1§f Password is NOT identical to the first one."
+    handle: "§6[§1XenforoLogin§6]§1§f Sorry, we will finish your request soon. If it takes too long, contact the administrator."
+    password: "§6[§1XenforoLogin§6]§1§f Wrong password."
+    key: "§6[§1XenforoLogin§6]§1§f Please check api.key [key]"
+    url: "§6[§1XenforoLogin§6]§1§f Please check api.url [url]"
+    no_user: "§6[§1XenforoLogin§6]§1§f You are not whitelisted on this server."
+    time_out: "§6[§1XenforoLogin§6]§1§f Login timed out!"
+    name_incorrect: "§6[§1XenforoLogin§6]§1§f You should use \"[correct]\", not this to login."
+    unknown: "§6[§1XenforoLogin§6]§1§f Unknown error. Web send \"[message]\""
+    mail_exist: "§6[§1XenforoLogin§6]§1§f Your email already exists in our database. Try another one."
+    user_exist: "§6[§1XenforoLogin§6]§1§f Your username is already registered in our database. Try another one."

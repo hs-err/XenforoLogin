@@ -26,10 +26,12 @@ public class HasherTool {
         return hash(hash(data) + salt);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean verify(String hash, String data) {
         return hash(data).toLowerCase().equals(hash.toLowerCase());
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean verify(String hash, String data, String salt) {
         return hash(hash(data) + salt).toLowerCase().equals(hash.toLowerCase());
     }
@@ -39,6 +41,7 @@ public class HasherTool {
     }
 
     public String generateSalt() {
+        @SuppressWarnings("SpellCheckingInspection")
         String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random1 = new Random();
         StringBuffer sb = new StringBuffer();
