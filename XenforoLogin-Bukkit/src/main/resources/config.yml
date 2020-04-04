@@ -1,7 +1,12 @@
 api:
-  system: "sqlite" # xenforo  discuz sqlite
-  # Can register in game?
-  # Not support register discuz account.
+  # account system
+  # xenforo | https://github.com/Mohist-Community/XenforoLogin/wiki/Installation-for-Xenforo
+  # discuz  | https://github.com/Mohist-Community/XenforoLogin/wiki/Installation-for-Discuz
+  # web     | https://github.com/Mohist-Community/XenforoLogin/wiki/Installation-for-Web
+  # sqlite  | https://github.com/Mohist-Community/XenforoLogin/wiki/Installation-for-Sqlite
+  # mysql   | https://github.com/Mohist-Community/XenforoLogin/wiki/Installation-for-Mysql
+  system: "sqlite"
+  # Can register in game
   register: true
   xenforo: # Configurations for xenforo
     url: "http://example.com/api"
@@ -9,6 +14,10 @@ api:
     key: "YOUR_KEY_HERE"
   discuz: # Configurations for discuz
     url: "http://example.com/XenforoLogin.php"
+    # Application key
+    key: "YOUR_KEY_HERE"
+  web: # Configurations for WebApi
+    url: "http://example.com/api.php"
     # Application key
     key: "YOUR_KEY_HERE"
   sqlite: # Configurations for sqlite
@@ -30,22 +39,8 @@ api:
     salt_length: 6
     # password hash type
     # most Recommend : BCrypt
-    # name       | Recommend   | Describe
-    # BCrypt     | Recommend   | For PHP Software,likes Xenforo,Laravel,Thinkphp,as PHP password_hash and password_verify
-    # Plain      | Never       | Save password Directly.NEVER use it UNLESS you don't decide use what further and will trans into other hash.
-    # MD5        | UnRecommend | Just md5(password) .It's not secure now.
-    # MD5Salt    | Support     | md5(md5(password)+salt) .You can use it But NOT Recommend.
-    # SHA1       | Support     | sha1(password) .A good secure but why not try SHA1Salt?
-    # SHA1Salt   | Recommend   | sha1(sha1(password)+salt) .SHOULD use it to protect password
-    # SHA224     | Support     | sha224(password) .A good secure but not verify too much.
-    # SHA224Salt | Recommend   | sha224(sha224(password)+salt) .SHOULD use it to protect password
-    # SHA256     | UnRecommend | sha256(password) .It's not secure now.
-    # SHA256Salt | Support     | sha256(sha256(password)+salt) .You can use it But NOT Recommend.
-    # SHA384     | Support     | sha384(password) .A good secure but not verify too much.
-    # SHA384Salt | Recommend   | sha384(sha384(password)+salt) .SHOULD use it to protect password
-    # SHA512     | Support     | sha512(password) .A good secure but not verify too much.
-    # SHA512Salt | Recommend   | sha512(sha512(password)+salt) .SHOULD use it to protect password
-    password_hash: "SHA512Salt"
+    # https://github.com/Mohist-Community/XenforoLogin/wiki/Select-password_hash
+    password_hash: "BCrypt"
   mysql: # Configurations for mysql
     # host to mysql db
     host: "localhost:3306"
@@ -69,22 +64,8 @@ api:
     salt_length: 6
     # password hash type
     # most Recommend : BCrypt
-    # name       | Recommend   | Describe
-    # BCrypt     | Recommend   | For PHP Software,likes Xenforo,Laravel,Thinkphp,as PHP password_hash and password_verify
-    # Plain      | Never       | Save password Directly.NEVER use it UNLESS you don't decide use what further and will trans into other hash.
-    # MD5        | UnRecommend | Just md5(password) .It's not secure now.
-    # MD5Salt    | Support     | md5(md5(password)+salt) .You can use it But NOT Recommend.
-    # SHA1       | Support     | sha1(password) .A good secure but why not try SHA1Salt?
-    # SHA1Salt   | Recommend   | sha1(sha1(password)+salt) .SHOULD use it to protect password
-    # SHA224     | Support     | sha224(password) .A good secure but not verify too much.
-    # SHA224Salt | Recommend   | sha224(sha224(password)+salt) .SHOULD use it to protect password
-    # SHA256     | UnRecommend | sha256(password) .It's not secure now.
-    # SHA256Salt | Support     | sha256(sha256(password)+salt) .You can use it But NOT Recommend.
-    # SHA384     | Support     | sha384(password) .A good secure but not verify too much.
-    # SHA384Salt | Recommend   | sha384(sha384(password)+salt) .SHOULD use it to protect password
-    # SHA512     | Support     | sha512(password) .A good secure but not verify too much.
-    # SHA512Salt | Recommend   | sha512(sha512(password)+salt) .SHOULD use it to protect password
-    password_hash: "SHA512Salt"
+    # https://github.com/Mohist-Community/XenforoLogin/wiki/Select-password_hash
+    password_hash: "BCrypt"
 
 # Set null to use server default spawn
 spawn:
