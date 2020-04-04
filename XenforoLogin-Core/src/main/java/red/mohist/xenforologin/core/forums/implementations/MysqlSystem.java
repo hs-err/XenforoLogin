@@ -98,7 +98,7 @@ public class MysqlSystem implements ForumSystem {
                         "INSERT INTO " + tableName + " (`" + emailField + "`, `" + usernameField + "`, `" + passwordField + "`) VALUES (?, ?, ?);");
                 pps.setString(1, email);
                 pps.setString(2, player.getName());
-                pps.setString(3, password);
+                pps.setString(3, hasherTool.hash(password));
             }
             pps.executeUpdate();
 
