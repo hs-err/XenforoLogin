@@ -22,4 +22,5 @@ rootProject.name = 'XenforoLogin'
 include(':XenforoLogin-Bukkit')
 include(':XenforoLogin-Core')
 include(':XenforoLogin-Fabric')
+include 'XenforoLogin-YggdrasilServer'
 
