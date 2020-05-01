@@ -82,6 +82,7 @@ dependencies {
         exclude group: 'org.lwjgl'
         exclude group: 'com.google.jimfs'
         exclude group: 'org.ow2.asm'
+     }
 }
 assemble.dependsOn(shadowJar)
 
