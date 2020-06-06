@@ -10,6 +10,7 @@
 plugins {
     id 'war'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id "com.github.gradle-lean" version "0.1.2"
 }
 
 allprojects {
@@ -81,8 +82,8 @@ dependencies {
         exclude group: 'org.lwjgl'
         exclude group: 'com.google.jimfs'
         exclude group: 'org.ow2.asm'
-    }
+     }
 }
-
 assemble.dependsOn(shadowJar)
+
 
