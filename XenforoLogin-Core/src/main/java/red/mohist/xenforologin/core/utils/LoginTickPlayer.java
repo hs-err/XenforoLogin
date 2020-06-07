@@ -18,10 +18,10 @@ import javax.annotation.Nonnull;
 
 public class LoginTickPlayer {
 
-    static final int showTipTime = XenforoLoginCore.instance.api.getConfigValueInt("secure.show_tips_time", 5);
+    static final int showTipTime = Config.getInteger("secure.show_tips_time", 5);
     long lastTipTime = 0;
     long startTime = System.currentTimeMillis();
-    int loginTimeout = XenforoLoginCore.instance.api.getConfigValueInt("secure.max_login_time", 30);
+    int loginTimeout = Config.getInteger("secure.max_login_time", 30);
     @Nonnull
     AbstractPlayer player;
 
@@ -46,7 +46,7 @@ public class LoginTickPlayer {
         }
         if ((now - startTime) / 1000 > loginTimeout
                 && XenforoLoginCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
-            player.kick(XenforoLoginCore.instance.langFile("errors.time_out"));
+            player.kick(Helper.langFile("errors.time_out"));
             return TickResult.DONE;
         }
         if (!player.isOnline() || !XenforoLoginCore.instance.needCancelled(player)) {

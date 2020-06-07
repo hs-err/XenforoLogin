@@ -22,20 +22,6 @@ public interface PlatformAdapter {
 
     LocationInfo getSpawn(String world);
 
-    Object getConfigValue(String key);
-
-    Object getConfigValue(String key, Object def);
-
-    Object getConfigValue(String file, String key, Object def);
-
-    int getConfigValueInt(String key, int def);
-
-    double getConfigValueDouble(String key, double def);
-
-    float getConfigValueFloat(String key, float def);
-
-    void setConfigValue(String file, String key, Object value);
-
     void login(AbstractPlayer player);
 
     void sendBlankInventoryPacket(AbstractPlayer player);

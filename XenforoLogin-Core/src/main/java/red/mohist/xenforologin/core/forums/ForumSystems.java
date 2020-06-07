@@ -11,6 +11,8 @@ package red.mohist.xenforologin.core.forums;
 
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.forums.implementations.*;
+import red.mohist.xenforologin.core.utils.Config;
+import red.mohist.xenforologin.core.utils.Helper;
 
 import java.util.Objects;
 
@@ -19,42 +21,42 @@ public class ForumSystems {
 
     public static void reloadConfig() {
         ForumSystem cs;
-        switch ((String) Objects.requireNonNull(XenforoLoginCore.instance.api.getConfigValue("api.system", "xenforo"))) {
+        switch (Config.getString("api.system", "xenforo")) {
             case "xenforo":
-                cs = new XenforoSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.xenforo.url"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.xenforo.key"));
+                cs = new XenforoSystem(Config.getString("api.xenforo.url"),
+                        Config.getString("api.xenforo.key"));
                 break;
             case "discuz":
-                cs = new DiscuzSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.discuz.url"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.discuz.key"));
+                cs = new DiscuzSystem(Config.getString("api.discuz.url"),
+                        Config.getString("api.discuz.key"));
                 break;
             case "sqlite":
-                cs = new SqliteSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.path"),
-                        (boolean) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.absolute", false),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.table_name"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.email_field"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.username_field"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_field"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.salt_field"),
-                        XenforoLoginCore.instance.api.getConfigValueInt("api.sqlite.salt_length", 6),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.sqlite.password_hash"));
+                cs = new SqliteSystem(Config.getString("api.sqlite.path"),
+                        Config.getBoolean("api.sqlite.absolute", false),
+                        Config.getString("api.sqlite.table_name"),
+                        Config.getString("api.sqlite.email_field"),
+                        Config.getString("api.sqlite.username_field"),
+                        Config.getString("api.sqlite.password_field"),
+                        Config.getString("api.sqlite.salt_field"),
+                        Config.getInteger("api.sqlite.salt_length", 6),
+                        Config.getString("api.sqlite.password_hash"));
                 break;
             case "web":
-                cs = new WebSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.web.url"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.web.key"));
+                cs = new WebSystem(Config.getString("api.web.url"),
+                        Config.getString("api.web.key"));
                 break;
             case "mysql":
-                cs = new MysqlSystem((String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.host"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.username"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.database"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.table_name"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.email_field"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.username_field"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password_field"),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.salt_field"),
-                        XenforoLoginCore.instance.api.getConfigValueInt("api.mysql.salt_length", 6),
-                        (String) XenforoLoginCore.instance.api.getConfigValue("api.mysql.password_hash"));
+                cs = new MysqlSystem(Config.getString("api.mysql.host"),
+                        Config.getString("api.mysql.username"),
+                        Config.getString("api.mysql.password"),
+                        Config.getString("api.mysql.database"),
+                        Config.getString("api.mysql.table_name"),
+                        Config.getString("api.mysql.email_field"),
+                        Config.getString("api.mysql.username_field"),
+                        Config.getString("api.mysql.password_field"),
+                        Config.getString("api.mysql.salt_field"),
+                        Config.getInteger("api.mysql.salt_length", 6),
+                        Config.getString("api.mysql.password_hash"));
                 break;
             default:
                 cs = null;

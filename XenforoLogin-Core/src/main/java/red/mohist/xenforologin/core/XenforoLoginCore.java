@@ -15,11 +15,12 @@ import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
+import red.mohist.xenforologin.core.utils.Config;
+import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 import red.mohist.xenforologin.core.utils.ResultTypeUtils;
 
 import java.sql.*;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -89,42 +90,17 @@ public final class XenforoLoginCore {
     private void loadConfig() {
         LocationInfo spawn_location = api.getSpawn("world");
         default_location = new LocationInfo(
-                (String) api.getConfigValue("spawn.world", "world"),
-                api.getConfigValueDouble("spawn.x", spawn_location.x),
-                api.getConfigValueDouble("spawn.y", spawn_location.y),
-                api.getConfigValueDouble("spawn.z", spawn_location.z),
-                api.getConfigValueFloat("spawn.yaw", spawn_location.yaw),
-                api.getConfigValueFloat("spawn.pitch", spawn_location.pitch)
+                Config.getString("spawn.world", "world"),
+                Config.getDouble("spawn.x", spawn_location.x),
+                Config.getDouble("spawn.y", spawn_location.y),
+                Config.getDouble("spawn.z", spawn_location.z),
+                Config.getFloat("spawn.yaw", spawn_location.yaw),
+                Config.getFloat("spawn.pitch", spawn_location.pitch)
         );
     }
 
     public boolean needCancelled(AbstractPlayer player) {
         return !logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN).equals(StatusType.LOGGED_IN);
-    }
-
-    public String langFile(String key) {
-        String result = (String) api.getConfigValue("lang." + key);
-        if (result == null) {
-            return key;
-        }
-        return result;
-    }
-
-    public String langFile(String key, Map<String, String> data) {
-        String result = (String) api.getConfigValue("lang." + key);
-        if (result == null) {
-            StringBuilder resultBuilder = new StringBuilder(key);
-            resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
-            }
-            result = resultBuilder.toString();
-            return result;
-        }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
-        }
-        return result;
     }
 
     public void login(AbstractPlayer player) {
@@ -134,13 +110,13 @@ public final class XenforoLoginCore {
             pps.setString(1, player.getUniqueId().toString());
             ResultSet rs = pps.executeQuery();
             if (!rs.next()) {
-                if ((boolean) api.getConfigValue("teleport.tp_back_after_login", true)) {
+                if (Config.getBoolean("teleport.tp_back_after_login", true)) {
                     LocationInfo spawn_location = api.getSpawn("world");
                     player.teleport(spawn_location);
                 }
-                player.setGamemode(api.getConfigValueInt("secure.default_gamemode", 0));
+                player.setGamemode(Config.getInteger("secure.default_gamemode", 0));
             } else {
-                if ((boolean) api.getConfigValue("teleport.tp_back_after_login", true)) {
+                if (Config.getBoolean("teleport.tp_back_after_login", true)) {
                     try {
                         player.teleport(new LocationInfo(
                                 rs.getString("world"),
@@ -159,27 +135,27 @@ public final class XenforoLoginCore {
                 player.setGamemode(rs.getInt("mode"));
             }
         } catch (Throwable e) {
-            player.setGamemode(api.getConfigValueInt("secure.default_gamemode", 0));
+            player.setGamemode(Config.getInteger("secure.default_gamemode", 0));
             e.printStackTrace();
         }
         api.login(player);
         api.getLogger().info("Logging in " + player.getUniqueId());
-        player.sendMessage(XenforoLoginCore.instance.langFile("success"));
+        player.sendMessage(Helper.langFile("success"));
     }
 
     public void message(AbstractPlayer player) {
         switch (logged_in.get(player.getUniqueId())) {
             case NEED_LOGIN:
-                player.sendMessage(langFile("need_login"));
+                player.sendMessage(Helper.langFile("need_login"));
                 break;
             case NEED_REGISTER_EMAIL:
-                player.sendMessage(langFile("register_email"));
+                player.sendMessage(Helper.langFile("register_email"));
                 break;
             case NEED_REGISTER_PASSWORD:
-                player.sendMessage(langFile("register_password"));
+                player.sendMessage(Helper.langFile("register_password"));
                 break;
             case NEED_REGISTER_CONFIRM:
-                player.sendMessage(langFile("register_password_confirm"));
+                player.sendMessage(Helper.langFile("register_password_confirm"));
                 break;
         }
     }
@@ -220,26 +196,26 @@ public final class XenforoLoginCore {
                 XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                 return null;
             case ERROR_NAME:
-                return XenforoLoginCore.instance.langFile("errors.name_incorrect",
+                return Helper.langFile("errors.name_incorrect",
                         resultType.getInheritedObject());
             case NO_USER:
-                if ((boolean) XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
+                if (Config.getBoolean("api.register", false)) {
                     XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
                 } else {
-                    return XenforoLoginCore.instance.langFile("errors.no_user");
+                    return Helper.langFile("errors.no_user");
                 }
             case UNKNOWN:
-                return XenforoLoginCore.instance.langFile("errors.unknown", resultType.getInheritedObject());
+                return Helper.langFile("errors.unknown", resultType.getInheritedObject());
         }
-        return XenforoLoginCore.instance.langFile("errors.server");
+        return Helper.langFile("errors.server");
     }
 
     public void onChat(AbstractPlayer player, String message) {
         StatusType status = XenforoLoginCore.instance.logged_in.get(player.getUniqueId());
         switch (status) {
             case NEED_CHECK:
-                player.sendMessage(XenforoLoginCore.instance.langFile("need_check"));
+                player.sendMessage(Helper.langFile("need_check"));
                 break;
             case NEED_LOGIN:
                 XenforoLoginCore.instance.logged_in.put(
@@ -254,7 +230,7 @@ public final class XenforoLoginCore {
                     logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(message));
                     message(player);
                 } else {
-                    player.sendMessage(XenforoLoginCore.instance.langFile("errors.email"));
+                    player.sendMessage(Helper.langFile("errors.email"));
                 }
                 break;
             case NEED_REGISTER_PASSWORD:
@@ -280,14 +256,14 @@ public final class XenforoLoginCore {
                         XenforoLoginCore.instance.message(player);
                     }
                 } else {
-                    player.sendMessage(XenforoLoginCore.instance.langFile("errors.confirm"));
+                    player.sendMessage(Helper.langFile("errors.confirm"));
                     XenforoLoginCore.instance.logged_in.put(
                             player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
                     XenforoLoginCore.instance.message(player);
                 }
                 break;
             case HANDLE:
-                player.sendMessage(XenforoLoginCore.instance.langFile("errors.handle"));
+                player.sendMessage(Helper.langFile("errors.handle"));
                 break;
         }
     }

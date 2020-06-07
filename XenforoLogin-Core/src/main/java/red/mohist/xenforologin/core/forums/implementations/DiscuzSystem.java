@@ -24,6 +24,7 @@ import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
+import red.mohist.xenforologin.core.utils.Helper;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class DiscuzSystem implements ForumSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 404) {
                     XenforoLoginCore.instance.api.getLogger().warning(
-                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                            Helper.langFile("errors.url", ImmutableMap.of(
                                     "url", url)));
                 }
                 return null;
@@ -122,7 +123,7 @@ public class DiscuzSystem implements ForumSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 404) {
                     XenforoLoginCore.instance.api.getLogger().warning(
-                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                            Helper.langFile("errors.url", ImmutableMap.of(
                                     "url", url)));
                 }
                 return null;
@@ -168,7 +169,7 @@ public class DiscuzSystem implements ForumSystem {
                     } else {
                         if (errors.get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")) {
                             XenforoLoginCore.instance.api.getLogger().warning(
-                                    XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                                    Helper.langFile("errors.key", ImmutableMap.of(
                                             "key", key)));
                             return ResultType.SERVER_ERROR;
                         }
@@ -205,7 +206,7 @@ public class DiscuzSystem implements ForumSystem {
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
                 XenforoLoginCore.instance.api.getLogger().warning(
-                        XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                        Helper.langFile("errors.url", ImmutableMap.of(
                                 "url", url)));
             }
             return null;
@@ -242,7 +243,7 @@ public class DiscuzSystem implements ForumSystem {
         }
         if (json.get("errors") != null && json.get("errors").getAsJsonArray().get(0).getAsJsonObject().get("code").getAsString().equals("UC_key_error")) {
             XenforoLoginCore.instance.api.getLogger().warning(
-                    XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                    Helper.langFile("errors.key", ImmutableMap.of(
                             "key", key)));
             return ResultType.SERVER_ERROR;
         }
