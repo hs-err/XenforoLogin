@@ -27,6 +27,10 @@ public class RequestConfig {
         meta.put(key,value);
         return this;
     }
+    public RequestConfig removeMeta(String key){
+        meta.remove(key);
+        return this;
+    }
     public RequestConfig addSkinDomains(String value){
         skinDomains.add(value);
         return this;

@@ -39,16 +39,17 @@
     "server": {
       "port": 8080
     },
+    "skinDomains": [],
     "token": {
-      "time-to-fully-expired": "20m",
+      "time-to-fully-expired": 259200,
       "enable-time-to-partially-expired": true,
       "time-to-partially-expired": "10m",
       "only-last-session-available": false
     },
     "core": {
-      "server-name": "XenforoLogin",
+      "serverName": "XenforoLogin",
       "url": "http://localhost:8080/",
-      "skin-domains": [
+      "skinDomains": [
         "localhost"
       ]
     },

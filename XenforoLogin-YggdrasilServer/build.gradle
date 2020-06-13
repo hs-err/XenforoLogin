@@ -14,6 +14,11 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.1'
+
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.50.Final'
+
+    compile 'com.blinkfox:zealot:1.3.1'
 }
 
 assemble.dependsOn(shadowJar)

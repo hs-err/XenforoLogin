@@ -9,58 +9,56 @@
 
 package red.mohist.xenforologin.yggdrasilserver;
 
-
-import com.google.gson.Gson;
-import org.apache.http.*;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.apache.logging.log4j.LogManager;
-import org.w3c.dom.Entity;
-import red.mohist.xenforologin.core.XenforoLoginCore;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import red.mohist.xenforologin.core.utils.Config;
-import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.yggdrasilserver.modules.RequestConfig;
+import red.mohist.xenforologin.yggdrasilserver.provider.UserProvider;
 
-import java.io.*;
+import java.net.InetSocketAddress;
+import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.sql.SQLException;
 
 public class YggdrasilServerCore {
-    private RSAPublicKey rsaPublicKey;
-    private RSAPrivateKey rsaPrivateKey;
-    public YggdrasilServerCore() throws IOException, NoSuchAlgorithmException {
+    private int port ;
+    public static YggdrasilServerCore instance;
+    public RSAPublicKey rsaPublicKey;
+    public RSAPrivateKey rsaPrivateKey;
+    public KeyPair rsaKeyPair;
+    public YggdrasilServerCore() throws NoSuchAlgorithmException, SQLException {
+        this.port = Config.getInteger("yggdrasil.server.port");
+        instance=this;
         generalKey();
+        new UserProvider();
+    }
 
-       ServerBootstrap.bootstrap()
-               .setListenerPort(8080)
-               .registerHandler("/", (request, response, context) -> {
-                   RequestConfig requestConfig=new RequestConfig();
-                   requestConfig
-                           .addMeta("serverName",Config.getString("yggdrasil.serverName","XenforoLoginCore"))
-                           .addMeta("implementationName","XenforoLoginYggdrasil")
-                           .addMeta("implementationVersion","testTEST");
-                   ArrayList<String> skinDomains=Config.getStringArray("yggdrasil.skinDomains");
-                   //skinDomains.forEach(requestConfig::addSkinDomains);
-                   requestConfig.setSignaturePublickey("-----BEGIN PUBLIC KEY-----\n" +
-                           Base64.getMimeEncoder(76, new byte[] { '\n' }).encodeToString(rsaPublicKey.getEncoded()) +
-                           "\n-----END PUBLIC KEY-----\n");
-                   response.setEntity(new StringEntity(new Gson().toJson(requestConfig)));
-               })
-               .setExceptionLogger(Throwable::printStackTrace)
-               .create().start();
+    public void start() throws Exception{
+        ServerBootstrap bootstrap = new ServerBootstrap();
+        EventLoopGroup boss = new NioEventLoopGroup();
+        EventLoopGroup work = new NioEventLoopGroup();
+        bootstrap.group(boss,work)
+                .handler(new LoggingHandler(LogLevel.DEBUG))
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new HttpServerInitializer());
+
+        ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
+        System.out.println(" server start up on port : " + port);
+        f.channel().closeFuture().sync();
     }
     private void generalKey() throws NoSuchAlgorithmException {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         gen.initialize(4096, new SecureRandom());
-        rsaPublicKey= (RSAPublicKey) gen.genKeyPair().getPublic();
-        rsaPrivateKey= (RSAPrivateKey) gen.genKeyPair().getPrivate();
+        rsaKeyPair=gen.genKeyPair();
+        rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
+        rsaPrivateKey = (RSAPrivateKey) rsaKeyPair.getPrivate();
     }
 }
