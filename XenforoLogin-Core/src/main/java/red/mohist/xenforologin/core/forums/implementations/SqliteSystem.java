@@ -42,6 +42,7 @@ public class SqliteSystem implements ForumSystem {
         HasherTools.loadHasher(passwordHash, saltLength);
         hasherTool = HasherTools.getCurrentSystem();
         try {
+
             if (absolute) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + path);
                 Helper.getLogger().info(Helper.getConfigPath(path));
@@ -53,10 +54,10 @@ public class SqliteSystem implements ForumSystem {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL,`" + saltField + "` TEXT NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
+                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL,`" + saltField + "` TEXT NOT NULL, PRIMARY KEY (`id` AUTOINCREMENT));");
                 } else {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
+                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL, PRIMARY KEY (`id` AUTOINCREMENT));");
                 }
                 pps.executeUpdate();
             }
