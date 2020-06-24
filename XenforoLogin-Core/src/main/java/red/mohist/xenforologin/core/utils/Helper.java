@@ -17,10 +17,9 @@ import org.apache.commons.codec.Charsets;
 import red.mohist.xenforologin.core.interfaces.LogProvider;
 
 import java.io.*;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +47,10 @@ public class Helper {
         generalConfigMap("",jsonDefault);
 
         new Config(jsonMap);
+    }
+
+    public static String getConfigPath(String filename) {
+        return Paths.get(instance.basePath,filename).toString();
     }
 
     protected final Reader getTextResource(String file) {

@@ -9,21 +9,12 @@
 
 package red.mohist.xenforologin.core.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.apache.commons.codec.Charsets;
-import red.mohist.xenforologin.core.interfaces.LogProvider;
 
-import java.io.*;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class Config {
     public static Config instance;
@@ -44,89 +35,129 @@ public class Config {
         return Config.instance.jsonMap.get("." + key).getAsString();
     }
     public static String getString(String key,String def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsString()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsString()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Integer getInteger(String key){
         return Config.instance.jsonMap.get("." + key).getAsInt();
     }
     public static Integer getInteger(String key,Integer def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsInt()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsInt()
+                    :def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static BigInteger getBigInteger(String key){
         return Config.instance.jsonMap.get("." + key).getAsBigInteger();
     }
     public static BigInteger getInteger(String key,BigInteger def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsBigInteger()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsBigInteger()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Double getDouble(String key){
         return Config.instance.jsonMap.get("." + key).getAsDouble();
     }
     public static Double getDouble(String key,Double def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsDouble()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsDouble()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static BigDecimal getBigDecimal(String key){
         return Config.instance.jsonMap.get("." + key).getAsBigDecimal();
     }
     public static BigDecimal getBigDecimal(String key, BigDecimal def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsBigDecimal()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsBigDecimal()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Float getFloat(String key){
         return Config.instance.jsonMap.get("." + key).getAsFloat();
     }
     public static Float getFloat(String key, Float def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsFloat()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsFloat()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Boolean getBoolean(String key){
         return Config.instance.jsonMap.get("." + key).getAsBoolean();
     }
     public static Boolean getBoolean(String key, Boolean def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsBoolean()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsBoolean()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Byte getByte(String key){
         return Config.instance.jsonMap.get("." + key).getAsByte();
     }
     public static Byte getByte(String key, Byte def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsByte()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsByte()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Long getLong(String key){
         return Config.instance.jsonMap.get("." + key).getAsLong();
     }
     public static Long getLong(String key, Long def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsLong()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsLong()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 
     public static Number getNumber(String key){
         return Config.instance.jsonMap.get("." + key).getAsNumber();
     }
     public static Number getNumber(String key, Number def){
-        return Config.instance.jsonMap.containsKey("." + key)
-                ? Config.instance.jsonMap.get("." + key).getAsLong()
-                :def;
+        try {
+            return Config.instance.jsonMap.containsKey("." + key)
+                    ? Config.instance.jsonMap.get("." + key).getAsNumber()
+                    : def;
+        }catch (Exception e){
+            return def;
+        }
     }
 }

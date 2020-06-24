@@ -9,14 +9,15 @@
 
 package red.mohist.xenforologin.yggdrasilserver;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.LogProvider;
 import red.mohist.xenforologin.core.utils.Helper;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class YggdrasilServerEntry {
-    private static final Logger logger = LogManager
+    private static final Logger logger = Logger
             .getLogger("XenforoLogin-Yggdrasil-Launcher");
 
 
@@ -30,17 +31,17 @@ public class YggdrasilServerEntry {
 
             @Override
             public void info(String info, Exception exception) {
-                logger.info(info,exception);
+                logger.log(Level.INFO,info,exception);
             }
 
             @Override
             public void warn(String info) {
-                logger.warn(info);
+                logger.warning(info);
             }
 
             @Override
             public void warn(String info, Exception exception) {
-                logger.warn(info,exception);
+                logger.log(Level.WARNING,info,exception);
             }
         });
         ForumSystems.reloadConfig();

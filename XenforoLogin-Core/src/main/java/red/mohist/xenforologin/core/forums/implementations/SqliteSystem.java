@@ -10,12 +10,12 @@
 package red.mohist.xenforologin.core.forums.implementations;
 
 import com.google.common.collect.ImmutableMap;
-import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.hasher.HasherTool;
 import red.mohist.xenforologin.core.hasher.HasherTools;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
+import red.mohist.xenforologin.core.utils.Helper;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
@@ -44,10 +44,10 @@ public class SqliteSystem implements ForumSystem {
         try {
             if (absolute) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-                XenforoLoginCore.instance.api.getLogger().info(path);
+                Helper.getLogger().info(Helper.getConfigPath(path));
             } else {
-                connection = DriverManager.getConnection("jdbc:sqlite:" + XenforoLoginCore.instance.api.getConfigPath(path));
-                XenforoLoginCore.instance.api.getLogger().info(XenforoLoginCore.instance.api.getConfigPath(path));
+                connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath(path));
+                Helper.getLogger().info(Helper.getConfigPath(path));
             }
             if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
                 PreparedStatement pps;
