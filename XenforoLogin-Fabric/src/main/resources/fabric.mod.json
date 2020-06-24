@@ -24,9 +24,8 @@
     "fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "fabric": "*",
-    "minecraft": "1.15.x"
+    "fabricloader": ">=0.8.8",
+    "minecraft": ">=1.16"
   },
   "suggests": {
     "flamingo": "*"

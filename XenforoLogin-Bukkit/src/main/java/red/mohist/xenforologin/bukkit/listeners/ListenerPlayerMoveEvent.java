@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
 import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.utils.Helper;
+import red.mohist.xenforologin.core.utils.Config;
 
 
 public class ListenerPlayerMoveEvent implements BukkitAPIListener {

@@ -9,13 +9,11 @@
 
 package red.mohist.xenforologin.fabric;
 
-import net.fabricmc.api.ModInitializer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings("unused")
-public class FabricLoader implements ModInitializer {
+public class MixinLogger {
 
-    @Override
-    public void onInitialize() {
-        System.out.println("Hello world");
-    }
+    public static final Logger logger = LogManager.getLogger("XenforoLogin|FabricMixins");
+
 }
