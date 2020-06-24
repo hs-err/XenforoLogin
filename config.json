@@ -19,7 +19,7 @@
       "password_field": "password",
       "salt_field": "salt",
       "salt_length": 6,
-      "password_hash": "BCrypt"
+      "password_hash": "Plain"
     },
     "mysql": {
       "host": "localhost:3306",

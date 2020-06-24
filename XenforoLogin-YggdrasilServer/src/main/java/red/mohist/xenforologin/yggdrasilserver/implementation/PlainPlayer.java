@@ -12,13 +12,12 @@ package red.mohist.xenforologin.yggdrasilserver.implementation;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 
-import java.net.InetAddress;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class PlainPlayer extends AbstractPlayer {
-    public PlainPlayer(String name, UUID uuid, InetAddress address) {
-        super(name, uuid, address);
+    public PlainPlayer(String name) {
+        super(name, UUID.randomUUID(), null);
     }
 
     @Override

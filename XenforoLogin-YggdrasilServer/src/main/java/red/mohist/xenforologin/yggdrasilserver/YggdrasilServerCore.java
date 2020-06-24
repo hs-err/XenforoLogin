@@ -9,17 +9,11 @@
 
 package red.mohist.xenforologin.yggdrasilserver;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import red.mohist.xenforologin.core.utils.Config;
+import red.mohist.xenforologin.core.utils.Helper;
+import red.mohist.xenforologin.yggdrasilserver.modules.TokenPair;
 import red.mohist.xenforologin.yggdrasilserver.provider.UserProvider;
 
-import java.net.InetSocketAddress;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -37,22 +31,64 @@ public class YggdrasilServerCore {
     public YggdrasilServerCore() throws NoSuchAlgorithmException, SQLException {
         this.port = Config.getInteger("yggdrasil.server.port");
         instance=this;
-        generalKey();
         new UserProvider();
+        generalKey();
     }
 
     public void start() throws Exception{
-        ServerBootstrap bootstrap = new ServerBootstrap();
-        EventLoopGroup boss = new NioEventLoopGroup();
-        EventLoopGroup work = new NioEventLoopGroup();
-        bootstrap.group(boss,work)
-                .handler(new LoggingHandler(LogLevel.DEBUG))
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new HttpServerInitializer());
+        String accessToken = UserProvider.instance.login("logos","PoweredBy1090","client");
+        if(accessToken==null){
+            Helper.getLogger().info("Login fail");
+            return;
+        }
 
-        ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
-        System.out.println(" server start up on port : " + port);
-        f.channel().closeFuture().sync();
+        if(!UserProvider.instance.verifyToken("logos","client",accessToken)){
+            Helper.getLogger().info("Verify before fresh fail");
+            return;
+        }
+
+        TokenPair tokenPair=UserProvider.instance.refreshToken("logos","client",accessToken);
+        if(tokenPair==null){
+            Helper.getLogger().info("Refresh with client fail");
+            return;
+        }
+        accessToken=tokenPair.accessToken;
+        tokenPair=UserProvider.instance.refreshToken("logos",null,accessToken);
+        if(tokenPair==null){
+            Helper.getLogger().info("Refresh without client fail");
+            return;
+        }
+        accessToken=tokenPair.accessToken;
+
+        if(!UserProvider.instance.verifyToken("logos","client",accessToken)){
+            Helper.getLogger().info("Verify after refresh fail");
+            return;
+        }
+
+        UserProvider.instance.invalidateToken(accessToken);
+
+        if(UserProvider.instance.verifyToken("logos","client",accessToken)){
+            Helper.getLogger().info("Verify after invalidate still success");
+            return;
+        }
+
+        accessToken = UserProvider.instance.login("logos","PoweredBy1090","ctoken");
+        if(accessToken==null){
+            Helper.getLogger().info("Login.2 fail");
+            return;
+        }
+
+        if(!UserProvider.instance.signout("logos","PoweredBy1090")){
+            Helper.getLogger().info("SignOut fail");
+            return;
+        }
+
+        if(UserProvider.instance.verifyToken("logos","ctoken",accessToken)){
+            Helper.getLogger().info("Verify after sign out still success");
+            return;
+        }
+
+        Helper.getLogger().info("2333");
     }
     private void generalKey() throws NoSuchAlgorithmException {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
