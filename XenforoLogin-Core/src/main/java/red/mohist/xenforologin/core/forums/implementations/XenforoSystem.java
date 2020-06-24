@@ -24,6 +24,7 @@ import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
+import red.mohist.xenforologin.core.utils.Helper;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -53,11 +54,11 @@ public class XenforoSystem implements ForumSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 401) {
                     XenforoLoginCore.instance.api.getLogger().warning(
-                            XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                            Helper.langFile("errors.key", ImmutableMap.of(
                                     "key", key)));
                 } else if (status == 404) {
                     XenforoLoginCore.instance.api.getLogger().warning(
-                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                            Helper.langFile("errors.url", ImmutableMap.of(
                                     "url", url)));
                 }
                 return null;
@@ -127,11 +128,11 @@ public class XenforoSystem implements ForumSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
                     XenforoLoginCore.instance.api.getLogger().warning(
-                            XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                            Helper.langFile("errors.key", ImmutableMap.of(
                                     "key", key)));
                 } else if (status == 404) {
                     XenforoLoginCore.instance.api.getLogger().warning(
-                            XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                            Helper.langFile("errors.url", ImmutableMap.of(
                                     "url", url)));
                 }
                 return null;
@@ -208,11 +209,11 @@ public class XenforoSystem implements ForumSystem {
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 401) {
                 XenforoLoginCore.instance.api.getLogger().warning(
-                        XenforoLoginCore.instance.langFile("errors.key", ImmutableMap.of(
+                        Helper.langFile("errors.key", ImmutableMap.of(
                                 "key", key)));
             } else if (status == 404) {
                 XenforoLoginCore.instance.api.getLogger().warning(
-                        XenforoLoginCore.instance.langFile("errors.url", ImmutableMap.of(
+                        Helper.langFile("errors.url", ImmutableMap.of(
                                 "url", url)));
             }
             return null;

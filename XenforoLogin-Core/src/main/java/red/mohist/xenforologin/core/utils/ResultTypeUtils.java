@@ -27,28 +27,28 @@ public class ResultTypeUtils {
                 }
                 return true;
             case PASSWORD_INCORRECT:
-                player.kick(XenforoLoginCore.instance.langFile("errors.password"));
+                player.kick(Helper.langFile("errors.password"));
                 return false;
             case ERROR_NAME:
-                player.kick(XenforoLoginCore.instance.langFile("errors.name_incorrect",
+                player.kick(Helper.langFile("errors.name_incorrect",
                         resultType.getInheritedObject()));
                 return false;
             case NO_USER:
-                if ((boolean) XenforoLoginCore.instance.api.getConfigValue("api.register", false)) {
+                if (Config.getBoolean("api.register", false)) {
                     XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 } else {
-                    player.kick(XenforoLoginCore.instance.langFile("errors.no_user"));
+                    player.kick(Helper.langFile("errors.no_user"));
                 }
                 return true;
             case UNKNOWN:
-                player.kick(XenforoLoginCore.instance.langFile("errors.unknown",
+                player.kick(Helper.langFile("errors.unknown",
                         resultType.getInheritedObject()));
                 return false;
             case SERVER_ERROR:
-                player.kick(XenforoLoginCore.instance.langFile("errors.server"));
+                player.kick(Helper.langFile("errors.server"));
                 return false;
             case USER_EXIST:
-                player.kick(XenforoLoginCore.instance.langFile("errors.user_exist"));
+                player.kick(Helper.langFile("errors.user_exist"));
                 return false;
             case EMAIL_WRONG:
             case EMAIL_EXIST:

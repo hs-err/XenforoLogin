@@ -12,7 +12,6 @@ package red.mohist.xenforologin.bukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -20,12 +19,14 @@ import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
 import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.xenforologin.bukkit.protocollib.ListenerProtocolEvent;
 import red.mohist.xenforologin.core.XenforoLoginCore;
+import red.mohist.xenforologin.core.interfaces.LogProvider;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
+import red.mohist.xenforologin.core.utils.Config;
+import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -33,17 +34,43 @@ import java.util.Set;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
-    public FileConfiguration config;
     public XenforoLoginCore xenforoLoginCore;
     private ListenerProtocolEvent listenerProtocolEvent;
 
     @Override
     public void onEnable() {
-        instance = this;
-        getLogger().info("Hello, XenforoLogin!");
+        try {
+            new Helper(getConfigPath(""), new LogProvider() {
+                @Override
+                public void info(String info) {
+                    getLogger().info(info);
+                }
 
-        saveDefaultConfig();
-        config = getConfig();
+                @Override
+                public void info(String info, Exception exception) {
+                    getLogger().info(info);
+                    getLogger().info(exception.toString());
+                }
+
+                @Override
+                public void warn(String info) {
+                    getLogger().warning(info);
+                }
+
+                @Override
+                public void warn(String info, Exception exception) {
+                    getLogger().warning(info);
+                    getLogger().warning(exception.toString());
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+            getLogger().warning("XenforoLogin load fail.");
+            getServer().shutdown();
+        }
+
+        instance = this;
+        Helper.getLogger().info("Hello, XenforoLogin!");
 
         xenforoLoginCore = new XenforoLoginCore(this);
 
@@ -58,9 +85,9 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     private void hookProtocolLib() {
-        if (org.bukkit.Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && config.getBoolean("secure.hide_inventory", true)) {
+        if (org.bukkit.Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && Config.getBoolean("secure.hide_inventory", true)) {
             listenerProtocolEvent = new ListenerProtocolEvent();
-            getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
+            Helper.getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
         }
     }
 
@@ -75,21 +102,21 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
                 try {
                     listener = clazz.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
-                    getLogger().warning(clazz.getName() + " is not available.");
+                    Helper.getLogger().warn(clazz.getName() + " is not available.");
                     unavailableCount++;
                     continue;
                 }
                 if (!listener.isAvailable()) {
-                    getLogger().warning(clazz.getName() + " is not available.");
+                    Helper.getLogger().warn(clazz.getName() + " is not available.");
                     unavailableCount++;
                     continue;
                 }
                 org.bukkit.Bukkit.getPluginManager().registerEvents(listener, this);
             }
             if (unavailableCount > 0) {
-                getLogger().warning("Warning: Some features in this plugin is not available on this version of bukkit");
-                getLogger().warning("If your encountered errors, do NOT report to XenforoLogin.");
-                getLogger().warning("Error count: " + unavailableCount);
+                Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of bukkit");
+                Helper.getLogger().warn("If your encountered errors, do NOT report to XenforoLogin.");
+                Helper.getLogger().warn("Error count: " + unavailableCount);
             }
         }
     }
@@ -117,61 +144,6 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
                 spawn_location.getZ(),
                 spawn_location.getYaw(),
                 spawn_location.getPitch());
-    }
-
-    @Override
-    public Object getConfigValue(String key) {
-        return getConfig().get(key);
-    }
-
-    @Override
-    public Object getConfigValue(String key, Object def) {
-        return getConfig().get(key, def);
-    }
-
-    @Override
-    public Object getConfigValue(String file, String key, Object def) {
-        File io;
-        io = new File(getDataFolder(), file + ".yml");
-        if (!io.exists()) {
-            try {
-                if (!io.createNewFile()) {
-                    throw new IOException("File can't be created.");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return YamlConfiguration.loadConfiguration(io).get(key, def);
-    }
-
-    @Override
-    public int getConfigValueInt(String key, int def) {
-        return getConfig().getInt(key, def);
-    }
-
-    @Override
-    public double getConfigValueDouble(String key, double def) {
-        return getConfig().getDouble(key, def);
-    }
-
-    @Override
-    public float getConfigValueFloat(String key, float def) {
-        return (float) getConfig().getDouble(key, def);
-    }
-
-    @Override
-    public void setConfigValue(String file, String key, Object value) {
-        FileConfiguration data;
-        File io;
-        io = new File(getDataFolder(), file + ".yml");
-        data = YamlConfiguration.loadConfiguration(io);
-        data.set(key, value);
-        try {
-            data.save(io);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
