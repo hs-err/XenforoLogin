@@ -73,7 +73,7 @@ public final class XenforoLoginCore {
         ForumSystems.reloadConfig();
         LoginTicker.register();
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + XenforoLoginCore.instance.api.getConfigPath("Locations.db"));
+            connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("Locations.db"));
             if (!connection.getMetaData().getTables(null, null, "locations", new String[]{"TABLE"}).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
@@ -129,7 +129,7 @@ public final class XenforoLoginCore {
                     } catch (Exception e) {
                         LocationInfo spawn_location = api.getSpawn("world");
                         player.teleport(spawn_location);
-                        api.getLogger().warning("Fail tp a player.Have you change the world?");
+                        Helper.getLogger().warn("Fail tp a player.Have you change the world?");
                     }
                 }
                 player.setGamemode(rs.getInt("mode"));
@@ -139,7 +139,7 @@ public final class XenforoLoginCore {
             e.printStackTrace();
         }
         api.login(player);
-        api.getLogger().info("Logging in " + player.getUniqueId());
+        Helper.getLogger().warn("Logging in " + player.getUniqueId());
         player.sendMessage(Helper.langFile("success"));
     }
 
@@ -178,7 +178,7 @@ public final class XenforoLoginCore {
                 pps.setInt(8, player.getGamemode());
                 pps.executeUpdate();
             } catch (SQLException e) {
-                api.getLogger().warning("Fail to save location.");
+                Helper.getLogger().warn("Fail to save location.");
             }
         }
         logged_in.remove(player.getUniqueId());

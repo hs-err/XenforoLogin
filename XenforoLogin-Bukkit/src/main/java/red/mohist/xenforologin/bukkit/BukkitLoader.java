@@ -11,7 +11,6 @@ package red.mohist.xenforologin.bukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
@@ -28,7 +27,6 @@ import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Set;
 
@@ -40,7 +38,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     @Override
     public void onEnable() {
         try {
-            new Helper(getConfigPath(""), new LogProvider() {
+            new Helper(getDataFolder().toString(), new LogProvider() {
                 @Override
                 public void info(String info) {
                     getLogger().info(info);
@@ -125,14 +123,6 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         if (listenerProtocolEvent != null) {
             listenerProtocolEvent.sendBlankInventoryPacket(player);
         }
-    }
-
-    @Override
-    public String getConfigPath(String filename) {
-        if (!getDataFolder().exists()) {
-            getDataFolder().mkdir();
-        }
-        return Paths.get(getDataFolder().getPath(), filename).toString();
     }
 
     @Override

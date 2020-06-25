@@ -38,7 +38,7 @@ public class LoginTickPlayer {
                             .join(player)
                             .shouldLogin(false));
             if (!result) {
-                XenforoLoginCore.instance.api.getLogger().warning(
+                Helper.getLogger().warn(
                         player.getName() + " didn't pass AccountExists test");
                 return TickResult.DONE;
             }

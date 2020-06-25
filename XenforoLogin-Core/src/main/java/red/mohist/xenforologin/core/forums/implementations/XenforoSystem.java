@@ -20,7 +20,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
@@ -29,7 +28,6 @@ import red.mohist.xenforologin.core.utils.Helper;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.logging.Level;
 
 @SuppressWarnings("unused")
 public class XenforoSystem implements ForumSystem {
@@ -53,11 +51,11 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 401) {
-                    XenforoLoginCore.instance.api.getLogger().warning(
+                    Helper.getLogger().warn(
                             Helper.langFile("errors.key", ImmutableMap.of(
                                     "key", key)));
                 } else if (status == 404) {
-                    XenforoLoginCore.instance.api.getLogger().warning(
+                    Helper.getLogger().warn(
                             Helper.langFile("errors.url", ImmutableMap.of(
                                     "url", url)));
                 }
@@ -80,7 +78,7 @@ public class XenforoSystem implements ForumSystem {
             try {
                 json = parse.parse(result).getAsJsonObject();
             } catch (JsonSyntaxException e) {
-                XenforoLoginCore.instance.api.getLogger().warning(result);
+                Helper.getLogger().warn(result);
                 e.printStackTrace();
                 return ResultType.SERVER_ERROR;
             }
@@ -110,7 +108,7 @@ public class XenforoSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            XenforoLoginCore.instance.api.getLogger().log(Level.WARNING,
+            Helper.getLogger().warn(
                     "Error while register player " + player.getName() + " data", e);
             return ResultType.SERVER_ERROR;
         }
@@ -127,11 +125,11 @@ public class XenforoSystem implements ForumSystem {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
-                    XenforoLoginCore.instance.api.getLogger().warning(
+                    Helper.getLogger().warn(
                             Helper.langFile("errors.key", ImmutableMap.of(
                                     "key", key)));
                 } else if (status == 404) {
-                    XenforoLoginCore.instance.api.getLogger().warning(
+                    Helper.getLogger().warn(
                             Helper.langFile("errors.url", ImmutableMap.of(
                                     "url", url)));
                 }
@@ -153,7 +151,7 @@ public class XenforoSystem implements ForumSystem {
             try {
                 json = parse.parse(result).getAsJsonObject();
             } catch (JsonSyntaxException e) {
-                XenforoLoginCore.instance.api.getLogger().warning(result);
+                Helper.getLogger().warn(result);
                 e.printStackTrace();
                 return ResultType.SERVER_ERROR;
             }
@@ -186,8 +184,7 @@ public class XenforoSystem implements ForumSystem {
                 }
             }
         } catch (Exception e) {
-            XenforoLoginCore.instance.api.getLogger()
-                    .log(Level.WARNING, "Error while checking player " + player.getName() + " data", e);
+            Helper.getLogger().warn("Error while checking player " + player.getName() + " data", e);
             return ResultType.SERVER_ERROR;
         }
     }
@@ -208,11 +205,11 @@ public class XenforoSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 401) {
-                XenforoLoginCore.instance.api.getLogger().warning(
+                Helper.getLogger().warn(
                         Helper.langFile("errors.key", ImmutableMap.of(
                                 "key", key)));
             } else if (status == 404) {
-                XenforoLoginCore.instance.api.getLogger().warning(
+                Helper.getLogger().warn(
                         Helper.langFile("errors.url", ImmutableMap.of(
                                 "url", url)));
             }
@@ -237,7 +234,7 @@ public class XenforoSystem implements ForumSystem {
         try {
             json = parse.parse(result).getAsJsonObject();
         } catch (JsonSyntaxException e) {
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(result);
             e.printStackTrace();
             return ResultType.SERVER_ERROR;
         }

@@ -12,13 +12,7 @@ package red.mohist.xenforologin.core.interfaces;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 
-import java.util.logging.Logger;
-
 public interface PlatformAdapter {
-
-    Logger getLogger();
-
-    String getConfigPath(String filename);
 
     LocationInfo getSpawn(String world);
 

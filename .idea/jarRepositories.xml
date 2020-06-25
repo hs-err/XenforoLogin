@@ -61,5 +61,10 @@
       <option name="name" value="BintrayJCenter" />
       <option name="url" value="https://jcenter.bintray.com/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="sponge" />
+      <option name="name" value="sponge" />
+      <option name="url" value="https://repo.spongepowered.org/maven" />
+    </remote-repository>
   </component>
 </project>

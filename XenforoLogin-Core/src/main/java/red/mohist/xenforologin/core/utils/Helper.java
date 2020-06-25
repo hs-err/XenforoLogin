@@ -19,6 +19,7 @@ import red.mohist.xenforologin.core.interfaces.LogProvider;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,9 +39,12 @@ public class Helper {
         saveResource("config.json",false);
 
         File configFile=new File(basePath+"/config.json");
-        Reader reader=new FileReader(configFile);
-        JsonElement json=new Gson().fromJson(reader,JsonElement.class);
+        FileInputStream fileReader = new FileInputStream(configFile);
+        InputStreamReader inputStreamReader=new InputStreamReader(fileReader, StandardCharsets.UTF_8);
+        JsonElement json=new Gson().fromJson(inputStreamReader,JsonElement.class);
         generalConfigMap("",json);
+        inputStreamReader.close();
+        fileReader.close();
 
         Reader readerDefault=getTextResource("config.json");
         JsonElement jsonDefault=new Gson().fromJson(readerDefault,JsonElement.class);

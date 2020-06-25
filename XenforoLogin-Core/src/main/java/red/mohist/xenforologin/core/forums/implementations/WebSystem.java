@@ -19,7 +19,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
@@ -46,7 +45,7 @@ public class WebSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
-                XenforoLoginCore.instance.api.getLogger().warning(
+                Helper.getLogger().warn(
                         Helper.langFile("errors.url", ImmutableMap.of(
                                 "url", url)));
             }
@@ -74,23 +73,23 @@ public class WebSystem implements ForumSystem {
         try {
             json = parse.parse(result).getAsJsonObject();
         } catch (JsonSyntaxException e) {
-            XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json == null) {
-            XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json.get("result") == null) {
-            XenforoLoginCore.instance.api.getLogger().warning(".result must be required.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(".result must be required.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json.get("result").getAsString() == null) {
-            XenforoLoginCore.instance.api.getLogger().warning(".result must can be cast to string.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(".result must can be cast to string.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         switch (json.get("result").getAsString()) {
@@ -104,31 +103,31 @@ public class WebSystem implements ForumSystem {
                 return ResultType.EMAIL_EXIST;
             case "unknown":
                 if (json.get("code") == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning("if .result is unknown,.message must be required.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn("if .result is unknown,.message must be required.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("code").getAsString() == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning(".message must can be cast to string.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn(".message must can be cast to string.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("message") == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning("if .result is unknown,.message must be required.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn("if .result is unknown,.message must be required.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("message").getAsString() == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning(".message must can be cast to string.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn(".message must can be cast to string.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
                         "code", json.get("code").getAsString(),
                         "message", json.get("message").getAsString()));
             default:
-                XenforoLoginCore.instance.api.getLogger().warning(".result only can choose between ok,name_incorrect,no_user.");
-                XenforoLoginCore.instance.api.getLogger().warning(result);
+                Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
+                Helper.getLogger().warn(result);
                 return ResultType.SERVER_ERROR;
         }
     }
@@ -142,7 +141,7 @@ public class WebSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
-                XenforoLoginCore.instance.api.getLogger().warning(
+                Helper.getLogger().warn(
                         Helper.langFile("errors.url", ImmutableMap.of(
                                 "url", url)));
             }
@@ -169,23 +168,23 @@ public class WebSystem implements ForumSystem {
         try {
             json = parse.parse(result).getAsJsonObject();
         } catch (JsonSyntaxException e) {
-            XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json == null) {
-            XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json.get("result") == null) {
-            XenforoLoginCore.instance.api.getLogger().warning(".result must be required.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(".result must be required.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json.get("result").getAsString() == null) {
-            XenforoLoginCore.instance.api.getLogger().warning(".result must can be cast to string.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(".result must can be cast to string.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         switch (json.get("result").getAsString()) {
@@ -193,13 +192,13 @@ public class WebSystem implements ForumSystem {
                 return ResultType.OK;
             case "name_incorrect":
                 if (json.get("correct") == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning("if .result is name_incorrect,.correct must be required.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn("if .result is name_incorrect,.correct must be required.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("correct").getAsString() == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning(".correct must can be cast to string.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn(".correct must can be cast to string.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
@@ -210,31 +209,31 @@ public class WebSystem implements ForumSystem {
                 return ResultType.PASSWORD_INCORRECT;
             case "unknown":
                 if (json.get("code") == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning("if .result is unknown,.message must be required.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn("if .result is unknown,.message must be required.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("code").getAsString() == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning(".message must can be cast to string.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn(".message must can be cast to string.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("message") == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning("if .result is unknown,.message must be required.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn("if .result is unknown,.message must be required.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("message").getAsString() == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning(".message must can be cast to string.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn(".message must can be cast to string.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
                         "code", json.get("code").getAsString(),
                         "message", json.get("message").getAsString()));
             default:
-                XenforoLoginCore.instance.api.getLogger().warning(".result only can choose between ok,name_incorrect,no_user.");
-                XenforoLoginCore.instance.api.getLogger().warning(result);
+                Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
+                Helper.getLogger().warn(result);
                 return ResultType.SERVER_ERROR;
         }
     }
@@ -254,7 +253,7 @@ public class WebSystem implements ForumSystem {
                 HttpEntity entity = response.getEntity();
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
-                XenforoLoginCore.instance.api.getLogger().warning(
+                Helper.getLogger().warn(
                         Helper.langFile("errors.url", ImmutableMap.of(
                                 "url", url)));
             }
@@ -280,23 +279,23 @@ public class WebSystem implements ForumSystem {
         try {
             json = parse.parse(result).getAsJsonObject();
         } catch (JsonSyntaxException e) {
-            XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json == null) {
-            XenforoLoginCore.instance.api.getLogger().warning("Json parse null.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json.get("result") == null) {
-            XenforoLoginCore.instance.api.getLogger().warning(".result must be required.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(".result must be required.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         if (json.get("result").getAsString() == null) {
-            XenforoLoginCore.instance.api.getLogger().warning(".result must can be cast to string.");
-            XenforoLoginCore.instance.api.getLogger().warning(result);
+            Helper.getLogger().warn(".result must can be cast to string.");
+            Helper.getLogger().warn(result);
             return ResultType.SERVER_ERROR;
         }
         switch (json.get("result").getAsString()) {
@@ -304,13 +303,13 @@ public class WebSystem implements ForumSystem {
                 return ResultType.OK;
             case "name_incorrect":
                 if (json.get("correct") == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning("if .result is name_incorrect,.correct must be required.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn("if .result is name_incorrect,.correct must be required.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 if (json.get("correct").getAsString() == null) {
-                    XenforoLoginCore.instance.api.getLogger().warning(".correct must can be cast to string.");
-                    XenforoLoginCore.instance.api.getLogger().warning(result);
+                    Helper.getLogger().warn(".correct must can be cast to string.");
+                    Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
                 return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
@@ -318,8 +317,8 @@ public class WebSystem implements ForumSystem {
             case "no_user":
                 return ResultType.NO_USER;
             default:
-                XenforoLoginCore.instance.api.getLogger().warning(".result only can choose between ok,name_incorrect,no_user.");
-                XenforoLoginCore.instance.api.getLogger().warning(result);
+                Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
+                Helper.getLogger().warn(result);
                 return ResultType.SERVER_ERROR;
         }
     }
