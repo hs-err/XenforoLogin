@@ -11,31 +11,20 @@ package red.mohist.xenforologin.sponge.listeners;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.message.MessageChannelEvent.Chat;
-import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
-import org.spongepowered.api.profile.GameProfile;
-import org.spongepowered.api.text.Text;
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
-import red.mohist.xenforologin.sponge.implementation.SpongePlainPlayer;
 import red.mohist.xenforologin.sponge.implementation.SpongePlayer;
+import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
 
-public class CommonListener {
-    @Listener
-    public void onAsyncPlayerPreLoginEvent(Auth event, GameProfile profile) {
-        String canjoin = XenforoLoginCore.instance.canJoin(new SpongePlainPlayer(
-                event.getProfile().getName().get(), event.getProfile().getUniqueId(), event.getConnection().getAddress().getAddress()));
-        if (canjoin != null) {
-            event.setMessage(Text.of(canjoin));
-            event.setCancelled(true);
-        }
-    }
-    @Listener
-    public void onPlayerJoinEvent(Join playerJoinEvent, Player spongePlayer) {
+public class JoinListener implements SpongeAPIListener {
+    @Listener(order = Order.FIRST, beforeModifications = true)
+    public void onJoinEvent(Join event, @First Player spongePlayer) {
         SpongePlayer player=new SpongePlayer(spongePlayer);
         XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
         if (!XenforoLoginCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
@@ -64,17 +53,8 @@ public class CommonListener {
         LoginTicker.add(player);
     }
 
-    @Listener
-    public void onChatEvent(Chat event, Player spongePlayer) {
-        SpongePlayer player=new SpongePlayer(spongePlayer);
-        if (!XenforoLoginCore.instance.needCancelled(player)) {
-            if (Config.getBoolean("secure.cancel_chat_after_login", false)) {
-                player.sendMessage(Helper.langFile("logged_in"));
-                event.setCancelled(true);
-            }
-            return;
-        }
-        event.setCancelled(true);
-        XenforoLoginCore.instance.onChat(player, event.getMessage().toPlain());
+    @Override
+    public void eventClass() {
+        Join.class.getName();
     }
 }

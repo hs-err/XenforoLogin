@@ -181,6 +181,7 @@ public final class XenforoLoginCore {
                 Helper.getLogger().warn("Fail to save location.");
             }
         }
+        player.teleport(default_location);
         logged_in.remove(player.getUniqueId());
     }
 
