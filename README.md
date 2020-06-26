@@ -19,11 +19,15 @@ Prevent minecraft username stealing with Xenforo and more.
   - MySQL via socket
   - SQLite
   - Customized RestAPI
+- Multi-platform support:
+  - Paper (Full)
+  - Mohist (Full)
+  - Spigot (Partial)
+  - CraftBukkit (Partial)
+  - Sponge (Experimental)
 
 ## Planned features
 - Support for fabric servers.
-- Support for sponge platform
-- Hashing support.
 - Session login.
 
 ## Usage
