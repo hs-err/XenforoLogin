@@ -17,12 +17,12 @@ import red.mohist.xenforologin.core.utils.Helper;
 import java.util.logging.Logger;
 
 public class YggdrasilServerLoader implements PlatformAdapter {
-    @Override
+    // TODO @Override
     public Logger getLogger() {
         return null;
     }
 
-    @Override
+    // TODO @Override
     public String getConfigPath(String filename) {
         return Helper.instance.basePath+"/"+filename;
     }
