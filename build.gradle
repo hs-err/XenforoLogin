@@ -10,7 +10,6 @@
 plugins {
     id 'war'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id "com.github.gradle-lean" version "0.1.2"
 }
 
 allprojects {
