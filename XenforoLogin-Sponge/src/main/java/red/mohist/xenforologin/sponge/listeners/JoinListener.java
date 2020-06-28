@@ -15,10 +15,7 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
 import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.core.utils.LoginTicker;
 import red.mohist.xenforologin.sponge.implementation.SpongePlayer;
 import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
 
@@ -37,20 +34,7 @@ public class JoinListener implements SpongeAPIListener {
                 }
             }).start();
         }
-        if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
-            player.teleport(new LocationInfo(
-                    XenforoLoginCore.instance.default_location.world,
-                    XenforoLoginCore.instance.default_location.x,
-                    XenforoLoginCore.instance.default_location.y,
-                    XenforoLoginCore.instance.default_location.z,
-                    XenforoLoginCore.instance.default_location.yaw,
-                    XenforoLoginCore.instance.default_location.pitch
-            ));
-        }
-        if (Config.getBoolean("secure.spectator_login", true)) {
-            //event.getPlayer().setGameMode(GameMode.SPECTATOR);
-        }
-        LoginTicker.add(player);
+        XenforoLoginCore.instance.onJoin(player);
     }
 
     @Override

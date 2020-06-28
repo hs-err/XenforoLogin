@@ -12,6 +12,8 @@ package red.mohist.xenforologin.core.interfaces;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 
+import java.util.Collection;
+
 public interface PlatformAdapter {
 
     LocationInfo getSpawn(String world);
@@ -19,4 +21,6 @@ public interface PlatformAdapter {
     void login(AbstractPlayer player);
 
     void sendBlankInventoryPacket(AbstractPlayer player);
+
+    Collection<AbstractPlayer> getAllPlayer();
 }

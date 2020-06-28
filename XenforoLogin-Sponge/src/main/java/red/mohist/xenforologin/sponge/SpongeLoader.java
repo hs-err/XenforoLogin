@@ -14,8 +14,10 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -25,12 +27,15 @@ import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 import red.mohist.xenforologin.core.utils.Helper;
+import red.mohist.xenforologin.sponge.implementation.SpongePlayer;
 import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Vector;
 
 @Plugin(
         id = "xenforologin",
@@ -113,6 +118,19 @@ public class SpongeLoader implements PlatformAdapter {
 
     }
 
+    @Listener
+    public void onServerStop(GameStoppingServerEvent event) {
+        XenforoLoginCore.instance.onDisable();
+    }
+
+    @Override
+    public Collection<AbstractPlayer> getAllPlayer() {
+        Collection<AbstractPlayer> allPlayers=new Vector<>();
+        for (Player onlinePlayer : Sponge.getServer().getOnlinePlayers()) {
+            allPlayers.add(new SpongePlayer(onlinePlayer));
+        }
+        return allPlayers;
+    }
 
     @Override
     public LocationInfo getSpawn(String worldName) {

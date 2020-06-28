@@ -81,9 +81,21 @@ public final class XenforoLoginCore {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
+            new Thread(() -> {
+                String canjoin = XenforoLoginCore.instance.canJoin(abstractPlayer);
+                if (canjoin != null) {
+                    abstractPlayer.kick(canjoin);
+                }
+            }).start();
+            onJoin(abstractPlayer);
+        }
     }
 
     public void onDisable() {
+        for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
+            onQuit(abstractPlayer);
+        }
         LoginTicker.unregister();
     }
 
@@ -210,6 +222,16 @@ public final class XenforoLoginCore {
                 return Helper.langFile("errors.unknown", resultType.getInheritedObject());
         }
         return Helper.langFile("errors.server");
+    }
+    public void onJoin(AbstractPlayer abstractPlayer) {
+        api.sendBlankInventoryPacket(abstractPlayer);
+        if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
+            abstractPlayer.teleport(default_location);
+        }
+        if (Config.getBoolean("secure.spectator_login", true)) {
+            abstractPlayer.setGamemode(3);
+        }
+        LoginTicker.add(abstractPlayer);
     }
 
     public void onChat(AbstractPlayer player, String message) {
