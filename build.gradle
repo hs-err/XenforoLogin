@@ -10,12 +10,11 @@
 plugins {
     id 'war'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id "com.github.gradle-lean" version "0.1.2"
 }
 
 allprojects {
     group = 'red.mohist.xenforologin'
-    version = '1.2.1'
+    version = '1.3-SNAPSHOT'
 }
 
 subprojects {
@@ -54,8 +53,8 @@ repositories {
 }
 
 dependencies {
-    providedCompile project(":XenforoLogin-Core")
-    providedCompile project(":XenforoLogin-Bukkit")
+    providedCompile(project(":XenforoLogin-Core"))
+    providedCompile(project(":XenforoLogin-Bukkit"))
     providedCompile(project(":XenforoLogin-Fabric")) {
         exclude group: 'com.mojang'
         exclude group: 'net.fabricmc'
@@ -83,6 +82,7 @@ dependencies {
         exclude group: 'com.google.jimfs'
         exclude group: 'org.ow2.asm'
      }
+    providedCompile(project(":XenforoLogin-Sponge"))
 }
 assemble.dependsOn(shadowJar)
 

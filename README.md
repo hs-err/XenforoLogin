@@ -2,6 +2,8 @@
 
 Prevent minecraft username stealing with Xenforo and more.
 
+Development builds: https://ci.ishland.com:43333/job/XenforoLogin/
+
 ## Description
 - Provide an extra protection for your online server.
 - Secure your offline server.
@@ -19,11 +21,15 @@ Prevent minecraft username stealing with Xenforo and more.
   - MySQL via socket
   - SQLite
   - Customized RestAPI
+- Multi-platform support:
+  - Paper (Full)
+  - Mohist (Full)
+  - Spigot (Partial)
+  - CraftBukkit (Partial)
+  - Sponge (Experimental)
 
 ## Planned features
-- Support for fabric servers.
-- Support for sponge platform
-- Hashing support.
+- Support for fabric servers. (currently in development)
 - Session login.
 
 ## Usage
