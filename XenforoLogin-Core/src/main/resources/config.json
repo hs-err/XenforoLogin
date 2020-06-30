@@ -89,6 +89,7 @@
     "logged_in": "§6[§1XenforoLogin§6]§1§f You have already logged in.",
     "success": "§6[§1XenforoLogin§6]§1§f Logged in successfully.",
     "session": "§6[§1XenforoLogin§6]§1§f Auto login by session.",
+    "last_login": "§6[§1XenforoLogin§6]§1§f Last login in [city].",
     "need_login": "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat.",
     "errors": {
       "email": "§6[§1XenforoLogin§6]§1§f Wrong Email.",

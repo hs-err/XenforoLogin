@@ -9,16 +9,15 @@
 
 package red.mohist.xenforologin.core;
 
+import com.google.common.collect.ImmutableMap;
+import com.maxmind.geoip2.model.CityResponse;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.enums.StatusType;
 import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.utils.Config;
-import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.core.utils.LoginTicker;
-import red.mohist.xenforologin.core.utils.ResultTypeUtils;
+import red.mohist.xenforologin.core.utils.*;
 
 import java.sql.*;
 import java.util.UUID;
@@ -159,7 +158,16 @@ public final class XenforoLoginCore {
         }
 
         try {
-            PreparedStatement pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? LIMIT 1;");
+            pps.setString(1, player.getUniqueId().toString());
+            ResultSet rs = pps.executeQuery();
+            if (rs.next()) {
+                CityResponse city = GeoIP.city(player.getAddress().getHostAddress());
+                player.sendMessage(Helper.langFile("last_login", ImmutableMap.of(
+                        "city", city.getCity().getName())));
+            }
+
+            pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
             pps.setString(1, player.getUniqueId().toString());
             pps.executeUpdate();
 
