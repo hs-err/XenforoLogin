@@ -35,6 +35,10 @@
       "password_hash": "BCrypt"
     }
   },
+  "session": {
+    "enable": false,
+    "timeout": 3600
+  },
   "yggdrasil": {
     "server": {
       "port": 8080
@@ -84,6 +88,7 @@
     "register_password_confirm": "§6[§1XenforoLogin§6]§1§f Please send your password again.",
     "logged_in": "§6[§1XenforoLogin§6]§1§f You have already logged in.",
     "success": "§6[§1XenforoLogin§6]§1§f Logged in successfully.",
+    "session": "§6[§1XenforoLogin§6]§1§f Auto login by session.",
     "need_login": "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat.",
     "errors": {
       "email": "§6[§1XenforoLogin§6]§1§f Wrong Email.",

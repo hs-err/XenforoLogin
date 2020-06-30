@@ -73,11 +73,16 @@ public final class XenforoLoginCore {
         ForumSystems.reloadConfig();
         LoginTicker.register();
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("Locations.db"));
+            connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("XenforoLogin.db"));
             if (!connection.getMetaData().getTables(null, null, "locations", new String[]{"TABLE"}).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
             }
+            if (!connection.getMetaData().getTables(null, null, "sessions", new String[]{"TABLE"}).next()) {
+                PreparedStatement pps = connection.prepareStatement("CREATE TABLE sessions (uuid NOT NULL,ip,time,PRIMARY KEY (uuid));");
+                pps.executeUpdate();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -146,8 +151,24 @@ public final class XenforoLoginCore {
                 }
                 player.setGamemode(rs.getInt("mode"));
             }
+
+
         } catch (Throwable e) {
             player.setGamemode(Config.getInteger("secure.default_gamemode", 0));
+            e.printStackTrace();
+        }
+
+        try {
+            PreparedStatement pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
+            pps.setString(1, player.getUniqueId().toString());
+            pps.executeUpdate();
+
+            pps = connection.prepareStatement("INSERT INTO sessions(uuid, ip, time) VALUES (?, ?, ?);");
+            pps.setString(1, player.getUniqueId().toString());
+            pps.setString(2, player.getAddress().getHostAddress());
+            pps.setInt(3, (int) (System.currentTimeMillis() / 1000));
+            pps.executeUpdate();
+        } catch (Throwable e) {
             e.printStackTrace();
         }
         api.login(player);
@@ -223,6 +244,7 @@ public final class XenforoLoginCore {
         }
         return Helper.langFile("errors.server");
     }
+
     public void onJoin(AbstractPlayer abstractPlayer) {
         api.sendBlankInventoryPacket(abstractPlayer);
         if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
@@ -232,6 +254,22 @@ public final class XenforoLoginCore {
             abstractPlayer.setGamemode(3);
         }
         LoginTicker.add(abstractPlayer);
+        try {
+            if (Config.getBoolean("session.enable")) {
+                PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
+                pps.setString(1, abstractPlayer.getUniqueId().toString());
+                pps.setString(2, abstractPlayer.getAddress().getHostAddress());
+                pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.getInteger("session.timeout")));
+                ResultSet rs = pps.executeQuery();
+                if (rs.next()) {
+                    abstractPlayer.sendMessage(Helper.langFile("session"));
+                    login(abstractPlayer);
+                }
+            }
+        }catch (Throwable e){
+            Helper.getLogger().warn("Fail use session.");
+            e.printStackTrace();
+        }
     }
 
     public void onChat(AbstractPlayer player, String message) {
