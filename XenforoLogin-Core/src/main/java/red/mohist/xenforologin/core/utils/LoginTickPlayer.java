@@ -41,8 +41,6 @@ public class LoginTickPlayer {
                         player.getName() + " didn't pass AccountExists test");
                 return TickResult.DONE;
             }
-            Helper.getLogger().warn(
-                    player.getName() + " 23333333");
             XenforoLoginCore.instance.message(player);
             XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
         }

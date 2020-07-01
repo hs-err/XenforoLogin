@@ -12,6 +12,7 @@ package red.mohist.xenforologin.core.proxys;
 import java.io.IOException;
 
 public interface ProxySystem {
+    String getName();
     void refreshProxys() throws IOException;
     boolean isProxy(String ip);
 }

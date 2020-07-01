@@ -27,6 +27,10 @@ public class QiYun implements ProxySystem
         proxyList = new CopyOnWriteArrayList<>();
     }
 
+    public String getName() {
+        return "89ip";
+    }
+
     public void refreshProxys() throws IOException {
         ResponseHandler<String> responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();

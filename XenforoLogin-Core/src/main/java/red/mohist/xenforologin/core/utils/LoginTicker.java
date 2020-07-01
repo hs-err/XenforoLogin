@@ -32,7 +32,6 @@ public class LoginTicker {
 
     public static void add(AbstractPlayer player) {
         tickers.add(new LoginTickPlayer(player));
-        new Exception().printStackTrace();
     }
 
     public static void run() {

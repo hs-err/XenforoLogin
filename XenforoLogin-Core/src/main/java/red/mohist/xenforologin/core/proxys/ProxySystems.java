@@ -27,20 +27,18 @@ public class ProxySystems {
             Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.proxys.implementations")
                     .getSubTypesOf(ProxySystem.class);
             for (Class<? extends ProxySystem> clazz : classes) {
-                ProxySystem proxySystem;
                 try {
-                    proxySystem = clazz.getDeclaredConstructor().newInstance();
+                    if(Config.getBoolean("secure.proxy.proxys."+clazz.getSimpleName())) {
+                        ProxySystem proxySystem = clazz.getDeclaredConstructor().newInstance();
+                        currentSystem.add(proxySystem);
+                    }
                 } catch (Exception e) {
                     Helper.getLogger().warn(clazz.getName() + " is not available.");
                     unavailableCount++;
-                    continue;
                 }
-                currentSystem.add(proxySystem);
             }
             if (unavailableCount > 0) {
-                Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of bukkit");
-                Helper.getLogger().warn("If your encountered errors, do NOT report to XenforoLogin.");
-                Helper.getLogger().warn("Error count: " + unavailableCount);
+                Helper.getLogger().warn("Can't pass proxy provider count: " + unavailableCount);
             }
         }
         new Timer().schedule(new TimerTask() {

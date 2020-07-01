@@ -14,7 +14,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 import red.mohist.xenforologin.core.proxys.ProxySystem;
-import red.mohist.xenforologin.core.utils.Helper;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,6 +25,11 @@ public class LiuLiu implements ProxySystem
     private CopyOnWriteArrayList<String> proxyList;
     public LiuLiu(){
         proxyList = new CopyOnWriteArrayList<>();
+    }
+
+    @Override
+    public String getName() {
+        return "66ip";
     }
 
     public void refreshProxys() throws IOException {
@@ -57,7 +61,6 @@ public class LiuLiu implements ProxySystem
     }
 
     public boolean isProxy(String ip){
-        Helper.getLogger().info("ipipipip....."+ip);
         return proxyList.contains(ip);
     }
 }

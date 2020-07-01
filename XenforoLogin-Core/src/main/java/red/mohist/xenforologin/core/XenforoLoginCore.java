@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.RateLimiter;
 import red.mohist.xenforologin.core.asyncs.CanJoin;
 import red.mohist.xenforologin.core.asyncs.Login;
+import red.mohist.xenforologin.core.asyncs.Register;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.enums.StatusType;
 import red.mohist.xenforologin.core.forums.ForumSystems;
@@ -38,9 +39,12 @@ public final class XenforoLoginCore {
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
     private Connection connection;
-    private RateLimiter rateLimiter;
+    private RateLimiter registerRateLimiter;
+    private RateLimiter loginRateLimiter;
+    private RateLimiter joinRateLimiter;
     private LinkedBlockingQueue<CanJoin> canJoinTask;
     private LinkedBlockingQueue<Login> LoginTask;
+    private LinkedBlockingQueue<Register> registerTask;
 
     public XenforoLoginCore(PlatformAdapter platformAdapter) {
 
@@ -92,12 +96,20 @@ public final class XenforoLoginCore {
         logged_in = new ConcurrentHashMap<>();
         canJoinTask=new LinkedBlockingQueue<>();
         LoginTask=new LinkedBlockingQueue<>();
+        registerTask=new LinkedBlockingQueue<>();
         loadConfig();
 
         ForumSystems.reloadConfig();
         LoginTicker.register();
-        if(Config.getBoolean("secure.rate_limit.enable")) {
-            rateLimiter = RateLimiter.create(Config.getDouble("secure.rate_limit.permits_per_second"));
+
+        if(Config.getBoolean("rate_limit.join.enable")) {
+             joinRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.join.permits"));
+        }
+        if(Config.getBoolean("rate_limit.register.enable")) {
+            registerRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.register.permits"));
+        }
+        if(Config.getBoolean("rate_limit.login.enable")) {
+            loginRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.login.permits"));
         }
 
         try {
@@ -143,6 +155,17 @@ public final class XenforoLoginCore {
                     Login task = LoginTask.take();
                     task.run(ForumSystems.getCurrentSystem()
                             .login(task.player, task.message));
+                }catch (Throwable e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(() -> {
+            while (true){
+                try {
+                    Register task = registerTask.take();
+                    task.run(ForumSystems.getCurrentSystem()
+                            .register(task.player, task.email,task.email));
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
@@ -288,6 +311,18 @@ public final class XenforoLoginCore {
                 return Helper.langFile("errors.proxy");
             }
         }
+        if(Config.getBoolean("rate_limit.join.enable")) {
+            if(!joinRateLimiter.tryAcquire()){
+                return Helper.langFile("errors.rate_limit");
+            }
+        }
+        if(Config.getBoolean("secure.country_limit.enable")) {
+            if(!Config.getBoolean(
+                    "secure.country_limit.lists."+GeoIP.country(player.getAddress().getHostAddress()),
+                    Config.getBoolean("secure.country_limit.default"))){
+                return Helper.langFile("errors.country_limit");
+            }
+        }
         return null;
     }
 
@@ -315,11 +350,6 @@ public final class XenforoLoginCore {
                 .shouldLogin(false);
         switch (resultType) {
             case OK:
-                if(Config.getBoolean("secure.rate_limit.enable")) {
-                    if(!rateLimiter.tryAcquire()){
-                        return Helper.langFile("errors.rate_limit");
-                    }
-                }
                 XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                 return null;
             case ERROR_NAME:
@@ -377,6 +407,12 @@ public final class XenforoLoginCore {
                 player.sendMessage(Helper.langFile("need_check"));
                 break;
             case NEED_LOGIN:
+                if(Config.getBoolean("rate_limit.login.enable")) {
+                    if(!loginRateLimiter.tryAcquire()){
+                        player.sendMessage(Helper.langFile("errors.rate_limit"));
+                        return;
+                    }
+                }
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 LoginTask.add(new Login(player,message) {
@@ -401,21 +437,30 @@ public final class XenforoLoginCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
+                if(Config.getBoolean("rate_limit.register.enable")) {
+                    if(!registerRateLimiter.tryAcquire()){
+                        player.sendMessage(Helper.langFile("errors.rate_limit"));
+                        return;
+                    }
+                }
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
-                    boolean result = ResultTypeUtils.handle(player,
-                            ForumSystems.getCurrentSystem()
-                                    .register(player, status.password, status.email)
-                                    .shouldLogin(true));
-                    if (result) {
-                        XenforoLoginCore.instance.logged_in.put(
-                                player.getUniqueId(), StatusType.LOGGED_IN);
-                    } else {
-                        XenforoLoginCore.instance.logged_in.put(
-                                player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                        XenforoLoginCore.instance.message(player);
-                    }
+                    registerTask.add(new Register(player,status.email,status.password) {
+                        @Override
+                        public void run(ResultType answer) {
+                            boolean result = ResultTypeUtils.handle(player,
+                                    answer.shouldLogin(true));
+                            if (result) {
+                                XenforoLoginCore.instance.logged_in.put(
+                                        player.getUniqueId(), StatusType.LOGGED_IN);
+                            } else {
+                                XenforoLoginCore.instance.logged_in.put(
+                                        player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                                XenforoLoginCore.instance.message(player);
+                            }
+                        }
+                    });
                 } else {
                     player.sendMessage(Helper.langFile("errors.confirm"));
                     XenforoLoginCore.instance.logged_in.put(

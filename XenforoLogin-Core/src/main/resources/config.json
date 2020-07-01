@@ -83,15 +83,33 @@
     "cancel_chat_after_login": false,
     "proxy": {
       "enable": true,
-      "update_time": 60
-    },
-    "rate_limit": {
-      "enable": true,
-      "permits_per_second": 0.1
+      "update_time": 60,
+      "proxys": {
+        "LiuLiu": true,
+        "QiYun": true
+      }
     },
     "country_limit": {
       "enable": true,
-      "permits_per_second": 0.1
+      "lists": {
+        "CN": true,
+        "UNKNOWN": true
+      },
+      "default": true
+    }
+  },
+  "rate_limit": {
+    "join": {
+      "enable": true,
+      "permits": 10
+    },
+    "register": {
+      "enable": true,
+      "permits": 0.1
+    },
+    "login": {
+      "enable": true,
+      "permits": 1
     }
   },
   "lang": {
@@ -107,6 +125,7 @@
     "errors": {
       "proxy": "§6[§1XenforoLogin§6]§1§f Proxy address have baned.",
       "rate_limit": "§6[§1XenforoLogin§6]§1§f Rate limited.",
+      "country_limit": "§6[§1XenforoLogin§6]§1§f Country limited.",
       "email": "§6[§1XenforoLogin§6]§1§f Wrong Email.",
       "server": "§6[§1XenforoLogin§6]§1§f There is an issue when connecting to the server, contact the administrator.",
       "confirm": "§6[§1XenforoLogin§6]§1§f Password is NOT identical to the first one.",
