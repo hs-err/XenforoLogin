@@ -10,19 +10,24 @@
 package red.mohist.xenforologin.core;
 
 import com.google.common.collect.ImmutableMap;
-import com.maxmind.geoip2.model.CityResponse;
+import com.google.common.util.concurrent.RateLimiter;
+import red.mohist.xenforologin.core.asyncs.CanJoin;
+import red.mohist.xenforologin.core.asyncs.Login;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.enums.StatusType;
 import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
+import red.mohist.xenforologin.core.proxys.ProxySystems;
 import red.mohist.xenforologin.core.utils.*;
 
 import java.sql.*;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,44 +38,68 @@ public final class XenforoLoginCore {
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
     private Connection connection;
+    private RateLimiter rateLimiter;
+    private LinkedBlockingQueue<CanJoin> canJoinTask;
+    private LinkedBlockingQueue<Login> LoginTask;
 
     public XenforoLoginCore(PlatformAdapter platformAdapter) {
-        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-        String a0 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-        try {
-            if (Class.forName("catserver.server.CatServer") != null) {
-                System.out.println("======================== [ Security Check ] ========================");
-                System.out.println("万分抱歉，本插件未对CatServer作任何测试，尚不能保证能正常使用。");
-                System.out.println("出于保护您的服务器安全的考虑，XenforoLogin已经停止载入。");
-                System.out.println("如果你需要使用本插件，建议使用Mohist服务端，我们完成了良好的适配。");
-                System.out.println("We are sorry that this plugin is not tested against CatServer at all");
-                System.out.println("It can cause some major issues preventing the plugin to work.");
-                System.out.println("Because of security issues, XenforoLogin aborted starting the server.");
-                System.out.println("If you want to use it, switch to Mohist which is more stable.");
-                System.out.println("==================================================================");
-                new Thread(() -> System.exit(-1)).start();
-                Thread.sleep(1000);
-                new Thread(() -> Runtime.getRuntime().halt(-1)).start();
+
+        {
+            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+            String a0 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            try {
+                if (Class.forName("catserver.server.CatServer") != null) {
+                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                    String a1 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    System.out.println("======================== [ Security Check ] ========================");
+                    System.out.println("万分抱歉，本插件未对CatServer作任何测试，尚不能保证能正常使用。");
+                    System.out.println("出于保护您的服务器安全的考虑，XenforoLogin已经停止载入。");
+                    System.out.println("如果你需要使用本插件，建议使用Mohist服务端，我们完成了良好的适配。");
+                    System.out.println("We are sorry that this plugin is not tested against CatServer at all");
+                    System.out.println("It can cause some major issues preventing the plugin to work.");
+                    System.out.println("Because of security issues, XenforoLogin aborted starting the server.");
+                    System.out.println("If you want to use it, switch to Mohist which is more stable.");
+                    System.out.println("==================================================================");
+                    new Thread(() -> {
+                        System.exit(-1);
+                        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                        String a2 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    }).start();
+                    Thread.sleep(1000);
+                    new Thread(() -> {
+                        Runtime.getRuntime().halt(-1);
+                        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                        String a3 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    }).start();
+                    return;
+                }
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a4 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            } catch (ClassNotFoundException ignored) {
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a5 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            } catch (Exception e) {
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a6 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                e.printStackTrace();
             }
             // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-            String a9 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-        } catch (ClassNotFoundException ignored) {
-            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-            String a10 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-        } catch (Exception e) {
-            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-            String a11 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-            e.printStackTrace();
+            String a7 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
         }
-        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-        String a13 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+
         instance = this;
         api = platformAdapter;
         logged_in = new ConcurrentHashMap<>();
+        canJoinTask=new LinkedBlockingQueue<>();
+        LoginTask=new LinkedBlockingQueue<>();
         loadConfig();
 
         ForumSystems.reloadConfig();
         LoginTicker.register();
+        if(Config.getBoolean("secure.rate_limit.enable")) {
+            rateLimiter = RateLimiter.create(Config.getDouble("secure.rate_limit.permits_per_second"));
+        }
+
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("XenforoLogin.db"));
             if (!connection.getMetaData().getTables(null, null, "locations", new String[]{"TABLE"}).next()) {
@@ -87,20 +116,48 @@ public final class XenforoLoginCore {
         }
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
             new Thread(() -> {
-                String canjoin = XenforoLoginCore.instance.canJoin(abstractPlayer);
+                String canjoin = XenforoLoginCore.instance.canJoinHandle(abstractPlayer);
                 if (canjoin != null) {
                     abstractPlayer.kick(canjoin);
                 }
             }).start();
             onJoin(abstractPlayer);
         }
+        createWorkers();
     }
 
+    private void createWorkers(){
+        new Thread(() -> {
+            while (true){
+                try {
+                    CanJoin task = canJoinTask.take();
+                    task.run(canJoinHandle(task.player));
+                }catch (Throwable e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        new Thread(() -> {
+            while (true){
+                try {
+                    Login task = LoginTask.take();
+                    task.run(ForumSystems.getCurrentSystem()
+                            .login(task.player, task.message));
+                }catch (Throwable e){
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
     public void onDisable() {
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
             onQuit(abstractPlayer);
         }
         LoginTicker.unregister();
+        try {
+            connection.close();
+        } catch (Throwable ignored) {
+        }
     }
 
     private void loadConfig() {
@@ -162,9 +219,8 @@ public final class XenforoLoginCore {
             pps.setString(1, player.getUniqueId().toString());
             ResultSet rs = pps.executeQuery();
             if (rs.next()) {
-                CityResponse city = GeoIP.city(player.getAddress().getHostAddress());
                 player.sendMessage(Helper.langFile("last_login", ImmutableMap.of(
-                        "city", city.getCity().getName())));
+                        "city", GeoIP.city(player.getAddress().getHostAddress()) )));
             }
 
             pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
@@ -226,15 +282,44 @@ public final class XenforoLoginCore {
         logged_in.remove(player.getUniqueId());
     }
 
-    public String canJoin(AbstractPlayer player) {
-        if (XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())) {
+    public String canLogin(AbstractPlayer player) {
+        if(Config.getBoolean("secure.proxy.enable")){
+            if(ProxySystems.isProxy(player.getAddress().getHostAddress())){
+                return Helper.langFile("errors.proxy");
+            }
+        }
+        return null;
+    }
+
+
+    public CompletableFuture<String> canJoin(AbstractPlayer player) {
+        CompletableFuture<String> can=new CompletableFuture<>();
+        canJoinAsync(new CanJoin(player){
+            @Override
+            public void run(String result) {
+                can.complete(result);
+            }
+        });
+        return can;
+    }
+
+    public String canJoinHandle(AbstractPlayer player) {
+        if (XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())
+                && XenforoLoginCore.instance.logged_in.get(player.getUniqueId())!=StatusType.HANDLE) {
             return null;
         }
+        XenforoLoginCore.instance.logged_in.put(player.getUniqueId(),StatusType.HANDLE);
+
         ResultType resultType = ForumSystems.getCurrentSystem()
                 .join(player.getName())
                 .shouldLogin(false);
         switch (resultType) {
             case OK:
+                if(Config.getBoolean("secure.rate_limit.enable")) {
+                    if(!rateLimiter.tryAcquire()){
+                        return Helper.langFile("errors.rate_limit");
+                    }
+                }
                 XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                 return null;
             case ERROR_NAME:
@@ -251,6 +336,11 @@ public final class XenforoLoginCore {
                 return Helper.langFile("errors.unknown", resultType.getInheritedObject());
         }
         return Helper.langFile("errors.server");
+    }
+
+    public void canJoinAsync(CanJoin action) {
+        XenforoLoginCore.instance.logged_in.put(action.player.getUniqueId(),StatusType.HANDLE);
+        canJoinTask.add(action);
     }
 
     public void onJoin(AbstractPlayer abstractPlayer) {
@@ -289,10 +379,12 @@ public final class XenforoLoginCore {
             case NEED_LOGIN:
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
-                ResultTypeUtils.handle(player,
-                        ForumSystems.getCurrentSystem()
-                                .login(player, message)
-                                .shouldLogin(true));
+                LoginTask.add(new Login(player,message) {
+                    @Override
+                    public void run(ResultType result) {
+                        ResultTypeUtils.handle(player,result.shouldLogin(true));
+                    }
+                });
                 break;
             case NEED_REGISTER_EMAIL:
                 if (isEmail(message)) {

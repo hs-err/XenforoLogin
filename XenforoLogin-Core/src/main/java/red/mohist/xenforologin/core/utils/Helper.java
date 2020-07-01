@@ -15,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.Charsets;
 import red.mohist.xenforologin.core.interfaces.LogProvider;
+import red.mohist.xenforologin.core.proxys.ProxySystems;
 
 import java.io.*;
 import java.net.URL;
@@ -51,6 +52,10 @@ public class Helper {
         generalConfigMap("",jsonDefault);
 
         new Config(jsonMap);
+        new GeoIP();
+        if(Config.getBoolean("secure.proxy.enable")){
+            new ProxySystems();
+        }
     }
 
     public static String getConfigPath(String filename) {
@@ -92,8 +97,6 @@ public class Helper {
                 }
                 out.close();
                 in.close();
-            } else {
-                Helper.getLogger().warn( "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
             Helper.getLogger().warn( "Could not save " + outFile.getName() + " to " + outFile, ex);
@@ -107,7 +110,6 @@ public class Helper {
 
         try {
             URL url = this.getClass().getClassLoader().getResource(filename);
-            Helper.getLogger().info(url.toString());
             if (url == null) {
                 return null;
             }

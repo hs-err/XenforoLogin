@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.IllegalPluginAccessException;
 import red.mohist.xenforologin.bukkit.BukkitLoader;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
@@ -36,18 +37,22 @@ public class BukkitPlainPlayer extends AbstractPlayer {
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
         try {
-            return Objects.requireNonNull(Bukkit.getPlayer(getUniqueId()))
-                    .teleportAsync(new Location(Bukkit.getWorld(location.world),
-                            location.x, location.y, location.z, location.yaw, location.pitch));
-        } catch (NoSuchMethodError error) {
-            BukkitLoader.instance.getSLF4JLogger()
-                    .debug("You are not running Paper? Using synchronized teleport.", error);
-            CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
-            Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
-                    booleanCompletableFuture.complete(Objects.requireNonNull(Bukkit.getPlayer(getUniqueId()))
-                            .teleport(new Location(Bukkit.getWorld(location.world),
-                                    location.x, location.y, location.z, location.yaw, location.pitch))));
-            return booleanCompletableFuture;
+            try {
+                return Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).teleportAsync(new Location(Bukkit.getWorld(location.world),
+                        location.x, location.y, location.z, location.yaw, location.pitch));
+            } catch (NoSuchMethodError e) {
+                BukkitLoader.instance.getLogger()
+                        .warning("You are not running Paper? Using synchronized teleport.");
+                CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
+                Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
+                        booleanCompletableFuture.complete(Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).teleport(new Location(Bukkit.getWorld(location.world),
+                                location.x, location.y, location.z, location.yaw, location.pitch))));
+                return booleanCompletableFuture;
+            }
+        }catch (IllegalPluginAccessException e){
+            CompletableFuture<Boolean> r= new CompletableFuture<>();
+            r.complete(false);
+            return r;
         }
     }
 

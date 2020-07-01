@@ -10,7 +10,6 @@
 package red.mohist.xenforologin.core.utils;
 
 import com.maxmind.geoip2.DatabaseReader;
-import com.maxmind.geoip2.model.CityResponse;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +24,12 @@ public class GeoIP {
         File database = new File(Helper.getConfigPath("GeoLite2-City.mmdb"));
         reader = new DatabaseReader.Builder(database).build();
     }
-    public static CityResponse city(String ip) throws Exception {
-        InetAddress ipAddress = InetAddress.getByName(ip);
-
-        return instance.reader.city(ipAddress);
+    public static String city(String ip) {
+        try {
+            InetAddress ipAddress = InetAddress.getByName(ip);
+            return instance.reader.city(ipAddress).getCity().getName();
+        }catch (Exception e){
+            return Helper.langFile("last_login_unknown");
+        }
     }
 }

@@ -45,10 +45,8 @@ public class SqliteSystem implements ForumSystem {
 
             if (absolute) {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-                Helper.getLogger().info(Helper.getConfigPath(path));
             } else {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath(path));
-                Helper.getLogger().info(Helper.getConfigPath(path));
             }
             if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
                 PreparedStatement pps;

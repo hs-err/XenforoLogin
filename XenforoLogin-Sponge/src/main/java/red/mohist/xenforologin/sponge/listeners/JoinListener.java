@@ -14,6 +14,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
+import org.spongepowered.api.text.Text;
 import red.mohist.xenforologin.core.XenforoLoginCore;
 import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.sponge.implementation.SpongePlayer;
@@ -25,7 +26,13 @@ public class JoinListener implements SpongeAPIListener {
         SpongePlayer player=new SpongePlayer(spongePlayer);
         XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
         if (!XenforoLoginCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
-            Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
+            String canLogin = XenforoLoginCore.instance.canLogin(player);
+            if (canLogin != null) {
+                spongePlayer.kick(Text.of(canLogin));
+                return;
+            }
+
+            Helper.getLogger().warn("onAsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
             new Thread(() -> {
                 String canjoin = XenforoLoginCore.instance.canJoin(player);
