@@ -82,7 +82,7 @@ dependencies {
         exclude group: 'com.google.jimfs'
         exclude group: 'org.ow2.asm'
      }
-    providedCompile(project(":XenforoLogin-Sponge"))
+    // providedCompile(project(":XenforoLogin-Sponge")) // TODO temp removed Sponge
 }
 assemble.dependsOn(shadowJar)
 
