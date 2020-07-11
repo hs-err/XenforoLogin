@@ -27,8 +27,7 @@ import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
@@ -119,6 +118,15 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         }
     }
 
+    @Override
+    public Collection<AbstractPlayer> getAllPlayer() {
+        Collection<AbstractPlayer> allPlayers=new Vector<>();
+        for (Player onlinePlayer : getServer().getOnlinePlayers()) {
+            allPlayers.add(new BukkitPlayer(onlinePlayer));
+        }
+        return allPlayers;
+    }
+
     public void sendBlankInventoryPacket(Player player) {
         if (listenerProtocolEvent != null) {
             listenerProtocolEvent.sendBlankInventoryPacket(player);
@@ -150,6 +158,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             }
         }
     }
+
 
     public AbstractPlayer player2info(Player player) {
         return new BukkitPlayer(player);

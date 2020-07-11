@@ -22,6 +22,13 @@ import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
 public class AuthListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onAsyncPlayerPreLoginEvent(Auth event, @First GameProfile profile) {
+        String canLogin = XenforoLoginCore.instance.canLogin(new SpongePlainPlayer(
+                event.getProfile().getName().get(), event.getProfile().getUniqueId(), event.getConnection().getAddress().getAddress()));
+        if (canLogin != null) {
+            event.setMessage(Text.of(canLogin));
+            event.setCancelled(true);
+            return;
+        }
         String canjoin = XenforoLoginCore.instance.canJoin(new SpongePlainPlayer(
                 event.getProfile().getName().get(), event.getProfile().getUniqueId(), event.getConnection().getAddress().getAddress()));
         if (canjoin != null) {

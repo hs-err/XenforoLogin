@@ -2,6 +2,8 @@
 
 Prevent minecraft username stealing with Xenforo and more.
 
+Development builds: https://ci.ishland.com:43333/job/XenforoLogin/
+
 ## Description
 - Provide an extra protection for your online server.
 - Secure your offline server.
@@ -27,7 +29,7 @@ Prevent minecraft username stealing with Xenforo and more.
   - Sponge (Experimental)
 
 ## Planned features
-- Support for fabric servers.
+- Support for fabric servers. (currently in development)
 - Session login.
 
 ## Usage

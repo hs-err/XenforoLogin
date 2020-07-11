@@ -27,7 +27,7 @@ public class LoginTicker {
             public void run() {
                 LoginTicker.run();
             }
-        }, 1000, LoginTickPlayer.showTipTime);
+        }, 0, LoginTickPlayer.showTipTime * 1000);
     }
 
     public static void add(AbstractPlayer player) {

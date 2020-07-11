@@ -14,11 +14,9 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
+import org.spongepowered.api.text.Text;
 import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.core.utils.LoginTicker;
 import red.mohist.xenforologin.sponge.implementation.SpongePlayer;
 import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
 
@@ -28,7 +26,13 @@ public class JoinListener implements SpongeAPIListener {
         SpongePlayer player=new SpongePlayer(spongePlayer);
         XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
         if (!XenforoLoginCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
-            Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
+            String canLogin = XenforoLoginCore.instance.canLogin(player);
+            if (canLogin != null) {
+                spongePlayer.kick(Text.of(canLogin));
+                return;
+            }
+
+            Helper.getLogger().warn("onAsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
             new Thread(() -> {
                 String canjoin = XenforoLoginCore.instance.canJoin(player);
@@ -37,20 +41,7 @@ public class JoinListener implements SpongeAPIListener {
                 }
             }).start();
         }
-        if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
-            player.teleport(new LocationInfo(
-                    XenforoLoginCore.instance.default_location.world,
-                    XenforoLoginCore.instance.default_location.x,
-                    XenforoLoginCore.instance.default_location.y,
-                    XenforoLoginCore.instance.default_location.z,
-                    XenforoLoginCore.instance.default_location.yaw,
-                    XenforoLoginCore.instance.default_location.pitch
-            ));
-        }
-        if (Config.getBoolean("secure.spectator_login", true)) {
-            //event.getPlayer().setGameMode(GameMode.SPECTATOR);
-        }
-        LoginTicker.add(player);
+        XenforoLoginCore.instance.onJoin(player);
     }
 
     @Override
