@@ -142,31 +142,34 @@ public final class XenforoLoginCore {
         new Thread(() -> {
             while (true){
                 try {
-                    CanJoin task = canJoinTask.take();
-                    task.run(canJoinHandle(task.player));
+                    if(!canJoinTask.isEmpty()){
+                        CanJoin task = canJoinTask.take();
+                        task.run(canJoinHandle(task.player));
+                    }
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
-            }
-        }).start();
-        new Thread(() -> {
-            while (true){
                 try {
-                    Login task = LoginTask.take();
-                    task.run(ForumSystems.getCurrentSystem()
-                            .login(task.player, task.message));
+                    if(!LoginTask.isEmpty()) {
+                        Login task = LoginTask.take();
+                        task.run(ForumSystems.getCurrentSystem()
+                                .login(task.player, task.message));
+                    }
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
-            }
-        }).start();
-        new Thread(() -> {
-            while (true){
                 try {
-                    Register task = registerTask.take();
-                    task.run(ForumSystems.getCurrentSystem()
-                            .register(task.player, task.email,task.email));
+                    if(!registerTask.isEmpty()) {
+                        Register task = registerTask.take();
+                        task.run(ForumSystems.getCurrentSystem()
+                                .register(task.player, task.email, task.email));
+                    }
                 }catch (Throwable e){
+                    e.printStackTrace();
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
