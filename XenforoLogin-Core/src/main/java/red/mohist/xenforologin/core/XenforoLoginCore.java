@@ -147,10 +147,6 @@ public final class XenforoLoginCore {
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
-            }
-        }).start();
-        new Thread(() -> {
-            while (true){
                 try {
                     Login task = LoginTask.take();
                     task.run(ForumSystems.getCurrentSystem()
@@ -158,10 +154,6 @@ public final class XenforoLoginCore {
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
-            }
-        }).start();
-        new Thread(() -> {
-            while (true){
                 try {
                     Register task = registerTask.take();
                     task.run(ForumSystems.getCurrentSystem()
