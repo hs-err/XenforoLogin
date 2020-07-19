@@ -1,10 +1,17 @@
 /*
- * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
+ * Copyright 2020 Mohist-Community
  *
- * You are not permitted to interfere any protection that prevents loading in CatServer
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 2020 Mohist-Community.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package red.mohist.xenforologin.core.utils;
@@ -32,34 +39,35 @@ public class Helper {
     public String basePath;
     public LogProvider log;
     public Map<String, JsonElement> jsonMap;
-    public Helper(String path, LogProvider log) throws IOException {
-        instance=this;
-        this.log=log;
-        basePath=path;
-        jsonMap= new HashMap<>();
-        saveResource("config.json",false);
 
-        File configFile=new File(basePath+"/config.json");
+    public Helper(String path, LogProvider log) throws IOException {
+        instance = this;
+        this.log = log;
+        basePath = path;
+        jsonMap = new HashMap<>();
+        saveResource("config.json", false);
+
+        File configFile = new File(basePath + "/config.json");
         FileInputStream fileReader = new FileInputStream(configFile);
-        InputStreamReader inputStreamReader=new InputStreamReader(fileReader, StandardCharsets.UTF_8);
-        JsonElement json=new Gson().fromJson(inputStreamReader,JsonElement.class);
-        generalConfigMap("",json);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileReader, StandardCharsets.UTF_8);
+        JsonElement json = new Gson().fromJson(inputStreamReader, JsonElement.class);
+        generalConfigMap("", json);
         inputStreamReader.close();
         fileReader.close();
 
-        Reader readerDefault=getTextResource("config.json");
-        JsonElement jsonDefault=new Gson().fromJson(readerDefault,JsonElement.class);
-        generalConfigMap("",jsonDefault);
+        Reader readerDefault = getTextResource("config.json");
+        JsonElement jsonDefault = new Gson().fromJson(readerDefault, JsonElement.class);
+        generalConfigMap("", jsonDefault);
 
         new Config(jsonMap);
         new GeoIP();
-        if(Config.getBoolean("secure.proxy.enable")){
+        if (Config.getBoolean("secure.proxy.enable")) {
             new ProxySystems();
         }
     }
 
     public static String getConfigPath(String filename) {
-        return Paths.get(instance.basePath,filename).toString();
+        return Paths.get(instance.basePath, filename).toString();
     }
 
     protected final Reader getTextResource(String file) {
@@ -99,7 +107,7 @@ public class Helper {
                 in.close();
             }
         } catch (IOException ex) {
-            Helper.getLogger().warn( "Could not save " + outFile.getName() + " to " + outFile, ex);
+            Helper.getLogger().warn("Could not save " + outFile.getName() + " to " + outFile, ex);
         }
     }
 
@@ -122,14 +130,14 @@ public class Helper {
         }
     }
 
-    private void generalConfigMap(String key, JsonElement data){
-        if(data.isJsonNull()){
-            if(!jsonMap.containsKey(key.equals("")?".":key)){
-                jsonMap.put(key.equals("")?".":key,null);
+    private void generalConfigMap(String key, JsonElement data) {
+        if (data.isJsonNull()) {
+            if (!jsonMap.containsKey(key.equals("") ? "." : key)) {
+                jsonMap.put(key.equals("") ? "." : key, null);
             }
         }
-        if(data.isJsonArray()){
-            if(!jsonMap.containsKey(key.equals("")?".":key)) {
+        if (data.isJsonArray()) {
+            if (!jsonMap.containsKey(key.equals("") ? "." : key)) {
                 JsonArray jsonArray = data.getAsJsonArray();
                 jsonMap.put(key.equals("") ? "." : key, data.getAsJsonArray());
                 for (int i = 0; i < jsonArray.size(); i++) {
@@ -137,24 +145,23 @@ public class Helper {
                 }
             }
         }
-        if (data.isJsonObject())
-        {
+        if (data.isJsonObject()) {
             JsonObject jsonBase = new JsonObject();
             Set<Map.Entry<String, JsonElement>> jsonObject = data.getAsJsonObject().entrySet();
-            for (Map.Entry<String, JsonElement> jsonData : jsonObject){
+            for (Map.Entry<String, JsonElement> jsonData : jsonObject) {
                 generalConfigMap(key + "." + jsonData.getKey(), jsonData.getValue());
-                jsonBase.add(jsonData.getKey(),jsonData.getValue());
+                jsonBase.add(jsonData.getKey(), jsonData.getValue());
             }
-            jsonMap.put(key.equals("")?".":key,jsonBase.getAsJsonObject());
+            jsonMap.put(key.equals("") ? "." : key, jsonBase.getAsJsonObject());
         }
-        if (data.isJsonPrimitive())
-        {
-            if(!jsonMap.containsKey(key.equals("")?".":key)){
-                jsonMap.put(key.equals("")?".":key,data.getAsJsonPrimitive());
+        if (data.isJsonPrimitive()) {
+            if (!jsonMap.containsKey(key.equals("") ? "." : key)) {
+                jsonMap.put(key.equals("") ? "." : key, data.getAsJsonPrimitive());
             }
         }
     }
-    public static LogProvider getLogger(){
+
+    public static LogProvider getLogger() {
         return Helper.instance.log;
     }
 

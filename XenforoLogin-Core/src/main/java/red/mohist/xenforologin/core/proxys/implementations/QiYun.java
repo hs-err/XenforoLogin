@@ -1,10 +1,17 @@
 /*
- * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
+ * Copyright 2020 Mohist-Community
  *
- * You are not permitted to interfere any protection that prevents loading in CatServer
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 2020 Mohist-Community.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package red.mohist.xenforologin.core.proxys.implementations;
@@ -20,10 +27,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class QiYun implements ProxySystem
-{
+public class QiYun implements ProxySystem {
     private CopyOnWriteArrayList<String> proxyList;
-    public QiYun(){
+
+    public QiYun() {
         proxyList = new CopyOnWriteArrayList<>();
     }
 
@@ -46,7 +53,7 @@ public class QiYun implements ProxySystem
                 .addHeader("connection", "Keep-Alive")
                 .addHeader("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
                 .execute().handleResponse(responseHandler);
-        if(result == null){
+        if (result == null) {
             throw new IOException("Result is null");
         }
         Pattern pattern = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
@@ -59,7 +66,7 @@ public class QiYun implements ProxySystem
         }
     }
 
-    public boolean isProxy(String ip){
+    public boolean isProxy(String ip) {
         return proxyList.contains(ip);
     }
 }

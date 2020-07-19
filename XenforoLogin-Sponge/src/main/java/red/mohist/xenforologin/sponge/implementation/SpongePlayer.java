@@ -1,10 +1,17 @@
 /*
- * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
+ * Copyright 2020 Mohist-Community
  *
- * You are not permitted to interfere any protection that prevents loading in CatServer
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 2020 Mohist-Community.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package red.mohist.xenforologin.sponge.implementation;
@@ -40,7 +47,7 @@ public class SpongePlayer extends AbstractPlayer {
         CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
         booleanCompletableFuture.complete(
                 handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
-                        .get().getLocation(location.x,location.y,location.z)));
+                        .get().getLocation(location.x, location.y, location.z)));
         return booleanCompletableFuture;
     }
 
@@ -57,7 +64,7 @@ public class SpongePlayer extends AbstractPlayer {
                 location.getX(),
                 location.getY(),
                 location.getZ(),
-                0,0
+                0, 0
         );
     }
 
@@ -72,14 +79,14 @@ public class SpongePlayer extends AbstractPlayer {
             return 2;
         } else if (GameModes.SPECTATOR.equals(gameMode)) {
             return 3;
-        }else {
+        } else {
             return 0;
         }
     }
 
     @Override
     public void setGamemode(int gamemode) {
-        switch (gamemode){
+        switch (gamemode) {
             case 0:
                 handle.gameMode().set(GameModes.SURVIVAL);
                 return;

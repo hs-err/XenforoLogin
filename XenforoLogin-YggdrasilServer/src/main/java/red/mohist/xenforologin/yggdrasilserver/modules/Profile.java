@@ -1,10 +1,17 @@
 /*
- * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
+ * Copyright 2020 Mohist-Community
  *
- * You are not permitted to interfere any protection that prevents loading in CatServer
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 2020 Mohist-Community.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package red.mohist.xenforologin.yggdrasilserver.modules;
@@ -15,21 +22,25 @@ public class Profile {
     public String id;
     public String name;
     public ArrayList<Propertie> properties;
-    public Profile setId(String id){
-        this.id=id;
+
+    public Profile setId(String id) {
+        this.id = id;
         return this;
     }
-    public Profile setName(String name){
-        this.name=name;
+
+    public Profile setName(String name) {
+        this.name = name;
         return this;
     }
-    public Profile addProperties(String name,String value){
-        properties.add(new Propertie(name,value));
+
+    public Profile addProperties(String name, String value) {
+        properties.add(new Propertie(name, value));
         return this;
     }
-    public Profile removeProperties(String name){
+
+    public Profile removeProperties(String name) {
         for (int i = 0; i < properties.size(); i++) {
-            if(properties.get(i).name.equals(name)){
+            if (properties.get(i).name.equals(name)) {
                 properties.remove(i);
                 break;
             }

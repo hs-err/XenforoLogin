@@ -36,8 +36,5 @@ Development builds: https://ci.ishland.com:43333/job/XenforoLogin/
 Moved to wiki.
 
 ## License
-XenforoLogin is licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
 
-## Extra license
-- You are not permitted to interfere any protection that prevents loading in CatServer
-
+[LICENSE.md](LICENSE.md)

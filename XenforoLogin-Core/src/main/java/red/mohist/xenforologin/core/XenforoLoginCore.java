@@ -1,10 +1,17 @@
 /*
- * This file is part of XenforoLogin, licensed under the GNU Lesser General Public License v3.0 (LGPLv3).
+ * Copyright 2020 Mohist-Community
  *
- * You are not permitted to interfere any protection that prevents loading in CatServer
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Copyright (c) 2020 Mohist-Community.
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package red.mohist.xenforologin.core;
@@ -94,21 +101,21 @@ public final class XenforoLoginCore {
         instance = this;
         api = platformAdapter;
         logged_in = new ConcurrentHashMap<>();
-        canJoinTask=new LinkedBlockingQueue<>();
-        LoginTask=new LinkedBlockingQueue<>();
-        registerTask=new LinkedBlockingQueue<>();
+        canJoinTask = new LinkedBlockingQueue<>();
+        LoginTask = new LinkedBlockingQueue<>();
+        registerTask = new LinkedBlockingQueue<>();
         loadConfig();
 
         ForumSystems.reloadConfig();
         LoginTicker.register();
 
-        if(Config.getBoolean("rate_limit.join.enable")) {
-             joinRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.join.permits"));
+        if (Config.getBoolean("rate_limit.join.enable")) {
+            joinRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.join.permits"));
         }
-        if(Config.getBoolean("rate_limit.register.enable")) {
+        if (Config.getBoolean("rate_limit.register.enable")) {
             registerRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.register.permits"));
         }
-        if(Config.getBoolean("rate_limit.login.enable")) {
+        if (Config.getBoolean("rate_limit.login.enable")) {
             loginRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.login.permits"));
         }
 
@@ -138,33 +145,33 @@ public final class XenforoLoginCore {
         createWorkers();
     }
 
-    private void createWorkers(){
+    private void createWorkers() {
         new Thread(() -> {
-            while (true){
+            while (true) {
                 try {
-                    if(!canJoinTask.isEmpty()){
+                    if (!canJoinTask.isEmpty()) {
                         CanJoin task = canJoinTask.take();
                         task.run(canJoinHandle(task.player));
                     }
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
                 try {
-                    if(!LoginTask.isEmpty()) {
+                    if (!LoginTask.isEmpty()) {
                         Login task = LoginTask.take();
                         task.run(ForumSystems.getCurrentSystem()
                                 .login(task.player, task.message));
                     }
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
                 try {
-                    if(!registerTask.isEmpty()) {
+                    if (!registerTask.isEmpty()) {
                         Register task = registerTask.take();
                         task.run(ForumSystems.getCurrentSystem()
                                 .register(task.player, task.email, task.email));
                     }
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
                 try {
@@ -175,6 +182,7 @@ public final class XenforoLoginCore {
             }
         }).start();
     }
+
     public void onDisable() {
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
             onQuit(abstractPlayer);
@@ -246,7 +254,7 @@ public final class XenforoLoginCore {
             ResultSet rs = pps.executeQuery();
             if (rs.next()) {
                 player.sendMessage(Helper.langFile("last_login", ImmutableMap.of(
-                        "city", GeoIP.city(player.getAddress().getHostAddress()) )));
+                        "city", GeoIP.city(player.getAddress().getHostAddress()))));
             }
 
             pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
@@ -309,20 +317,20 @@ public final class XenforoLoginCore {
     }
 
     public String canLogin(AbstractPlayer player) {
-        if(Config.getBoolean("secure.proxy.enable")){
-            if(ProxySystems.isProxy(player.getAddress().getHostAddress())){
+        if (Config.getBoolean("secure.proxy.enable")) {
+            if (ProxySystems.isProxy(player.getAddress().getHostAddress())) {
                 return Helper.langFile("errors.proxy");
             }
         }
-        if(Config.getBoolean("rate_limit.join.enable")) {
-            if(!joinRateLimiter.tryAcquire()){
+        if (Config.getBoolean("rate_limit.join.enable")) {
+            if (!joinRateLimiter.tryAcquire()) {
                 return Helper.langFile("errors.rate_limit");
             }
         }
-        if(Config.getBoolean("secure.country_limit.enable")) {
-            if(!Config.getBoolean(
-                    "secure.country_limit.lists."+GeoIP.country(player.getAddress().getHostAddress()),
-                    Config.getBoolean("secure.country_limit.default"))){
+        if (Config.getBoolean("secure.country_limit.enable")) {
+            if (!Config.getBoolean(
+                    "secure.country_limit.lists." + GeoIP.country(player.getAddress().getHostAddress()),
+                    Config.getBoolean("secure.country_limit.default"))) {
                 return Helper.langFile("errors.country_limit");
             }
         }
@@ -331,8 +339,8 @@ public final class XenforoLoginCore {
 
 
     public CompletableFuture<String> canJoin(AbstractPlayer player) {
-        CompletableFuture<String> can=new CompletableFuture<>();
-        canJoinAsync(new CanJoin(player){
+        CompletableFuture<String> can = new CompletableFuture<>();
+        canJoinAsync(new CanJoin(player) {
             @Override
             public void run(String result) {
                 can.complete(result);
@@ -343,10 +351,10 @@ public final class XenforoLoginCore {
 
     public String canJoinHandle(AbstractPlayer player) {
         if (XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())
-                && XenforoLoginCore.instance.logged_in.get(player.getUniqueId())!=StatusType.HANDLE) {
+                && XenforoLoginCore.instance.logged_in.get(player.getUniqueId()) != StatusType.HANDLE) {
             return null;
         }
-        XenforoLoginCore.instance.logged_in.put(player.getUniqueId(),StatusType.HANDLE);
+        XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
 
         ResultType resultType = ForumSystems.getCurrentSystem()
                 .join(player.getName())
@@ -372,7 +380,7 @@ public final class XenforoLoginCore {
     }
 
     public void canJoinAsync(CanJoin action) {
-        XenforoLoginCore.instance.logged_in.put(action.player.getUniqueId(),StatusType.HANDLE);
+        XenforoLoginCore.instance.logged_in.put(action.player.getUniqueId(), StatusType.HANDLE);
         canJoinTask.add(action);
     }
 
@@ -397,7 +405,7 @@ public final class XenforoLoginCore {
                     login(abstractPlayer);
                 }
             }
-        }catch (Throwable e){
+        } catch (Throwable e) {
             Helper.getLogger().warn("Fail use session.");
             e.printStackTrace();
         }
@@ -410,18 +418,18 @@ public final class XenforoLoginCore {
                 player.sendMessage(Helper.langFile("need_check"));
                 break;
             case NEED_LOGIN:
-                if(Config.getBoolean("rate_limit.login.enable")) {
-                    if(!loginRateLimiter.tryAcquire()){
+                if (Config.getBoolean("rate_limit.login.enable")) {
+                    if (!loginRateLimiter.tryAcquire()) {
                         player.sendMessage(Helper.langFile("errors.rate_limit"));
                         return;
                     }
                 }
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
-                LoginTask.add(new Login(player,message) {
+                LoginTask.add(new Login(player, message) {
                     @Override
                     public void run(ResultType result) {
-                        ResultTypeUtils.handle(player,result.shouldLogin(true));
+                        ResultTypeUtils.handle(player, result.shouldLogin(true));
                     }
                 });
                 break;
@@ -440,8 +448,8 @@ public final class XenforoLoginCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
-                if(Config.getBoolean("rate_limit.register.enable")) {
-                    if(!registerRateLimiter.tryAcquire()){
+                if (Config.getBoolean("rate_limit.register.enable")) {
+                    if (!registerRateLimiter.tryAcquire()) {
                         player.sendMessage(Helper.langFile("errors.rate_limit"));
                         return;
                     }
@@ -449,7 +457,7 @@ public final class XenforoLoginCore {
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
-                    registerTask.add(new Register(player,status.email,status.password) {
+                    registerTask.add(new Register(player, status.email, status.password) {
                         @Override
                         public void run(ResultType answer) {
                             boolean result = ResultTypeUtils.handle(player,
