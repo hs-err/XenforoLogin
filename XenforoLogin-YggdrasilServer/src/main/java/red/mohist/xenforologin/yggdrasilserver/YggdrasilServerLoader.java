@@ -21,6 +21,7 @@ import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 import red.mohist.xenforologin.core.utils.Helper;
 
+import java.util.Collection;
 import java.util.logging.Logger;
 
 public class YggdrasilServerLoader implements PlatformAdapter {
@@ -47,5 +48,10 @@ public class YggdrasilServerLoader implements PlatformAdapter {
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
 
+    }
+
+    @Override
+    public Collection<AbstractPlayer> getAllPlayer() {
+        return null;
     }
 }
