@@ -20,6 +20,7 @@ public class LoginTicker {
 
     public static TimerTask task = null;
     private static final Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
+    private static Timer timer;
 
     public static void register() {
         task = new TimerTask() {
@@ -28,7 +29,8 @@ public class LoginTicker {
                 LoginTicker.run();
             }
         };
-        new Timer().schedule(task, 0, LoginTickPlayer.showTipTime * 1000);
+        timer = new Timer();
+        timer.schedule(task, 0, LoginTickPlayer.showTipTime * 1000);
     }
 
     public static void add(AbstractPlayer player) {
@@ -43,5 +45,8 @@ public class LoginTicker {
         if (task != null)
             task.cancel();
         task = null;
+        if (timer != null)
+            timer.cancel();
+        timer = null;
     }
 }
