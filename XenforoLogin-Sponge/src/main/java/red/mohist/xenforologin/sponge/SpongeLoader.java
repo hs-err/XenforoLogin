@@ -77,43 +77,43 @@ public class SpongeLoader implements PlatformAdapter {
                     logger.warn(info,exception);
                 }
             });
+
+            instance = this;
+            Helper.getLogger().info("Hello, XenforoLogin!");
+
+            xenforoLoginCore = new XenforoLoginCore(this);
+
+
+            {
+                int unavailableCount = 0;
+                Set<Class<? extends SpongeAPIListener>> classes = new Reflections("red.mohist.xenforologin.sponge.listeners")
+                        .getSubTypesOf(SpongeAPIListener.class);
+                for (Class<? extends SpongeAPIListener> clazz : classes) {
+                    SpongeAPIListener listener;
+                    try {
+                        listener = clazz.getDeclaredConstructor().newInstance();
+                    } catch (Exception e) {
+                        Helper.getLogger().warn(clazz.getName() + " is not available.");
+                        unavailableCount++;
+                        continue;
+                    }
+                    if (!listener.isAvailable()) {
+                        Helper.getLogger().warn(clazz.getName() + " is not available.");
+                        unavailableCount++;
+                        continue;
+                    }
+                    Sponge.getEventManager().registerListeners(this, listener);
+                }
+                if (unavailableCount > 0) {
+                    Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of sponge");
+                    Helper.getLogger().warn("If your encountered errors, do NOT report to XenforoLogin.");
+                    Helper.getLogger().warn("Error count: " + unavailableCount);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
             logger.warn("XenforoLogin load fail.");
             Sponge.getServer().shutdown();
-        }
-
-        instance = this;
-        Helper.getLogger().info("Hello, XenforoLogin!");
-
-        xenforoLoginCore = new XenforoLoginCore(this);
-
-
-        {
-            int unavailableCount = 0;
-            Set<Class<? extends SpongeAPIListener>> classes = new Reflections("red.mohist.xenforologin.sponge.listeners")
-                    .getSubTypesOf(SpongeAPIListener.class);
-            for (Class<? extends SpongeAPIListener> clazz : classes) {
-                SpongeAPIListener listener;
-                try {
-                    listener = clazz.getDeclaredConstructor().newInstance();
-                } catch (Exception e) {
-                    Helper.getLogger().warn(clazz.getName() + " is not available.");
-                    unavailableCount++;
-                    continue;
-                }
-                if (!listener.isAvailable()) {
-                    Helper.getLogger().warn(clazz.getName() + " is not available.");
-                    unavailableCount++;
-                    continue;
-                }
-                Sponge.getEventManager().registerListeners(this, listener);
-            }
-            if (unavailableCount > 0) {
-                Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of sponge");
-                Helper.getLogger().warn("If your encountered errors, do NOT report to XenforoLogin.");
-                Helper.getLogger().warn("Error count: " + unavailableCount);
-            }
         }
 
     }

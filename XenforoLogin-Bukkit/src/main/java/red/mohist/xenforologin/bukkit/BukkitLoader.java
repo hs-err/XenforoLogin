@@ -60,20 +60,20 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
                     getLogger().warning(exception.toString());
                 }
             });
+
+            instance = this;
+            Helper.getLogger().info("Hello, XenforoLogin!");
+
+            xenforoLoginCore = new XenforoLoginCore(this);
+
+            hookProtocolLib();
+
+            registerListeners();
         } catch (IOException e) {
             e.printStackTrace();
             getLogger().warning("XenforoLogin load fail.");
             getServer().shutdown();
         }
-
-        instance = this;
-        Helper.getLogger().info("Hello, XenforoLogin!");
-
-        xenforoLoginCore = new XenforoLoginCore(this);
-
-        hookProtocolLib();
-
-        registerListeners();
     }
 
     @Override
