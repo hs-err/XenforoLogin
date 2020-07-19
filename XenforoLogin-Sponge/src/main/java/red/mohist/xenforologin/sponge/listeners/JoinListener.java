@@ -23,6 +23,7 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
 import org.spongepowered.api.text.Text;
 import red.mohist.xenforologin.core.XenforoLoginCore;
+import red.mohist.xenforologin.core.asyncs.CanJoin;
 import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.sponge.implementation.SpongePlayer;
 import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
@@ -39,14 +40,16 @@ public class JoinListener implements SpongeAPIListener {
                 return;
             }
 
-            Helper.getLogger().warn("onAsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
+            Helper.getLogger().warn("onAuthEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            new Thread(() -> {
-                String canjoin = XenforoLoginCore.instance.canJoin(player);
-                if (canjoin != null) {
-                    player.kick(canjoin);
+            XenforoLoginCore.instance.canJoinAsync(new CanJoin(player) {
+                @Override
+                public void run(String result) {
+                    if (result != null) {
+                        player.kick(result);
+                    }
                 }
-            }).start();
+            });
         }
         XenforoLoginCore.instance.onJoin(player);
     }

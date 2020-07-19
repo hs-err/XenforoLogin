@@ -23,25 +23,32 @@ import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
 import red.mohist.xenforologin.core.XenforoLoginCore;
+import red.mohist.xenforologin.core.asyncs.CanJoin;
+import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.sponge.implementation.SpongePlainPlayer;
 import red.mohist.xenforologin.sponge.interfaces.SpongeAPIListener;
 
 public class AuthListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
-    public void onAsyncPlayerPreLoginEvent(Auth event, @First GameProfile profile) {
-        String canLogin = XenforoLoginCore.instance.canLogin(new SpongePlainPlayer(
-                event.getProfile().getName().get(), event.getProfile().getUniqueId(), event.getConnection().getAddress().getAddress()));
+    public void onAuthEvent(Auth event, @First GameProfile profile) {
+         AbstractPlayer abstractPlayer=new SpongePlainPlayer(
+                event.getProfile().getName().get(),
+                event.getProfile().getUniqueId(),
+                event.getConnection().getAddress().getAddress());
+        String canLogin = XenforoLoginCore.instance.canLogin(abstractPlayer);
         if (canLogin != null) {
             event.setMessage(Text.of(canLogin));
             event.setCancelled(true);
             return;
         }
-        String canjoin = XenforoLoginCore.instance.canJoin(new SpongePlainPlayer(
-                event.getProfile().getName().get(), event.getProfile().getUniqueId(), event.getConnection().getAddress().getAddress()));
-        if (canjoin != null) {
-            event.setMessage(Text.of(canjoin));
-            event.setCancelled(true);
-        }
+        XenforoLoginCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
+            @Override
+            public void run(String result) {
+                if (result != null) {
+                    player.kick(result);
+                }
+            }
+        });
     }
 
     @Override
