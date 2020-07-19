@@ -23,5 +23,5 @@ include(':XenforoLogin-Bukkit')
 include(':XenforoLogin-Core')
 include(':XenforoLogin-Fabric')
 include('XenforoLogin-YggdrasilServer')
-// include('XenforoLogin-Sponge') // TODO temp removed Sponge
+include('XenforoLogin-Sponge')
 
