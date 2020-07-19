@@ -19,15 +19,16 @@ import java.util.TimerTask;
 public class LoginTicker {
 
     public static TimerTask task = null;
-    private static Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
+    private static final Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
 
     public static void register() {
-        new Timer().schedule(new TimerTask() {
+        task = new TimerTask() {
             @Override
             public void run() {
                 LoginTicker.run();
             }
-        }, 0, LoginTickPlayer.showTipTime * 1000);
+        };
+        new Timer().schedule(task, 0, LoginTickPlayer.showTipTime * 1000);
     }
 
     public static void add(AbstractPlayer player) {
