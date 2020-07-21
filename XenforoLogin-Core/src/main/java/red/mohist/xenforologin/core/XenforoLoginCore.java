@@ -246,15 +246,7 @@ public final class XenforoLoginCore {
         }
 
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? LIMIT 1;");
-            pps.setString(1, player.getUniqueId().toString());
-            ResultSet rs = pps.executeQuery();
-            if (rs.next()) {
-                player.sendMessage(Helper.langFile("last_login", ImmutableMap.of(
-                        "city", GeoIP.city(player.getAddress().getHostAddress()))));
-            }
-
-            pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
+            PreparedStatement pps = connection.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
             pps.setString(1, player.getUniqueId().toString());
             pps.executeUpdate();
 
@@ -322,13 +314,6 @@ public final class XenforoLoginCore {
         if (Config.getBoolean("rate_limit.join.enable")) {
             if (!joinRateLimiter.tryAcquire()) {
                 return Helper.langFile("errors.rate_limit");
-            }
-        }
-        if (Config.getBoolean("secure.country_limit.enable")) {
-            if (!Config.getBoolean(
-                    "secure.country_limit.lists." + GeoIP.country(player.getAddress().getHostAddress()),
-                    Config.getBoolean("secure.country_limit.default"))) {
-                return Helper.langFile("errors.country_limit");
             }
         }
         return null;

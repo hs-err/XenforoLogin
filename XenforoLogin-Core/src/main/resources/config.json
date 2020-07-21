@@ -88,14 +88,6 @@
         "LiuLiu": true,
         "QiYun": true
       }
-    },
-    "country_limit": {
-      "enable": true,
-      "lists": {
-        "CN": true,
-        "UNKNOWN": true
-      },
-      "default": true
     }
   },
   "rate_limit": {
