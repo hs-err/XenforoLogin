@@ -147,36 +147,33 @@ public final class XenforoLoginCore {
 
     private void createWorkers() {
         new Thread(() -> {
-            while (true) {
+            while (true){
                 try {
-                    if (!canJoinTask.isEmpty()) {
-                        CanJoin task = canJoinTask.take();
-                        task.run(canJoinHandle(task.player));
-                    }
-                } catch (Throwable e) {
+                    CanJoin task = canJoinTask.take();
+                    task.run(canJoinHandle(task.player));
+                }catch (Throwable e){
                     e.printStackTrace();
                 }
+            }
+        }).start();
+        new Thread(() -> {
+            while (true){
                 try {
-                    if (!LoginTask.isEmpty()) {
-                        Login task = LoginTask.take();
-                        task.run(ForumSystems.getCurrentSystem()
-                                .login(task.player, task.message));
-                    }
-                } catch (Throwable e) {
+                    Login task = LoginTask.take();
+                    task.run(ForumSystems.getCurrentSystem()
+                            .login(task.player, task.message));
+                }catch (Throwable e){
                     e.printStackTrace();
                 }
+            }
+        }).start();
+        new Thread(() -> {
+            while (true){
                 try {
-                    if (!registerTask.isEmpty()) {
-                        Register task = registerTask.take();
-                        task.run(ForumSystems.getCurrentSystem()
-                                .register(task.player, task.email, task.email));
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
+                    Register task = registerTask.take();
+                    task.run(ForumSystems.getCurrentSystem()
+                            .register(task.player, task.email,task.email));
+                }catch (Throwable e){
                     e.printStackTrace();
                 }
             }
