@@ -60,7 +60,6 @@ public class Helper {
         generalConfigMap("", jsonDefault);
 
         new Config(jsonMap);
-        new GeoIP();
         if (Config.getBoolean("secure.proxy.enable")) {
             new ProxySystems();
         }
