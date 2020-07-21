@@ -87,7 +87,8 @@
       "proxys": {
         "LiuLiu": true,
         "QiYun": true
-      }
+      },
+      "enable_local": true
     }
   },
   "rate_limit": {

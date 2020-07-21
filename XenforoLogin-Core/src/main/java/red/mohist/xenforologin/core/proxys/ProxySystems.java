@@ -64,6 +64,9 @@ public class ProxySystems {
     }
 
     public static boolean isProxy(String ip) {
+        if(ip.equals("127.0.0.1")){
+            return !Config.getBoolean("secure.proxy.enable_local");
+        }
         for (ProxySystem proxySystem : currentSystem) {
             if (proxySystem.isProxy(ip)) {
                 Helper.getLogger().warn("find proxy by " + proxySystem.getClass().getName());
