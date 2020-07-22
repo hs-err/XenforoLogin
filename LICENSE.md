@@ -2,11 +2,11 @@
 
 Copyright 2020 Mohist-Community
 
-## XenforoLogin-Bukkit
+## SodionAuth-Bukkit
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
-## XenforoLogin-Core
+## SodionAuth-Core
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
@@ -14,15 +14,15 @@ Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
 - You are not permitted to interfere any protection that prevents loading in CatServer
 
-## XenforoLogin-Fabric
+## SodionAuth-Fabric
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
-## XenforoLogin-Sponge
+## SodionAuth-Sponge
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
-## XenforoLogin-YggdrasilServer
+## SodionAuth-YggdrasilServer
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
