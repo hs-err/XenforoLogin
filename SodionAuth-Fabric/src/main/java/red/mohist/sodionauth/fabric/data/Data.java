@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        gradlePluginPortal()
-    }
+package red.mohist.sodionauth.fabric.data;
+
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+
+public class Data {
+
+    public static MinecraftDedicatedServer serverInstance = null;
+
 }
-
-rootProject.name = 'SodionAuth'
-include(':SodionAuth-Bukkit')
-include(':SodionAuth-Core')
-include(':SodionAuth-Fabric')
-include(':SodionAuth-YggdrasilServer')
-include(':SodionAuth-Sponge')
-

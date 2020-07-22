@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        gradlePluginPortal()
+package red.mohist.sodionauth.core.hasher.implementations;
+
+public class SHA384SaltHasherTool extends SHA384HasherTool {
+    public SHA384SaltHasherTool(int saltLength) {
+        super(saltLength);
+    }
+
+    @Override
+    public boolean needSalt() {
+        return true;
     }
 }
-
-rootProject.name = 'SodionAuth'
-include(':SodionAuth-Bukkit')
-include(':SodionAuth-Core')
-include(':SodionAuth-Fabric')
-include(':SodionAuth-YggdrasilServer')
-include(':SodionAuth-Sponge')
-

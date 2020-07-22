@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        gradlePluginPortal()
+package red.mohist.sodionauth.core.enums;
+
+public enum StatusType {
+    NEED_CHECK, NEED_LOGIN, NEED_REGISTER_EMAIL, NEED_REGISTER_PASSWORD, NEED_REGISTER_CONFIRM, LOGGED_IN, HANDLE;
+    public String email;
+    public String password;
+
+    public StatusType setEmail(String t) {
+        email = t;
+        return this;
+    }
+
+    public StatusType setPassword(String t) {
+        password = t;
+        return this;
     }
 }
-
-rootProject.name = 'SodionAuth'
-include(':SodionAuth-Bukkit')
-include(':SodionAuth-Core')
-include(':SodionAuth-Fabric')
-include(':SodionAuth-YggdrasilServer')
-include(':SodionAuth-Sponge')
-

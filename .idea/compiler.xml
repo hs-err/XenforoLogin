@@ -29,12 +29,30 @@
           <entry name="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/1.18/snakeyaml-1.18.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/checkerframework/checker-qual/2.4.0/checker-qual-2.4.0.jar" />
         </processorPath>
-        <module name="XenforoLogin.XenforoLogin-Sponge.main" />
+        <module name="SodionAuth.SodionAuth-Sponge.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="XenforoLogin" target="11" />
       <module name="XenforoLogin-Bukkit" target="1.8" />
       <module name="XenforoLogin-Core" target="1.8" />
+      <module name="XenforoLogin.main" target="11" />
+      <module name="XenforoLogin.test" target="11" />
+      <module name="XenforoLogin.XenforoLogin-Bukkit" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Bukkit.main" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Bukkit.test" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Core" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Core.main" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Core.test" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Fabric" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Fabric.main" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Fabric.test" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Sponge" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Sponge.main" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-Sponge.test" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-YggdrasilServer" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-YggdrasilServer.main" target="1.8" />
+      <module name="XenforoLogin.XenforoLogin-YggdrasilServer.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,9 +1,0 @@
-name: XenforoLogin
-version: ${version}
-main: red.mohist.xenforologin.bukkit.BukkitLoader
-authors:
-  - logos
-  - ishland
-description: Support login with xenforo.
-website: https://mohist.red/
-softdepend: [ProtocolLib]

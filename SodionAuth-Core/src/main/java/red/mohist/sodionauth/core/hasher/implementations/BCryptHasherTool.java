@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        gradlePluginPortal()
+package red.mohist.sodionauth.core.hasher.implementations;
+
+import org.mindrot.jbcrypt.BCrypt;
+import red.mohist.sodionauth.core.hasher.HasherTool;
+
+public class BCryptHasherTool extends HasherTool {
+    public BCryptHasherTool(int saltLength) {
+        super(saltLength);
+    }
+
+    @Override
+    public String hash(String data) {
+        return BCrypt.hashpw(data, BCrypt.gensalt());
+    }
+
+    @Override
+    public boolean verify(String hash, String data) {
+        return BCrypt.checkpw(data, hash);
     }
 }
-
-rootProject.name = 'SodionAuth'
-include(':SodionAuth-Bukkit')
-include(':SodionAuth-Core')
-include(':SodionAuth-Fabric')
-include(':SodionAuth-YggdrasilServer')
-include(':SodionAuth-Sponge')
-

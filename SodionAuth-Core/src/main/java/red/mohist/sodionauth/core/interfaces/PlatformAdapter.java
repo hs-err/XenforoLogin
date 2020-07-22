@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        gradlePluginPortal()
-    }
+package red.mohist.sodionauth.core.interfaces;
+
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+
+import java.util.Collection;
+
+public interface PlatformAdapter {
+
+    LocationInfo getSpawn(String world);
+
+    String getDefaultWorld();
+
+    void onLogin(AbstractPlayer player);
+
+    void sendBlankInventoryPacket(AbstractPlayer player);
+
+    Collection<AbstractPlayer> getAllPlayer();
 }
-
-rootProject.name = 'SodionAuth'
-include(':SodionAuth-Bukkit')
-include(':SodionAuth-Core')
-include(':SodionAuth-Fabric')
-include(':SodionAuth-YggdrasilServer')
-include(':SodionAuth-Sponge')
-

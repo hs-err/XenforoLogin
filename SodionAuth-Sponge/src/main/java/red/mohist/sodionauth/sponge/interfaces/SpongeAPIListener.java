@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
+package red.mohist.sodionauth.sponge.interfaces;
+
+
+public interface SpongeAPIListener {
+
+    void eventClass();
+
+    default boolean isAvailable() {
+        try {
+            eventClass();
+        } catch (NoClassDefFoundError e) {
+            return false;
         }
-        gradlePluginPortal()
+        return true;
     }
+
 }
-
-rootProject.name = 'SodionAuth'
-include(':SodionAuth-Bukkit')
-include(':SodionAuth-Core')
-include(':SodionAuth-Fabric')
-include(':SodionAuth-YggdrasilServer')
-include(':SodionAuth-Sponge')
-

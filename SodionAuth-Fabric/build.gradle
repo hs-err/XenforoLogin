@@ -1,0 +1,129 @@
+import net.fabricmc.loom.task.RemapJarTask
+
+/*
+ * Copyright 2020 Mohist-Community
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+plugins {
+    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow'
+    id 'war'
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = project.archives_base_name
+
+minecraft {
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    providedCompile project(':SodionAuth-Core')
+}
+
+configurations {
+    remapShadow
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+// ensure that the encoding is set to UTF-8, no matter what the system default is
+// this fixes some edge cases with special characters not displaying correctly
+// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    from "LICENSE"
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
+    }
+}
+
+shadowJar {
+    archiveClassifier = "all-dev"
+    dependencies {
+        exclude(dependency('com.mojang::'))
+        exclude(dependency('net.fabricmc::'))
+        exclude(dependency('net.fabricmc.fabric-api::'))
+        exclude(dependency('net.minecraft::'))
+        exclude(dependency('oshi-project::'))
+        exclude(dependency('com.ibm.icu::'))
+        exclude(dependency('net.java.dev.jna::'))
+        exclude(dependency('net.sf.jopt-simple::'))
+        exclude(dependency('io.netty::'))
+        exclude(dependency('com.google.guava::'))
+        exclude(dependency('org.apache.commons:commons-lang3:'))
+        exclude(dependency('org.apache.commons:commons-compress:'))
+        exclude(dependency('commons-io::'))
+        exclude(dependency('commons-codec::'))
+        exclude(dependency('net.java.jinput::'))
+        exclude(dependency('net.java.jutils::'))
+        exclude(dependency('com.google.code.gson::'))
+        exclude(dependency('org.apache.httpcomponents:httpclient:'))
+        exclude(dependency('org.apache.httpcomponents:httpcore:'))
+        exclude(dependency('commons-logging::'))
+        exclude(dependency('it.unimi.dsi::'))
+        exclude(dependency('org.apache.logging.log4j::'))
+        exclude(dependency('org.lwjgl::'))
+        exclude(dependency('com.google.jimfs::'))
+        exclude(dependency('org.ow2.asm::'))
+    }
+}
+
+task("remapShadowJar", type: RemapJarTask, dependsOn: shadowJar){
+    input = shadowJar.archiveFile
+    archiveFileName = shadowJar.archiveFileName.get().replaceAll("-dev\\.jar\$", ".jar")
+    addNestedDependencies = false
+}
+
+assemble.dependsOn(remapShadowJar)
+
+artifacts {
+    remapShadow remapShadowJar
+}

@@ -20,7 +20,7 @@ plugins {
 }
 
 allprojects {
-    group = 'red.mohist.xenforologin'
+    group = 'red.mohist.sodionauth'
     version = '2.0-SNAPSHOT'
 }
 
@@ -60,10 +60,10 @@ repositories {
 }
 
 dependencies {
-    // compile(project(path: ":XenforoLogin-Core", configuration: "shadow"))
-    compile(project(path: ":XenforoLogin-Bukkit", configuration: "shadow"))
-    compile(project(path: ":XenforoLogin-Fabric", configuration: "remapShadow"))
-    compile(project(path: ":XenforoLogin-Sponge", configuration: "shadow"))
+    // compile(project(path: ":SodionAuth-Core", configuration: "shadow"))
+    compile(project(path: ":SodionAuth-Bukkit", configuration: "shadow"))
+    compile(project(path: ":SodionAuth-Fabric", configuration: "remapShadow"))
+    compile(project(path: ":SodionAuth-Sponge", configuration: "shadow"))
 }
 
 assemble.dependsOn(shadowJar)

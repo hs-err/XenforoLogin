@@ -1,0 +1,9 @@
+name: SodionAuth
+version: ${version}
+main: red.mohist.sodionauth.bukkit.BukkitLoader
+authors:
+  - logos
+  - ishland
+description: A new generation of authentication plugin for Minecraft
+website: https://mohist.red/
+softdepend: [ProtocolLib]
