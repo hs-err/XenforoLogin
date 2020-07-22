@@ -16,13 +16,120 @@
 
 package red.mohist.xenforologin.fabric;
 
+import com.google.common.base.Preconditions;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import red.mohist.xenforologin.core.XenforoLoginCore;
+import red.mohist.xenforologin.core.interfaces.LogProvider;
+import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
+import red.mohist.xenforologin.core.modules.AbstractPlayer;
+import red.mohist.xenforologin.core.modules.LocationInfo;
+import red.mohist.xenforologin.core.utils.Helper;
+import red.mohist.xenforologin.fabric.data.Data;
+import red.mohist.xenforologin.fabric.implementation.FabricPlayer;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @SuppressWarnings("unused")
-public class FabricLoader implements ModInitializer {
+public class FabricLoader implements ModInitializer, PlatformAdapter {
+
+    public static final Logger logger = LogManager.getLogger("XenforoLogin|Main");
+    private static FabricLoader instance = null;
+    private final File configDir = new File("./XenforoLogin/");
+    private XenforoLoginCore core = null;
+
+    public FabricLoader() {
+        synchronized (FabricLoader.class) {
+            if (instance != null) throw new IllegalStateException("Cannot initialize twice");
+            instance = this;
+        }
+    }
+
+    public static FabricLoader getInstance() {
+        return instance;
+    }
 
     @Override
     public void onInitialize() {
-        System.out.println("Hello world");
+        configDir.mkdirs();
+        logger.info("XenforoLogin has been successfully discovered");
+    }
+
+    public void onServerPostWorld() {
+        logger.info("Hello, XenforoLogin!");
+        try {
+            new Helper(configDir.toString(), new LogProvider() {
+                @Override
+                public void info(String info) {
+                    logger.info(info);
+                }
+
+                @Override
+                public void info(String info, Exception exception) {
+                    logger.info(info, exception.toString());
+                }
+
+                @Override
+                public void warn(String info) {
+                    logger.warn(info);
+                }
+
+                @Override
+                public void warn(String info, Exception exception) {
+                    logger.warn(info, exception);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException("Could not initialize helper", e);
+        }
+        core = new XenforoLoginCore(this);
+    }
+
+    @Override
+    public LocationInfo getSpawn(String world) {
+        Preconditions.checkNotNull(world);
+        for (RegistryKey<World> worldRegistryKey : Data.serverInstance.getWorldRegistryKeys()) {
+            if (world.equals(worldRegistryKey.getValue().toString())) {
+                final ServerWorld world1 = Data.serverInstance.getWorld(worldRegistryKey);
+                if (world1 == null) throw new IllegalStateException("Has registry key but not world");
+                final BlockPos spawnPos = world1.getSpawnPos();
+                return new LocationInfo(world, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), 0, 0);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void login(AbstractPlayer player) {
+
+    }
+
+    @Override
+    public void sendBlankInventoryPacket(AbstractPlayer player) {
+        ServerPlayerEntity fabricPlayer = Data.serverInstance.getPlayerManager().getPlayer(player.getName());
+        assert fabricPlayer != null;
+        fabricPlayer.networkHandler.sendPacket(new InventoryS2CPacket());
+    }
+
+    @Override
+    public Collection<AbstractPlayer> getAllPlayer() {
+        List<FabricPlayer> players = new ArrayList<>(Data.serverInstance.getCurrentPlayerCount());
+        for (ServerPlayerEntity player :
+                Data.serverInstance.getPlayerManager().getPlayerList()) {
+            players.add(new FabricPlayer(player));
+        }
+        return Collections.unmodifiableList(players);
     }
 }

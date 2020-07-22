@@ -69,7 +69,7 @@ public class SpongePlayer extends AbstractPlayer {
     }
 
     @Override
-    public int getGamemode() {
+    public int getGameMode() {
         GameMode gameMode = handle.gameMode().get();
         if (GameModes.SURVIVAL.equals(gameMode)) {
             return 0;
@@ -85,8 +85,8 @@ public class SpongePlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setGamemode(int gamemode) {
-        switch (gamemode) {
+    public void setGameMode(int gameMode) {
+        switch (gameMode) {
             case 0:
                 handle.gameMode().set(GameModes.SURVIVAL);
                 return;

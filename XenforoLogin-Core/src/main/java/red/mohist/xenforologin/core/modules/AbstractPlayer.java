@@ -52,9 +52,9 @@ public abstract class AbstractPlayer {
 
     public abstract LocationInfo getLocation();
 
-    public abstract int getGamemode();
+    public abstract int getGameMode();
 
-    public abstract void setGamemode(int gamemode);
+    public abstract void setGameMode(int gameMode);
 
     public abstract boolean isOnline();
 }

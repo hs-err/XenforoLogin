@@ -48,12 +48,12 @@ public class PlainPlayer extends AbstractPlayer {
     }
 
     @Override
-    public int getGamemode() {
+    public int getGameMode() {
         return 0;
     }
 
     @Override
-    public void setGamemode(int gamemode) {
+    public void setGameMode(int gameMode) {
 
     }
 

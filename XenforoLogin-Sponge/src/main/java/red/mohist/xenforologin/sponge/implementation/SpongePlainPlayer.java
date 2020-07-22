@@ -73,7 +73,7 @@ public class SpongePlainPlayer extends AbstractPlayer {
     }
 
     @Override
-    public int getGamemode() {
+    public int getGameMode() {
         Player handle = Sponge.getServer().getPlayer(getUniqueId()).get();
         GameMode gameMode = handle.gameMode().get();
         if (GameModes.SURVIVAL.equals(gameMode)) {
@@ -90,9 +90,9 @@ public class SpongePlainPlayer extends AbstractPlayer {
     }
 
     @Override
-    public void setGamemode(int gamemode) {
+    public void setGameMode(int gameMode) {
         Player handle = Sponge.getServer().getPlayer(getUniqueId()).get();
-        switch (gamemode) {
+        switch (gameMode) {
             case 0:
                 handle.gameMode().set(GameModes.SURVIVAL);
                 return;

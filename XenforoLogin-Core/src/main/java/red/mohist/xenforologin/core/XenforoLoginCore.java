@@ -16,7 +16,6 @@
 
 package red.mohist.xenforologin.core;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.RateLimiter;
 import red.mohist.xenforologin.core.asyncs.CanJoin;
 import red.mohist.xenforologin.core.asyncs.Login;
@@ -28,7 +27,10 @@ import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
 import red.mohist.xenforologin.core.proxys.ProxySystems;
-import red.mohist.xenforologin.core.utils.*;
+import red.mohist.xenforologin.core.utils.Config;
+import red.mohist.xenforologin.core.utils.Helper;
+import red.mohist.xenforologin.core.utils.LoginTicker;
+import red.mohist.xenforologin.core.utils.ResultTypeUtils;
 
 import java.sql.*;
 import java.util.UUID;
@@ -218,7 +220,7 @@ public final class XenforoLoginCore {
                     LocationInfo spawn_location = api.getSpawn("world");
                     player.teleport(spawn_location);
                 }
-                player.setGamemode(Config.getInteger("secure.default_gamemode", 0));
+                player.setGameMode(Config.getInteger("secure.default_gamemode", 0));
             } else {
                 if (Config.getBoolean("teleport.tp_back_after_login", true)) {
                     try {
@@ -236,12 +238,12 @@ public final class XenforoLoginCore {
                         Helper.getLogger().warn("Fail tp a player.Have you change the world?");
                     }
                 }
-                player.setGamemode(rs.getInt("mode"));
+                player.setGameMode(rs.getInt("mode"));
             }
 
 
         } catch (Throwable e) {
-            player.setGamemode(Config.getInteger("secure.default_gamemode", 0));
+            player.setGameMode(Config.getInteger("secure.default_gamemode", 0));
             e.printStackTrace();
         }
 
@@ -295,7 +297,7 @@ public final class XenforoLoginCore {
                 pps.setDouble(5, leave_location.z);
                 pps.setFloat(6, leave_location.yaw);
                 pps.setFloat(7, leave_location.pitch);
-                pps.setInt(8, player.getGamemode());
+                pps.setInt(8, player.getGameMode());
                 pps.executeUpdate();
             } catch (SQLException e) {
                 Helper.getLogger().warn("Fail to save location.");
@@ -372,7 +374,7 @@ public final class XenforoLoginCore {
             abstractPlayer.teleport(default_location);
         }
         if (Config.getBoolean("secure.spectator_login", true)) {
-            abstractPlayer.setGamemode(3);
+            abstractPlayer.setGameMode(3);
         }
         LoginTicker.add(abstractPlayer);
         try {
