@@ -4,6 +4,9 @@ Prevent minecraft username stealing with Xenforo and more.
 
 Development builds: https://ci.ishland.com:43333/job/XenforoLogin/
 
+## Fabric builds
+Fabric support is still WIP. Do NOT use them unless you would like to help us. 
+
 ## Description
 - Provide an extra protection for your online server.
 - Secure your offline server.
