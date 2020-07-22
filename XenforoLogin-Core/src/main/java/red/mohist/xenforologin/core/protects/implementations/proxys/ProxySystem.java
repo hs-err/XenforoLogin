@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-dependencies {
-    compile 'org.reflections:reflections:0.9.12'
-    compile 'org.apache.httpcomponents:fluent-hc:4.5.11'
-    compileOnly 'com.google.code.gson:gson:2.8.6'
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
-    compile 'org.mindrot:jbcrypt:0.4'
-    compile 'com.google.guava:guava:29.0-jre'
-    compile('com.maxmind.geoip2:geoip2:2.14.0'){
-        exclude group:'com.google.code.gson',module:'gson'
-    }
-    implementation 'org.xerial:sqlite-jdbc:3.30.1'
-    implementation 'mysql:mysql-connector-java:8.0.19'
+package red.mohist.xenforologin.core.protects.implementations.proxys;
+
+import java.io.IOException;
+
+public interface ProxySystem {
+    String getName();
+
+    void refreshProxys() throws IOException;
+
+    boolean isProxy(String ip);
 }

@@ -22,7 +22,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.Charsets;
 import red.mohist.xenforologin.core.interfaces.LogProvider;
-import red.mohist.xenforologin.core.proxys.ProxySystems;
 
 import java.io.*;
 import java.net.URL;
@@ -60,9 +59,6 @@ public class Helper {
         generalConfigMap("", jsonDefault);
 
         new Config(jsonMap);
-        if (Config.getBoolean("secure.proxy.enable")) {
-            new ProxySystems();
-        }
     }
 
     public static String getConfigPath(String filename) {
