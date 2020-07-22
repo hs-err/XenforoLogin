@@ -26,10 +26,7 @@ import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.protection.SecureSystems;
-import red.mohist.sodionauth.core.utils.Config;
-import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.core.utils.LoginTicker;
-import red.mohist.sodionauth.core.utils.ResultTypeUtils;
+import red.mohist.sodionauth.core.utils.*;
 
 import java.sql.*;
 import java.util.UUID;
@@ -184,12 +181,12 @@ public final class SodionAuthCore {
     private void loadConfig() {
         LocationInfo spawn_location = api.getSpawn(api.getDefaultWorld());
         default_location = new LocationInfo(
-                Config.getString("spawn.world", "world"),
-                Config.getDouble("spawn.x", spawn_location.x),
-                Config.getDouble("spawn.y", spawn_location.y),
-                Config.getDouble("spawn.z", spawn_location.z),
-                Config.getFloat("spawn.yaw", spawn_location.yaw),
-                Config.getFloat("spawn.pitch", spawn_location.pitch)
+                Config.spawn.getWorld(api.getDefaultWorld()),
+                Config.spawn.getX(spawn_location.x),
+                Config.spawn.getY(spawn_location.y),
+                Config.spawn.getZ(spawn_location.z),
+                Config.spawn.getYaw(spawn_location.yaw),
+                Config.spawn.getPitch(spawn_location.pitch)
         );
     }
 
@@ -204,13 +201,13 @@ public final class SodionAuthCore {
             pps.setString(1, player.getUniqueId().toString());
             ResultSet rs = pps.executeQuery();
             if (!rs.next()) {
-                if (Config.getBoolean("teleport.tp_back_after_login", true)) {
+                if (Config.teleport.getTpBackAfterLogin()) {
                     LocationInfo spawn_location = api.getSpawn("world");
                     player.teleport(spawn_location);
                 }
-                player.setGameMode(Config.getInteger("secure.default_gamemode", 0));
+                player.setGameMode(Config.security.getDefaultGamemode());
             } else {
-                if (Config.getBoolean("teleport.tp_back_after_login", true)) {
+                if (Config.teleport.getTpBackAfterLogin()) {
                     try {
                         player.teleport(new LocationInfo(
                                 rs.getString("world"),
@@ -231,7 +228,7 @@ public final class SodionAuthCore {
 
 
         } catch (Throwable e) {
-            player.setGameMode(Config.getInteger("secure.default_gamemode", 0));
+            player.setGameMode(Config.security.getDefaultGamemode());
             e.printStackTrace();
         }
 
@@ -250,22 +247,22 @@ public final class SodionAuthCore {
         }
         api.onLogin(player);
         Helper.getLogger().warn("Logging in " + player.getUniqueId());
-        player.sendMessage(Helper.langFile("success"));
+        player.sendMessage(player.getLang().getSuccess());
     }
 
     public void message(AbstractPlayer player) {
         switch (logged_in.get(player.getUniqueId())) {
             case NEED_LOGIN:
-                player.sendMessage(Helper.langFile("need_login"));
+                player.sendMessage(player.getLang().getNeedLogin());
                 break;
             case NEED_REGISTER_EMAIL:
-                player.sendMessage(Helper.langFile("register_email"));
+                player.sendMessage(player.getLang().getRegisterEmail());
                 break;
             case NEED_REGISTER_PASSWORD:
-                player.sendMessage(Helper.langFile("register_password"));
+                player.sendMessage(player.getLang().getRegisterPassword());
                 break;
             case NEED_REGISTER_CONFIRM:
-                player.sendMessage(Helper.langFile("register_password_confirm"));
+                player.sendMessage(player.getLang().getRegisterPasswordConfirm());
                 break;
         }
     }
@@ -326,19 +323,19 @@ public final class SodionAuthCore {
                 SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                 return null;
             case ERROR_NAME:
-                return Helper.langFile("errors.name_incorrect",
+                return player.getLang().getErrors().getNameIncorrect(
                         resultType.getInheritedObject());
             case NO_USER:
-                if (Config.getBoolean("api.register", false)) {
+                if (Config.api.getAllowRegister()) {
                     SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
                 } else {
-                    return Helper.langFile("errors.no_user");
+                    return player.getLang().getErrors().getNoUser();
                 }
             case UNKNOWN:
-                return Helper.langFile("errors.unknown", resultType.getInheritedObject());
+                return player.getLang().getErrors().getUnknown(resultType.getInheritedObject());
         }
-        return Helper.langFile("errors.server");
+        return player.getLang().getErrors().getUnknown();
     }
 
     public void canJoinAsync(CanJoin action) {
@@ -348,22 +345,22 @@ public final class SodionAuthCore {
 
     public void onJoin(AbstractPlayer abstractPlayer) {
         api.sendBlankInventoryPacket(abstractPlayer);
-        if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
+        if (Config.teleport.getTpSpawnBeforeLogin()) {
             abstractPlayer.teleport(default_location);
         }
-        if (Config.getBoolean("secure.spectator_login", true)) {
+        if (Config.security.getSpectatorLogin()) {
             abstractPlayer.setGameMode(3);
         }
         LoginTicker.add(abstractPlayer);
         try {
-            if (Config.getBoolean("session.enable")) {
+            if (Config.session.getEnable()) {
                 PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
                 pps.setString(1, abstractPlayer.getUniqueId().toString());
                 pps.setString(2, abstractPlayer.getAddress().getHostAddress());
-                pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.getInteger("session.timeout")));
+                pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.session.getTimeout()));
                 ResultSet rs = pps.executeQuery();
                 if (rs.next()) {
-                    abstractPlayer.sendMessage(Helper.langFile("session"));
+                    abstractPlayer.sendMessage(abstractPlayer.getLang().getSession());
                     login(abstractPlayer);
                 }
             }
@@ -377,7 +374,7 @@ public final class SodionAuthCore {
         StatusType status = SodionAuthCore.instance.logged_in.get(player.getUniqueId());
         switch (status) {
             case NEED_CHECK:
-                player.sendMessage(Helper.langFile("need_check"));
+                player.sendMessage(player.getLang().getNeedLogin());
                 break;
             case NEED_LOGIN:
                 String canLogin=SecureSystems.canLogin(player);
@@ -399,7 +396,7 @@ public final class SodionAuthCore {
                     logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(message));
                     message(player);
                 } else {
-                    player.sendMessage(Helper.langFile("errors.email"));
+                    player.sendMessage(player.getLang().getErrors().getEmail());
                 }
                 break;
             case NEED_REGISTER_PASSWORD:
@@ -433,14 +430,14 @@ public final class SodionAuthCore {
                         }
                     });
                 } else {
-                    player.sendMessage(Helper.langFile("errors.confirm"));
+                    player.sendMessage(player.getLang().getErrors().getConfirm());
                     SodionAuthCore.instance.logged_in.put(
                             player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
                     SodionAuthCore.instance.message(player);
                 }
                 break;
             case HANDLE:
-                player.sendMessage(Helper.langFile("errors.handle"));
+                player.sendMessage(player.getLang().getErrors().getHandle());
                 break;
         }
     }

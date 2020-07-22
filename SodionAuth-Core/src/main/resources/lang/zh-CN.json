@@ -1,17 +1,17 @@
 {
-  "register_email": "§6[§1XenforoLogin§6]§1§f Please send your email to register.",
-  "register_password": "§6[§1XenforoLogin§6]§1§f Please send your password.",
-  "register_password_confirm": "§6[§1XenforoLogin§6]§1§f Please send your password again.",
-  "logged_in": "§6[§1XenforoLogin§6]§1§f You have already logged in.",
+  "registerEmail": "§6[§1XenforoLogin§6]§1§f Please send your email to register.",
+  "registerPassword": "§6[§1XenforoLogin§6]§1§f Please send your password.",
+  "registerPasswordConfirm": "§6[§1XenforoLogin§6]§1§f Please send your password again.",
+  "loggedIn": "§6[§1XenforoLogin§6]§1§f You have already logged in.",
   "success": "§6[§1XenforoLogin§6]§1§f Logged in successfully.",
   "session": "§6[§1XenforoLogin§6]§1§f Auto login by session.",
-  "last_login": "§6[§1XenforoLogin§6]§1§f Last login in [city].",
-  "last_login_unknown": "UNKNOWN",
-  "need_login": "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat.",
+  "lastLogin": "§6[§1XenforoLogin§6]§1§f Last login in [city].",
+  "lastLoginUnknown": "UNKNOWN",
+  "needLogin": "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat.",
   "errors": {
     "proxy": "§6[§1XenforoLogin§6]§1§f Proxy address have baned.",
-    "rate_limit": "§6[§1XenforoLogin§6]§1§f Rate limited.",
-    "country_limit": "§6[§1XenforoLogin§6]§1§f Country limited.",
+    "rateLimit": "§6[§1XenforoLogin§6]§1§f Rate limited.",
+    "countryLimit": "§6[§1XenforoLogin§6]§1§f Country limited.",
     "email": "§6[§1XenforoLogin§6]§1§f Wrong Email.",
     "server": "§6[§1XenforoLogin§6]§1§f There is an issue when connecting to the server, contact the administrator.",
     "confirm": "§6[§1XenforoLogin§6]§1§f Password is NOT identical to the first one.",
@@ -19,11 +19,11 @@
     "password": "§6[§1XenforoLogin§6]§1§f Wrong password.",
     "key": "§6[§1XenforoLogin§6]§1§f Please check api.key [key]",
     "url": "§6[§1XenforoLogin§6]§1§f Please check api.url [url]",
-    "no_user": "§6[§1XenforoLogin§6]§1§f You are not whitelisted on this server.",
-    "time_out": "§6[§1XenforoLogin§6]§1§f Login timed out!",
-    "name_incorrect": "§6[§1XenforoLogin§6]§1§f You should use \"[correct]\", not this to login.",
+    "noUser": "§6[§1XenforoLogin§6]§1§f You are not whitelisted on this server.",
+    "timeOut": "§6[§1XenforoLogin§6]§1§f Login timed out!",
+    "nameIncorrect": "§6[§1XenforoLogin§6]§1§f You should use \"[correct]\", not this to login.",
     "unknown": "§6[§1XenforoLogin§6]§1§f Unknown error. Web send \"[message]\"",
-    "mail_exist": "§6[§1XenforoLogin§6]§1§f Your email already exists in our database. Try another one.",
-    "user_exist": "§6[§1XenforoLogin§6]§1§f Your username is already registered in our database. Try another one."
+    "mailExist": "§6[§1XenforoLogin§6]§1§f Your email already exists in our database. Try another one.",
+    "userExist": "§6[§1XenforoLogin§6]§1§f Your username is already registered in our database. Try another one."
   }
 }

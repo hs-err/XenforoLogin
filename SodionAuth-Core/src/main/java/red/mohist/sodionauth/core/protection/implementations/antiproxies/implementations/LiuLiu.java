@@ -27,10 +27,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class _66ip implements ProxySystem {
+public class LiuLiu implements ProxySystem {
     private CopyOnWriteArrayList<String> proxyList;
 
-    public _66ip() {
+    public LiuLiu() {
         proxyList = new CopyOnWriteArrayList<>();
     }
 

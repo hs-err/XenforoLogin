@@ -17,6 +17,10 @@
 package red.mohist.sodionauth.core.modules;
 
 
+import red.mohist.sodionauth.core.config.LangConfiguration;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Lang;
+
 import java.net.InetAddress;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +34,9 @@ public abstract class AbstractPlayer {
         this.name = name;
         this.uuid = uuid;
         this.address = address;
+    }
+    public LangConfiguration getLang(){
+        return Lang.get(Config.defaultLang);
     }
 
     public String getName() {

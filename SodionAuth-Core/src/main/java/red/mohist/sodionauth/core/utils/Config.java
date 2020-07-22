@@ -19,22 +19,21 @@ package red.mohist.sodionauth.core.utils;
 import com.google.gson.Gson;
 import red.mohist.sodionauth.core.config.MainConfiguration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Config {
     public static MainConfiguration instance;
+    public static MainConfiguration all;
     public static String defaultLang;
-    public static MainConfiguration.ApiConfiguration api;
-    public static MainConfiguration.SessionConfiguration session;
-    public static MainConfiguration.YggdrasilConfiguration yggdrasil;
-    public static MainConfiguration.SpawnConfiguration spawn;
-    public static MainConfiguration.TeleportConfiguration teleport;
-    public static MainConfiguration.SecurityConfiguration security;
-    public static MainConfiguration.ProtectionConfiguration protection;
+    public static MainConfiguration.ApiBean api;
+    public static MainConfiguration.SessionBean session;
+    public static MainConfiguration.YggdrasilBean yggdrasil;
+    public static MainConfiguration.SpawnBean spawn;
+    public static MainConfiguration.TeleportBean teleport;
+    public static MainConfiguration.SecurityBean security;
+    public static MainConfiguration.ProtectionBean protection;
+
     public Config() throws IOException {
         Helper.instance.saveResource("config.json", false);
         File configFile = new File(Helper.getConfigPath("config.json"));
@@ -44,13 +43,19 @@ public class Config {
         inputStreamReader.close();
         fileReader.close();
 
-        defaultLang=instance.defaultLang;
-        api=instance.api;
-        session=instance.session;
-        yggdrasil=instance.yggdrasil;
-        spawn=instance.spawn;
-        teleport=instance.teleport;
-        security=instance.security;
-        protection=instance.protection;
+        InputStream defaultFileReader = Helper.instance.getResource("config.json");
+        InputStreamReader defaultInputStreamReader = new InputStreamReader(defaultFileReader, StandardCharsets.UTF_8);
+        all = new Gson().fromJson(defaultInputStreamReader, MainConfiguration.class);
+        defaultInputStreamReader.close();
+        defaultFileReader.close();
+
+        defaultLang=instance.getDefaultLang();
+        api=instance.getApi();
+        session=instance.getSession();
+        yggdrasil=instance.getYggdrasil();
+        spawn=instance.getSpawn();
+        teleport=instance.getTeleport();
+        security=instance.getSecurity();
+        protection=instance.getProtection();
     }
 }

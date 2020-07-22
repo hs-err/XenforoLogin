@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.utils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
-import red.mohist.xenforologin.core.config.LangConfiguration;
+import red.mohist.sodionauth.core.config.LangConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,8 +29,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Lang {
-    public static ConcurrentHashMap<String,LangConfiguration> languages=new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, LangConfiguration> languages=new ConcurrentHashMap<>();
     public static LangConfiguration def;
+    public static LangConfiguration all;
     public static LangConfiguration get(String name){
         LangConfiguration lang=languages.getOrDefault(name,null);
         if(lang==null){
@@ -52,5 +53,6 @@ public class Lang {
             fileReader.close();
         }
         def=languages.get(Config.defaultLang);
+        all=languages.get("zh-CN");
     }
 }
