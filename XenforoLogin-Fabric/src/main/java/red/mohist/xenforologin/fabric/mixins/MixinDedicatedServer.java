@@ -58,7 +58,7 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     @Inject(method = "setupServer",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/MinecraftServer;loadWorld()Z",
+                    target = "Lnet/minecraft/server/MinecraftServer;loadWorld()V",
                     shift = At.Shift.AFTER
             )
     )

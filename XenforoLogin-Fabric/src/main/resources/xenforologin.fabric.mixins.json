@@ -8,5 +8,6 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "refmap": "XenforoLogin-Fabric-refmap.json"
 }

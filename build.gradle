@@ -60,37 +60,12 @@ repositories {
 }
 
 dependencies {
-    providedCompile(project(":XenforoLogin-Core"))
-    providedCompile(project(":XenforoLogin-Bukkit"))
-    providedCompile(project(":XenforoLogin-Fabric")) {
-        exclude group: 'com.mojang'
-        exclude group: 'net.fabricmc'
-        exclude group: 'net.fabricmc.fabric-api'
-        exclude group: 'net.minecraft'
-        exclude group: 'oshi-project'
-        exclude group: 'com.ibm.icu'
-        exclude group: 'net.java.dev.jna'
-        exclude group: 'net.sf.jopt-simple'
-        exclude group: 'io.netty'
-        exclude group: 'com.google.guava'
-        exclude group: 'org.apache.commons', module: 'commons-lang3'
-        exclude group: 'org.apache.commons', module: 'commons-compress'
-        exclude group: 'commons-io'
-        exclude group: 'commons-codec'
-        exclude group: 'net.java.jinput'
-        exclude group: 'net.java.jutils'
-        exclude group: 'com.google.code.gson'
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
-        exclude group: 'org.apache.httpcomponents', module: 'httpcore'
-        exclude group: 'commons-logging'
-        exclude group: 'it.unimi.dsi'
-        exclude group: 'org.apache.logging.log4j'
-        exclude group: 'org.lwjgl'
-        exclude group: 'com.google.jimfs'
-        exclude group: 'org.ow2.asm'
-    }
-    // providedCompile(project(":XenforoLogin-Sponge")) // TODO temp removed Sponge
+    // compile(project(path: ":XenforoLogin-Core", configuration: "shadow"))
+    compile(project(path: ":XenforoLogin-Bukkit", configuration: "shadow"))
+    compile(project(path: ":XenforoLogin-Fabric", configuration: "remapShadow"))
+    compile(project(path: ":XenforoLogin-Sponge", configuration: "shadow"))
 }
+
 assemble.dependsOn(shadowJar)
 
 

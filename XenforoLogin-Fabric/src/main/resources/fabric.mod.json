@@ -21,7 +21,7 @@
     ]
   },
   "mixins": [
-    "fabric.mixins.json"
+    "xenforologin.fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.8.8",
