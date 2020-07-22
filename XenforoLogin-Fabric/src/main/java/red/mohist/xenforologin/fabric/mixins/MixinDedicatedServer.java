@@ -52,4 +52,9 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
         MixinLogger.logger.info("Fetched server instance");
     }
 
+    @Inject(method = "shutdown", at = @At("HEAD"))
+    public void onServerPreShutdown(CallbackInfo ci) {
+        MixinLogger.logger.info("Calling onServerPreShutdown");
+    }
+
 }

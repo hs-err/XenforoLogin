@@ -99,6 +99,10 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
         core = new XenforoLoginCore(this);
     }
 
+    public void onServerPreShutdown() {
+        core.onDisable();
+    }
+
     @Override
     public LocationInfo getSpawn(String world) {
         Preconditions.checkNotNull(world);
