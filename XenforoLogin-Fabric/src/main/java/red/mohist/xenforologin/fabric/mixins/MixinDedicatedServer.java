@@ -34,8 +34,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import red.mohist.xenforologin.fabric.FabricLoader;
 import red.mohist.xenforologin.fabric.MixinLogger;
 import red.mohist.xenforologin.fabric.data.Data;
 
@@ -52,19 +50,6 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     public void onServerPostConstruction(Thread thread, RegistryTracker.Modifiable modifiable, LevelStorage.Session session, ResourcePackManager<ResourcePackProfile> resourcePackManager, ServerResourceManager serverResourceManager, SaveProperties saveProperties, ServerPropertiesLoader serverPropertiesLoader, DataFixer dataFixer, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, UserCache userCache, WorldGenerationProgressListenerFactory worldGenerationProgressListenerFactory, CallbackInfo ci) {
         Data.serverInstance = MinecraftDedicatedServer.class.cast(this);
         MixinLogger.logger.info("Fetched server instance");
-    }
-
-    @SuppressWarnings("SpellCheckingInspection")
-    @Inject(method = "setupServer",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/server/MinecraftServer;loadWorld()V",
-                    shift = At.Shift.AFTER
-            )
-    )
-    public void onServerPostWorld(CallbackInfoReturnable<Boolean> cir) {
-        MixinLogger.logger.info("Calling onServerPostWorld");
-        FabricLoader.getInstance().onServerPostWorld();
     }
 
 }

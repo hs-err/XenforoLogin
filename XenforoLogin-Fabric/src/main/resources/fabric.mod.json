@@ -14,7 +14,7 @@
   },
   "license": "LGPLv3",
   "icon": "",
-  "environment": "*",
+  "environment": "server",
   "entrypoints": {
     "main": [
       "red.mohist.xenforologin.fabric.FabricLoader"
@@ -26,8 +26,5 @@
   "depends": {
     "fabricloader": ">=0.8.8",
     "minecraft": ">=1.16"
-  },
-  "suggests": {
-    "flamingo": "*"
   }
 }
