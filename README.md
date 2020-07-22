@@ -1,4 +1,4 @@
-# XenforoLogin
+# SodionAuth
 
 Prevent minecraft username stealing with Xenforo and more.
 

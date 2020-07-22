@@ -7,7 +7,7 @@
       "key": "YOUR_KEY_HERE"
     },
     "discuz": {
-      "url": "http://example.com/XenforoLogin.php",
+      "url": "http://example.com/SodionAuth.php",
       "key": "YOUR_KEY_HERE"
     },
     "sqlite": {
@@ -23,9 +23,9 @@
     },
     "mysql": {
       "host": "localhost:3306",
-      "username": "xenforoLogin",
+      "username": "sodionauth",
       "password": "W8xMxJyYcxdmY33G",
-      "database": "xenforoLogin",
+      "database": "sodionauth",
       "table_name": "users",
       "email_field": "email",
       "username_field": "username",
@@ -51,7 +51,7 @@
       "only-last-session-available": false
     },
     "core": {
-      "serverName": "XenforoLogin",
+      "serverName": "SodionAuth",
       "url": "http://localhost:8080/",
       "skinDomains": [
         "localhost"

@@ -41,10 +41,10 @@ assemble.dependsOn(shadowJar)
 
 jar {
     manifest {
-        attributes "Main-Class": "red.mohist.xenforologin.yggdrasilserver.YggdrasilServerEntry"
+        attributes "Main-Class": "red.mohist.sodionauth.yggdrasilserver.YggdrasilServerEntry"
     }
 }
 
 shadowJar {
-    relocate('org.apache.logging.log4j', 'red.mohist.xenforologin.yggdrasilserver.libs.log4j2')
+    relocate('org.apache.logging.log4j', 'red.mohist.sodionauth.yggdrasilserver.libs.log4j2')
 }
