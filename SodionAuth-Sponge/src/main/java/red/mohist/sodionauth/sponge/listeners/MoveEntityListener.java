@@ -21,7 +21,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
@@ -32,24 +32,24 @@ public class MoveEntityListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onMoveEntity(MoveEntityEvent event, @First Player player) {
         if (event instanceof MoveEntityEvent.Teleport
-                || !XenforoLoginCore.instance.needCancelled(new SpongePlayer(player))) {
+                || !SodionAuthCore.instance.needCancelled(new SpongePlayer(player))) {
             return;
         }
 
         if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
             if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
-                if (XenforoLoginCore.instance.default_location.x
+                if (SodionAuthCore.instance.default_location.x
                         != event.getToTransform().getPosition().getFloorX()
-                        || XenforoLoginCore.instance.default_location.z
+                        || SodionAuthCore.instance.default_location.z
                         != event.getToTransform().getPosition().getFloorZ()) {
                     event.setCancelled(true);
                     new SpongePlayer(player).teleport(new LocationInfo(
-                            XenforoLoginCore.instance.default_location.world,
-                            XenforoLoginCore.instance.default_location.x,
-                            XenforoLoginCore.instance.default_location.y,
-                            XenforoLoginCore.instance.default_location.z,
-                            XenforoLoginCore.instance.default_location.yaw,
-                            XenforoLoginCore.instance.default_location.pitch
+                            SodionAuthCore.instance.default_location.world,
+                            SodionAuthCore.instance.default_location.x,
+                            SodionAuthCore.instance.default_location.y,
+                            SodionAuthCore.instance.default_location.z,
+                            SodionAuthCore.instance.default_location.yaw,
+                            SodionAuthCore.instance.default_location.pitch
                     ));
                 }
             }

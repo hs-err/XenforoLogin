@@ -22,12 +22,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 
 public class ListenerInventoryDragEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnInventoryDragEvent(InventoryDragEvent event) {
-        if (XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getWhoClicked()))) {
+        if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getWhoClicked()))) {
             event.setCancelled(true);
         }
     }

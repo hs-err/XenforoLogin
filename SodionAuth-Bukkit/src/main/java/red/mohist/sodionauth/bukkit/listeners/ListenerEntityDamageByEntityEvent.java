@@ -23,18 +23,18 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 
 public class ListenerEntityDamageByEntityEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
-            if (XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getEntity()))) {
+            if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getEntity()))) {
                 event.setCancelled(true);
             }
         }
         if (event.getDamager().getType() == EntityType.PLAYER) {
-            if (XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getDamager()))) {
+            if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getDamager()))) {
                 event.setCancelled(true);
             }
         }

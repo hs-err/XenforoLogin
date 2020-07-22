@@ -21,13 +21,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 
 public class ListenerPlayerQuitEvent implements BukkitAPIListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnQuit(PlayerQuitEvent event) {
-        XenforoLoginCore.instance.onQuit(BukkitLoader.instance.player2info(event.getPlayer()));
+        SodionAuthCore.instance.onQuit(BukkitLoader.instance.player2info(event.getPlayer()));
     }
 
     @Override

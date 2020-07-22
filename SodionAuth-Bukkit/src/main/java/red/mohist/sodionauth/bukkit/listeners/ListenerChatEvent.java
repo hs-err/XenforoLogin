@@ -21,14 +21,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerChatEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
-        if (!XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+        if (!SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
             if (Config.getBoolean("secure.cancel_chat_after_login", false)) {
                 event.getPlayer().sendMessage(Helper.langFile("logged_in"));
                 event.setCancelled(true);
@@ -36,7 +36,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
             return;
         }
         event.setCancelled(true);
-        XenforoLoginCore.instance.onChat(BukkitLoader.instance.player2info(event.getPlayer()), event.getMessage());
+        SodionAuthCore.instance.onChat(BukkitLoader.instance.player2info(event.getPlayer()), event.getMessage());
     }
 
     @Override

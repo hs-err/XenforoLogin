@@ -16,21 +16,15 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.apache.commons.codec.Charsets;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class Helper {
     public static Helper instance;
@@ -44,31 +38,12 @@ public class Helper {
         this.log = log;
         basePath = path;
         jsonMap = new HashMap<>();
-        saveResource("config.json", false);
-
-        File configFile = new File(basePath + "/config.json");
-        FileInputStream fileReader = new FileInputStream(configFile);
-        InputStreamReader inputStreamReader = new InputStreamReader(fileReader, StandardCharsets.UTF_8);
-        JsonElement json = new Gson().fromJson(inputStreamReader, JsonElement.class);
-        generalConfigMap("", json);
-        inputStreamReader.close();
-        fileReader.close();
-
-        Reader readerDefault = getTextResource("config.json");
-        JsonElement jsonDefault = new Gson().fromJson(readerDefault, JsonElement.class);
-        generalConfigMap("", jsonDefault);
-
-        new Config(jsonMap);
+        new Config();
+        new Lang();
     }
 
     public static String getConfigPath(String filename) {
         return Paths.get(instance.basePath, filename).toString();
-    }
-
-    protected final Reader getTextResource(String file) {
-        final InputStream in = getResource(file);
-
-        return in == null ? null : new InputStreamReader(in, Charsets.UTF_8);
     }
 
     public void saveResource(String resourcePath, boolean replace) {
@@ -125,63 +100,7 @@ public class Helper {
         }
     }
 
-    private void generalConfigMap(String key, JsonElement data) {
-        if (data.isJsonNull()) {
-            if (!jsonMap.containsKey(key.equals("") ? "." : key)) {
-                jsonMap.put(key.equals("") ? "." : key, null);
-            }
-        }
-        if (data.isJsonArray()) {
-            if (!jsonMap.containsKey(key.equals("") ? "." : key)) {
-                JsonArray jsonArray = data.getAsJsonArray();
-                jsonMap.put(key.equals("") ? "." : key, data.getAsJsonArray());
-                for (int i = 0; i < jsonArray.size(); i++) {
-                    generalConfigMap((key.equals("") ? "." : key) + "[" + i + "]", jsonArray.get(i));
-                }
-            }
-        }
-        if (data.isJsonObject()) {
-            JsonObject jsonBase = new JsonObject();
-            Set<Map.Entry<String, JsonElement>> jsonObject = data.getAsJsonObject().entrySet();
-            for (Map.Entry<String, JsonElement> jsonData : jsonObject) {
-                generalConfigMap(key + "." + jsonData.getKey(), jsonData.getValue());
-                jsonBase.add(jsonData.getKey(), jsonData.getValue());
-            }
-            jsonMap.put(key.equals("") ? "." : key, jsonBase.getAsJsonObject());
-        }
-        if (data.isJsonPrimitive()) {
-            if (!jsonMap.containsKey(key.equals("") ? "." : key)) {
-                jsonMap.put(key.equals("") ? "." : key, data.getAsJsonPrimitive());
-            }
-        }
-    }
-
     public static LogProvider getLogger() {
         return Helper.instance.log;
-    }
-
-    public static String langFile(String key) {
-        String result = Config.getString("lang." + key);
-        if (result == null) {
-            return key;
-        }
-        return result;
-    }
-
-    public static String langFile(String key, Map<String, String> data) {
-        String result = Config.getString("lang." + key);
-        if (result == null) {
-            StringBuilder resultBuilder = new StringBuilder(key);
-            resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
-            }
-            result = resultBuilder.toString();
-            return result;
-        }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
-        }
-        return result;
     }
 }

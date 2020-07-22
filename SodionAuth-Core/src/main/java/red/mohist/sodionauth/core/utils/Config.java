@@ -16,171 +16,41 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
+import red.mohist.sodionauth.core.config.MainConfiguration;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Map;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class Config {
-    public static Config instance;
-    public Map<String, JsonElement> jsonMap;
+    public static MainConfiguration instance;
+    public static String defaultLang;
+    public static MainConfiguration.ApiConfiguration api;
+    public static MainConfiguration.SessionConfiguration session;
+    public static MainConfiguration.YggdrasilConfiguration yggdrasil;
+    public static MainConfiguration.SpawnConfiguration spawn;
+    public static MainConfiguration.TeleportConfiguration teleport;
+    public static MainConfiguration.SecurityConfiguration security;
+    public static MainConfiguration.ProtectionConfiguration protection;
+    public Config() throws IOException {
+        Helper.instance.saveResource("config.json", false);
+        File configFile = new File(Helper.getConfigPath("config.json"));
+        FileInputStream fileReader = new FileInputStream(configFile);
+        InputStreamReader inputStreamReader = new InputStreamReader(fileReader, StandardCharsets.UTF_8);
+        instance = new Gson().fromJson(inputStreamReader, MainConfiguration.class);
+        inputStreamReader.close();
+        fileReader.close();
 
-    public Config(Map<String, JsonElement> jsonMap) throws IOException {
-        instance = this;
-        this.jsonMap = jsonMap;
-    }
-
-    public static JsonElement getConfig() {
-        return Config.getConfig(".");
-    }
-
-    public static String getString(String key) {
-        return getConfig(key).getAsString();
-    }
-
-    private static JsonElement getConfig(String key) {
-        return Config.instance.jsonMap.get("." + key);
-    }
-
-    private static boolean containsKey(String key) {
-        return getConfig(key) != null;
-    }
-
-    public static String getString(String key, String def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsString()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Integer getInteger(String key) {
-        return getConfig(key).getAsInt();
-    }
-
-    public static Integer getInteger(String key, Integer def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsInt()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static BigInteger getBigInteger(String key) {
-        return getConfig(key).getAsBigInteger();
-    }
-
-    public static BigInteger getInteger(String key, BigInteger def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsBigInteger()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Double getDouble(String key) {
-        return getConfig(key).getAsDouble();
-    }
-
-    public static Double getDouble(String key, Double def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsDouble()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static BigDecimal getBigDecimal(String key) {
-        return getConfig(key).getAsBigDecimal();
-    }
-
-    public static BigDecimal getBigDecimal(String key, BigDecimal def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsBigDecimal()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Float getFloat(String key) {
-        return getConfig(key).getAsFloat();
-    }
-
-    public static Float getFloat(String key, Float def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsFloat()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Boolean getBoolean(String key) {
-        return getConfig(key).getAsBoolean();
-    }
-
-    public static Boolean getBoolean(String key, Boolean def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsBoolean()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Byte getByte(String key) {
-        return getConfig(key).getAsByte();
-    }
-
-    public static Byte getByte(String key, Byte def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsByte()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Long getLong(String key) {
-        return getConfig(key).getAsLong();
-    }
-
-    public static Long getLong(String key, Long def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsLong()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
-    }
-
-    public static Number getNumber(String key) {
-        return getConfig(key).getAsNumber();
-    }
-
-    public static Number getNumber(String key, Number def) {
-        try {
-            return containsKey(key)
-                    ? getConfig(key).getAsNumber()
-                    : def;
-        } catch (Exception e) {
-            return def;
-        }
+        defaultLang=instance.defaultLang;
+        api=instance.api;
+        session=instance.session;
+        yggdrasil=instance.yggdrasil;
+        spawn=instance.spawn;
+        teleport=instance.teleport;
+        security=instance.security;
+        protection=instance.protection;
     }
 }

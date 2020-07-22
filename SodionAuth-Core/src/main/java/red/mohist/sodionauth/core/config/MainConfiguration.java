@@ -24,6 +24,7 @@ import java.util.List;
 public class MainConfiguration {
 
 
+    public String defaultLang;
     public ApiConfiguration api;
     public SessionConfiguration session;
     public YggdrasilConfiguration yggdrasil;

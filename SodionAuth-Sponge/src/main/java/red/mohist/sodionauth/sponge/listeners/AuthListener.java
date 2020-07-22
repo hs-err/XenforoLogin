@@ -22,7 +22,7 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.asyncs.CanJoin;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.sponge.implementation.SpongePlainPlayer;
@@ -35,13 +35,13 @@ public class AuthListener implements SpongeAPIListener {
                 event.getProfile().getName().get(),
                 event.getProfile().getUniqueId(),
                 event.getConnection().getAddress().getAddress());
-        String canLogin = XenforoLoginCore.instance.canLogin(abstractPlayer);
+        String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
         if (canLogin != null) {
             event.setMessage(Text.of(canLogin));
             event.setCancelled(true);
             return;
         }
-        XenforoLoginCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
+        SodionAuthCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
             @Override
             public void run(String result) {
                 if (result != null) {

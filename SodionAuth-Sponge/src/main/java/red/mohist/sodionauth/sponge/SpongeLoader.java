@@ -28,7 +28,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -58,7 +58,7 @@ public class SpongeLoader implements PlatformAdapter {
     private Path privateConfigDir;
 
     public SpongeLoader instance;
-    public XenforoLoginCore xenforoLoginCore;
+    public SodionAuthCore sodionAuthCore;
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
@@ -88,7 +88,7 @@ public class SpongeLoader implements PlatformAdapter {
             instance = this;
             Helper.getLogger().info("Hello, XenforoLogin!");
 
-            xenforoLoginCore = new XenforoLoginCore(this);
+            sodionAuthCore = new SodionAuthCore(this);
 
 
             {
@@ -127,7 +127,7 @@ public class SpongeLoader implements PlatformAdapter {
 
     @Listener
     public void onServerStop(GameStoppingServerEvent event) {
-        XenforoLoginCore.instance.onDisable();
+        SodionAuthCore.instance.onDisable();
     }
 
     @Override

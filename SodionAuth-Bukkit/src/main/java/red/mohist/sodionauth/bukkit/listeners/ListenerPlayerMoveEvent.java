@@ -22,21 +22,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.utils.Config;
 
 
 public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
-        if (XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+        if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
             if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
                 Location location = event.getTo();
-                location.setX(XenforoLoginCore.instance.default_location.x);
+                location.setX(SodionAuthCore.instance.default_location.x);
                 if (Config.getBoolean("secure.spectator_login", true)) {
-                    location.setY(XenforoLoginCore.instance.default_location.y);
+                    location.setY(SodionAuthCore.instance.default_location.y);
                 }
-                location.setZ(XenforoLoginCore.instance.default_location.z);
+                location.setZ(SodionAuthCore.instance.default_location.z);
                 event.setTo(location);
             } else {
                 Location back = event.getFrom();

@@ -21,7 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlainPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
@@ -34,11 +34,11 @@ public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
         AbstractPlayer abstractPlayer = new BukkitPlainPlayer(
                 event.getName(), event.getUniqueId(), event.getAddress());
 
-        if (!XenforoLoginCore.instance.logged_in.containsKey(event.getUniqueId())) {
-            String canLogin = XenforoLoginCore.instance.canLogin(abstractPlayer);
+        if (!SodionAuthCore.instance.logged_in.containsKey(event.getUniqueId())) {
+            String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
             if (canLogin != null) {
                 event.setKickMessage(canLogin);
-                XenforoLoginCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
             }
         }
     }

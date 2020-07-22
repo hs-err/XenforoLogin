@@ -40,9 +40,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class XenforoLoginCore {
+public final class SodionAuthCore {
 
-    public static XenforoLoginCore instance;
+    public static SodionAuthCore instance;
     public PlatformAdapter api;
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
@@ -51,7 +51,7 @@ public final class XenforoLoginCore {
     private LinkedBlockingQueue<Login> LoginTask;
     private LinkedBlockingQueue<Register> registerTask;
 
-    public XenforoLoginCore(PlatformAdapter platformAdapter) {
+    public SodionAuthCore(PlatformAdapter platformAdapter) {
 
         {
             // WARN You are not permitted to interfere any protection that prevents loading in CatServer
@@ -125,7 +125,7 @@ public final class XenforoLoginCore {
         }
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
             new Thread(() -> {
-                String canjoin = XenforoLoginCore.instance.canJoinHandle(abstractPlayer);
+                String canjoin = SodionAuthCore.instance.canJoinHandle(abstractPlayer);
                 if (canjoin != null) {
                     abstractPlayer.kick(canjoin);
                 }
@@ -312,25 +312,25 @@ public final class XenforoLoginCore {
     }
 
     public String canJoinHandle(AbstractPlayer player) {
-        if (XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())
-                && XenforoLoginCore.instance.logged_in.get(player.getUniqueId()) != StatusType.HANDLE) {
+        if (SodionAuthCore.instance.logged_in.containsKey(player.getUniqueId())
+                && SodionAuthCore.instance.logged_in.get(player.getUniqueId()) != StatusType.HANDLE) {
             return null;
         }
-        XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
+        SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
 
         ResultType resultType = AuthBackendSystems.getCurrentSystem()
                 .join(player.getName())
                 .shouldLogin(false);
         switch (resultType) {
             case OK:
-                XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
+                SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                 return null;
             case ERROR_NAME:
                 return Helper.langFile("errors.name_incorrect",
                         resultType.getInheritedObject());
             case NO_USER:
                 if (Config.getBoolean("api.register", false)) {
-                    XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                    SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
                 } else {
                     return Helper.langFile("errors.no_user");
@@ -342,7 +342,7 @@ public final class XenforoLoginCore {
     }
 
     public void canJoinAsync(CanJoin action) {
-        XenforoLoginCore.instance.logged_in.put(action.player.getUniqueId(), StatusType.HANDLE);
+        SodionAuthCore.instance.logged_in.put(action.player.getUniqueId(), StatusType.HANDLE);
         canJoinTask.add(action);
     }
 
@@ -374,7 +374,7 @@ public final class XenforoLoginCore {
     }
 
     public void onChat(AbstractPlayer player, String message) {
-        StatusType status = XenforoLoginCore.instance.logged_in.get(player.getUniqueId());
+        StatusType status = SodionAuthCore.instance.logged_in.get(player.getUniqueId());
         switch (status) {
             case NEED_CHECK:
                 player.sendMessage(Helper.langFile("need_check"));
@@ -385,7 +385,7 @@ public final class XenforoLoginCore {
                     player.sendMessage(canLogin);
                     return;
                 }
-                XenforoLoginCore.instance.logged_in.put(
+                SodionAuthCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 LoginTask.add(new Login(player, message) {
                     @Override
@@ -403,7 +403,7 @@ public final class XenforoLoginCore {
                 }
                 break;
             case NEED_REGISTER_PASSWORD:
-                XenforoLoginCore.instance.logged_in.put(
+                SodionAuthCore.instance.logged_in.put(
                         player.getUniqueId(),
                         StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(message));
                 message(player);
@@ -414,7 +414,7 @@ public final class XenforoLoginCore {
                     player.sendMessage(canRegister);
                     return;
                 }
-                XenforoLoginCore.instance.logged_in.put(
+                SodionAuthCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
                     registerTask.add(new Register(player, status.email, status.password) {
@@ -423,20 +423,20 @@ public final class XenforoLoginCore {
                             boolean result = ResultTypeUtils.handle(player,
                                     answer.shouldLogin(true));
                             if (result) {
-                                XenforoLoginCore.instance.logged_in.put(
+                                SodionAuthCore.instance.logged_in.put(
                                         player.getUniqueId(), StatusType.LOGGED_IN);
                             } else {
-                                XenforoLoginCore.instance.logged_in.put(
+                                SodionAuthCore.instance.logged_in.put(
                                         player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                                XenforoLoginCore.instance.message(player);
+                                SodionAuthCore.instance.message(player);
                             }
                         }
                     });
                 } else {
                     player.sendMessage(Helper.langFile("errors.confirm"));
-                    XenforoLoginCore.instance.logged_in.put(
+                    SodionAuthCore.instance.logged_in.put(
                             player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
-                    XenforoLoginCore.instance.message(player);
+                    SodionAuthCore.instance.message(player);
                 }
                 break;
             case HANDLE:

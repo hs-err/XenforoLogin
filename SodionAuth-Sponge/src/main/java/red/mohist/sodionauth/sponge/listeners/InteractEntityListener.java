@@ -22,14 +22,14 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
 public class InteractEntityListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractEntityEvent(InteractEntityEvent event, @First Player player) {
-        if (XenforoLoginCore.instance.needCancelled(new SpongePlayer(player))) {
+        if (SodionAuthCore.instance.needCancelled(new SpongePlayer(player))) {
             event.setCancelled(true);
         }
     }

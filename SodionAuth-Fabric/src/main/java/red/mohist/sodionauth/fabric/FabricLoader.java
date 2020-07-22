@@ -28,7 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.level.ServerWorldProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -50,7 +50,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
     public static final Logger logger = LogManager.getLogger("XenforoLogin|Main");
     private static FabricLoader instance = null;
     private final File configDir = new File("./XenforoLogin/");
-    private XenforoLoginCore core = null;
+    private SodionAuthCore core = null;
 
     public FabricLoader() {
         synchronized (FabricLoader.class) {
@@ -96,7 +96,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize helper", e);
         }
-        core = new XenforoLoginCore(this);
+        core = new SodionAuthCore(this);
     }
 
     public void onServerPreShutdown() {

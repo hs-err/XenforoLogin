@@ -16,7 +16,7 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -38,7 +38,7 @@ public class LoginTickPlayer {
 
     public TickResult tick() {
         long now = System.currentTimeMillis();
-        if (!XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())) {
+        if (!SodionAuthCore.instance.logged_in.containsKey(player.getUniqueId())) {
             boolean result = ResultTypeUtils.handle(player,
                     AuthBackendSystems.getCurrentSystem()
                             .join(player)
@@ -48,20 +48,20 @@ public class LoginTickPlayer {
                         player.getName() + " didn't pass AccountExists test");
                 return TickResult.DONE;
             }
-            XenforoLoginCore.instance.message(player);
-            XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
+            SodionAuthCore.instance.message(player);
+            SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         }
         if ((now - startTime) / 1000 > loginTimeout
-                && XenforoLoginCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
+                && SodionAuthCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
             player.kick(Helper.langFile("errors.time_out"));
             return TickResult.DONE;
         }
-        if (!player.isOnline() || !XenforoLoginCore.instance.needCancelled(player)) {
+        if (!player.isOnline() || !SodionAuthCore.instance.needCancelled(player)) {
             return TickResult.DONE;
         }
 
-        XenforoLoginCore.instance.message(player);
-        XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
+        SodionAuthCore.instance.message(player);
+        SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         return TickResult.CONTINUE;
     }
 

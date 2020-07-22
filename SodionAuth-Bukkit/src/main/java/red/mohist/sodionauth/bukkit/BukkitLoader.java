@@ -24,7 +24,7 @@ import org.reflections.Reflections;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.bukkit.protocollib.ListenerProtocolEvent;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -41,7 +41,7 @@ import java.util.Vector;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
-    public XenforoLoginCore xenforoLoginCore;
+    public SodionAuthCore sodionAuthCore;
     private ListenerProtocolEvent listenerProtocolEvent;
 
     @Override
@@ -74,7 +74,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             instance = this;
             Helper.getLogger().info("Hello, XenforoLogin!");
 
-            xenforoLoginCore = new XenforoLoginCore(this);
+            sodionAuthCore = new SodionAuthCore(this);
 
             hookProtocolLib();
 
@@ -88,7 +88,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public void onDisable() {
-        xenforoLoginCore.onDisable();
+        sodionAuthCore.onDisable();
     }
 
     private void hookProtocolLib() {

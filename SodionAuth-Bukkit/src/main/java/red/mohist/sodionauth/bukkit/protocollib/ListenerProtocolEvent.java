@@ -28,7 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class ListenerProtocolEvent {
                     @Override
                     public void onPacketSending(PacketEvent event) {
                         if (event.getPacket().getIntegers().read(0) == 0
-                                && XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+                                && SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
                             event.setCancelled(true);
                         }
                     }

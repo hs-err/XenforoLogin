@@ -21,13 +21,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 
 public class ListenerBlockFertilizeEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnBlockFertilizeEvent(BlockFertilizeEvent event) {
         if (event.getPlayer() == null) return;
-        if (XenforoLoginCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+        if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
             event.setCancelled(true);
         }
     }

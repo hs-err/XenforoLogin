@@ -20,7 +20,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent.Chat;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
@@ -31,7 +31,7 @@ public class ChatListener implements SpongeAPIListener {
     @Listener
     public void onChatEvent(Chat event, @First Player spongePlayer) {
         SpongePlayer player = new SpongePlayer(spongePlayer);
-        if (!XenforoLoginCore.instance.needCancelled(player)) {
+        if (!SodionAuthCore.instance.needCancelled(player)) {
             if (Config.getBoolean("secure.cancel_chat_after_login", false)) {
                 player.sendMessage(Helper.langFile("logged_in"));
                 event.setCancelled(true);
@@ -39,7 +39,7 @@ public class ChatListener implements SpongeAPIListener {
             return;
         }
         event.setCancelled(true);
-        XenforoLoginCore.instance.onChat(player, event.getRawMessage().toPlainSingle());
+        SodionAuthCore.instance.onChat(player, event.getRawMessage().toPlainSingle());
     }
 
     @Override

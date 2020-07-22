@@ -22,7 +22,7 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
 import org.spongepowered.api.text.Text;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.asyncs.CanJoin;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
@@ -32,9 +32,9 @@ public class JoinListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onJoinEvent(Join event, @First Player spongePlayer) {
         SpongePlayer player = new SpongePlayer(spongePlayer);
-        XenforoLoginCore.instance.api.sendBlankInventoryPacket(player);
-        if (!XenforoLoginCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
-            String canLogin = XenforoLoginCore.instance.canLogin(player);
+        SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
+        if (!SodionAuthCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
+            String canLogin = SodionAuthCore.instance.canLogin(player);
             if (canLogin != null) {
                 spongePlayer.kick(Text.of(canLogin));
                 return;
@@ -42,7 +42,7 @@ public class JoinListener implements SpongeAPIListener {
 
             Helper.getLogger().warn("onAuthEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            XenforoLoginCore.instance.canJoinAsync(new CanJoin(player) {
+            SodionAuthCore.instance.canJoinAsync(new CanJoin(player) {
                 @Override
                 public void run(String result) {
                     if (result != null) {
@@ -51,7 +51,7 @@ public class JoinListener implements SpongeAPIListener {
                 }
             });
         }
-        XenforoLoginCore.instance.onJoin(player);
+        SodionAuthCore.instance.onJoin(player);
     }
 
     @Override

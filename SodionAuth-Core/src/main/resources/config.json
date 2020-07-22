@@ -1,7 +1,8 @@
 {
+  "defaultLang": "zh-CN",
   "api": {
     "system": "sqlite",
-    "register": true,
+    "allowRegister": true,
     "xenforo": {
       "url": "http://example.com/api",
       "key": "YOUR_KEY_HERE"
@@ -13,26 +14,26 @@
     "sqlite": {
       "path": "Users.db",
       "absolute": false,
-      "table_name": "users",
-      "email_field": "email",
-      "username_field": "username",
-      "password_field": "password",
-      "salt_field": "salt",
-      "salt_length": 6,
-      "password_hash": "BCrypt"
+      "tableName": "users",
+      "emailField": "email",
+      "usernameField": "username",
+      "passwordField": "password",
+      "saltField": "salt",
+      "saltLength": 6,
+      "passwordHash": "BCrypt"
     },
     "mysql": {
       "host": "localhost:3306",
       "username": "sodionauth",
-      "password": "W8xMxJyYcxdmY33G",
+      "password": "sodionauth",
       "database": "sodionauth",
-      "table_name": "users",
-      "email_field": "email",
-      "username_field": "username",
-      "password_field": "password",
-      "salt_field": "salt",
-      "salt_length": 6,
-      "password_hash": "BCrypt"
+      "tableName": "users",
+      "emailField": "email",
+      "usernameField": "username",
+      "passwordField": "password",
+      "saltField": "salt",
+      "saltLength": 6,
+      "passwordHash": "BCrypt"
     }
   },
   "session": {
@@ -45,10 +46,10 @@
     },
     "skinDomains": [],
     "token": {
-      "time-to-fully-expired": 259200,
-      "enable-time-to-partially-expired": true,
-      "time-to-partially-expired": "10m",
-      "only-last-session-available": false
+      "timeToFullyExpired": 259200,
+      "enableTimeToPartiallyExpired": true,
+      "timeToPartiallyExpired": "10m",
+      "onlyLastSessionAvailable": false
     },
     "core": {
       "serverName": "SodionAuth",
@@ -57,11 +58,11 @@
         "localhost"
       ]
     },
-    "rate-limit": {
-      "limit-duration": "300ms"
+    "ratelimit": {
+      "limitDuration": "300ms"
     },
     "session": {
-      "auth-expire-time": "15s"
+      "authExpireTime": "15s"
     }
   },
   "spawn": {
@@ -71,26 +72,26 @@
     "z": null
   },
   "teleport": {
-    "tp_spawn_before_login": true,
-    "tp_back_after_login": true
+    "tpSpawnBeforeLogin": true,
+    "tpBackAfterLogin": true
   },
-  "secure": {
-    "hide_inventory": true,
-    "spectator_login": true,
-    "default_gamemode": 0,
-    "show_tips_time": 5,
-    "max_login_time": 30,
-    "cancel_chat_after_login": false
+  "security": {
+    "hideInventory": true,
+    "spectatorLogin": true,
+    "defaultGamemode": 0,
+    "showTipsTime": 5,
+    "maxLoginTime": 30,
+    "cancelChatAfterLogin": false
   },
-  "protects": {
-    "Proxy": {
+  "protection": {
+    "antiProxy": {
       "enable": true,
-      "update_time": 60,
-      "proxys": {
-        "LiuLiu": true,
+      "updateTime": 60,
+      "proxiesProvider": {
+        "66ip": true,
         "QiYun": true
       },
-      "enable_local": true
+      "enableLocal": true
     },
     "GeoIP": {
       "enable": true,
@@ -115,35 +116,6 @@
         "enable": true,
         "permits": 5
       }
-    }
-  },
-  "lang": {
-    "register_email": "§6[§1XenforoLogin§6]§1§f Please send your email to register.",
-    "register_password": "§6[§1XenforoLogin§6]§1§f Please send your password.",
-    "register_password_confirm": "§6[§1XenforoLogin§6]§1§f Please send your password again.",
-    "logged_in": "§6[§1XenforoLogin§6]§1§f You have already logged in.",
-    "success": "§6[§1XenforoLogin§6]§1§f Logged in successfully.",
-    "session": "§6[§1XenforoLogin§6]§1§f Auto login by session.",
-    "last_login": "§6[§1XenforoLogin§6]§1§f Last login in [city].",
-    "last_login_unknown": "UNKNOWN",
-    "need_login": "§6[§1XenforoLogin§6]§1§f Please enter your password directly in chat.",
-    "errors": {
-      "proxy": "§6[§1XenforoLogin§6]§1§f Proxy address have baned.",
-      "rate_limit": "§6[§1XenforoLogin§6]§1§f Rate limited.",
-      "country_limit": "§6[§1XenforoLogin§6]§1§f Country limited.",
-      "email": "§6[§1XenforoLogin§6]§1§f Wrong Email.",
-      "server": "§6[§1XenforoLogin§6]§1§f There is an issue when connecting to the server, contact the administrator.",
-      "confirm": "§6[§1XenforoLogin§6]§1§f Password is NOT identical to the first one.",
-      "handle": "§6[§1XenforoLogin§6]§1§f Sorry, we will finish your request soon. If it takes too long, contact the administrator.",
-      "password": "§6[§1XenforoLogin§6]§1§f Wrong password.",
-      "key": "§6[§1XenforoLogin§6]§1§f Please check api.key [key]",
-      "url": "§6[§1XenforoLogin§6]§1§f Please check api.url [url]",
-      "no_user": "§6[§1XenforoLogin§6]§1§f You are not whitelisted on this server.",
-      "time_out": "§6[§1XenforoLogin§6]§1§f Login timed out!",
-      "name_incorrect": "§6[§1XenforoLogin§6]§1§f You should use \"[correct]\", not this to login.",
-      "unknown": "§6[§1XenforoLogin§6]§1§f Unknown error. Web send \"[message]\"",
-      "mail_exist": "§6[§1XenforoLogin§6]§1§f Your email already exists in our database. Try another one.",
-      "user_exist": "§6[§1XenforoLogin§6]§1§f Your username is already registered in our database. Try another one."
     }
   }
 }

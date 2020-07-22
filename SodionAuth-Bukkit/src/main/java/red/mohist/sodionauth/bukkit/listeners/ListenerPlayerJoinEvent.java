@@ -21,7 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.asyncs.CanJoin;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -31,19 +31,19 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerJoinEvent(PlayerJoinEvent event) {
         AbstractPlayer abstractPlayer = BukkitLoader.instance.player2info(event.getPlayer());
-        XenforoLoginCore.instance.api.sendBlankInventoryPacket(abstractPlayer);
-        if (!XenforoLoginCore.instance.logged_in.containsKey(abstractPlayer.getUniqueId())) {
+        SodionAuthCore.instance.api.sendBlankInventoryPacket(abstractPlayer);
+        if (!SodionAuthCore.instance.logged_in.containsKey(abstractPlayer.getUniqueId())) {
 
-            String canLogin = XenforoLoginCore.instance.canLogin(abstractPlayer);
+            String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
             if (canLogin != null) {
-                XenforoLoginCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
                 event.getPlayer().kickPlayer(canLogin);
                 return;
             }
 
             Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            XenforoLoginCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
+            SodionAuthCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
                 @Override
                 public void run(String result) {
                     if (result != null) {
@@ -52,7 +52,7 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
                 }
             });
         }
-        XenforoLoginCore.instance.onJoin(abstractPlayer);
+        SodionAuthCore.instance.onJoin(abstractPlayer);
     }
 
     @Override
