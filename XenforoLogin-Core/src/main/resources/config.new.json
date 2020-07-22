@@ -1,0 +1,120 @@
+{
+  "api": {
+    "system": "sqlite",
+    "allowRegister": true,
+    "xenforo": {
+      "url": "http://example.com/api",
+      "key": "YOUR_KEY_HERE"
+    },
+    "discuz": {
+      "url": "http://example.com/XenforoLogin.php",
+      "key": "YOUR_KEY_HERE"
+    },
+    "sqlite": {
+      "path": "Users.db",
+      "absolute": false,
+      "tableName": "users",
+      "emailField": "email",
+      "usernameField": "username",
+      "passwordField": "password",
+      "saltField": "salt",
+      "saltLength": 6,
+      "passwordHash": "BCrypt"
+    },
+    "mysql": {
+      "host": "localhost:3306",
+      "username": "xenforoLogin",
+      "password": "xenforologin",
+      "database": "xenforoLogin",
+      "tableName": "users",
+      "emailField": "email",
+      "usernameField": "username",
+      "passwordField": "password",
+      "saltField": "salt",
+      "saltLength": 6,
+      "passwordHash": "BCrypt"
+    }
+  },
+  "session": {
+    "enable": false,
+    "timeout": 3600
+  },
+  "yggdrasil": {
+    "server": {
+      "port": 8080
+    },
+    "skinDomains": [],
+    "token": {
+      "timeToFullyExpired": 259200,
+      "enableTimeToPartiallyExpired": true,
+      "timeToPartiallyExpired": "10m",
+      "onlyLastSessionAvailable": false
+    },
+    "core": {
+      "serverName": "XenforoLogin",
+      "url": "http://localhost:8080/",
+      "skinDomains": [
+        "localhost"
+      ]
+    },
+    "ratelimit": {
+      "limitDuration": "300ms"
+    },
+    "session": {
+      "authExpireTime": "15s"
+    }
+  },
+  "spawn": {
+    "world": null,
+    "x": null,
+    "y": null,
+    "z": null
+  },
+  "teleport": {
+    "tpSpawnBeforeLogin": true,
+    "tpBackAfterLogin": true
+  },
+  "security": {
+    "hideInventory": true,
+    "spectatorLogin": true,
+    "defaultGamemode": 0,
+    "showTipsTime": 5,
+    "maxLoginTime": 30,
+    "cancelChatAfterLogin": false
+  },
+  "protection": {
+    "antiProxy": {
+      "enable": true,
+      "updateTime": 60,
+      "proxiesProvider": {
+        "66ip": true,
+        "QiYun": true
+      },
+      "enableLocal": true
+    },
+    "GeoIP": {
+      "enable": true,
+      "lists": {
+        "CN": true,
+        "UNKNOWN": true
+      },
+      "default": true
+    },
+    "RateLimit": {
+      "enable": true,
+      "permitsPerSecond": 5,
+      "join": {
+        "enable": true,
+        "permits": 1
+      },
+      "register": {
+        "enable": true,
+        "permits": 10
+      },
+      "login": {
+        "enable": true,
+        "permits": 5
+      }
+    }
+  }
+}
