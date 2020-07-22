@@ -36,18 +36,22 @@ public class Config {
         return Config.getConfig(".");
     }
 
-    public static JsonElement getConfig(String key) {
+    public static String getString(String key) {
+        return getConfig(key).getAsString();
+    }
+
+    private static JsonElement getConfig(String key) {
         return Config.instance.jsonMap.get("." + key);
     }
 
-    public static String getString(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsString();
+    private static boolean containsKey(String key) {
+        return getConfig(key) != null;
     }
 
     public static String getString(String key, String def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsString()
+            return containsKey(key)
+                    ? getConfig(key).getAsString()
                     : def;
         } catch (Exception e) {
             return def;
@@ -55,13 +59,13 @@ public class Config {
     }
 
     public static Integer getInteger(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsInt();
+        return getConfig(key).getAsInt();
     }
 
     public static Integer getInteger(String key, Integer def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsInt()
+            return containsKey(key)
+                    ? getConfig(key).getAsInt()
                     : def;
         } catch (Exception e) {
             return def;
@@ -69,13 +73,13 @@ public class Config {
     }
 
     public static BigInteger getBigInteger(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsBigInteger();
+        return getConfig(key).getAsBigInteger();
     }
 
     public static BigInteger getInteger(String key, BigInteger def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsBigInteger()
+            return containsKey(key)
+                    ? getConfig(key).getAsBigInteger()
                     : def;
         } catch (Exception e) {
             return def;
@@ -83,13 +87,13 @@ public class Config {
     }
 
     public static Double getDouble(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsDouble();
+        return getConfig(key).getAsDouble();
     }
 
     public static Double getDouble(String key, Double def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsDouble()
+            return containsKey(key)
+                    ? getConfig(key).getAsDouble()
                     : def;
         } catch (Exception e) {
             return def;
@@ -97,13 +101,13 @@ public class Config {
     }
 
     public static BigDecimal getBigDecimal(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsBigDecimal();
+        return getConfig(key).getAsBigDecimal();
     }
 
     public static BigDecimal getBigDecimal(String key, BigDecimal def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsBigDecimal()
+            return containsKey(key)
+                    ? getConfig(key).getAsBigDecimal()
                     : def;
         } catch (Exception e) {
             return def;
@@ -111,13 +115,13 @@ public class Config {
     }
 
     public static Float getFloat(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsFloat();
+        return getConfig(key).getAsFloat();
     }
 
     public static Float getFloat(String key, Float def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsFloat()
+            return containsKey(key)
+                    ? getConfig(key).getAsFloat()
                     : def;
         } catch (Exception e) {
             return def;
@@ -125,13 +129,13 @@ public class Config {
     }
 
     public static Boolean getBoolean(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsBoolean();
+        return getConfig(key).getAsBoolean();
     }
 
     public static Boolean getBoolean(String key, Boolean def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsBoolean()
+            return containsKey(key)
+                    ? getConfig(key).getAsBoolean()
                     : def;
         } catch (Exception e) {
             return def;
@@ -139,13 +143,13 @@ public class Config {
     }
 
     public static Byte getByte(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsByte();
+        return getConfig(key).getAsByte();
     }
 
     public static Byte getByte(String key, Byte def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsByte()
+            return containsKey(key)
+                    ? getConfig(key).getAsByte()
                     : def;
         } catch (Exception e) {
             return def;
@@ -153,13 +157,13 @@ public class Config {
     }
 
     public static Long getLong(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsLong();
+        return getConfig(key).getAsLong();
     }
 
     public static Long getLong(String key, Long def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsLong()
+            return containsKey(key)
+                    ? getConfig(key).getAsLong()
                     : def;
         } catch (Exception e) {
             return def;
@@ -167,13 +171,13 @@ public class Config {
     }
 
     public static Number getNumber(String key) {
-        return Config.instance.jsonMap.get("." + key).getAsNumber();
+        return getConfig(key).getAsNumber();
     }
 
     public static Number getNumber(String key, Number def) {
         try {
-            return Config.instance.jsonMap.containsKey("." + key)
-                    ? Config.instance.jsonMap.get("." + key).getAsNumber()
+            return containsKey(key)
+                    ? getConfig(key).getAsNumber()
                     : def;
         } catch (Exception e) {
             return def;

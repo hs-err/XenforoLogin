@@ -146,7 +146,12 @@ public class SpongeLoader implements PlatformAdapter {
     }
 
     @Override
-    public void login(AbstractPlayer player) {
+    public String getDefaultWorld() {
+        return Sponge.getServer().getDefaultWorldName();
+    }
+
+    @Override
+    public void onLogin(AbstractPlayer player) {
 
     }
 

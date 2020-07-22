@@ -34,7 +34,10 @@ import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
@@ -152,7 +155,12 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     @Override
-    public void login(AbstractPlayer player) {
+    public String getDefaultWorld() {
+        return Bukkit.getWorlds().get(0).getName();
+    }
+
+    @Override
+    public void onLogin(AbstractPlayer player) {
         Objects.requireNonNull(Bukkit.getPlayer(player.getUniqueId())).updateInventory();
     }
 

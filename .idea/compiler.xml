@@ -33,23 +33,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="all" target="1.8" />
-      <module name="Parent" target="1.8" />
-      <module name="XenforoLogin-All" target="1.8" />
       <module name="XenforoLogin-Bukkit" target="1.8" />
       <module name="XenforoLogin-Core" target="1.8" />
-      <module name="XenforoLogin-Fabric" target="1.8" />
-      <module name="XenforoLogin-Parent" target="1.8" />
-      <module name="XenforoLogin-Parent.main" target="11" />
-      <module name="XenforoLogin-Parent.test" target="11" />
-      <module name="XenforoLogin-Parent.XenforoLogin-All.main" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-All.test" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-Bukkit.main" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-Bukkit.test" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-Core.main" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-Core.test" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-Fabric.main" target="1.8" />
-      <module name="XenforoLogin-Parent.XenforoLogin-Fabric.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

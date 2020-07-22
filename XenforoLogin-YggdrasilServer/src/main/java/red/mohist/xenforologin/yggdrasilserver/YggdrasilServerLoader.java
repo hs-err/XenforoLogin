@@ -40,8 +40,14 @@ public class YggdrasilServerLoader implements PlatformAdapter {
         return null;
     }
 
+    // TODO
     @Override
-    public void login(AbstractPlayer player) {
+    public String getDefaultWorld() {
+        return null;
+    }
+
+    @Override
+    public void onLogin(AbstractPlayer player) {
 
     }
 

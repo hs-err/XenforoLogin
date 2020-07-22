@@ -182,7 +182,7 @@ public final class XenforoLoginCore {
     }
 
     private void loadConfig() {
-        LocationInfo spawn_location = api.getSpawn("world");
+        LocationInfo spawn_location = api.getSpawn(api.getDefaultWorld());
         default_location = new LocationInfo(
                 Config.getString("spawn.world", "world"),
                 Config.getDouble("spawn.x", spawn_location.x),
@@ -248,7 +248,7 @@ public final class XenforoLoginCore {
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        api.login(player);
+        api.onLogin(player);
         Helper.getLogger().warn("Logging in " + player.getUniqueId());
         player.sendMessage(Helper.langFile("success"));
     }

@@ -17,13 +17,15 @@
 package red.mohist.xenforologin.fabric;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.world.level.ServerWorldProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.xenforologin.core.XenforoLoginCore;
@@ -100,27 +102,35 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
     @Override
     public LocationInfo getSpawn(String world) {
         Preconditions.checkNotNull(world);
-        for (RegistryKey<World> worldRegistryKey : Data.serverInstance.getWorldRegistryKeys()) {
-            if (world.equals(worldRegistryKey.getValue().toString())) {
-                final ServerWorld world1 = Data.serverInstance.getWorld(worldRegistryKey);
-                if (world1 == null) throw new IllegalStateException("Has registry key but not world");
-                final BlockPos spawnPos = world1.getSpawnPos();
-                return new LocationInfo(world, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), 0, 0);
-            }
+        for (ServerWorld world1 : Data.serverInstance.getWorlds()) {
+            if (world1 == null) continue;
+            final String levelName = ((ServerWorldProperties) world1.getLevelProperties()).getLevelName();
+            if (!levelName.equals(world)) continue;
+            final BlockPos spawnPos = world1.getSpawnPos();
+            return new LocationInfo(world, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), 0, 0);
         }
         return null;
     }
 
     @Override
-    public void login(AbstractPlayer player) {
+    public String getDefaultWorld() {
+        return ((ServerWorldProperties) Iterables.get(Data.serverInstance.getWorlds(), 0).getLevelProperties())
+                .getLevelName();
+    }
 
+    @Override
+    public void onLogin(AbstractPlayer player) {
+        ServerPlayerEntity fabricPlayer = Data.serverInstance.getPlayerManager().getPlayer(player.getName());
+        assert fabricPlayer != null;
+        fabricPlayer.inventory.updateItems();
     }
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
         ServerPlayerEntity fabricPlayer = Data.serverInstance.getPlayerManager().getPlayer(player.getName());
         assert fabricPlayer != null;
-        fabricPlayer.networkHandler.sendPacket(new InventoryS2CPacket());
+        fabricPlayer.networkHandler.sendPacket(new InventoryS2CPacket(-1,
+                DefaultedList.ofSize(54, ItemStack.EMPTY)));
     }
 
     @Override

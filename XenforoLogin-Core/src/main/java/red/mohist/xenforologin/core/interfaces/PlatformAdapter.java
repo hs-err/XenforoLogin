@@ -25,7 +25,9 @@ public interface PlatformAdapter {
 
     LocationInfo getSpawn(String world);
 
-    void login(AbstractPlayer player);
+    String getDefaultWorld();
+
+    void onLogin(AbstractPlayer player);
 
     void sendBlankInventoryPacket(AbstractPlayer player);
 
