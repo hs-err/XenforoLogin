@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.forums;
+package red.mohist.xenforologin.core.authbackends;
 
-import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.forums.implementations.*;
+import red.mohist.xenforologin.core.authbackends.implementations.*;
 import red.mohist.xenforologin.core.utils.Config;
-import red.mohist.xenforologin.core.utils.Helper;
 
-import java.util.Objects;
-
-public class ForumSystems {
-    private static ForumSystem currentSystem = null;
+public class AuthBackendSystems {
+    private static AuthBackendSystem currentSystem = null;
 
     public static void reloadConfig() {
-        ForumSystem cs;
+        AuthBackendSystem cs;
         switch (Config.getString("api.system", "xenforo")) {
             case "xenforo":
                 cs = new XenforoSystem(Config.getString("api.xenforo.url"),
@@ -72,7 +68,7 @@ public class ForumSystems {
         currentSystem = cs;
     }
 
-    public static ForumSystem getCurrentSystem() {
+    public static AuthBackendSystem getCurrentSystem() {
         return currentSystem;
     }
 

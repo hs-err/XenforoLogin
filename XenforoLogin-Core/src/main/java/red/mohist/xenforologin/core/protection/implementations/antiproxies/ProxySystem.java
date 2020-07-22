@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects;
+package red.mohist.xenforologin.core.protection.implementations.antiproxies;
 
-import red.mohist.xenforologin.core.modules.AbstractPlayer;
+import java.io.IOException;
 
-public interface SecureSystem {
-    String canJoin(AbstractPlayer player);
+public interface ProxySystem {
+    String getName();
 
-    String canLogin(AbstractPlayer player);
+    void refreshProxys() throws IOException;
 
-    String canRegister(AbstractPlayer player);
+    boolean isProxy(String ip);
 }

@@ -16,8 +16,8 @@
 
 package red.mohist.xenforologin.yggdrasilserver.provider;
 
+import red.mohist.xenforologin.core.authbackends.AuthBackendSystems;
 import red.mohist.xenforologin.core.enums.ResultType;
-import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.yggdrasilserver.implementation.PlainPlayer;
 import red.mohist.xenforologin.yggdrasilserver.modules.Profile;
@@ -52,7 +52,7 @@ public class UserProvider {
     }
 
     public String login(String username, String password, String clientToken) throws SQLException {
-        switch (ForumSystems.getCurrentSystem().login(new PlainPlayer(username), password)) {
+        switch (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password)) {
             case OK:
                 String accessToken = UUID.randomUUID().toString();
                 addToken(username, clientToken, accessToken);
@@ -157,7 +157,7 @@ public class UserProvider {
     }
 
     public boolean signout(String username, String password) throws SQLException {
-        if (ForumSystems.getCurrentSystem().login(new PlainPlayer(username), password) != ResultType.OK) {
+        if (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password) != ResultType.OK) {
             return false;
         }
         PreparedStatement pps = connection.prepareStatement(

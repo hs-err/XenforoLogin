@@ -16,7 +16,7 @@
 
 package red.mohist.xenforologin.yggdrasilserver;
 
-import red.mohist.xenforologin.core.forums.ForumSystems;
+import red.mohist.xenforologin.core.authbackends.AuthBackendSystems;
 import red.mohist.xenforologin.core.interfaces.LogProvider;
 import red.mohist.xenforologin.core.utils.Helper;
 
@@ -51,7 +51,7 @@ public class YggdrasilServerEntry {
                 logger.log(Level.WARNING, info, exception);
             }
         });
-        ForumSystems.reloadConfig();
+        AuthBackendSystems.reloadConfig();
         YggdrasilServerCore server = new YggdrasilServerCore();
         server.start();
     }

@@ -19,13 +19,13 @@ package red.mohist.xenforologin.core;
 import red.mohist.xenforologin.core.asyncs.CanJoin;
 import red.mohist.xenforologin.core.asyncs.Login;
 import red.mohist.xenforologin.core.asyncs.Register;
+import red.mohist.xenforologin.core.authbackends.AuthBackendSystems;
 import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.enums.StatusType;
-import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.protects.SecureSystems;
+import red.mohist.xenforologin.core.protection.SecureSystems;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
@@ -104,7 +104,7 @@ public final class XenforoLoginCore {
         registerTask = new LinkedBlockingQueue<>();
         loadConfig();
 
-        ForumSystems.reloadConfig();
+        AuthBackendSystems.reloadConfig();
         SecureSystems.reloadConfig();
         LoginTicker.register();
 
@@ -150,7 +150,7 @@ public final class XenforoLoginCore {
             while (true){
                 try {
                     Login task = LoginTask.take();
-                    task.run(ForumSystems.getCurrentSystem()
+                    task.run(AuthBackendSystems.getCurrentSystem()
                             .login(task.player, task.message));
                 }catch (Throwable e){
                     e.printStackTrace();
@@ -161,8 +161,8 @@ public final class XenforoLoginCore {
             while (true){
                 try {
                     Register task = registerTask.take();
-                    task.run(ForumSystems.getCurrentSystem()
-                            .register(task.player, task.password,task.email));
+                    task.run(AuthBackendSystems.getCurrentSystem()
+                            .register(task.player, task.password, task.email));
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
@@ -318,7 +318,7 @@ public final class XenforoLoginCore {
         }
         XenforoLoginCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
 
-        ResultType resultType = ForumSystems.getCurrentSystem()
+        ResultType resultType = AuthBackendSystems.getCurrentSystem()
                 .join(player.getName())
                 .shouldLogin(false);
         switch (resultType) {

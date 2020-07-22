@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects.implementations.proxys;
+package red.mohist.xenforologin.core.protection.implementations.antiproxies;
 
 import org.reflections.Reflections;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.protects.SecureSystem;
+import red.mohist.xenforologin.core.protection.SecureSystem;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 
@@ -28,17 +28,17 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Proxy implements SecureSystem {
+public class ProxySystems implements SecureSystem {
     private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
 
-    public Proxy() {
+    public ProxySystems() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.protects.implementations.proxys.implementations")
+            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.protects.implementations.antiproxies.implementations")
                     .getSubTypesOf(ProxySystem.class);
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
-                    if (Config.getBoolean("protects.Proxy.proxys." + clazz.getSimpleName())) {
+                    if (Config.getBoolean("protects.Proxy.antiproxies." + clazz.getSimpleName())) {
                         ProxySystem proxySystem = clazz.getDeclaredConstructor().newInstance();
                         currentSystem.add(proxySystem);
                     }

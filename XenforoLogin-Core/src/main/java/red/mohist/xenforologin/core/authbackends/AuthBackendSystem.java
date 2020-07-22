@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects.implementations.proxys;
+package red.mohist.xenforologin.core.authbackends;
 
-import java.io.IOException;
+import red.mohist.xenforologin.core.enums.ResultType;
+import red.mohist.xenforologin.core.modules.AbstractPlayer;
 
-public interface ProxySystem {
-    String getName();
+import javax.annotation.Nonnull;
 
-    void refreshProxys() throws IOException;
+public interface AuthBackendSystem {
 
-    boolean isProxy(String ip);
+    @Nonnull
+    ResultType register(AbstractPlayer player, String password, String email);
+
+    @Nonnull
+    ResultType login(AbstractPlayer player, String password);
+
+    @SuppressWarnings("unused")
+    @Nonnull
+    ResultType join(AbstractPlayer player);
+
+    @Nonnull
+    ResultType join(String name);
+
 }

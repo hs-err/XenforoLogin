@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.forums;
+package red.mohist.xenforologin.core.protection;
 
-import red.mohist.xenforologin.core.enums.ResultType;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 
-import javax.annotation.Nonnull;
+public interface SecureSystem {
+    String canJoin(AbstractPlayer player);
 
-public interface ForumSystem {
+    String canLogin(AbstractPlayer player);
 
-    @Nonnull
-    ResultType register(AbstractPlayer player, String password, String email);
-
-    @Nonnull
-    ResultType login(AbstractPlayer player, String password);
-
-    @SuppressWarnings("unused")
-    @Nonnull
-    ResultType join(AbstractPlayer player);
-
-    @Nonnull
-    ResultType join(String name);
-
+    String canRegister(AbstractPlayer player);
 }

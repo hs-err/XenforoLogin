@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects.implementations.geoIP;
+package red.mohist.xenforologin.core.protection.implementations.geoip;
 
 import com.maxmind.geoip2.DatabaseReader;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.protects.SecureSystem;
+import red.mohist.xenforologin.core.protection.SecureSystem;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 

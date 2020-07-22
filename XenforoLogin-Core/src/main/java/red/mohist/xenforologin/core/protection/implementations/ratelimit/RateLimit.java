@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects.implementations.rateLimit;
+package red.mohist.xenforologin.core.protection.implementations.ratelimit;
 
 import com.google.common.util.concurrent.RateLimiter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.protects.SecureSystem;
+import red.mohist.xenforologin.core.protection.SecureSystem;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 

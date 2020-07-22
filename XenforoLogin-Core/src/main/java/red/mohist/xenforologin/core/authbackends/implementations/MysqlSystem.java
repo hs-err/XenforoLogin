@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.forums.implementations;
+package red.mohist.xenforologin.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
+import red.mohist.xenforologin.core.authbackends.AuthBackendSystem;
 import red.mohist.xenforologin.core.enums.ResultType;
-import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.hasher.HasherTool;
 import red.mohist.xenforologin.core.hasher.HasherTools;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.utils.Helper;
 
 import javax.annotation.Nonnull;
 import java.sql.*;
 
-public class SqliteSystem implements ForumSystem {
+public class MysqlSystem implements AuthBackendSystem {
     private Connection connection;
+    private String host;
+    private String username;
+    private String password;
+    private String database;
     private String tableName;
     private String emailField;
     private String usernameField;
@@ -38,7 +41,11 @@ public class SqliteSystem implements ForumSystem {
     private String passwordHash;
     private HasherTool hasherTool;
 
-    public SqliteSystem(String path, boolean absolute, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
+    public MysqlSystem(String host, String username, String password, String database, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
+        this.host = host;
+        this.username = username;
+        this.password = password;
+        this.database = database;
         this.tableName = tableName;
         this.emailField = emailField;
         this.usernameField = usernameField;
@@ -47,22 +54,18 @@ public class SqliteSystem implements ForumSystem {
         this.saltLength = saltLength;
         this.passwordHash = passwordHash;
         HasherTools.loadHasher(passwordHash, saltLength);
-        hasherTool = HasherTools.getCurrentSystem();
+        this.hasherTool = HasherTools.getCurrentSystem();
         try {
-
-            if (absolute) {
-                connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-            } else {
-                connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath(path));
-            }
+            connection = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?useSSL=false&serverTimezone=UTC", username, password);
             if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL,`" + saltField + "` TEXT NOT NULL, PRIMARY KEY (`id` AUTOINCREMENT));");
+                            "CREATE TABLE " + tableName + " (`id` int(11) NOT NULL AUTO_INCREMENT,`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL,`" + saltField + "` varchar(32) NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
+
                 } else {
                     pps = connection.prepareStatement(
-                            "CREATE TABLE " + tableName + " (`id` INTEGER NOT NULL,`" + emailField + "` TEXT NOT NULL,`" + usernameField + "` TEXT NOT NULL,`" + passwordField + "` TEXT NOT NULL, PRIMARY KEY (`id` AUTOINCREMENT));");
+                            "CREATE TABLE " + tableName + " (`id` int(11) NOT NULL AUTO_INCREMENT,`" + emailField + "` varchar(255) NOT NULL,`" + usernameField + "` varchar(32) NOT NULL,`" + passwordField + "` varchar(255) NOT NULL, PRIMARY KEY (`id`,`" + usernameField + "`));");
                 }
                 pps.executeUpdate();
             }
@@ -75,14 +78,14 @@ public class SqliteSystem implements ForumSystem {
     @Override
     public ResultType register(AbstractPlayer player, String password, String email) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(" + usernameField + ")=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + usernameField + "`)=? LIMIT 1;");
             pps.setString(1, player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if (rs.next()) {
                 return ResultType.USER_EXIST;
             }
 
-            pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(" + emailField + ")=? LIMIT 1;");
+            pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + emailField + "`)=? LIMIT 1;");
             pps.setString(1, email);
             rs = pps.executeQuery();
             if (rs.next()) {
@@ -92,14 +95,14 @@ public class SqliteSystem implements ForumSystem {
             if (hasherTool.needSalt()) {
                 String salt = hasherTool.generateSalt();
                 pps = connection.prepareStatement(
-                        "INSERT INTO " + tableName + " (" + emailField + ", " + usernameField + ", " + passwordField + ",salt) VALUES (?, ?, ?, ?);");
+                        "INSERT INTO " + tableName + " (`" + emailField + "`, `" + usernameField + "`, `" + passwordField + "`,`" + saltField + "`) VALUES (?, ?, ?, ?);");
                 pps.setString(1, email);
                 pps.setString(2, player.getName());
                 pps.setString(3, hasherTool.hash(password, salt));
                 pps.setString(4, salt);
             } else {
                 pps = connection.prepareStatement(
-                        "INSERT INTO " + tableName + " (" + emailField + ", " + usernameField + ", " + passwordField + ") VALUES (?, ?, ?);");
+                        "INSERT INTO " + tableName + " (`" + emailField + "`, `" + usernameField + "`, `" + passwordField + "`) VALUES (?, ?, ?);");
                 pps.setString(1, email);
                 pps.setString(2, player.getName());
                 pps.setString(3, hasherTool.hash(password));
@@ -117,7 +120,7 @@ public class SqliteSystem implements ForumSystem {
     @Override
     public ResultType login(AbstractPlayer player, String password) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(" + usernameField + ")=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + usernameField + "`)=? LIMIT 1;");
             pps.setString(1, player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if (!rs.next()) {
@@ -153,7 +156,7 @@ public class SqliteSystem implements ForumSystem {
     @Override
     public ResultType join(String name) {
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(" + usernameField + ")=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + usernameField + "`)=? LIMIT 1;");
             pps.setString(1, name.toLowerCase());
             ResultSet rs = pps.executeQuery();
             if (!rs.next()) {

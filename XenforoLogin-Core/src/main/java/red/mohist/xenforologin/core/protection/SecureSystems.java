@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects;
+package red.mohist.xenforologin.core.protection;
 
 import org.reflections.Reflections;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;

@@ -17,8 +17,8 @@
 package red.mohist.xenforologin.core.utils;
 
 import red.mohist.xenforologin.core.XenforoLoginCore;
+import red.mohist.xenforologin.core.authbackends.AuthBackendSystems;
 import red.mohist.xenforologin.core.enums.StatusType;
-import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 
 import javax.annotation.Nonnull;
@@ -40,7 +40,7 @@ public class LoginTickPlayer {
         long now = System.currentTimeMillis();
         if (!XenforoLoginCore.instance.logged_in.containsKey(player.getUniqueId())) {
             boolean result = ResultTypeUtils.handle(player,
-                    ForumSystems.getCurrentSystem()
+                    AuthBackendSystems.getCurrentSystem()
                             .join(player)
                             .shouldLogin(false));
             if (!result) {

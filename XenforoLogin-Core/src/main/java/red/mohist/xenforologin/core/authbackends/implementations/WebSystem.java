@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.forums.implementations;
+package red.mohist.xenforologin.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
@@ -26,15 +26,15 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
+import red.mohist.xenforologin.core.authbackends.AuthBackendSystem;
 import red.mohist.xenforologin.core.enums.ResultType;
-import red.mohist.xenforologin.core.forums.ForumSystem;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.utils.Helper;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 
-public class WebSystem implements ForumSystem {
+public class WebSystem implements AuthBackendSystem {
     private String url;
     private String key;
 

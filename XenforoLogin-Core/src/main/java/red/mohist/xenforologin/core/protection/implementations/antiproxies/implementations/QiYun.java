@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protects.implementations.proxys.implementations;
+package red.mohist.xenforologin.core.protection.implementations.antiproxies.implementations;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import red.mohist.xenforologin.core.protects.implementations.proxys.ProxySystem;
+import red.mohist.xenforologin.core.protection.implementations.antiproxies.ProxySystem;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LiuLiu implements ProxySystem {
+public class QiYun implements ProxySystem {
     private CopyOnWriteArrayList<String> proxyList;
 
-    public LiuLiu() {
+    public QiYun() {
         proxyList = new CopyOnWriteArrayList<>();
     }
 
-    @Override
     public String getName() {
-        return "66ip";
+        return "89ip";
     }
 
     public void refreshProxys() throws IOException {
@@ -49,7 +48,7 @@ public class LiuLiu implements ProxySystem {
             return null;
         };
 
-        String result = Request.Get("http://www.66ip.cn/mo.php?tqsl=9999")
+        String result = Request.Get("http://www.89ip.cn/tqdl.html?api=1&num=9999")
                 .addHeader("accept", "*/*")
                 .addHeader("connection", "Keep-Alive")
                 .addHeader("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
