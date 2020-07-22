@@ -80,8 +80,10 @@
     "default_gamemode": 0,
     "show_tips_time": 5,
     "max_login_time": 30,
-    "cancel_chat_after_login": false,
-    "proxy": {
+    "cancel_chat_after_login": false
+  },
+  "protects": {
+    "Proxy": {
       "enable": true,
       "update_time": 60,
       "proxys": {
@@ -89,20 +91,30 @@
         "QiYun": true
       },
       "enable_local": true
-    }
-  },
-  "rate_limit": {
-    "join": {
-      "enable": true,
-      "permits": 10
     },
-    "register": {
+    "GeoIP": {
       "enable": true,
-      "permits": 0.1
+      "lists": {
+        "CN": true,
+        "UNKNOWN": true
+      },
+      "default": true
     },
-    "login": {
+    "RateLimit": {
       "enable": true,
-      "permits": 1
+      "permitsPerSecond": 5,
+      "join": {
+        "enable": true,
+        "permits": 1
+      },
+      "register": {
+        "enable": true,
+        "permits": 10
+      },
+      "login": {
+        "enable": true,
+        "permits": 5
+      }
     }
   },
   "lang": {

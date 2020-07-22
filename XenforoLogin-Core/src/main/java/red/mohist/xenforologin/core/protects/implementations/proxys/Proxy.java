@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.proxys;
+package red.mohist.xenforologin.core.protects.implementations.proxys;
 
 import org.reflections.Reflections;
+import red.mohist.xenforologin.core.modules.AbstractPlayer;
+import red.mohist.xenforologin.core.protects.SecureSystem;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 
@@ -26,17 +28,17 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ProxySystems {
+public class Proxy implements SecureSystem {
     private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
 
-    public ProxySystems() {
+    public Proxy() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.proxys.implementations")
+            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.protects.implementations.proxys.implementations")
                     .getSubTypesOf(ProxySystem.class);
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
-                    if (Config.getBoolean("secure.proxy.proxys." + clazz.getSimpleName())) {
+                    if (Config.getBoolean("protects.Proxy.proxys." + clazz.getSimpleName())) {
                         ProxySystem proxySystem = clazz.getDeclaredConstructor().newInstance();
                         currentSystem.add(proxySystem);
                     }
@@ -60,19 +62,35 @@ public class ProxySystems {
                     }
                 }
             }
-        }, 0, Config.getInteger("secure.proxy.update_time", 60) * 1000);
+        }, 0, Config.getInteger("protects.Proxy.update_time", 60) * 1000);
     }
 
-    public static boolean isProxy(String ip) {
+    @Override
+    public String canJoin(AbstractPlayer player) {
+        String ip = player.getAddress().getHostAddress();
         if(ip.equals("127.0.0.1")){
-            return !Config.getBoolean("secure.proxy.enable_local");
+            if(Config.getBoolean("protects.Proxy.enable_local")){
+                return null;
+            }else{
+                return Helper.langFile("errors.proxy");
+            }
         }
         for (ProxySystem proxySystem : currentSystem) {
             if (proxySystem.isProxy(ip)) {
                 Helper.getLogger().warn("find proxy by " + proxySystem.getClass().getName());
-                return true;
+                return Helper.langFile("errors.proxy");
             }
         }
-        return false;
+        return null;
+    }
+
+    @Override
+    public String canLogin(AbstractPlayer player) {
+        return null;
+    }
+
+    @Override
+    public String canRegister(AbstractPlayer player) {
+        return null;
     }
 }

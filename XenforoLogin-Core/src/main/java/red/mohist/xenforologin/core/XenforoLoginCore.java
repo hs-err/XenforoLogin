@@ -16,7 +16,6 @@
 
 package red.mohist.xenforologin.core;
 
-import com.google.common.util.concurrent.RateLimiter;
 import red.mohist.xenforologin.core.asyncs.CanJoin;
 import red.mohist.xenforologin.core.asyncs.Login;
 import red.mohist.xenforologin.core.asyncs.Register;
@@ -26,7 +25,7 @@ import red.mohist.xenforologin.core.forums.ForumSystems;
 import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
 import red.mohist.xenforologin.core.modules.AbstractPlayer;
 import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.proxys.ProxySystems;
+import red.mohist.xenforologin.core.protects.SecureSystems;
 import red.mohist.xenforologin.core.utils.Config;
 import red.mohist.xenforologin.core.utils.Helper;
 import red.mohist.xenforologin.core.utils.LoginTicker;
@@ -48,9 +47,6 @@ public final class XenforoLoginCore {
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
     private Connection connection;
-    private RateLimiter registerRateLimiter;
-    private RateLimiter loginRateLimiter;
-    private RateLimiter joinRateLimiter;
     private LinkedBlockingQueue<CanJoin> canJoinTask;
     private LinkedBlockingQueue<Login> LoginTask;
     private LinkedBlockingQueue<Register> registerTask;
@@ -109,17 +105,9 @@ public final class XenforoLoginCore {
         loadConfig();
 
         ForumSystems.reloadConfig();
+        SecureSystems.reloadConfig();
         LoginTicker.register();
 
-        if (Config.getBoolean("rate_limit.join.enable")) {
-            joinRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.join.permits"));
-        }
-        if (Config.getBoolean("rate_limit.register.enable")) {
-            registerRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.register.permits"));
-        }
-        if (Config.getBoolean("rate_limit.login.enable")) {
-            loginRateLimiter = RateLimiter.create(Config.getDouble("rate_limit.login.permits"));
-        }
 
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("XenforoLogin.db"));
@@ -174,7 +162,7 @@ public final class XenforoLoginCore {
                 try {
                     Register task = registerTask.take();
                     task.run(ForumSystems.getCurrentSystem()
-                            .register(task.player, task.email,task.email));
+                            .register(task.player, task.password,task.email));
                 }catch (Throwable e){
                     e.printStackTrace();
                 }
@@ -308,17 +296,7 @@ public final class XenforoLoginCore {
     }
 
     public String canLogin(AbstractPlayer player) {
-        if (Config.getBoolean("secure.proxy.enable")) {
-            if (ProxySystems.isProxy(player.getAddress().getHostAddress())) {
-                return Helper.langFile("errors.proxy");
-            }
-        }
-        if (Config.getBoolean("rate_limit.join.enable")) {
-            if (!joinRateLimiter.tryAcquire()) {
-                return Helper.langFile("errors.rate_limit");
-            }
-        }
-        return null;
+        return SecureSystems.canJoin(player);
     }
 
 
@@ -402,11 +380,10 @@ public final class XenforoLoginCore {
                 player.sendMessage(Helper.langFile("need_check"));
                 break;
             case NEED_LOGIN:
-                if (Config.getBoolean("rate_limit.login.enable")) {
-                    if (!loginRateLimiter.tryAcquire()) {
-                        player.sendMessage(Helper.langFile("errors.rate_limit"));
-                        return;
-                    }
+                String canLogin=SecureSystems.canLogin(player);
+                if (canLogin != null) {
+                    player.sendMessage(canLogin);
+                    return;
                 }
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
@@ -432,11 +409,10 @@ public final class XenforoLoginCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
-                if (Config.getBoolean("rate_limit.register.enable")) {
-                    if (!registerRateLimiter.tryAcquire()) {
-                        player.sendMessage(Helper.langFile("errors.rate_limit"));
-                        return;
-                    }
+                String canRegister=SecureSystems.canRegister(player);
+                if (canRegister != null) {
+                    player.sendMessage(canRegister);
+                    return;
                 }
                 XenforoLoginCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
