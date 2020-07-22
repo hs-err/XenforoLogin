@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.authbackends;
+package red.mohist.sodionauth.core.authbackends;
 
-import red.mohist.xenforologin.core.authbackends.implementations.*;
-import red.mohist.xenforologin.core.utils.Config;
+import red.mohist.sodionauth.core.authbackends.implementations.*;
+import red.mohist.sodionauth.core.utils.Config;
 
 public class AuthBackendSystems {
     private static AuthBackendSystem currentSystem = null;

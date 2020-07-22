@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "red.mohist.xenforologin.fabric.mixins",
+  "package": "red.mohist.sodionauth.fabric.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "MixinDedicatedServer",
@@ -10,5 +10,5 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "XenforoLogin-Fabric-refmap.json"
+  "refmap": "SodionAuth-Fabric-refmap.json"
 }

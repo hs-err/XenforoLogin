@@ -1,27 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "xenforologin",
+  "id": "sodionauth",
   "version": "${version}",
-  "name": "XenforoLogin-Fabric",
-  "description": "Use your Xenforo account to login Minecraft.",
+  "name": "SodionAuth-Fabric",
+  "description": "A new generation of authentication plugin for Minecraft",
   "authors": [
     "logos",
     "ishland"
   ],
   "contact": {
     "homepage": "https://mohist.red/",
-    "sources": "https://github.com/Mohist-Community/XenforoLogin"
+    "sources": "https://github.com/Mohist-Community/SodionAuth"
   },
   "license": "LGPLv3",
   "icon": "",
   "environment": "server",
   "entrypoints": {
     "main": [
-      "red.mohist.xenforologin.fabric.FabricLoader"
+      "red.mohist.sodionauth.fabric.FabricLoader"
     ]
   },
   "mixins": [
-    "xenforologin.fabric.mixins.json"
+    "sodionauth.fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.8.8",

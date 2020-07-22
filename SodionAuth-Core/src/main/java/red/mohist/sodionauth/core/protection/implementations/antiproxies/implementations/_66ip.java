@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core.protection.implementations.antiproxies.implementations;
+package red.mohist.sodionauth.core.protection.implementations.antiproxies.implementations;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
-import red.mohist.xenforologin.core.protection.implementations.antiproxies.ProxySystem;
+import red.mohist.sodionauth.core.protection.implementations.antiproxies.ProxySystem;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;

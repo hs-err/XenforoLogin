@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.bukkit;
+package red.mohist.sodionauth.bukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
-import red.mohist.xenforologin.bukkit.implementation.BukkitPlayer;
-import red.mohist.xenforologin.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.xenforologin.bukkit.protocollib.ListenerProtocolEvent;
-import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.interfaces.LogProvider;
-import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
-import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.utils.Config;
-import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.core.utils.LoginTicker;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
+import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
+import red.mohist.sodionauth.bukkit.protocollib.ListenerProtocolEvent;
+import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.interfaces.LogProvider;
+import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.LoginTicker;
 
 import java.io.IOException;
 import java.util.Collection;

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.core;
+package red.mohist.sodionauth.core;
 
-import red.mohist.xenforologin.core.asyncs.CanJoin;
-import red.mohist.xenforologin.core.asyncs.Login;
-import red.mohist.xenforologin.core.asyncs.Register;
-import red.mohist.xenforologin.core.authbackends.AuthBackendSystems;
-import red.mohist.xenforologin.core.enums.ResultType;
-import red.mohist.xenforologin.core.enums.StatusType;
-import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
-import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.protection.SecureSystems;
-import red.mohist.xenforologin.core.utils.Config;
-import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.core.utils.LoginTicker;
-import red.mohist.xenforologin.core.utils.ResultTypeUtils;
+import red.mohist.sodionauth.core.asyncs.CanJoin;
+import red.mohist.sodionauth.core.asyncs.Login;
+import red.mohist.sodionauth.core.asyncs.Register;
+import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
+import red.mohist.sodionauth.core.enums.ResultType;
+import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.protection.SecureSystems;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.LoginTicker;
+import red.mohist.sodionauth.core.utils.ResultTypeUtils;
 
 import java.sql.*;
 import java.util.UUID;

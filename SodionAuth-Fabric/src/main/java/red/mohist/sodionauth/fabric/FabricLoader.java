@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package red.mohist.xenforologin.fabric;
+package red.mohist.sodionauth.fabric;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -28,14 +28,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.level.ServerWorldProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import red.mohist.xenforologin.core.XenforoLoginCore;
-import red.mohist.xenforologin.core.interfaces.LogProvider;
-import red.mohist.xenforologin.core.interfaces.PlatformAdapter;
-import red.mohist.xenforologin.core.modules.AbstractPlayer;
-import red.mohist.xenforologin.core.modules.LocationInfo;
-import red.mohist.xenforologin.core.utils.Helper;
-import red.mohist.xenforologin.fabric.data.Data;
-import red.mohist.xenforologin.fabric.implementation.FabricPlayer;
+import red.mohist.sodionauth.core.XenforoLoginCore;
+import red.mohist.sodionauth.core.interfaces.LogProvider;
+import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.fabric.data.Data;
+import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
 
 import java.io.File;
 import java.io.IOException;
