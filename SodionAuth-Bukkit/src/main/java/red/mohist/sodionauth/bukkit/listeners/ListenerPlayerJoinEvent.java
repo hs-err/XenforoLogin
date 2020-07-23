@@ -22,7 +22,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.asyncs.CanJoin;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -43,12 +42,9 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
 
             Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            SodionAuthCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
-                @Override
-                public void run(String result) {
-                    if (result != null) {
-                        player.kick(result);
-                    }
+            SodionAuthCore.instance.canJoin(abstractPlayer).thenAccept(result -> {
+                if (result != null) {
+                    abstractPlayer.kick(result);
                 }
             });
         }

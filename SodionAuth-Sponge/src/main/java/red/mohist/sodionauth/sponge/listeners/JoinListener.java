@@ -23,7 +23,6 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
 import org.spongepowered.api.text.Text;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.asyncs.CanJoin;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
@@ -42,12 +41,9 @@ public class JoinListener implements SpongeAPIListener {
 
             Helper.getLogger().warn("onAuthEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            SodionAuthCore.instance.canJoinAsync(new CanJoin(player) {
-                @Override
-                public void run(String result) {
-                    if (result != null) {
-                        player.kick(result);
-                    }
+            SodionAuthCore.instance.canJoin(player).thenAccept(result -> {
+                if (result != null) {
+                    player.kick(result);
                 }
             });
         }

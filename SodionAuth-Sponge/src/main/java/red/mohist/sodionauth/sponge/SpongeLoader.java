@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.sponge;
 
 import com.google.inject.Inject;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
@@ -34,6 +33,7 @@ import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.libs.reflections.Reflections;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 

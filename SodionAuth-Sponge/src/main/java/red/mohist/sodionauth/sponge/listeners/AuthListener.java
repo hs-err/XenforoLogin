@@ -23,7 +23,6 @@ import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.asyncs.CanJoin;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.sponge.implementation.SpongePlainPlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
@@ -41,12 +40,9 @@ public class AuthListener implements SpongeAPIListener {
             event.setCancelled(true);
             return;
         }
-        SodionAuthCore.instance.canJoinAsync(new CanJoin(abstractPlayer) {
-            @Override
-            public void run(String result) {
-                if (result != null) {
-                    player.kick(result);
-                }
+        SodionAuthCore.instance.canJoin(abstractPlayer).thenAccept(result -> {
+            if (result != null) {
+                abstractPlayer.kick(result);
             }
         });
     }
