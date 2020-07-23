@@ -47,9 +47,9 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class FabricLoader implements ModInitializer, PlatformAdapter {
 
-    public static final Logger logger = LogManager.getLogger("XenforoLogin|Main");
+    public static final Logger logger = LogManager.getLogger("SodionAuth|Main");
     private static FabricLoader instance = null;
-    private final File configDir = new File("./XenforoLogin/");
+    private final File configDir = new File("./SodionAuth/");
     private SodionAuthCore core = null;
 
     public FabricLoader() {
@@ -66,11 +66,11 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
     @Override
     public void onInitialize() {
         configDir.mkdirs();
-        logger.info("XenforoLogin has been successfully discovered");
+        logger.info("SodionAuth has been successfully discovered");
     }
 
     public void onServerPostWorld() {
-        logger.info("Hello, XenforoLogin!");
+        logger.info("Hello, SodionAuth!");
         try {
             new Helper(configDir.toString(), new LogProvider() {
                 @Override

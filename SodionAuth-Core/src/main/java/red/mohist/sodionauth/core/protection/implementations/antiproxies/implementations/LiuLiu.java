@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LiuLiu implements ProxySystem {
-    private CopyOnWriteArrayList<String> proxyList;
+    private final CopyOnWriteArrayList<String> proxyList;
 
     public LiuLiu() {
         proxyList = new CopyOnWriteArrayList<>();

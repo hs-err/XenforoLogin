@@ -19,21 +19,10 @@ package red.mohist.sodionauth.yggdrasilserver;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
-import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.Collection;
-import java.util.logging.Logger;
 
 public class YggdrasilServerLoader implements PlatformAdapter {
-    // TODO @Override
-    public Logger getLogger() {
-        return null;
-    }
-
-    // TODO @Override
-    public String getConfigPath(String filename) {
-        return Helper.instance.basePath + "/" + filename;
-    }
 
     @Override
     public LocationInfo getSpawn(String world) {

@@ -18,12 +18,12 @@ package red.mohist.sodionauth.core.modules;
 
 public class LocationInfo {
 
-    public String world;
-    public double x;
-    public double y;
-    public double z;
-    public float yaw;
-    public float pitch;
+    public final String world;
+    public final double x;
+    public final double y;
+    public final double z;
+    public final float yaw;
+    public final float pitch;
 
     public LocationInfo(String world, double x, double y, double z, float yaw, float pitch) {
         this.world = world;

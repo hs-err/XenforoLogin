@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public class SecureSystems {
-    private static ArrayList<SecureSystem> currentSystem = new ArrayList<>();
+    private static final ArrayList<SecureSystem> currentSystem = new ArrayList<>();
     public static void reloadConfig() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends SecureSystem>> classes = new Reflections("red.mohist.xenforologin.core.protects.implementations")
+            Set<Class<? extends SecureSystem>> classes = new Reflections("red.mohist.sodionauth.core.protects.implementations")
                     .getSubTypesOf(SecureSystem.class);
             for (Class<? extends SecureSystem> clazz : classes) {
                 try {

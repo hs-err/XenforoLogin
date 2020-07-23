@@ -1,8 +1,8 @@
 # SodionAuth
 
-Prevent minecraft username stealing with Xenforo and more.
+A new generation of authentication plugin for Minecraft
 
-Development builds: https://ci.ishland.com:43333/job/XenforoLogin/
+Development builds: https://ci.ishland.com:43333/job/SodionAuth/
 
 ## Fabric builds
 Fabric support is still WIP. Do NOT use them unless you would like to help us. 

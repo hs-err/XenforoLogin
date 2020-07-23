@@ -45,9 +45,9 @@ import java.util.Set;
 import java.util.Vector;
 
 @Plugin(
-        id = "xenforologin",
-        name = "XenforoLogin",
-        description = "XenforoLogin"
+        id = "sodionauth",
+        name = "SodionAuth",
+        description = "A new generation of authentication plugin for Minecraft"
 )
 public class SpongeLoader implements PlatformAdapter {
     @Inject
@@ -86,14 +86,14 @@ public class SpongeLoader implements PlatformAdapter {
             });
 
             instance = this;
-            Helper.getLogger().info("Hello, XenforoLogin!");
+            Helper.getLogger().info("Hello, SodionAuth!");
 
             sodionAuthCore = new SodionAuthCore(this);
 
 
             {
                 int unavailableCount = 0;
-                Set<Class<? extends SpongeAPIListener>> classes = new Reflections("red.mohist.xenforologin.sponge.listeners")
+                Set<Class<? extends SpongeAPIListener>> classes = new Reflections("red.mohist.sodionauth.sponge.listeners")
                         .getSubTypesOf(SpongeAPIListener.class);
                 for (Class<? extends SpongeAPIListener> clazz : classes) {
                     SpongeAPIListener listener;
@@ -113,13 +113,13 @@ public class SpongeLoader implements PlatformAdapter {
                 }
                 if (unavailableCount > 0) {
                     Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of sponge");
-                    Helper.getLogger().warn("If your encountered errors, do NOT report to XenforoLogin.");
+                    Helper.getLogger().warn("If your encountered errors, do NOT report to SodionAuth.");
                     Helper.getLogger().warn("Error count: " + unavailableCount);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
-            logger.warn("XenforoLogin load fail.");
+            logger.warn("SodionAuth load fail.");
             Sponge.getServer().shutdown();
         }
 

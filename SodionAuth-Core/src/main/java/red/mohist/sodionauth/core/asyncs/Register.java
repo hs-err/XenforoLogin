@@ -20,9 +20,9 @@ import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public abstract class Register {
-    public AbstractPlayer player;
-    public String email;
-    public String password;
+    public final AbstractPlayer player;
+    public final String email;
+    public final String password;
 
     public Register(AbstractPlayer player, String email, String password) {
         this.player = player;

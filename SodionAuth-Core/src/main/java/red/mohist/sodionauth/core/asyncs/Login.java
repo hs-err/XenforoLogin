@@ -20,8 +20,8 @@ import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public abstract class Login {
-    public AbstractPlayer player;
-    public String message;
+    public final AbstractPlayer player;
+    public final String message;
 
     public Login(AbstractPlayer player, String message) {
         this.player = player;

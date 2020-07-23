@@ -19,7 +19,7 @@ package red.mohist.sodionauth.core.hasher;
 import java.util.Random;
 
 public class HasherTool {
-    protected int saltLength;
+    protected final int saltLength;
 
     public HasherTool(int saltLength) {
         this.saltLength = saltLength;

@@ -27,16 +27,17 @@ import red.mohist.sodionauth.core.utils.Helper;
 import javax.annotation.Nonnull;
 import java.sql.*;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class SqliteSystem implements AuthBackendSystem {
     private Connection connection;
-    private String tableName;
-    private String emailField;
-    private String usernameField;
-    private String passwordField;
-    private String saltField;
-    private int saltLength;
-    private String passwordHash;
-    private HasherTool hasherTool;
+    private final String tableName;
+    private final String emailField;
+    private final String usernameField;
+    private final String passwordField;
+    private final String saltField;
+    private final int saltLength;
+    private final String passwordHash;
+    private final HasherTool hasherTool;
 
     public SqliteSystem(String path, boolean absolute, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
         this.tableName = tableName;

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class LoginRespone {
     public String accessToken;
     public String clientToken;
-    public ArrayList<Profile> availableProfiles;
+    public final ArrayList<Profile> availableProfiles;
     public Profile selectedProfile;
     public User user;
 

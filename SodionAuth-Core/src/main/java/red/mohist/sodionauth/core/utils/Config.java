@@ -22,6 +22,7 @@ import red.mohist.sodionauth.core.config.MainConfiguration;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+@SuppressWarnings("unused")
 public class Config {
     public static MainConfiguration instance;
     public static MainConfiguration all;
@@ -34,7 +35,7 @@ public class Config {
     public static MainConfiguration.SecurityBean security;
     public static MainConfiguration.ProtectionBean protection;
 
-    public Config() throws IOException {
+    public static void init() throws IOException {
         Helper.instance.saveResource("config.json", false);
         File configFile = new File(Helper.getConfigPath("config.json"));
         FileInputStream fileReader = new FileInputStream(configFile);

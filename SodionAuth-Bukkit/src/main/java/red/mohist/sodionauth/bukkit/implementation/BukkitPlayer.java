@@ -36,10 +36,6 @@ public class BukkitPlayer extends AbstractPlayer {
         this.handle = handle;
     }
 
-    public Player getHandle() {
-        return handle;
-    }
-
     @Override
     public void sendMessage(String message) {
         handle.sendMessage(message);
@@ -90,6 +86,7 @@ public class BukkitPlayer extends AbstractPlayer {
         return handle.getGameMode().getValue();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void setGameMode(int gameMode) {
         GameMode gm = GameMode.getByValue(gameMode);
