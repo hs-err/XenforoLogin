@@ -72,7 +72,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             });
 
             instance = this;
-            Helper.getLogger().info("Hello, XenforoLogin!");
+            Helper.getLogger().info("Hello, SodionAuth!");
 
             sodionAuthCore = new SodionAuthCore(this);
 
@@ -81,7 +81,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             registerListeners();
         } catch (IOException e) {
             e.printStackTrace();
-            getLogger().warning("XenforoLogin load fail.");
+            getLogger().warning("SodionAuth load fail.");
             getServer().shutdown();
         }
     }
@@ -92,7 +92,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     private void hookProtocolLib() {
-        if (org.bukkit.Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && Config.getBoolean("secure.hide_inventory", true)) {
+        if (org.bukkit.Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && Config.security.getHideInventory(true)) {
             listenerProtocolEvent = new ListenerProtocolEvent();
             Helper.getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
         }
@@ -102,7 +102,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         LoginTicker.register();
         {
             int unavailableCount = 0;
-            Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.xenforologin.bukkit.listeners")
+            Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.sodionauth.bukkit.listeners")
                     .getSubTypesOf(BukkitAPIListener.class);
             for (Class<? extends BukkitAPIListener> clazz : classes) {
                 BukkitAPIListener listener;
@@ -122,7 +122,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             }
             if (unavailableCount > 0) {
                 Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of bukkit");
-                Helper.getLogger().warn("If your encountered errors, do NOT report to XenforoLogin.");
+                Helper.getLogger().warn("If your encountered errors, do NOT report to SodionAuth.");
                 Helper.getLogger().warn("Error count: " + unavailableCount);
             }
         }

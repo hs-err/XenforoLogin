@@ -21,6 +21,6 @@ import org.apache.logging.log4j.Logger;
 
 public class MixinLogger {
 
-    public static final Logger logger = LogManager.getLogger("XenforoLogin|FabricMixins");
+    public static final Logger logger = LogManager.getLogger("SodionAuth|FabricMixins");
 
 }

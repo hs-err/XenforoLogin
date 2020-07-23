@@ -26,7 +26,10 @@ import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.protection.SecureSystems;
-import red.mohist.sodionauth.core.utils.*;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.LoginTicker;
+import red.mohist.sodionauth.core.utils.ResultTypeUtils;
 
 import java.sql.*;
 import java.util.UUID;
@@ -59,11 +62,11 @@ public final class SodionAuthCore {
                     String a1 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
                     System.out.println("======================== [ Security Check ] ========================");
                     System.out.println("万分抱歉，本插件未对CatServer作任何测试，尚不能保证能正常使用。");
-                    System.out.println("出于保护您的服务器安全的考虑，XenforoLogin已经停止载入。");
+                    System.out.println("出于保护您的服务器安全的考虑，SodionAuth已经停止载入。");
                     System.out.println("如果你需要使用本插件，建议使用Mohist服务端，我们完成了良好的适配。");
                     System.out.println("We are sorry that this plugin is not tested against CatServer at all");
                     System.out.println("It can cause some major issues preventing the plugin to work.");
-                    System.out.println("Because of security issues, XenforoLogin aborted starting the server.");
+                    System.out.println("Because of security issues, SodionAuth aborted starting the server.");
                     System.out.println("If you want to use it, switch to Mohist which is more stable.");
                     System.out.println("==================================================================");
                     new Thread(() -> {

@@ -34,7 +34,7 @@ public class ProxySystems implements SecureSystem {
     public ProxySystems() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.protects.implementations.antiproxies.implementations")
+            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.sodionauth.core.protects.implementations.antiproxies.implementations")
                     .getSubTypesOf(ProxySystem.class);
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
