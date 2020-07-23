@@ -145,7 +145,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public LocationInfo getSpawn(String world) {
-        Location spawn_location = Objects.requireNonNull(Bukkit.getWorld("world")).getSpawnLocation();
+        Location spawn_location = Objects.requireNonNull(Bukkit.getWorld(getDefaultWorld())).getSpawnLocation();
         return new LocationInfo(world,
                 spawn_location.getX(),
                 spawn_location.getY(),

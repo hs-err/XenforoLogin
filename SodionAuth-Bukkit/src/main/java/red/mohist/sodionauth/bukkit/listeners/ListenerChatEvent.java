@@ -22,15 +22,17 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerChatEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
-        if (!SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
-            if (Config.getBoolean("secure.cancel_chat_after_login", false)) {
-                event.getPlayer().sendMessage(Helper.langFile("logged_in"));
+        AbstractPlayer player=BukkitLoader.instance.player2info(event.getPlayer());
+        if (!SodionAuthCore.instance.needCancelled(player)) {
+            if (Config.security.getCancelChatAfterLogin(false)) {
+                player.sendMessage(player.getLang().getLoggedIn());
                 event.setCancelled(true);
             }
             return;

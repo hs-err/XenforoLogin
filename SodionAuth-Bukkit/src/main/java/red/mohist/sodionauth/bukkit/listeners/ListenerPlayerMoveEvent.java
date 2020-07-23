@@ -30,10 +30,10 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
         if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
-            if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
+            if (Config.teleport.getTpSpawnBeforeLogin(true)) {
                 Location location = event.getTo();
                 location.setX(SodionAuthCore.instance.default_location.x);
-                if (Config.getBoolean("secure.spectator_login", true)) {
+                if (Config.security.getSpectatorLogin(true)) {
                     location.setY(SodionAuthCore.instance.default_location.y);
                 }
                 location.setZ(SodionAuthCore.instance.default_location.z);
@@ -42,7 +42,7 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
                 Location back = event.getFrom();
                 Location location = event.getTo();
                 location.setX(back.getX());
-                if (Config.getBoolean("secure.spectator_login", true)) {
+                if (Config.security.getSpectatorLogin(true)) {
                     location.setY(back.getY());
                 }
                 location.setZ(back.getZ());
