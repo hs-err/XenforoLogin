@@ -28,9 +28,12 @@ import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
 import red.mohist.sodionauth.core.utils.ResultTypeUtils;
 
+import javax.annotation.Nonnull;
 import java.sql.*;
 import java.util.UUID;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,91 +45,129 @@ public final class SodionAuthCore {
     public LocationInfo default_location;
     private Connection connection;
     private ExecutorService executor;
+    public ScheduledExecutorService globalScheduledExecutor;
+
+    public boolean isEnabled() {
+        return isEnabled.get();
+    }
+
+    private final AtomicBoolean isEnabled = new AtomicBoolean(false);
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
-        Helper.getLogger().info("Initializing basic services...");
-        {
-            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-            String a0 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+        try {
+            Helper.getLogger().info("Initializing basic services...");
+            {
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a0 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                try {
+                    Class.forName("catserver.server.CatServer");
+                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                    String a1 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    System.out.println("======================== [ Security Check ] ========================");
+                    System.out.println("万分抱歉，本插件未对CatServer作任何测试，尚不能保证能正常使用。");
+                    System.out.println("出于保护您的服务器安全的考虑，SodionAuth已经停止载入。");
+                    System.out.println("如果你需要使用本插件，建议使用Mohist服务端，我们完成了良好的适配。");
+                    System.out.println("We are sorry that this plugin is not tested against CatServer at all");
+                    System.out.println("It can cause some major issues preventing the plugin to work.");
+                    System.out.println("Because of security issues, SodionAuth aborted starting the server.");
+                    System.out.println("If you want to use it, switch to Mohist which is more stable.");
+                    System.out.println("==================================================================");
+                    new Thread(() -> {
+                        System.exit(-1);
+                        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                        String a2 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    }).start();
+                    Thread.sleep(1000);
+                    new Thread(() -> {
+                        Runtime.getRuntime().halt(-1);
+                        // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                        String a3 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    }).start();
+                    return;
+                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                } catch (ClassNotFoundException ignored) {
+                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                    String a5 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                } catch (Exception e) {
+                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                    String a6 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                    e.printStackTrace();
+                }
+                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
+                String a7 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+            }
+
+            instance = this;
+            api = platformAdapter;
+            logged_in = new ConcurrentHashMap<>();
+            executor = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
+                    60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
+                    new ThreadFactory() {
+
+                        private final AtomicLong serial = new AtomicLong(0L);
+
+                        @Override
+                        public Thread newThread(@Nonnull Runnable runnable) {
+                            final Thread thread = new Thread(runnable);
+                            thread.setName("SodionAuthWorker - " + serial.getAndIncrement());
+                            return thread;
+                        }
+                    });
+            globalScheduledExecutor = Executors.newScheduledThreadPool(
+                    Math.max(Runtime.getRuntime().availableProcessors() / 4, 1),
+                    new ThreadFactory() {
+
+                        private final AtomicLong serial = new AtomicLong(0L);
+
+                        @Override
+                        public Thread newThread(@Nonnull Runnable runnable) {
+                            final Thread thread = new Thread(runnable);
+                            thread.setName("SodionAuthScheduler - " + serial.getAndIncrement());
+                            return thread;
+                        }
+                    });
+            isEnabled.set(true);
+
+            Helper.getLogger().info("Loading configurations...");
+            loadConfig();
+            AuthBackendSystems.reloadConfig();
+            SecuritySystems.reloadConfig();
+            LoginTicker.register();
+
+            Helper.getLogger().info("Initializing session storage...");
             try {
-                Class.forName("catserver.server.CatServer");
-                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-                String a1 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-                System.out.println("======================== [ Security Check ] ========================");
-                System.out.println("万分抱歉，本插件未对CatServer作任何测试，尚不能保证能正常使用。");
-                System.out.println("出于保护您的服务器安全的考虑，SodionAuth已经停止载入。");
-                System.out.println("如果你需要使用本插件，建议使用Mohist服务端，我们完成了良好的适配。");
-                System.out.println("We are sorry that this plugin is not tested against CatServer at all");
-                System.out.println("It can cause some major issues preventing the plugin to work.");
-                System.out.println("Because of security issues, SodionAuth aborted starting the server.");
-                System.out.println("If you want to use it, switch to Mohist which is more stable.");
-                System.out.println("==================================================================");
-                new Thread(() -> {
-                    System.exit(-1);
-                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-                    String a2 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-                }).start();
-                Thread.sleep(1000);
-                new Thread(() -> {
-                    Runtime.getRuntime().halt(-1);
-                    // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-                    String a3 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-                }).start();
-                return;
-                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-            } catch (ClassNotFoundException ignored) {
-                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-                String a5 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-            } catch (Exception e) {
-                // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-                String a6 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
+                connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
+                if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
+                    PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
+                    pps.executeUpdate();
+                }
+                if (!connection.getMetaData().getTables(null, null, "sessions", new String[] { "TABLE" }).next()) {
+                    PreparedStatement pps = connection.prepareStatement("CREATE TABLE sessions (uuid NOT NULL,ip,time,PRIMARY KEY (uuid));");
+                    pps.executeUpdate();
+                }
+
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
-            // WARN You are not permitted to interfere any protection that prevents loading in CatServer
-            String a7 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
-        }
 
-        instance = this;
-        api = platformAdapter;
-        logged_in = new ConcurrentHashMap<>();
-        executor = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
-                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-
-        Helper.getLogger().info("Loading configurations...");
-        loadConfig();
-        AuthBackendSystems.reloadConfig();
-        SecuritySystems.reloadConfig();
-        LoginTicker.register();
-
-        Helper.getLogger().info("Initializing session storage...");
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
-            if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
-                PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
-                pps.executeUpdate();
-            }
-            if (!connection.getMetaData().getTables(null, null, "sessions", new String[] { "TABLE" }).next()) {
-                PreparedStatement pps = connection.prepareStatement("CREATE TABLE sessions (uuid NOT NULL,ip,time,PRIMARY KEY (uuid));");
-                pps.executeUpdate();
+            Helper.getLogger().info("Check for existing players...");
+            for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
+                canJoin(abstractPlayer).thenAccept(result -> {
+                    if (result != null)
+                        abstractPlayer.kick(result);
+                });
+                onJoin(abstractPlayer);
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+            Helper.getLogger().info("Done");
+        } catch (Throwable throwable) {
+            isEnabled.set(false);
+            throw throwable;
         }
-
-        Helper.getLogger().info("Check for existing players...");
-        for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
-            canJoin(abstractPlayer).thenAccept(result -> {
-                if(result != null)
-                    abstractPlayer.kick(result);
-            });
-            onJoin(abstractPlayer);
-        }
-
-        Helper.getLogger().info("Done");
     }
 
     public void onDisable() {
+        isEnabled.set(false);
         Helper.getLogger().info("Removing existing players...");
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
             onQuit(abstractPlayer);
@@ -134,8 +175,10 @@ public final class SodionAuthCore {
         Helper.getLogger().info("Stopping services...");
         LoginTicker.unregister();
         executor.shutdown();
+        globalScheduledExecutor.shutdown();
         try {
             executor.awaitTermination(30, TimeUnit.SECONDS);
+            globalScheduledExecutor.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException ignored) {
         }
         try {

@@ -38,7 +38,7 @@ public class QiYun implements ProxySystem {
         return "89ip";
     }
 
-    public void refreshProxys() throws IOException {
+    public void refreshProxies() throws IOException {
         ResponseHandler<String> responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {

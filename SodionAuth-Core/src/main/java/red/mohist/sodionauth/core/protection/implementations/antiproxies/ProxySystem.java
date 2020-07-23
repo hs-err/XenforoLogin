@@ -21,7 +21,7 @@ import java.io.IOException;
 public interface ProxySystem {
     String getName();
 
-    void refreshProxys() throws IOException;
+    void refreshProxies() throws IOException;
 
     boolean isProxy(String ip);
 }

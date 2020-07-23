@@ -17,6 +17,7 @@
 package red.mohist.sodionauth.core.protection.implementations.antiproxies;
 
 import org.reflections.Reflections;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.utils.Config;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class ProxySystems implements SecuritySystem {
     private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
@@ -53,18 +55,16 @@ public class ProxySystems implements SecuritySystem {
                 Helper.getLogger().warn("Can't pass proxy provider count: " + unavailableCount);
             }
         }
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                for (ProxySystem proxySystem : currentSystem) {
-                    try {
-                        proxySystem.refreshProxys();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+        SodionAuthCore.instance.globalScheduledExecutor.scheduleAtFixedRate(() -> {
+            for (ProxySystem proxySystem : currentSystem) {
+                try {
+                    proxySystem.refreshProxies();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        }, 0, Config.protection.getProxySystems().getUpdateTime(60) * 1000);
+        }, 0, Config.protection.getProxySystems().getUpdateTime(60), TimeUnit.SECONDS);
     }
 
     @Override
