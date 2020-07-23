@@ -63,6 +63,7 @@ public class MoveEntityListener implements SpongeAPIListener {
                     ));
                 }
             }
+
         } else {
             if (event.getFromTransform().getPosition().getFloorX()
                     != event.getToTransform().getPosition().getFloorX()
