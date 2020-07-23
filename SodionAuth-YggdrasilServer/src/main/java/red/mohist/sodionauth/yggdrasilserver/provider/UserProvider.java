@@ -68,7 +68,7 @@ public class UserProvider {
         pps.setString(2, accessToken);
         pps.setString(3, clientToken);
         pps.setInt(4, 0);
-        pps.setInt(5, (int) (System.currentTimeMillis() / 1000 - Config.yggdrasil.getToken().getTimeToFullyExpired()));
+        pps.setInt(5, (int) (System.currentTimeMillis() / 1000));
         pps.execute();
     }
 

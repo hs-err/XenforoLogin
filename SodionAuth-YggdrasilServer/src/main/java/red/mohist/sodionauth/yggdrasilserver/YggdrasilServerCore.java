@@ -45,7 +45,7 @@ public class YggdrasilServerCore {
     }
 
     public void start() throws Exception {
-        String accessToken = UserProvider.instance.login("logos", "PoweredBy1090", "client");
+        String accessToken = UserProvider.instance.login("logos", "asdasdasdasdasd", "client");
         if (accessToken == null) {
             Helper.getLogger().info("Login fail");
             return;
@@ -81,13 +81,13 @@ public class YggdrasilServerCore {
             return;
         }
 
-        accessToken = UserProvider.instance.login("logos", "PoweredBy1090", "ctoken");
+        accessToken = UserProvider.instance.login("logos", "asdasdasdasdasd", "ctoken");
         if (accessToken == null) {
             Helper.getLogger().info("Login.2 fail");
             return;
         }
 
-        if (!UserProvider.instance.signout("logos", "PoweredBy1090")) {
+        if (!UserProvider.instance.signout("logos", "asdasdasdasdasd")) {
             Helper.getLogger().info("SignOut fail");
             return;
         }
