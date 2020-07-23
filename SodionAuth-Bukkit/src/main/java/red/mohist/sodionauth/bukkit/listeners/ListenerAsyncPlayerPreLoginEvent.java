@@ -23,7 +23,6 @@ import red.mohist.sodionauth.bukkit.implementation.BukkitPlainPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.concurrent.ExecutionException;
 

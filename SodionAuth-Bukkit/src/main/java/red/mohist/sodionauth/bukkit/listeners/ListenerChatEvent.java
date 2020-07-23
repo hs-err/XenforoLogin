@@ -24,21 +24,20 @@ import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
-import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerChatEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
-        AbstractPlayer player=BukkitLoader.instance.player2info(event.getPlayer());
-        if (!SodionAuthCore.instance.needCancelled(player)) {
-            if (Config.security.getCancelChatAfterLogin(false)) {
-                player.sendMessage(player.getLang().getLoggedIn());
+        final AbstractPlayer abstractPlayer = BukkitLoader.instance.player2info(event.getPlayer());
+        if (!SodionAuthCore.instance.needCancelled(abstractPlayer)) {
+            if (Config.security.getCancelChatAfterLogin()) {
+                event.getPlayer().sendMessage(abstractPlayer.getLang().getLoggedIn());
                 event.setCancelled(true);
             }
             return;
         }
         event.setCancelled(true);
-        SodionAuthCore.instance.onChat(BukkitLoader.instance.player2info(event.getPlayer()), event.getMessage());
+        SodionAuthCore.instance.onChat(abstractPlayer, event.getMessage());
     }
 
     @Override
