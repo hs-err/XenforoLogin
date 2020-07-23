@@ -50,13 +50,13 @@ public class Config {
         defaultInputStreamReader.close();
         defaultFileReader.close();
 
-        defaultLang=instance.getDefaultLang();
-        api=instance.getApi();
-        session=instance.getSession();
-        yggdrasil=instance.getYggdrasil();
-        spawn=instance.getSpawn();
-        teleport=instance.getTeleport();
-        security=instance.getSecurity();
-        protection=instance.getProtection();
+        defaultLang = instance.getDefaultLang();
+        api = instance.getApi();
+        session = instance.getSession();
+        yggdrasil = instance.getYggdrasil();
+        spawn = instance.getSpawn();
+        teleport = instance.getTeleport();
+        security = instance.getSecurity();
+        protection = instance.getProtection();
     }
 }

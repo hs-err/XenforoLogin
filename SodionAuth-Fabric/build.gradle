@@ -117,7 +117,7 @@ shadowJar {
     }
 }
 
-task("remapShadowJar", type: RemapJarTask, dependsOn: shadowJar){
+task("remapShadowJar", type: RemapJarTask, dependsOn: shadowJar) {
     input = shadowJar.archiveFile
     archiveFileName = shadowJar.archiveFileName.get().replaceAll("-dev\\.jar\$", ".jar")
     addNestedDependencies = false

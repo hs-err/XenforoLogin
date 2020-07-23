@@ -19,9 +19,9 @@ package red.mohist.sodionauth.yggdrasilserver.modules;
 import java.util.ArrayList;
 
 public class LoginRespone {
+    public final ArrayList<Profile> availableProfiles;
     public String accessToken;
     public String clientToken;
-    public final ArrayList<Profile> availableProfiles;
     public Profile selectedProfile;
     public User user;
 

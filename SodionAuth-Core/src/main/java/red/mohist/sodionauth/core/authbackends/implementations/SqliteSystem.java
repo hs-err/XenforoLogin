@@ -29,7 +29,6 @@ import java.sql.*;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class SqliteSystem implements AuthBackendSystem {
-    private Connection connection;
     private final String tableName;
     private final String emailField;
     private final String usernameField;
@@ -38,6 +37,7 @@ public class SqliteSystem implements AuthBackendSystem {
     private final int saltLength;
     private final String passwordHash;
     private final HasherTool hasherTool;
+    private Connection connection;
 
     public SqliteSystem(String path, boolean absolute, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
         this.tableName = tableName;
@@ -56,7 +56,7 @@ public class SqliteSystem implements AuthBackendSystem {
             } else {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath(path));
             }
-            if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
+            if (!connection.getMetaData().getTables(null, null, tableName, new String[] { "TABLE" }).next()) {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
@@ -146,7 +146,7 @@ public class SqliteSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    public ResultType join(AbstractPlayer player){
+    public ResultType join(AbstractPlayer player) {
         try {
             PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(" + usernameField + ")=? LIMIT 1;");
             pps.setString(1, player.getName().toLowerCase());

@@ -28,7 +28,6 @@ import java.sql.*;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class MysqlSystem implements AuthBackendSystem {
-    private Connection connection;
     private final String host;
     private final String username;
     private final String password;
@@ -41,6 +40,7 @@ public class MysqlSystem implements AuthBackendSystem {
     private final int saltLength;
     private final String passwordHash;
     private final HasherTool hasherTool;
+    private Connection connection;
 
     public MysqlSystem(String host, String username, String password, String database, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
         this.host = host;
@@ -58,7 +58,7 @@ public class MysqlSystem implements AuthBackendSystem {
         this.hasherTool = HasherTools.getCurrentSystem();
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?useSSL=false&serverTimezone=UTC", username, password);
-            if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
+            if (!connection.getMetaData().getTables(null, null, tableName, new String[] { "TABLE" }).next()) {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(
@@ -149,7 +149,7 @@ public class MysqlSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    public ResultType join(AbstractPlayer player){
+    public ResultType join(AbstractPlayer player) {
         try {
             PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + usernameField + "`)=? LIMIT 1;");
             pps.setString(1, player.getName().toLowerCase());

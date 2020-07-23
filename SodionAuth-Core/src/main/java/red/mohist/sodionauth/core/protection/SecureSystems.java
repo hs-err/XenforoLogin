@@ -28,6 +28,7 @@ import java.util.Set;
 
 public class SecureSystems {
     private static final ArrayList<SecureSystem> currentSystem = new ArrayList<>();
+
     public static void reloadConfig() {
         {
             int unavailableCount = 0;
@@ -35,8 +36,8 @@ public class SecureSystems {
                     .getSubTypesOf(SecureSystem.class);
             for (Class<? extends SecureSystem> clazz : classes) {
                 try {
-                    Method getMethod = MainConfiguration.ProtectionBean.class.getDeclaredMethod("get"+clazz.getSimpleName(), Boolean.class);
-                    if ((Boolean) getMethod.invoke(Config.protection,false)) {
+                    Method getMethod = MainConfiguration.ProtectionBean.class.getDeclaredMethod("get" + clazz.getSimpleName(), Boolean.class);
+                    if ((Boolean) getMethod.invoke(Config.protection, false)) {
                         SecureSystem secureSystem = clazz.getDeclaredConstructor().newInstance();
                         currentSystem.add(secureSystem);
                     }
@@ -53,28 +54,30 @@ public class SecureSystems {
 
     public static String canJoin(AbstractPlayer player) {
         for (SecureSystem secureSystem : currentSystem) {
-            String canJoin=secureSystem.canJoin(player);
-            if(canJoin!=null){
+            String canJoin = secureSystem.canJoin(player);
+            if (canJoin != null) {
                 Helper.getLogger().warn("deny by secure " + secureSystem.getClass().getName());
                 return canJoin;
             }
         }
         return null;
     }
+
     public static String canLogin(AbstractPlayer player) {
         for (SecureSystem secureSystem : currentSystem) {
-            String canLogin=secureSystem.canLogin(player);
-            if(canLogin!=null){
+            String canLogin = secureSystem.canLogin(player);
+            if (canLogin != null) {
                 Helper.getLogger().warn("deny by secure " + secureSystem.getClass().getName());
                 return canLogin;
             }
         }
         return null;
     }
+
     public static String canRegister(AbstractPlayer player) {
         for (SecureSystem secureSystem : currentSystem) {
-            String canRegister=secureSystem.canRegister(player);
-            if(canRegister!=null){
+            String canRegister = secureSystem.canRegister(player);
+            if (canRegister != null) {
                 Helper.getLogger().warn("deny by secure " + secureSystem.getClass().getName());
                 return canRegister;
             }

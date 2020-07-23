@@ -31,8 +31,8 @@ import java.sql.SQLException;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class YggdrasilServerCore {
-    private final int port;
     public static YggdrasilServerCore instance;
+    private final int port;
     public RSAPublicKey rsaPublicKey;
     public RSAPrivateKey rsaPrivateKey;
     public KeyPair rsaKeyPair;

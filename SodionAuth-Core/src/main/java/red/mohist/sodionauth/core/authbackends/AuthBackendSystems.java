@@ -16,7 +16,10 @@
 
 package red.mohist.sodionauth.core.authbackends;
 
-import red.mohist.sodionauth.core.authbackends.implementations.*;
+import red.mohist.sodionauth.core.authbackends.implementations.MysqlSystem;
+import red.mohist.sodionauth.core.authbackends.implementations.SqliteSystem;
+import red.mohist.sodionauth.core.authbackends.implementations.WebSystem;
+import red.mohist.sodionauth.core.authbackends.implementations.XenforoSystem;
 import red.mohist.sodionauth.core.utils.Config;
 
 public class AuthBackendSystems {

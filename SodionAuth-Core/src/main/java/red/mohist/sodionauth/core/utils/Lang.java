@@ -54,7 +54,7 @@ public class Lang {
             inputStreamReader.close();
             fileReader.close();
         }
-        def=languages.get(Config.defaultLang);
-        all=languages.get("zh-CN");
+        def = languages.get(Config.defaultLang);
+        all = languages.get("zh-CN");
     }
 }

@@ -46,6 +46,10 @@ public class Helper {
         return Paths.get(instance.basePath, filename).toString();
     }
 
+    public static LogProvider getLogger() {
+        return Helper.instance.log;
+    }
+
     public void saveResource(String resourcePath, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
@@ -98,9 +102,5 @@ public class Helper {
         } catch (IOException ex) {
             return null;
         }
-    }
-
-    public static LogProvider getLogger() {
-        return Helper.instance.log;
     }
 }

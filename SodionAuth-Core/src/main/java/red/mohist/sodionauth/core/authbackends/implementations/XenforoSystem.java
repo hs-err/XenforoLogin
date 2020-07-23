@@ -30,7 +30,6 @@ import org.apache.http.util.EntityUtils;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.Lang;
 

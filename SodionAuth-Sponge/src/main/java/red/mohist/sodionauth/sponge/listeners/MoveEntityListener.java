@@ -37,7 +37,7 @@ public class MoveEntityListener implements SpongeAPIListener {
         }
 
         if (Config.teleport.getTpSpawnBeforeLogin(true)) {
-            if(Config.security.getSpectatorLogin()){
+            if (Config.security.getSpectatorLogin()) {
                 event.setCancelled(true);
                 new SpongePlayer(player).teleport(new LocationInfo(
                         SodionAuthCore.instance.default_location.world,
@@ -47,7 +47,7 @@ public class MoveEntityListener implements SpongeAPIListener {
                         SodionAuthCore.instance.default_location.yaw,
                         SodionAuthCore.instance.default_location.pitch
                 ));
-            }else{
+            } else {
                 if (SodionAuthCore.instance.default_location.x
                         != event.getToTransform().getPosition().getFloorX()
                         || SodionAuthCore.instance.default_location.z

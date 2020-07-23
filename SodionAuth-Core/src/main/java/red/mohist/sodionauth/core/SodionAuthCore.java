@@ -109,11 +109,11 @@ public final class SodionAuthCore {
 
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
-            if (!connection.getMetaData().getTables(null, null, "locations", new String[]{"TABLE"}).next()) {
+            if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
             }
-            if (!connection.getMetaData().getTables(null, null, "sessions", new String[]{"TABLE"}).next()) {
+            if (!connection.getMetaData().getTables(null, null, "sessions", new String[] { "TABLE" }).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE sessions (uuid NOT NULL,ip,time,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
             }
@@ -135,33 +135,33 @@ public final class SodionAuthCore {
 
     private void createWorkers() {
         new Thread(() -> {
-            while (true){
+            while (true) {
                 try {
                     CanJoin task = canJoinTask.take();
                     task.run(canJoinHandle(task.player));
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
         }).start();
         new Thread(() -> {
-            while (true){
+            while (true) {
                 try {
                     Login task = LoginTask.take();
                     task.run(AuthBackendSystems.getCurrentSystem()
                             .login(task.player, task.message));
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
         }).start();
         new Thread(() -> {
-            while (true){
+            while (true) {
                 try {
                     Register task = registerTask.take();
                     task.run(AuthBackendSystems.getCurrentSystem()
                             .register(task.player, task.password, task.email));
-                }catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
@@ -378,7 +378,7 @@ public final class SodionAuthCore {
                 player.sendMessage(player.getLang().getNeedLogin());
                 break;
             case NEED_LOGIN:
-                String canLogin=SecureSystems.canLogin(player);
+                String canLogin = SecureSystems.canLogin(player);
                 if (canLogin != null) {
                     player.sendMessage(canLogin);
                     return;
@@ -407,7 +407,7 @@ public final class SodionAuthCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
-                String canRegister=SecureSystems.canRegister(player);
+                String canRegister = SecureSystems.canRegister(player);
                 if (canRegister != null) {
                     player.sendMessage(canRegister);
                     return;

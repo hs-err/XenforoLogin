@@ -248,7 +248,7 @@ public class WebSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    public ResultType join(AbstractPlayer player){
+    public ResultType join(AbstractPlayer player) {
         ResponseHandler<String> responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {

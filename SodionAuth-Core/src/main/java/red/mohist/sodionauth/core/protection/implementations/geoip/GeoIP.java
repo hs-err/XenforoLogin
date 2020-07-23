@@ -28,22 +28,25 @@ import java.net.InetAddress;
 
 public class GeoIP implements SecureSystem {
     private final DatabaseReader countryReader;
+
     public GeoIP() throws IOException {
         Helper.instance.saveResource("GeoLite2-Country.mmdb", false);
         File database = new File(Helper.getConfigPath("GeoLite2-Country.mmdb"));
         countryReader = new DatabaseReader.Builder(database).build();
     }
+
     @Override
     public String canJoin(AbstractPlayer player) {
         String country = "UNKNOWN";
         try {
             InetAddress ipAddress = player.getAddress();
             country = countryReader.country(ipAddress).getCountry().getIsoCode();
-        }catch (Throwable ignored){}
-        if(Config.protection.getGeoIP().getLists().getOrDefault(country,
-                Config.protection.getGeoIP().getOther())){
+        } catch (Throwable ignored) {
+        }
+        if (Config.protection.getGeoIP().getLists().getOrDefault(country,
+                Config.protection.getGeoIP().getOther())) {
             return null;
-        }else{
+        } else {
             return player.getLang().getErrors().getCountryLimit();
         }
     }

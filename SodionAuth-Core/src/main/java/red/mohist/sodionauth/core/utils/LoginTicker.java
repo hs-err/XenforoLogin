@@ -25,8 +25,8 @@ import java.util.TimerTask;
 
 public class LoginTicker {
 
-    public static TimerTask task = null;
     private static final Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
+    public static TimerTask task = null;
     private static Timer timer;
 
     public static void register() {

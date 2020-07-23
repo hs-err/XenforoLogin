@@ -31,7 +31,7 @@ import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 public class AuthListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onAuthEvent(Auth event, @First GameProfile profile) {
-         AbstractPlayer abstractPlayer=new SpongePlainPlayer(
+        AbstractPlayer abstractPlayer = new SpongePlainPlayer(
                 event.getProfile().getName().get(),
                 event.getProfile().getUniqueId(),
                 event.getConnection().getAddress().getAddress());

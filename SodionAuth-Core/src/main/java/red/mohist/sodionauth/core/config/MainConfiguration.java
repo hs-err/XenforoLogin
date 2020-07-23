@@ -701,7 +701,7 @@ public class MainConfiguration {
         public static class ProxySystemsBean {
             private Boolean enable;
             private Integer updateTime;
-            private Map<String,Boolean> proxiesProvider;
+            private Map<String, Boolean> proxiesProvider;
             private Boolean enableLocal;
 
             public Boolean getEnable(Boolean def) {
@@ -739,7 +739,7 @@ public class MainConfiguration {
 
         public static class GeoIPBean {
             private Boolean enable;
-            private Map<String,Boolean> lists;
+            private Map<String, Boolean> lists;
             private Boolean other;
 
             public Boolean getEnable(Boolean def) {

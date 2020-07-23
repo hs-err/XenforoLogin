@@ -39,7 +39,7 @@ public class ProxySystems implements SecureSystem {
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
                     if (Config.protection.getProxySystems().getProxiesProvider().getOrDefault(
-                            clazz.getSimpleName(),true
+                            clazz.getSimpleName(), true
                     )) {
                         ProxySystem proxySystem = clazz.getDeclaredConstructor().newInstance();
                         currentSystem.add(proxySystem);
@@ -70,10 +70,10 @@ public class ProxySystems implements SecureSystem {
     @Override
     public String canJoin(AbstractPlayer player) {
         String ip = player.getAddress().getHostAddress();
-        if(ip.equals("127.0.0.1")){
-            if(Config.protection.getProxySystems().getEnableLocal()){
+        if (ip.equals("127.0.0.1")) {
+            if (Config.protection.getProxySystems().getEnableLocal()) {
                 return null;
-            }else{
+            } else {
                 Helper.getLogger().warn("find proxy by EnableLocal");
                 return player.getLang().getErrors().getProxy();
             }

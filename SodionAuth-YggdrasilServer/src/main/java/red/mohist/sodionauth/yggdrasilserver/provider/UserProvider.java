@@ -36,7 +36,7 @@ public class UserProvider {
     public UserProvider() throws SQLException {
         instance = this;
         connection = DriverManager.getConnection("jdbc:sqlite:yggdrasil.db");
-        if (!connection.getMetaData().getTables(null, null, "tokens", new String[]{"TABLE"}).next()) {
+        if (!connection.getMetaData().getTables(null, null, "tokens", new String[] { "TABLE" }).next()) {
             PreparedStatement pps;
             pps = connection.prepareStatement(
                     "CREATE TABLE tokens (" +

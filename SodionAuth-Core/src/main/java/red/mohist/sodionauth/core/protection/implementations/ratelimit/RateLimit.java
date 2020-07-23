@@ -20,14 +20,13 @@ import com.google.common.util.concurrent.RateLimiter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecureSystem;
 import red.mohist.sodionauth.core.utils.Config;
-import red.mohist.sodionauth.core.utils.Helper;
 
 @SuppressWarnings("UnstableApiUsage")
 public class RateLimit implements SecureSystem {
     private final RateLimiter rateLimiter;
 
-    public RateLimit(){
-        rateLimiter=RateLimiter.create(Config.protection.getRateLimit().getPermitsPerSecond(5));
+    public RateLimit() {
+        rateLimiter = RateLimiter.create(Config.protection.getRateLimit().getPermitsPerSecond(5));
     }
 
     @Override

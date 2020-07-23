@@ -50,15 +50,13 @@ import java.util.Vector;
         description = "A new generation of authentication plugin for Minecraft"
 )
 public class SpongeLoader implements PlatformAdapter {
+    public SpongeLoader instance;
+    public SodionAuthCore sodionAuthCore;
     @Inject
     private Logger logger;
-
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path privateConfigDir;
-
-    public SpongeLoader instance;
-    public SodionAuthCore sodionAuthCore;
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
