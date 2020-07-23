@@ -34,28 +34,28 @@ public class ResultTypeUtils {
                 }
                 return true;
             case PASSWORD_INCORRECT:
-                player.kick(Helper.langFile("errors.password"));
+                player.kick(player.getLang().getErrors().getPassword());
                 return false;
             case ERROR_NAME:
-                player.kick(Helper.langFile("errors.name_incorrect",
+                player.kick(player.getLang().getErrors().getNameIncorrect(
                         resultType.getInheritedObject()));
                 return false;
             case NO_USER:
-                if (Config.getBoolean("api.register", false)) {
+                if (Config.api.getAllowRegister(false)) {
                     SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 } else {
-                    player.kick(Helper.langFile("errors.no_user"));
+                    player.kick(player.getLang().getErrors().getNoUser());
                 }
                 return true;
             case UNKNOWN:
-                player.kick(Helper.langFile("errors.unknown",
+                player.kick(player.getLang().getErrors().getUnknown(
                         resultType.getInheritedObject()));
                 return false;
             case SERVER_ERROR:
-                player.kick(Helper.langFile("errors.server"));
+                player.kick(player.getLang().getErrors().getServer());
                 return false;
             case USER_EXIST:
-                player.kick(Helper.langFile("errors.user_exist"));
+                player.kick(player.getLang().getErrors().getUserExist());
                 return false;
             case EMAIL_WRONG:
             case EMAIL_EXIST:

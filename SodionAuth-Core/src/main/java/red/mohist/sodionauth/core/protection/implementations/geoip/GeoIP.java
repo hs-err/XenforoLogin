@@ -40,11 +40,11 @@ public class GeoIP implements SecureSystem {
             InetAddress ipAddress = player.getAddress();
             country = countryReader.country(ipAddress).getCountry().getIsoCode();
         }catch (Throwable ignored){}
-        if(Config.getBoolean("protects.GeoIP.lists."+country,
-                Config.getBoolean("protects.GeoIP.default"))){
+        if(Config.protection.getGeoIP().getLists().getOrDefault(country,
+                Config.protection.getGeoIP().getOther())){
             return null;
         }else{
-            return Helper.langFile("errors.country_limit");
+            return player.getLang().getErrors().getCountryLimit();
         }
     }
 

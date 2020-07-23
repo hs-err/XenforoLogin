@@ -25,13 +25,14 @@ import red.mohist.sodionauth.core.utils.Helper;
 public class RateLimit implements SecureSystem {
     private RateLimiter rateLimiter;
     public RateLimit(){
-        rateLimiter=RateLimiter.create(Config.getDouble("protects.RateLimit.permitsPerSecond"));
+        rateLimiter=RateLimiter.create(Config.protection.getRateLimit().getPermitsPerSecond(5));
     }
     @Override
     public String canJoin(AbstractPlayer player) {
-        if (Config.getBoolean("protects.RateLimit.join.enable")) {
-            if (!rateLimiter.tryAcquire(Config.getInteger("protects.RateLimit.join.permits"))) {
-                return Helper.langFile("errors.rate_limit");
+        if (Config.protection.getRateLimit().getJoin().getEnable(true)) {
+            if (!rateLimiter.tryAcquire(
+                    Config.protection.getRateLimit().getJoin().getPermits(1))) {
+                return player.getLang().getErrors().getRateLimit();
             }
         }
         return null;
@@ -39,9 +40,10 @@ public class RateLimit implements SecureSystem {
 
     @Override
     public String canLogin(AbstractPlayer player) {
-        if (Config.getBoolean("protects.RateLimit.login.enable")) {
-            if (!rateLimiter.tryAcquire(Config.getInteger("protects.RateLimit.login.permits"))) {
-                return Helper.langFile("errors.rate_limit");
+        if (Config.protection.getRateLimit().getLogin().getEnable(true)) {
+            if (!rateLimiter.tryAcquire(
+                    Config.protection.getRateLimit().getLogin().getPermits(5))) {
+                return player.getLang().getErrors().getRateLimit();
             }
         }
         return null;
@@ -49,9 +51,11 @@ public class RateLimit implements SecureSystem {
 
     @Override
     public String canRegister(AbstractPlayer player) {
-        if (Config.getBoolean("protects.RateLimit.register.enable")) {
-            if (!rateLimiter.tryAcquire(Config.getInteger("protects.RateLimit.register.permits"))) {
-                return Helper.langFile("errors.rate_limit");
+        if (Config.protection.getRateLimit().getRegister().getEnable()) {
+            if (!rateLimiter.tryAcquire(
+                    Config.protection.getRateLimit().getRegister().getPermits(10)
+            )) {
+                return player.getLang().getErrors().getRateLimit();
             }
         }
         return null;

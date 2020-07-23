@@ -7,7 +7,7 @@
       "url": "http://example.com/api",
       "key": "YOUR_KEY_HERE"
     },
-    "discuz": {
+    "web": {
       "url": "http://example.com/SodionAuth.php",
       "key": "YOUR_KEY_HERE"
     },

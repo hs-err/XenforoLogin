@@ -24,42 +24,38 @@ public class AuthBackendSystems {
 
     public static void reloadConfig() {
         AuthBackendSystem cs;
-        switch (Config.getString("api.system", "xenforo")) {
+        switch (Config.api.getSystem()) {
             case "xenforo":
-                cs = new XenforoSystem(Config.getString("api.xenforo.url"),
-                        Config.getString("api.xenforo.key"));
-                break;
-            case "discuz":
-                cs = new DiscuzSystem(Config.getString("api.discuz.url"),
-                        Config.getString("api.discuz.key"));
-                break;
-            case "sqlite":
-                cs = new SqliteSystem(Config.getString("api.sqlite.path"),
-                        Config.getBoolean("api.sqlite.absolute", false),
-                        Config.getString("api.sqlite.table_name"),
-                        Config.getString("api.sqlite.email_field"),
-                        Config.getString("api.sqlite.username_field"),
-                        Config.getString("api.sqlite.password_field"),
-                        Config.getString("api.sqlite.salt_field"),
-                        Config.getInteger("api.sqlite.salt_length", 6),
-                        Config.getString("api.sqlite.password_hash"));
+                cs = new XenforoSystem(Config.api.getXenforo().getUrl(),
+                        Config.api.getXenforo().getKey());
                 break;
             case "web":
-                cs = new WebSystem(Config.getString("api.web.url"),
-                        Config.getString("api.web.key"));
+                cs = new WebSystem(Config.api.getWeb().getUrl(),
+                        Config.api.getWeb().getKey());
+                break;
+            case "sqlite":
+                cs = new SqliteSystem(Config.api.getSqlite().getPath(),
+                        Config.api.getSqlite().getAbsolute(),
+                        Config.api.getSqlite().getTableName(),
+                        Config.api.getSqlite().getEmailField(),
+                        Config.api.getSqlite().getUsernameField(),
+                        Config.api.getSqlite().getPasswordField(),
+                        Config.api.getSqlite().getSaltField(),
+                        Config.api.getSqlite().getSaltLength(),
+                        Config.api.getSqlite().getPasswordHash());
                 break;
             case "mysql":
-                cs = new MysqlSystem(Config.getString("api.mysql.host"),
-                        Config.getString("api.mysql.username"),
-                        Config.getString("api.mysql.password"),
-                        Config.getString("api.mysql.database"),
-                        Config.getString("api.mysql.table_name"),
-                        Config.getString("api.mysql.email_field"),
-                        Config.getString("api.mysql.username_field"),
-                        Config.getString("api.mysql.password_field"),
-                        Config.getString("api.mysql.salt_field"),
-                        Config.getInteger("api.mysql.salt_length", 6),
-                        Config.getString("api.mysql.password_hash"));
+                cs = new MysqlSystem(Config.api.getMysql().getHost(),
+                        Config.api.getMysql().getUsername(),
+                        Config.api.getMysql().getPassword(),
+                        Config.api.getMysql().getDatabase(),
+                        Config.api.getMysql().getTableName(),
+                        Config.api.getMysql().getEmailField(),
+                        Config.api.getMysql().getUsernameField(),
+                        Config.api.getMysql().getPasswordField(),
+                        Config.api.getMysql().getSaltField(),
+                        Config.api.getMysql().getSaltLength(),
+                        Config.api.getMysql().getPasswordHash());
                 break;
             default:
                 cs = null;

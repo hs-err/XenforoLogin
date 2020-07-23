@@ -30,7 +30,9 @@ import org.apache.http.util.EntityUtils;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.Lang;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -59,11 +61,11 @@ public class XenforoSystem implements AuthBackendSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 401) {
                     Helper.getLogger().warn(
-                            Helper.langFile("errors.key", ImmutableMap.of(
+                            Lang.def.getErrors().getKey(ImmutableMap.of(
                                     "key", key)));
                 } else if (status == 404) {
                     Helper.getLogger().warn(
-                            Helper.langFile("errors.url", ImmutableMap.of(
+                            Lang.def.getErrors().getUrl(ImmutableMap.of(
                                     "url", url)));
                 }
                 return null;
@@ -123,7 +125,6 @@ public class XenforoSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public ResultType login(AbstractPlayer player, String password) {
         try {
             ResponseHandler<String> responseHandler = response -> {
@@ -133,11 +134,11 @@ public class XenforoSystem implements AuthBackendSystem {
                     return entity != null ? EntityUtils.toString(entity) : null;
                 } else if (status == 403) {
                     Helper.getLogger().warn(
-                            Helper.langFile("errors.key", ImmutableMap.of(
+                            Lang.def.getErrors().getKey(ImmutableMap.of(
                                     "key", key)));
                 } else if (status == 404) {
                     Helper.getLogger().warn(
-                            Helper.langFile("errors.url", ImmutableMap.of(
+                            Lang.def.getErrors().getUrl(ImmutableMap.of(
                                     "url", url)));
                 }
                 return null;
@@ -199,13 +200,6 @@ public class XenforoSystem implements AuthBackendSystem {
     @Nonnull
     @Override
     public ResultType join(AbstractPlayer player) {
-        return join(player.getName());
-    }
-
-    @Nonnull
-    @Override
-    @SuppressWarnings("deprecation")
-    public ResultType join(String name) {
         ResponseHandler<String> responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
@@ -213,11 +207,11 @@ public class XenforoSystem implements AuthBackendSystem {
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 401) {
                 Helper.getLogger().warn(
-                        Helper.langFile("errors.key", ImmutableMap.of(
+                        Lang.def.getErrors().getKey(ImmutableMap.of(
                                 "key", key)));
             } else if (status == 404) {
                 Helper.getLogger().warn(
-                        Helper.langFile("errors.url", ImmutableMap.of(
+                        Lang.def.getErrors().getUrl(ImmutableMap.of(
                                 "url", url)));
             }
             return null;
@@ -225,7 +219,7 @@ public class XenforoSystem implements AuthBackendSystem {
         String result;
         try {
             result = Request.Get(url + "/users/find-name?username=" +
-                    URLEncoder.encode(name, "UTF-8"))
+                    URLEncoder.encode(player.getName(), "UTF-8"))
                     .addHeader("XF-Api-Key", key)
                     .execute().handleResponse(responseHandler);
         } catch (IOException e) {
@@ -252,7 +246,7 @@ public class XenforoSystem implements AuthBackendSystem {
         if (json.get("exact").isJsonNull()) {
             return ResultType.NO_USER;
         }
-        if (!json.getAsJsonObject("exact").get("username").getAsString().equals(name)) {
+        if (!json.getAsJsonObject("exact").get("username").getAsString().equals(player.getName())) {
             return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
                     "correct", json.getAsJsonObject("exact").get("username").getAsString()));
         }

@@ -30,6 +30,7 @@ import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.Lang;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class WebSystem implements AuthBackendSystem {
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
                 Helper.getLogger().warn(
-                        Helper.langFile("errors.url", ImmutableMap.of(
+                        Lang.def.getErrors().getUrl(ImmutableMap.of(
                                 "url", url)));
             }
             return null;
@@ -149,7 +150,7 @@ public class WebSystem implements AuthBackendSystem {
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
                 Helper.getLogger().warn(
-                        Helper.langFile("errors.url", ImmutableMap.of(
+                        Lang.def.getErrors().getUrl(ImmutableMap.of(
                                 "url", url)));
             }
             return null;
@@ -247,13 +248,7 @@ public class WebSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    public ResultType join(AbstractPlayer player) {
-        return join(player.getName());
-    }
-
-    @Nonnull
-    @Override
-    public ResultType join(String name) {
+    public ResultType join(AbstractPlayer player){
         ResponseHandler<String> responseHandler = response -> {
             int status = response.getStatusLine().getStatusCode();
             if (status == 200) {
@@ -261,7 +256,7 @@ public class WebSystem implements AuthBackendSystem {
                 return entity != null ? EntityUtils.toString(entity) : null;
             } else if (status == 404) {
                 Helper.getLogger().warn(
-                        Helper.langFile("errors.url", ImmutableMap.of(
+                        Lang.def.getErrors().getUrl(ImmutableMap.of(
                                 "url", url)));
             }
             return null;
@@ -270,7 +265,7 @@ public class WebSystem implements AuthBackendSystem {
         try {
             result = Request.Post(url)
                     .bodyForm(Form.form().add("action", "join")
-                            .add("username", name).build())
+                            .add("username", player.getName()).build())
                     .addHeader("XenforoLogin-Key", key)
                     .execute().handleResponse(responseHandler);
         } catch (IOException e) {

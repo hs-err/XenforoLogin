@@ -316,7 +316,7 @@ public final class SodionAuthCore {
         SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
 
         ResultType resultType = AuthBackendSystems.getCurrentSystem()
-                .join(player.getName())
+                .join(player)
                 .shouldLogin(false);
         switch (resultType) {
             case OK:

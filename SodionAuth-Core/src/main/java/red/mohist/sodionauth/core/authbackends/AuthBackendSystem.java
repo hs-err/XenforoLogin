@@ -29,11 +29,7 @@ public interface AuthBackendSystem {
     @Nonnull
     ResultType login(AbstractPlayer player, String password);
 
-    @SuppressWarnings("unused")
     @Nonnull
     ResultType join(AbstractPlayer player);
-
-    @Nonnull
-    ResultType join(String name);
 
 }

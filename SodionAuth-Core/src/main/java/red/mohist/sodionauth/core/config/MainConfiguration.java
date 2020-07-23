@@ -100,7 +100,7 @@ public class MainConfiguration {
         private String system;
         private Boolean allowRegister;
         private XenforoBean xenforo;
-        private DiscuzBean discuz;
+        private WebBean web;
         private SqliteBean sqlite;
         private MysqlBean mysql;
 
@@ -128,12 +128,12 @@ public class MainConfiguration {
             return xenforo != null ? xenforo : Config.all.api.xenforo;
         }
 
-        public DiscuzBean getDiscuz(DiscuzBean def) {
-            return getDiscuz() == null ? def : getDiscuz();
+        public WebBean getWeb(WebBean def) {
+            return getWeb() == null ? def : getWeb();
         }
 
-        public DiscuzBean getDiscuz() {
-            return discuz != null ? discuz : Config.all.api.discuz;
+        public WebBean getWeb() {
+            return web != null ? web : Config.all.api.web;
         }
 
         public SqliteBean getSqlite(SqliteBean def) {
@@ -173,7 +173,7 @@ public class MainConfiguration {
             }
         }
 
-        public static class DiscuzBean {
+        public static class WebBean {
             private String url;
             private String key;
 
@@ -182,7 +182,7 @@ public class MainConfiguration {
             }
 
             public String getUrl() {
-                return url != null ? url : Config.all.api.discuz.url;
+                return url != null ? url : Config.all.api.web.url;
             }
 
             public String getKey(String def) {
@@ -190,7 +190,7 @@ public class MainConfiguration {
             }
 
             public String getKey() {
-                return key != null ? key : Config.all.api.discuz.key;
+                return key != null ? key : Config.all.api.web.key;
             }
         }
 

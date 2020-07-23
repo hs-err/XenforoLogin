@@ -22,16 +22,16 @@ import java.util.Map;
 
 public class LangConfiguration {
 
-    public String registerEmail;
-    public String registerPassword;
-    public String registerPasswordConfirm;
-    public String loggedIn;
-    public String success;
-    public String session;
-    public String lastLogin;
-    public String lastLoginUnknown;
-    public String needLogin;
-    public ErrorsBean errors;
+    private String registerEmail;
+    private String registerPassword;
+    private String registerPasswordConfirm;
+    private String loggedIn;
+    private String success;
+    private String session;
+    private String lastLogin;
+    private String lastLoginUnknown;
+    private String needLogin;
+    private ErrorsBean errors;
 
     public String getRegisterEmail(Map<String, String> data) {
         String result = getRegisterEmail();
@@ -227,22 +227,22 @@ public class LangConfiguration {
     }
 
     public static class ErrorsBean {
-        public String proxy;
-        public String rateLimit;
-        public String countryLimit;
-        public String email;
-        public String server;
-        public String confirm;
-        public String handle;
-        public String password;
-        public String key;
-        public String url;
-        public String noUser;
-        public String timeOut;
-        public String nameIncorrect;
-        public String unknown;
-        public String mailExist;
-        public String userExist;
+        private String proxy;
+        private String rateLimit;
+        private String countryLimit;
+        private String email;
+        private String server;
+        private String confirm;
+        private String handle;
+        private String password;
+        private String key;
+        private String url;
+        private String noUser;
+        private String timeOut;
+        private String nameIncorrect;
+        private String unknown;
+        private String mailExist;
+        private String userExist;
 
         public String getProxy(Map<String, String> data) {
             String result = getProxy();

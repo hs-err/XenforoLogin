@@ -17,10 +17,12 @@
 package red.mohist.sodionauth.core.protection;
 
 import org.reflections.Reflections;
+import red.mohist.sodionauth.core.config.MainConfiguration;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -33,7 +35,8 @@ public class SecureSystems {
                     .getSubTypesOf(SecureSystem.class);
             for (Class<? extends SecureSystem> clazz : classes) {
                 try {
-                    if (Config.getBoolean("protects."+clazz.getSimpleName()+".enable")) {
+                    Method getMethod = MainConfiguration.ProtectionBean.class.getDeclaredMethod("get"+clazz.getSimpleName(), Boolean.class);
+                    if ((Boolean) getMethod.invoke(Config.protection,false)) {
                         SecureSystem secureSystem = clazz.getDeclaredConstructor().newInstance();
                         currentSystem.add(secureSystem);
                     }

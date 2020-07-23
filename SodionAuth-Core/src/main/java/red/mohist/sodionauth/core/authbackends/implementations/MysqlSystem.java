@@ -148,21 +148,15 @@ public class MysqlSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    public ResultType join(AbstractPlayer player) {
-        return join(player.getName());
-    }
-
-    @Nonnull
-    @Override
-    public ResultType join(String name) {
+    public ResultType join(AbstractPlayer player){
         try {
             PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + usernameField + "`)=? LIMIT 1;");
-            pps.setString(1, name.toLowerCase());
+            pps.setString(1, player.getName().toLowerCase());
             ResultSet rs = pps.executeQuery();
             if (!rs.next()) {
                 return ResultType.NO_USER;
             }
-            if (!rs.getString(usernameField).equals(name)) {
+            if (!rs.getString(usernameField).equals(player.getName())) {
                 return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
                         "correct", rs.getString(usernameField)));
             }

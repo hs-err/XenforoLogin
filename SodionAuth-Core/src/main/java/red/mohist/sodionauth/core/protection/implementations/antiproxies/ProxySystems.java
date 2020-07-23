@@ -34,11 +34,13 @@ public class ProxySystems implements SecureSystem {
     public ProxySystems() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.xenforologin.core.protects.implementations.antiproxies.implementations")
+            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.sodionauth.core.protection.implementations.antiproxies.implementations")
                     .getSubTypesOf(ProxySystem.class);
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
-                    if (Config.getBoolean("protects.Proxy.antiproxies." + clazz.getSimpleName())) {
+                    if (Config.protection.getProxySystems().getProxiesProvider().getOrDefault(
+                            clazz.getSimpleName(),true
+                    )) {
                         ProxySystem proxySystem = clazz.getDeclaredConstructor().newInstance();
                         currentSystem.add(proxySystem);
                     }
@@ -62,23 +64,24 @@ public class ProxySystems implements SecureSystem {
                     }
                 }
             }
-        }, 0, Config.getInteger("protects.Proxy.update_time", 60) * 1000);
+        }, 0, Config.protection.getProxySystems().getUpdateTime(60) * 1000);
     }
 
     @Override
     public String canJoin(AbstractPlayer player) {
         String ip = player.getAddress().getHostAddress();
         if(ip.equals("127.0.0.1")){
-            if(Config.getBoolean("protects.Proxy.enable_local")){
+            if(Config.protection.getProxySystems().getEnableLocal()){
                 return null;
             }else{
-                return Helper.langFile("errors.proxy");
+                Helper.getLogger().warn("find proxy by EnableLocal");
+                return player.getLang().getErrors().getProxy();
             }
         }
         for (ProxySystem proxySystem : currentSystem) {
             if (proxySystem.isProxy(ip)) {
                 Helper.getLogger().warn("find proxy by " + proxySystem.getClass().getName());
-                return Helper.langFile("errors.proxy");
+                return player.getLang().getErrors().getProxy();
             }
         }
         return null;

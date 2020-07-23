@@ -25,9 +25,9 @@ import javax.annotation.Nonnull;
 
 public class LoginTickPlayer {
 
-    static final int showTipTime = Config.getInteger("secure.show_tips_time", 5);
+    static final int showTipTime = Config.security.getShowTipsTime();
     long startTime = System.currentTimeMillis();
-    int loginTimeout = Config.getInteger("secure.max_login_time", 30);
+    int loginTimeout = Config.security.getMaxLoginTime();
     @Nonnull
     AbstractPlayer player;
 
@@ -53,7 +53,7 @@ public class LoginTickPlayer {
         }
         if ((now - startTime) / 1000 > loginTimeout
                 && SodionAuthCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
-            player.kick(Helper.langFile("errors.time_out"));
+            player.kick(player.getLang().getErrors().getTimeOut());
             return TickResult.DONE;
         }
         if (!player.isOnline() || !SodionAuthCore.instance.needCancelled(player)) {
