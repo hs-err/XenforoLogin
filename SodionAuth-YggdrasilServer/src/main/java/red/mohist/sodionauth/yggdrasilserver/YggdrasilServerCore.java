@@ -29,8 +29,9 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.sql.SQLException;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class YggdrasilServerCore {
-    private int port;
+    private final int port;
     public static YggdrasilServerCore instance;
     public RSAPublicKey rsaPublicKey;
     public RSAPrivateKey rsaPrivateKey;

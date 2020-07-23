@@ -52,14 +52,12 @@ public class UserProvider {
     }
 
     public String login(String username, String password, String clientToken) throws SQLException {
-        switch (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password)) {
-            case OK:
-                String accessToken = UUID.randomUUID().toString();
-                addToken(username, clientToken, accessToken);
-                return accessToken;
-            default:
-                return null;
+        if (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password) == ResultType.OK) {
+            String accessToken = UUID.randomUUID().toString();
+            addToken(username, clientToken, accessToken);
+            return accessToken;
         }
+        return null;
     }
 
     public void addToken(String username, String clientToken, String accessToken) throws SQLException {

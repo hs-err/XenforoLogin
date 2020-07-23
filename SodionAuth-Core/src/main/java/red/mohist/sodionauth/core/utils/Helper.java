@@ -29,17 +29,17 @@ import java.util.Map;
 public class Helper {
     public static Helper instance;
 
-    public String basePath;
-    public LogProvider log;
-    public Map<String, JsonElement> jsonMap;
+    public final String basePath;
+    public final LogProvider log;
+    public final Map<String, JsonElement> jsonMap;
 
     public Helper(String path, LogProvider log) throws IOException {
         instance = this;
         this.log = log;
         basePath = path;
         jsonMap = new HashMap<>();
-        new Config();
-        new Lang();
+        Config.init();
+        Lang.init();
     }
 
     public static String getConfigPath(String filename) {

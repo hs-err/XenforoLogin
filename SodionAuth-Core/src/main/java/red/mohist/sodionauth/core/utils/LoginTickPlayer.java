@@ -26,9 +26,10 @@ import javax.annotation.Nonnull;
 public class LoginTickPlayer {
 
     static final int showTipTime = Config.getInteger("secure.show_tips_time", 5);
-    long startTime = System.currentTimeMillis();
-    int loginTimeout = Config.getInteger("secure.max_login_time", 30);
+    final long startTime = System.currentTimeMillis();
+    final int loginTimeout = Config.getInteger("secure.max_login_time", 30);
     @Nonnull
+    final
     AbstractPlayer player;
 
     public LoginTickPlayer(@Nonnull AbstractPlayer player) {

@@ -22,11 +22,14 @@ import red.mohist.sodionauth.core.protection.SecureSystem;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
+@SuppressWarnings("UnstableApiUsage")
 public class RateLimit implements SecureSystem {
-    private RateLimiter rateLimiter;
+    private final RateLimiter rateLimiter;
+
     public RateLimit(){
         rateLimiter=RateLimiter.create(Config.getDouble("protects.RateLimit.permitsPerSecond"));
     }
+
     @Override
     public String canJoin(AbstractPlayer player) {
         if (Config.getBoolean("protects.RateLimit.join.enable")) {

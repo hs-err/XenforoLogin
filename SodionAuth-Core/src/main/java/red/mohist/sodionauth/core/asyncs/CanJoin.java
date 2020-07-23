@@ -19,7 +19,7 @@ package red.mohist.sodionauth.core.asyncs;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public abstract class CanJoin {
-    public AbstractPlayer player;
+    public final AbstractPlayer player;
 
     public CanJoin(AbstractPlayer player) {
         this.player = player;

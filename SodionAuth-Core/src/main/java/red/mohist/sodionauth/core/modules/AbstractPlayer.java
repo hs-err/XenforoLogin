@@ -26,16 +26,17 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractPlayer {
-    private String name;
-    private UUID uuid;
-    private InetAddress address;
+    private final String name;
+    private final UUID uuid;
+    private final InetAddress address;
 
     public AbstractPlayer(String name, UUID uuid, InetAddress address) {
         this.name = name;
         this.uuid = uuid;
         this.address = address;
     }
-    public LangConfiguration getLang(){
+
+    public LangConfiguration getLang() {
         return Lang.get(Config.defaultLang);
     }
 
@@ -53,6 +54,7 @@ public abstract class AbstractPlayer {
 
     public abstract void sendMessage(String message);
 
+    @SuppressWarnings("UnusedReturnValue")
     public abstract CompletableFuture<Boolean> teleport(LocationInfo location);
 
     public abstract void kick(String message);

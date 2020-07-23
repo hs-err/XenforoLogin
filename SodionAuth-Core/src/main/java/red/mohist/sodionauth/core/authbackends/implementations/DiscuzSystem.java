@@ -92,7 +92,6 @@ public class DiscuzSystem implements AuthBackendSystem {
                 JsonArray errors = json.get("errors").getAsJsonArray();
                 if (errors.size() > 0) {
                     switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
-                        //noinspection SpellCheckingInspection
                         case "usernames_must_be_unique":
                             return ResultType.USER_EXIST;
                         case "please_enter_valid_email":

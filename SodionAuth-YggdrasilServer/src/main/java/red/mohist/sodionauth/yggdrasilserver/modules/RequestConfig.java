@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RequestConfig {
-    public HashMap<String, String> meta;
-    public ArrayList<String> skinDomains;
+    public final HashMap<String, String> meta;
+    public final ArrayList<String> skinDomains;
     public String signaturePublickey;
 
     public RequestConfig() {
-        meta = new HashMap<String, String>();
-        skinDomains = new ArrayList<String>();
+        meta = new HashMap<>();
+        skinDomains = new ArrayList<>();
     }
 
     public RequestConfig addMeta(String key, String value) {

@@ -35,8 +35,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class WebSystem implements AuthBackendSystem {
-    private String url;
-    private String key;
+    private final String url;
+    private final String key;
 
     public WebSystem(String url, String key) {
         this.url = url;

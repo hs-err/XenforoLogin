@@ -29,7 +29,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ProxySystems implements SecureSystem {
-    private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
+    private static final ArrayList<ProxySystem> currentSystem = new ArrayList<>();
 
     public ProxySystems() {
         {

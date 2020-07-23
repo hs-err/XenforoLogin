@@ -29,26 +29,28 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Lang {
-    public static ConcurrentHashMap<String, LangConfiguration> languages=new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<String, LangConfiguration> languages = new ConcurrentHashMap<>();
     public static LangConfiguration def;
     public static LangConfiguration all;
-    public static LangConfiguration get(String name){
-        LangConfiguration lang=languages.getOrDefault(name,null);
-        if(lang==null){
-            lang=def;
+
+    public static LangConfiguration get(String name) {
+        LangConfiguration lang = languages.getOrDefault(name, null);
+        if (lang == null) {
+            lang = def;
         }
         return lang;
     }
-    public Lang() throws IOException {
+
+    public static void init() throws IOException {
         ArrayList<String> languageList = new ArrayList<>(ImmutableList.of(
                 "zh-CN"
         ));
         for (String language : languageList) {
-            Helper.instance.saveResource("lang/"+language+".json", false);
-            File configFile = new File(Helper.getConfigPath("lang/"+language+".json"));
+            Helper.instance.saveResource("lang/" + language + ".json", false);
+            File configFile = new File(Helper.getConfigPath("lang/" + language + ".json"));
             FileInputStream fileReader = new FileInputStream(configFile);
             InputStreamReader inputStreamReader = new InputStreamReader(fileReader, StandardCharsets.UTF_8);
-            languages.put(language,new Gson().fromJson(inputStreamReader, LangConfiguration.class));
+            languages.put(language, new Gson().fromJson(inputStreamReader, LangConfiguration.class));
             inputStreamReader.close();
             fileReader.close();
         }

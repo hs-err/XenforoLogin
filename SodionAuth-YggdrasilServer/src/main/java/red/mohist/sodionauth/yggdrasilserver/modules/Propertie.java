@@ -26,9 +26,9 @@ import java.util.Base64;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Propertie {
-    public String name;
-    public String value;
-    public String signature;
+    public final String name;
+    public final String value;
+    public final String signature;
 
     public Propertie(String name, String value) {
         this.name = name;

@@ -85,6 +85,7 @@ public class BukkitPlainPlayer extends AbstractPlayer {
     public int getGameMode() {
         Player player = Bukkit.getPlayer(getUniqueId());
         if (player != null) {
+            //noinspection deprecation
             return player.getGameMode().getValue();
         } else {
             BukkitLoader.instance.getLogger().warning("fail to get gamemode");
@@ -96,7 +97,7 @@ public class BukkitPlainPlayer extends AbstractPlayer {
     public void setGameMode(int gameMode) {
         Player player = Bukkit.getPlayer(getUniqueId());
         if (player != null) {
-            GameMode gm = GameMode.getByValue(gameMode);
+            @SuppressWarnings("deprecation") GameMode gm = GameMode.getByValue(gameMode);
             if (gm != null) {
                 player.setGameMode(gm);
             } else {
