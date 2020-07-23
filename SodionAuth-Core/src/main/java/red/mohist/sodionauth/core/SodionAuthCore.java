@@ -22,7 +22,7 @@ import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
-import red.mohist.sodionauth.core.protection.SecureSystems;
+import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
@@ -95,7 +95,7 @@ public final class SodionAuthCore {
         Helper.getLogger().info("Loading configurations...");
         loadConfig();
         AuthBackendSystems.reloadConfig();
-        SecureSystems.reloadConfig();
+        SecuritySystems.reloadConfig();
         LoginTicker.register();
 
         Helper.getLogger().info("Initializing session storage...");
@@ -259,7 +259,7 @@ public final class SodionAuthCore {
     }
 
     public String canLogin(AbstractPlayer player) {
-        return SecureSystems.canJoin(player);
+        return SecuritySystems.canJoin(player);
     }
 
 
@@ -336,7 +336,7 @@ public final class SodionAuthCore {
                 player.sendMessage(player.getLang().getNeedLogin());
                 break;
             case NEED_LOGIN:
-                String canLogin = SecureSystems.canLogin(player);
+                String canLogin = SecuritySystems.canLogin(player);
                 if (canLogin != null) {
                     player.sendMessage(canLogin);
                     return;
@@ -361,7 +361,7 @@ public final class SodionAuthCore {
                 message(player);
                 break;
             case NEED_REGISTER_CONFIRM:
-                String canRegister = SecureSystems.canRegister(player);
+                String canRegister = SecuritySystems.canRegister(player);
                 if (canRegister != null) {
                     player.sendMessage(canRegister);
                     return;

@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.protection.implementations.geoip;
 
 import com.maxmind.geoip2.DatabaseReader;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.protection.SecureSystem;
+import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class GeoIP implements SecureSystem {
+public class GeoIP implements SecuritySystem {
     private final DatabaseReader countryReader;
 
     public GeoIP() throws IOException {

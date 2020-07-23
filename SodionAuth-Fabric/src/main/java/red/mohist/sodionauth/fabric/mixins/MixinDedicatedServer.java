@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import red.mohist.sodionauth.fabric.FabricLoader;
 import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.data.Data;
 
@@ -55,6 +56,7 @@ public abstract class MixinDedicatedServer extends MinecraftServer {
     @Inject(method = "shutdown", at = @At("HEAD"))
     public void onServerPreShutdown(CallbackInfo ci) {
         MixinLogger.logger.info("Calling onServerPreShutdown");
+        FabricLoader.getInstance().onServerPreShutdown();
     }
 
 }

@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.protection;
 
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
-public interface SecureSystem {
+public interface SecuritySystem {
     String canJoin(AbstractPlayer player);
 
     String canLogin(AbstractPlayer player);

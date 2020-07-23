@@ -47,7 +47,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class FabricLoader implements ModInitializer, PlatformAdapter {
 
-    public static final Logger logger = LogManager.getLogger("SodionAuth|Main");
+    public static final Logger logger = LogManager.getLogger("SodionAuth|FabricMain");
     private static FabricLoader instance = null;
     private final File configDir = new File("./SodionAuth/");
     private SodionAuthCore core = null;
@@ -73,6 +73,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
         logger.info("Hello, SodionAuth!");
         try {
             new Helper(configDir.toString(), new LogProvider() {
+                final Logger logger = LogManager.getLogger("SodionAuth|Main");
                 @Override
                 public void info(String info) {
                     logger.info(info);

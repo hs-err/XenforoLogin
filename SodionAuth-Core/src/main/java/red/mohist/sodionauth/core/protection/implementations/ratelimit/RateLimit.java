@@ -18,11 +18,11 @@ package red.mohist.sodionauth.core.protection.implementations.ratelimit;
 
 import com.google.common.util.concurrent.RateLimiter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.protection.SecureSystem;
+import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.utils.Config;
 
 @SuppressWarnings("UnstableApiUsage")
-public class RateLimit implements SecureSystem {
+public class RateLimit implements SecuritySystem {
     private final RateLimiter rateLimiter;
 
     public RateLimit() {

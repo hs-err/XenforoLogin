@@ -22,27 +22,31 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class SecureSystems {
-    private static final ArrayList<SecureSystem> currentSystem = new ArrayList<>();
+public class SecuritySystems {
+    private static final ArrayList<SecuritySystem> currentSystem = new ArrayList<>();
 
     public static void reloadConfig() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends SecureSystem>> classes = new Reflections("red.mohist.sodionauth.core.protects.implementations")
-                    .getSubTypesOf(SecureSystem.class);
-            for (Class<? extends SecureSystem> clazz : classes) {
+            Set<Class<? extends SecuritySystem>> classes = new Reflections("red.mohist.sodionauth.core.protection.implementations")
+                    .getSubTypesOf(SecuritySystem.class);
+            for (Class<? extends SecuritySystem> clazz : classes) {
                 try {
-                    Method getMethod = MainConfiguration.ProtectionBean.class.getDeclaredMethod("get" + clazz.getSimpleName(), Boolean.class);
-                    if ((Boolean) getMethod.invoke(Config.protection, false)) {
-                        SecureSystem secureSystem = clazz.getDeclaredConstructor().newInstance();
-                        currentSystem.add(secureSystem);
+                    final Object systemBean = MainConfiguration.ProtectionBean.class
+                            .getDeclaredMethod("get" + clazz.getSimpleName())
+                            .invoke(Config.protection);
+                    Field enabledField = systemBean.getClass().getDeclaredField("enable");
+                    enabledField.setAccessible(true);
+                    if ((Boolean) enabledField.get(systemBean)) {
+                        SecuritySystem securitySystem = clazz.getDeclaredConstructor().newInstance();
+                        currentSystem.add(securitySystem);
                     }
                 } catch (Exception e) {
-                    Helper.getLogger().warn(clazz.getName() + " is not available.");
+                    Helper.getLogger().warn(clazz.getName() + " is not available.", e);
                     unavailableCount++;
                 }
             }
@@ -53,10 +57,10 @@ public class SecureSystems {
     }
 
     public static String canJoin(AbstractPlayer player) {
-        for (SecureSystem secureSystem : currentSystem) {
-            String canJoin = secureSystem.canJoin(player);
+        for (SecuritySystem securitySystem : currentSystem) {
+            String canJoin = securitySystem.canJoin(player);
             if (canJoin != null) {
-                Helper.getLogger().warn("deny by secure " + secureSystem.getClass().getName());
+                Helper.getLogger().warn("deny by secure " + securitySystem.getClass().getName());
                 return canJoin;
             }
         }
@@ -64,10 +68,10 @@ public class SecureSystems {
     }
 
     public static String canLogin(AbstractPlayer player) {
-        for (SecureSystem secureSystem : currentSystem) {
-            String canLogin = secureSystem.canLogin(player);
+        for (SecuritySystem securitySystem : currentSystem) {
+            String canLogin = securitySystem.canLogin(player);
             if (canLogin != null) {
-                Helper.getLogger().warn("deny by secure " + secureSystem.getClass().getName());
+                Helper.getLogger().warn("deny by secure " + securitySystem.getClass().getName());
                 return canLogin;
             }
         }
@@ -75,10 +79,10 @@ public class SecureSystems {
     }
 
     public static String canRegister(AbstractPlayer player) {
-        for (SecureSystem secureSystem : currentSystem) {
-            String canRegister = secureSystem.canRegister(player);
+        for (SecuritySystem securitySystem : currentSystem) {
+            String canRegister = securitySystem.canRegister(player);
             if (canRegister != null) {
-                Helper.getLogger().warn("deny by secure " + secureSystem.getClass().getName());
+                Helper.getLogger().warn("deny by secure " + securitySystem.getClass().getName());
                 return canRegister;
             }
         }

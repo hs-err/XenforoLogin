@@ -33,7 +33,8 @@ dependencies {
 }
 
 shadowJar {
-    relocate "com.maxmind.geoip2", "red.mohist.sodionauth.lib.geoip2"
+    relocate "com.maxmind.geoip2", "red.mohist.sodionauth.libs.geoip2"
+    relocate "org.reflections", "red.mohist.sodionauth.libs.reflections"
 }
 
 assemble.dependsOn(shadowJar)
