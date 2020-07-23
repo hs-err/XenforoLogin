@@ -23,7 +23,6 @@ import red.mohist.sodionauth.bukkit.implementation.BukkitPlainPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.concurrent.ExecutionException;
 
@@ -50,7 +49,7 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
             canjoin = SodionAuthCore.instance.canJoin(abstractPlayer).get();
         } catch (InterruptedException | ExecutionException e) {
             SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, Helper.langFile("errors.server"));
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getServer());
             e.printStackTrace();
             return;
         }

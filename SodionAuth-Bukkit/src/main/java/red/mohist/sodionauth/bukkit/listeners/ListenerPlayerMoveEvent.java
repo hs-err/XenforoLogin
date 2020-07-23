@@ -23,17 +23,19 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
 
 
 public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
-        if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
-            if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
+        final AbstractPlayer player = BukkitLoader.instance.player2info(event.getPlayer());
+        if (SodionAuthCore.instance.needCancelled(player)) {
+            if (Config.teleport.getTpBackAfterLogin()) {
                 Location location = event.getTo();
                 location.setX(SodionAuthCore.instance.default_location.x);
-                if (Config.getBoolean("secure.spectator_login", true)) {
+                if (Config.security.getSpectatorLogin()) {
                     location.setY(SodionAuthCore.instance.default_location.y);
                 }
                 location.setZ(SodionAuthCore.instance.default_location.z);
@@ -42,7 +44,7 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
                 Location back = event.getFrom();
                 Location location = event.getTo();
                 location.setX(back.getX());
-                if (Config.getBoolean("secure.spectator_login", true)) {
+                if (Config.security.getSpectatorLogin()) {
                     location.setY(back.getY());
                 }
                 location.setZ(back.getZ());
