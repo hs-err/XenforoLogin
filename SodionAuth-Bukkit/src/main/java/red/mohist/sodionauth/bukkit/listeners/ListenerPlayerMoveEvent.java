@@ -44,7 +44,7 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
                 Location back = event.getFrom();
                 Location location = event.getTo();
                 location.setX(back.getX());
-                if (Config.security.getSpectatorLogin()) {
+                if (Config.security.getSpectatorLogin(true)) {
                     location.setY(back.getY());
                 }
                 location.setZ(back.getZ());
