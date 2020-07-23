@@ -36,23 +36,23 @@ public class MoveEntityListener implements SpongeAPIListener {
             return;
         }
 
-        if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
-            if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
-                if (SodionAuthCore.instance.default_location.x
-                        != event.getToTransform().getPosition().getFloorX()
-                        || SodionAuthCore.instance.default_location.z
-                        != event.getToTransform().getPosition().getFloorZ()) {
-                    event.setCancelled(true);
-                    new SpongePlayer(player).teleport(new LocationInfo(
-                            SodionAuthCore.instance.default_location.world,
-                            SodionAuthCore.instance.default_location.x,
-                            SodionAuthCore.instance.default_location.y,
-                            SodionAuthCore.instance.default_location.z,
-                            SodionAuthCore.instance.default_location.yaw,
-                            SodionAuthCore.instance.default_location.pitch
-                    ));
-                }
+
+        if (Config.teleport.getTpSpawnBeforeLogin()) {
+            if (SodionAuthCore.instance.default_location.x
+                    != event.getToTransform().getPosition().getFloorX()
+                    || SodionAuthCore.instance.default_location.z
+                    != event.getToTransform().getPosition().getFloorZ()) {
+                event.setCancelled(true);
+                new SpongePlayer(player).teleport(new LocationInfo(
+                        SodionAuthCore.instance.default_location.world,
+                        SodionAuthCore.instance.default_location.x,
+                        SodionAuthCore.instance.default_location.y,
+                        SodionAuthCore.instance.default_location.z,
+                        SodionAuthCore.instance.default_location.yaw,
+                        SodionAuthCore.instance.default_location.pitch
+                ));
             }
+
         } else {
             if (event.getFromTransform().getPosition().getFloorX()
                     != event.getToTransform().getPosition().getFloorX()
