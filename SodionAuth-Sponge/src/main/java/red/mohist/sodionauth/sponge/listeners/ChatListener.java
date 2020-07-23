@@ -32,8 +32,8 @@ public class ChatListener implements SpongeAPIListener {
     public void onChatEvent(Chat event, @First Player spongePlayer) {
         SpongePlayer player = new SpongePlayer(spongePlayer);
         if (!SodionAuthCore.instance.needCancelled(player)) {
-            if (Config.getBoolean("secure.cancel_chat_after_login", false)) {
-                player.sendMessage(Helper.langFile("logged_in"));
+            if (Config.security.getCancelChatAfterLogin(false)) {
+                player.sendMessage(player.getLang().getLoggedIn());
                 event.setCancelled(true);
             }
             return;

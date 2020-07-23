@@ -47,7 +47,7 @@
     "token": {
       "timeToFullyExpired": 259200,
       "enableTimeToPartiallyExpired": true,
-      "timeToPartiallyExpired": "10m",
+      "timeToPartiallyExpired": 600,
       "onlyLastSessionAvailable": false
     },
     "core": {
@@ -56,12 +56,6 @@
       "skinDomains": [
         "localhost"
       ]
-    },
-    "ratelimit": {
-      "limitDuration": "300ms"
-    },
-    "session": {
-      "authExpireTime": "15s"
     }
   },
   "spawn": {

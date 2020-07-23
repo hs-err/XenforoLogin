@@ -407,7 +407,6 @@ public class MainConfiguration {
         private TokenBean token;
         private CoreBean core;
         private RatelimitBean ratelimit;
-        private SessionBeanX session;
 
         public ServerBean getServer(ServerBean def) {
             return getServer() == null ? def : getServer();
@@ -441,14 +440,6 @@ public class MainConfiguration {
             return ratelimit != null ? ratelimit : Config.all.yggdrasil.ratelimit;
         }
 
-        public SessionBeanX getSession(SessionBeanX def) {
-            return getSession() == null ? def : getSession();
-        }
-
-        public SessionBeanX getSession() {
-            return session != null ? session : Config.all.yggdrasil.session;
-        }
-
         public static class ServerBean {
             private Integer port;
 
@@ -464,7 +455,7 @@ public class MainConfiguration {
         public static class TokenBean {
             private Integer timeToFullyExpired;
             private Boolean enableTimeToPartiallyExpired;
-            private String timeToPartiallyExpired;
+            private Integer timeToPartiallyExpired;
             private Boolean onlyLastSessionAvailable;
 
             public Integer getTimeToFullyExpired(Integer def) {
@@ -483,11 +474,11 @@ public class MainConfiguration {
                 return enableTimeToPartiallyExpired != null ? enableTimeToPartiallyExpired : Config.all.yggdrasil.token.enableTimeToPartiallyExpired;
             }
 
-            public String getTimeToPartiallyExpired(String def) {
+            public Integer getTimeToPartiallyExpired(Integer def) {
                 return getTimeToPartiallyExpired() == null ? def : getTimeToPartiallyExpired();
             }
 
-            public String getTimeToPartiallyExpired() {
+            public Integer getTimeToPartiallyExpired() {
                 return timeToPartiallyExpired != null ? timeToPartiallyExpired : Config.all.yggdrasil.token.timeToPartiallyExpired;
             }
 
@@ -539,18 +530,6 @@ public class MainConfiguration {
 
             public String getLimitDuration() {
                 return limitDuration != null ? limitDuration : Config.all.yggdrasil.ratelimit.limitDuration;
-            }
-        }
-
-        public static class SessionBeanX {
-            private String authExpireTime;
-
-            public String getAuthExpireTime(String def) {
-                return getAuthExpireTime() == null ? def : getAuthExpireTime();
-            }
-
-            public String getAuthExpireTime() {
-                return authExpireTime != null ? authExpireTime : Config.all.yggdrasil.session.authExpireTime;
             }
         }
     }

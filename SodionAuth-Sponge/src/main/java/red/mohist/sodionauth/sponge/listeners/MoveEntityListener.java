@@ -36,8 +36,18 @@ public class MoveEntityListener implements SpongeAPIListener {
             return;
         }
 
-        if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
-            if (Config.getBoolean("teleport.tp_spawn_before_login", true)) {
+        if (Config.teleport.getTpSpawnBeforeLogin(true)) {
+            if(Config.security.getSpectatorLogin()){
+                event.setCancelled(true);
+                new SpongePlayer(player).teleport(new LocationInfo(
+                        SodionAuthCore.instance.default_location.world,
+                        SodionAuthCore.instance.default_location.x,
+                        SodionAuthCore.instance.default_location.y,
+                        SodionAuthCore.instance.default_location.z,
+                        SodionAuthCore.instance.default_location.yaw,
+                        SodionAuthCore.instance.default_location.pitch
+                ));
+            }else{
                 if (SodionAuthCore.instance.default_location.x
                         != event.getToTransform().getPosition().getFloorX()
                         || SodionAuthCore.instance.default_location.z
@@ -46,7 +56,7 @@ public class MoveEntityListener implements SpongeAPIListener {
                     new SpongePlayer(player).teleport(new LocationInfo(
                             SodionAuthCore.instance.default_location.world,
                             SodionAuthCore.instance.default_location.x,
-                            SodionAuthCore.instance.default_location.y,
+                            event.getToTransform().getPosition().getFloorY(),
                             SodionAuthCore.instance.default_location.z,
                             SodionAuthCore.instance.default_location.yaw,
                             SodionAuthCore.instance.default_location.pitch
