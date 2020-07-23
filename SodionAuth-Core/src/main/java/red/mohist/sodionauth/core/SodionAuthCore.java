@@ -16,9 +16,6 @@
 
 package red.mohist.sodionauth.core;
 
-import red.mohist.sodionauth.core.asyncs.CanJoin;
-import red.mohist.sodionauth.core.asyncs.Login;
-import red.mohist.sodionauth.core.asyncs.Register;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
@@ -33,10 +30,7 @@ import red.mohist.sodionauth.core.utils.ResultTypeUtils;
 
 import java.sql.*;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,12 +41,10 @@ public final class SodionAuthCore {
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
     private Connection connection;
-    private LinkedBlockingQueue<CanJoin> canJoinTask;
-    private LinkedBlockingQueue<Login> LoginTask;
-    private LinkedBlockingQueue<Register> registerTask;
+    private ExecutorService executor;
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
-
+        Helper.getLogger().info("Initializing basic services...");
         {
             // WARN You are not permitted to interfere any protection that prevents loading in CatServer
             String a0 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
@@ -97,16 +89,16 @@ public final class SodionAuthCore {
         instance = this;
         api = platformAdapter;
         logged_in = new ConcurrentHashMap<>();
-        canJoinTask = new LinkedBlockingQueue<>();
-        LoginTask = new LinkedBlockingQueue<>();
-        registerTask = new LinkedBlockingQueue<>();
-        loadConfig();
+        executor = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
+                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 
+        Helper.getLogger().info("Loading configurations...");
+        loadConfig();
         AuthBackendSystems.reloadConfig();
         SecureSystems.reloadConfig();
         LoginTicker.register();
 
-
+        Helper.getLogger().info("Initializing session storage...");
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
             if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
@@ -121,58 +113,31 @@ public final class SodionAuthCore {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        Helper.getLogger().info("Check for existing players...");
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
-            new Thread(() -> {
-                String canjoin = SodionAuthCore.instance.canJoinHandle(abstractPlayer);
-                if (canjoin != null) {
-                    abstractPlayer.kick(canjoin);
-                }
-            }).start();
+            canJoin(abstractPlayer).thenAccept(result -> {
+                if(result != null)
+                    abstractPlayer.kick(result);
+            });
             onJoin(abstractPlayer);
         }
-        createWorkers();
-    }
 
-    private void createWorkers() {
-        new Thread(() -> {
-            while (true) {
-                try {
-                    CanJoin task = canJoinTask.take();
-                    task.run(canJoinHandle(task.player));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Login task = LoginTask.take();
-                    task.run(AuthBackendSystems.getCurrentSystem()
-                            .login(task.player, task.message));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(() -> {
-            while (true) {
-                try {
-                    Register task = registerTask.take();
-                    task.run(AuthBackendSystems.getCurrentSystem()
-                            .register(task.player, task.password, task.email));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        Helper.getLogger().info("Done");
     }
 
     public void onDisable() {
+        Helper.getLogger().info("Removing existing players...");
         for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
             onQuit(abstractPlayer);
         }
+        Helper.getLogger().info("Stopping services...");
         LoginTicker.unregister();
+        executor.shutdown();
+        try {
+            executor.awaitTermination(30, TimeUnit.SECONDS);
+        } catch (InterruptedException ignored) {
+        }
         try {
             connection.close();
         } catch (Throwable ignored) {
@@ -299,14 +264,12 @@ public final class SodionAuthCore {
 
 
     public CompletableFuture<String> canJoin(AbstractPlayer player) {
-        CompletableFuture<String> can = new CompletableFuture<>();
-        canJoinAsync(new CanJoin(player) {
-            @Override
-            public void run(String result) {
-                can.complete(result);
-            }
+        CompletableFuture<String> future = new CompletableFuture<>();
+        executor.execute(() -> {
+            SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
+            future.complete(canJoinHandle(player));
         });
-        return can;
+        return future;
     }
 
     public String canJoinHandle(AbstractPlayer player) {
@@ -337,11 +300,6 @@ public final class SodionAuthCore {
                 return player.getLang().getErrors().getUnknown(resultType.getInheritedObject());
         }
         return player.getLang().getErrors().getUnknown();
-    }
-
-    public void canJoinAsync(CanJoin action) {
-        SodionAuthCore.instance.logged_in.put(action.player.getUniqueId(), StatusType.HANDLE);
-        canJoinTask.add(action);
     }
 
     public void onJoin(AbstractPlayer abstractPlayer) {
@@ -385,12 +343,8 @@ public final class SodionAuthCore {
                 }
                 SodionAuthCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
-                LoginTask.add(new Login(player, message) {
-                    @Override
-                    public void run(ResultType result) {
-                        ResultTypeUtils.handle(player, result.shouldLogin(true));
-                    }
-                });
+                executor.execute(() -> ResultTypeUtils.handle(player,
+                        AuthBackendSystems.getCurrentSystem().login(player, message).shouldLogin(true)));
                 break;
             case NEED_REGISTER_EMAIL:
                 if (isEmail(message)) {
@@ -415,19 +369,17 @@ public final class SodionAuthCore {
                 SodionAuthCore.instance.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
-                    registerTask.add(new Register(player, status.email, status.password) {
-                        @Override
-                        public void run(ResultType answer) {
-                            boolean result = ResultTypeUtils.handle(player,
-                                    answer.shouldLogin(true));
-                            if (result) {
-                                SodionAuthCore.instance.logged_in.put(
-                                        player.getUniqueId(), StatusType.LOGGED_IN);
-                            } else {
-                                SodionAuthCore.instance.logged_in.put(
-                                        player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                                SodionAuthCore.instance.message(player);
-                            }
+                    executor.execute(() -> {
+                        boolean result = ResultTypeUtils.handle(player,
+                                AuthBackendSystems.getCurrentSystem()
+                                        .register(player, status.password, status.email).shouldLogin(true));
+                        if (result) {
+                            SodionAuthCore.instance.logged_in.put(
+                                    player.getUniqueId(), StatusType.LOGGED_IN);
+                        } else {
+                            SodionAuthCore.instance.logged_in.put(
+                                    player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                            SodionAuthCore.instance.message(player);
                         }
                     });
                 } else {
