@@ -45,9 +45,9 @@ import java.util.Set;
 import java.util.Vector;
 
 @Plugin(
-        id = "xenforologin",
-        name = "XenforoLogin",
-        description = "XenforoLogin"
+        id = "sodionauth",
+        name = "SodionAuth",
+        description = "A new generation of authentication plugin for Minecraft"
 )
 public class SpongeLoader implements PlatformAdapter {
     @Inject

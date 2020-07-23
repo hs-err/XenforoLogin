@@ -29,7 +29,7 @@ dependencies {
     providedCompile project(':SodionAuth-Core')
 }
 
-sponge.plugin.id = 'xenforologin'
+sponge.plugin.id = 'sodionauth'
 processResources {
     expand(version: version)
 }
