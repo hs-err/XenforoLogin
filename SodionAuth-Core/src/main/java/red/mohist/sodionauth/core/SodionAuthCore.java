@@ -110,7 +110,7 @@ public final class SodionAuthCore {
 
 
         try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("XenforoLogin.db"));
+            connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
             if (!connection.getMetaData().getTables(null, null, "locations", new String[]{"TABLE"}).next()) {
                 PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
                 pps.executeUpdate();
