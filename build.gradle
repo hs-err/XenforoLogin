@@ -15,8 +15,8 @@
  */
 
 plugins {
-    id 'war'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'war'
 }
 
 allprojects {
@@ -61,9 +61,9 @@ repositories {
 
 dependencies {
     // compile(project(path: ":SodionAuth-Core", configuration: "shadow"))
-    compile(project(path: ":SodionAuth-Bukkit", configuration: "shadow"))
-    compile(project(path: ":SodionAuth-Fabric", configuration: "remapShadow"))
-    compile(project(path: ":SodionAuth-Sponge", configuration: "shadow"))
+    implementation(project(path: ":SodionAuth-Bukkit", configuration: "shadow"))
+    implementation(project(path: ":SodionAuth-Fabric", configuration: "remapShadow"))
+    implementation(project(path: ":SodionAuth-Sponge", configuration: "shadow"))
 }
 
 assemble.dependsOn(shadowJar)

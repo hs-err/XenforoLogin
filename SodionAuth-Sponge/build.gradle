@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id 'org.spongepowered.plugin' version '0.9.0'
+    id 'org.spongepowered.gradle.plugin' version "0.11.0-SNAPSHOT"
     id 'war'
     id 'com.github.johnrengelman.shadow'
 }
@@ -23,10 +23,16 @@ plugins {
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
+repositories {
+    maven {
+        url "https://repo.spongepowered.org/maven/"
+    }
+}
+
 dependencies {
     compileOnly 'org.spongepowered:spongeapi:7.2.0'
     annotationProcessor 'org.spongepowered:spongeapi:7.2.0'
-    providedCompile project(':SodionAuth-Core')
+    implementation project(path: ":SodionAuth-Core", configuration: "shadow")
 }
 
 sponge.plugin.id = 'sodionauth'

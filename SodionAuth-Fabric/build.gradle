@@ -18,9 +18,9 @@ import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'java'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow'
-    id 'war'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -36,7 +36,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    providedCompile project(':SodionAuth-Core')
+    implementation project(path: ":SodionAuth-Core", configuration: "shadow")
 }
 
 configurations {
@@ -46,14 +46,7 @@ configurations {
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-        expand "version": project.version
-    }
 
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
 }
 
 // ensure that the encoding is set to UTF-8, no matter what the system default is
