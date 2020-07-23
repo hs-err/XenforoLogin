@@ -38,7 +38,7 @@ public class YggdrasilServerCore {
     public KeyPair rsaKeyPair;
 
     public YggdrasilServerCore() throws NoSuchAlgorithmException, SQLException {
-        this.port = Config.getInteger("yggdrasil.server.port");
+        this.port = Config.yggdrasil.getServer().getPort();
         instance = this;
         new UserProvider();
         generalKey();

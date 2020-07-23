@@ -68,7 +68,7 @@ public class UserProvider {
         pps.setString(2, accessToken);
         pps.setString(3, clientToken);
         pps.setInt(4, 0);
-        pps.setInt(5, (int) (System.currentTimeMillis() / 1000 - Config.getInteger("yggdrasil.token.time-to-fully-expired")));
+        pps.setInt(5, (int) (System.currentTimeMillis() / 1000 - Config.yggdrasil.getToken().getTimeToFullyExpired()));
         pps.execute();
     }
 
@@ -168,7 +168,7 @@ public class UserProvider {
     public void refresh() throws SQLException {
         PreparedStatement pps = connection.prepareStatement(
                 "DELETE FROM tokens WHERE `timestamp` < ?");
-        pps.setInt(1, (int) (System.currentTimeMillis() / 1000 - Config.getInteger("yggdrasil.token.time-to-fully-expired")));
+        pps.setInt(1, (int) (System.currentTimeMillis() / 1000 - Config.yggdrasil.getToken().getTimeToFullyExpired()));
         pps.execute();
     }
 
