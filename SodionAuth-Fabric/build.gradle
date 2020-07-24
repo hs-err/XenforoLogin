@@ -44,6 +44,7 @@ configurations {
 }
 
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     inputs.property "version", project.version
 
     from(sourceSets.main.resources.srcDirs) {
