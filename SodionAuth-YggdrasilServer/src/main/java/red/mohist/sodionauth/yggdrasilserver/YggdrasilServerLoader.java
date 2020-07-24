@@ -25,6 +25,11 @@ import java.util.Collection;
 public class YggdrasilServerLoader implements PlatformAdapter {
 
     @Override
+    public void shutdown() {
+        
+    }
+
+    @Override
     public LocationInfo getSpawn(String world) {
         return null;
     }

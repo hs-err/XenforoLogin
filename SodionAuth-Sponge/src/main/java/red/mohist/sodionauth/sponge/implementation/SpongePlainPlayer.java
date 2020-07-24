@@ -26,7 +26,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
-import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.sponge.SpongeLoader;
 
 import java.net.InetAddress;
@@ -98,7 +98,7 @@ public class SpongePlainPlayer extends AbstractPlayer {
         } else if (GameModes.SPECTATOR.equals(gameMode)) {
             return 3;
         } else {
-            return 0;
+            return Config.security.getDefaultGamemode(0);
         }
     }
 
@@ -108,7 +108,7 @@ public class SpongePlainPlayer extends AbstractPlayer {
             Player handle = Sponge.getServer().getPlayer(getUniqueId()).get();
             switch (gameMode) {
                 case 0:
-                    handle.offer(Keys.GAME_MODE,GameModes.SPECTATOR);
+                    handle.offer(Keys.GAME_MODE,GameModes.SURVIVAL);
                     return;
                 case 1:
                     handle.offer(Keys.GAME_MODE,GameModes.CREATIVE);
