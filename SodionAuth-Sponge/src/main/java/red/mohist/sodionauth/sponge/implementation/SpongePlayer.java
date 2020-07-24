@@ -16,40 +16,59 @@
 
 package red.mohist.sodionauth.sponge.implementation;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.SpongeLoader;
 
+import java.net.InetAddress;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class SpongePlayer extends AbstractPlayer {
 
-    private final Player handle;
+    private Player handle;
 
     public SpongePlayer(Player handle) {
         super(handle.getName(), handle.getUniqueId(), handle.getConnection().getAddress().getAddress());
         this.handle = handle;
     }
-
+    public SpongePlayer(String name, UUID uuid, InetAddress address) {
+        super(name, uuid, address);
+    }
+    public void checkHandle(){
+        if(handle==null){
+            Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(getUniqueId());
+            if(!optionalPlayer.isPresent()){
+                Helper.getLogger().warn("No player can be call.");
+            }else{
+                handle=optionalPlayer.get();
+            }
+        }
+    }
     @Override
     public void sendMessage(String message) {
+        checkHandle();
         handle.sendMessage(Text.of(message));
     }
 
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
+        checkHandle();
         CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
         if(Sponge.getServer().isMainThread()){
-            booleanCompletableFuture.complete(handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
+            booleanCompletableFuture.complete(handle.setLocation(Sponge.getServer().getWorld(location.world)
                     .get().getLocation(location.x, location.y, location.z)));
         }else{
             Sponge.getScheduler().createTaskBuilder().execute(()->{
@@ -65,12 +84,38 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
+        checkHandle();
         handle.kick(Text.of(message));
     }
 
     @Override
+    public PlayerInfo getPlayerInfo() {
+        checkHandle();
+        PlayerInfo playerInfo = new PlayerInfo();
+        playerInfo.locationInfo=getLocation();
+        playerInfo.gameMode=getGameMode();
+        playerInfo.health=handle.getHealthData().health().get();
+        playerInfo.maxHealth=handle.getHealthData().maxHealth().get();
+        handle.getValue(Keys.FALL_DISTANCE).ifPresent(value -> playerInfo.fallDistance = value.get());
+        Vector3d v3d = handle.getVelocity();
+        playerInfo.velocityInfo= VelocityInfo.create(v3d.getX(),v3d.getY(),v3d.getZ());
+        playerInfo.foodInfo= FoodInfo.create(
+                handle.getFoodData().foodLevel().get(),
+                handle.getFoodData().exhaustion().get(),
+                handle.getFoodData().saturation().get()
+        );
+        handle.getValue(Keys.REMAINING_AIR).ifPresent(value -> playerInfo.remainingAir = value.get());
+        return null;
+    }
+
+    @Override
+    public void setPlayerInfo(PlayerInfo playerInfo) {
+
+    }
+
     public LocationInfo getLocation() {
         Location<World> location = handle.getLocation();
+
         return new LocationInfo(
                 location.getExtent().getName(),
                 location.getX(),
@@ -80,7 +125,6 @@ public class SpongePlayer extends AbstractPlayer {
         );
     }
 
-    @Override
     public int getGameMode() {
         GameMode gameMode = handle.gameMode().get();
         if (GameModes.SURVIVAL.equals(gameMode)) {
@@ -98,6 +142,7 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void setGameMode(int gameMode) {
+        checkHandle();
         if(Sponge.getServer().isMainThread()){
             switch (gameMode) {
                 case 0:
@@ -121,6 +166,11 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public boolean isOnline() {
-        return handle.isOnline();
+        if(handle==null){
+            Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(getUniqueId());
+            return optionalPlayer.map(User::isOnline).orElse(false);
+        }else {
+            return handle.isOnline();
+        }
     }
 }

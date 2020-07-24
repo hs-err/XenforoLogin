@@ -59,9 +59,9 @@ public abstract class AbstractPlayer {
 
     public abstract void kick(String message);
 
-    public abstract LocationInfo getLocation();
+    public abstract PlayerInfo getPlayerInfo();
 
-    public abstract int getGameMode();
+    public abstract void setPlayerInfo(PlayerInfo playerInfo);
 
     public abstract void setGameMode(int gameMode);
 

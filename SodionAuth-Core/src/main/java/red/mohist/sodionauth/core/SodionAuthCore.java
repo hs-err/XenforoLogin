@@ -25,6 +25,7 @@ import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.PlayerInfo;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -47,6 +48,7 @@ public final class SodionAuthCore {
     public PlatformAdapter api;
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
+    public LocationInfo spawn_location;
     private Connection connection;
     private ExecutorService executor;
 
@@ -144,8 +146,8 @@ public final class SodionAuthCore {
             Helper.getLogger().info("Initializing session storage...");
             try {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
-                if (!connection.getMetaData().getTables(null, null, "locations", new String[] { "TABLE" }).next()) {
-                    PreparedStatement pps = connection.prepareStatement("CREATE TABLE locations (uuid NOT NULL,world,x,y,z,yaw,pitch,mode,PRIMARY KEY (uuid));");
+                if (!connection.getMetaData().getTables(null, null, "last_login_info", new String[] { "TABLE" }).next()) {
+                    PreparedStatement pps = connection.prepareStatement("CREATE TABLE last_login_info (uuid NOT NULL,info,PRIMARY KEY (uuid));");
                     pps.executeUpdate();
                 }
                 if (!connection.getMetaData().getTables(null, null, "sessions", new String[] { "TABLE" }).next()) {
@@ -174,6 +176,7 @@ public final class SodionAuthCore {
     }
     public void loadFail() {
         api.shutdown();
+        onDisable();
     }
 
     public ScheduledExecutorService globalScheduledExecutor;
@@ -216,7 +219,7 @@ public final class SodionAuthCore {
     }
 
     private void loadConfig() {
-        LocationInfo spawn_location = api.getSpawn(api.getDefaultWorld());
+        spawn_location = api.getSpawn(api.getDefaultWorld());
         default_location = new LocationInfo(
                 Config.spawn.getWorld(api.getDefaultWorld()),
                 Config.spawn.getX(spawn_location.x),
@@ -234,33 +237,16 @@ public final class SodionAuthCore {
     public void login(AbstractPlayer player) {
         logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
-            PreparedStatement pps = connection.prepareStatement("SELECT * FROM locations WHERE uuid=? LIMIT 1;");
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM last_login_info WHERE uuid=? LIMIT 1;");
             pps.setString(1, player.getUniqueId().toString());
             ResultSet rs = pps.executeQuery();
             if (!rs.next()) {
                 if (Config.teleport.getTpBackAfterLogin()) {
-                    LocationInfo spawn_location = api.getSpawn("world");
                     player.teleport(spawn_location);
                 }
                 player.setGameMode(Config.security.getDefaultGamemode());
             } else {
-                if (Config.teleport.getTpBackAfterLogin()) {
-                    try {
-                        player.teleport(new LocationInfo(
-                                rs.getString("world"),
-                                rs.getDouble("x"),
-                                rs.getDouble("y"),
-                                rs.getDouble("z"),
-                                rs.getFloat("yaw"),
-                                rs.getFloat("pitch")
-                        ));
-                    } catch (Exception e) {
-                        LocationInfo spawn_location = api.getSpawn("world");
-                        player.teleport(spawn_location);
-                        Helper.getLogger().warn("Fail tp a player.Have you change the world?");
-                    }
-                }
-                player.setGameMode(rs.getInt("mode"));
+                player.setPlayerInfo(PlayerInfo.deserialize(rs.getString("info")));
             }
 
 
@@ -305,24 +291,18 @@ public final class SodionAuthCore {
     }
 
     public void onQuit(AbstractPlayer player) {
-        LocationInfo leave_location = player.getLocation();
+        PlayerInfo leave_info = player.getPlayerInfo();
         if (!needCancelled(player)) {
             try {
-                PreparedStatement pps = connection.prepareStatement("DELETE FROM locations WHERE uuid = ?;");
+                PreparedStatement pps = connection.prepareStatement("DELETE FROM info WHERE uuid = ?;");
                 pps.setString(1, player.getUniqueId().toString());
                 pps.executeUpdate();
-                pps = connection.prepareStatement("INSERT INTO locations(uuid, world, x, y, z, yaw, pitch,mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+                pps = connection.prepareStatement("INSERT INTO last_login_info(uuid, info) VALUES (?, ?);");
                 pps.setString(1, player.getUniqueId().toString());
-                pps.setString(2, leave_location.world);
-                pps.setDouble(3, leave_location.x);
-                pps.setDouble(4, leave_location.y);
-                pps.setDouble(5, leave_location.z);
-                pps.setFloat(6, leave_location.yaw);
-                pps.setFloat(7, leave_location.pitch);
-                pps.setInt(8, player.getGameMode());
+                pps.setString(2, leave_info.serialize());
                 pps.executeUpdate();
             } catch (SQLException e) {
-                Helper.getLogger().warn("Fail to save location.");
+                Helper.getLogger().warn("Fail to save player info.");
             }
         }
         player.teleport(default_location);
