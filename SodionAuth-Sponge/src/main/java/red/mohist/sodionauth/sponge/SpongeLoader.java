@@ -47,10 +47,11 @@ import java.util.Vector;
 @Plugin(
         id = "sodionauth",
         name = "SodionAuth",
-        description = "A new generation of authentication plugin for Minecraft"
+        description = "A new generation of authentication plugin for Minecraft",
+        version = "2.0"
 )
 public class SpongeLoader implements PlatformAdapter {
-    public SpongeLoader instance;
+    public static SpongeLoader instance;
     public SodionAuthCore sodionAuthCore;
     @Inject
     private Logger logger;
@@ -120,7 +121,6 @@ public class SpongeLoader implements PlatformAdapter {
             logger.warn("SodionAuth load fail.");
             Sponge.getServer().shutdown();
         }
-
     }
 
     @Listener

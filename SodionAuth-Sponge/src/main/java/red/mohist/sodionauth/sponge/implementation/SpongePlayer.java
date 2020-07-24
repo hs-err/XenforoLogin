@@ -17,6 +17,7 @@
 package red.mohist.sodionauth.sponge.implementation;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -25,8 +26,11 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.sponge.SpongeLoader;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class SpongePlayer extends AbstractPlayer {
 
@@ -45,9 +49,18 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
         CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
-        booleanCompletableFuture.complete(
-                handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
-                        .get().getLocation(location.x, location.y, location.z)));
+        if(Sponge.getServer().isMainThread()){
+            booleanCompletableFuture.complete(handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
+                    .get().getLocation(location.x, location.y, location.z)));
+        }else{
+            Sponge.getScheduler().createTaskBuilder().execute(()->{
+                try {
+                    booleanCompletableFuture.complete(teleport(location).get());
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }).submit(SpongeLoader.instance);
+        }
         return booleanCompletableFuture;
     }
 
@@ -86,18 +99,24 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void setGameMode(int gameMode) {
-        switch (gameMode) {
-            case 0:
-                handle.gameMode().set(GameModes.SURVIVAL);
-                return;
-            case 1:
-                handle.gameMode().set(GameModes.CREATIVE);
-                return;
-            case 2:
-                handle.gameMode().set(GameModes.ADVENTURE);
-                return;
-            case 3:
-                handle.gameMode().set(GameModes.SPECTATOR);
+        if(Sponge.getServer().isMainThread()){
+            switch (gameMode) {
+                case 0:
+                    handle.offer(Keys.GAME_MODE,GameModes.SPECTATOR);
+                    return;
+                case 1:
+                    handle.offer(Keys.GAME_MODE,GameModes.CREATIVE);
+                    return;
+                case 2:
+                    handle.offer(Keys.GAME_MODE,GameModes.ADVENTURE);
+                    return;
+                case 3:
+                    handle.offer(Keys.GAME_MODE,GameModes.SPECTATOR);
+            }
+        }else{
+            Sponge.getScheduler().createTaskBuilder().execute(()->{
+                setGameMode(gameMode);
+            }).submit(SpongeLoader.instance);
         }
     }
 
