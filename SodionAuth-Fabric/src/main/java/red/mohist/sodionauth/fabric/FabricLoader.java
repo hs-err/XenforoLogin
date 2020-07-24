@@ -67,6 +67,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
     public void onInitialize() {
         configDir.mkdirs();
         logger.info("SodionAuth has been successfully discovered");
+        FabricDevEnvBootstrap.wrapClassloaderIfNecessary();
     }
 
     public void onServerPostWorld() {

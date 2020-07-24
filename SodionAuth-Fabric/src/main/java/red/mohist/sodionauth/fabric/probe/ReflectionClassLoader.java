@@ -21,12 +21,12 @@
  *  Copyright (c) contributors
  */
 
-package red.mohist.sodionauth.core.dependency.classloader;
+package red.mohist.sodionauth.fabric.probe;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.utils.Helper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +36,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 
 public class ReflectionClassLoader {
+
+    public static final Logger logger = LogManager.getLogger("SodionAuth|FabricDevBootstrapClassLoader");
+
     public URLClassLoader getClassLoader() {
         return classLoader;
     }
@@ -46,9 +49,7 @@ public class ReflectionClassLoader {
     private final Supplier<Method> addUrlMethod;
 
     public ReflectionClassLoader() throws IllegalStateException {
-        ClassLoader classLoader = SodionAuthCore.instance.api.getClass().getClassLoader();
-        if (classLoader.getClass().getName().startsWith("net.fabricmc.loader")) // Fabric
-            classLoader = classLoader.getParent();
+        ClassLoader classLoader = getClass().getClassLoader().getParent();
         if (classLoader instanceof URLClassLoader) {
             this.classLoader = (URLClassLoader) classLoader;
         } else {
@@ -57,7 +58,7 @@ public class ReflectionClassLoader {
 
         this.addUrlMethod = Suppliers.memoize(() -> {
             if (isJava9OrNewer()) {
-                Helper.getLogger().info("It is safe to ignore any warning printed following this message " +
+                logger.info("It is safe to ignore any warning printed following this message " +
                         "starting with 'WARNING: An illegal reflective access operation has occurred, Illegal reflective " +
                         "access by " + getClass().getName() + "'. This is intended, and will not have any impact on the " +
                         "operation of SodionAuth.");
