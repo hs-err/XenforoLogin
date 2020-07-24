@@ -25,6 +25,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
@@ -119,7 +120,7 @@ public class SpongeLoader implements PlatformAdapter {
         } catch (IOException e) {
             e.printStackTrace();
             logger.warn("SodionAuth load fail.");
-            Sponge.getServer().shutdown();
+            Sponge.getServer().shutdown(Text.of("SodionAuth load fail."));
         }
     }
 
@@ -127,6 +128,12 @@ public class SpongeLoader implements PlatformAdapter {
     public void onServerStop(GameStoppingServerEvent event) {
         SodionAuthCore.instance.onDisable();
     }
+
+    @Override
+    public void shutdown() {
+        Sponge.getServer().shutdown(Text.of("SodionAuth load fail."));
+    }
+
 
     @Override
     public Collection<AbstractPlayer> getAllPlayer() {

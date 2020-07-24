@@ -22,6 +22,7 @@ import red.mohist.sodionauth.core.modules.LocationInfo;
 import java.util.Collection;
 
 public interface PlatformAdapter {
+    void shutdown();
 
     LocationInfo getSpawn(String world);
 

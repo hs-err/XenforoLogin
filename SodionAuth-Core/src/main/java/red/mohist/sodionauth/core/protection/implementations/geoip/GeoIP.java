@@ -17,6 +17,7 @@
 package red.mohist.sodionauth.core.protection.implementations.geoip;
 
 import com.maxmind.geoip2.DatabaseReader;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.utils.Config;
@@ -27,12 +28,16 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 public class GeoIP implements SecuritySystem {
-    private final DatabaseReader countryReader;
+    private DatabaseReader countryReader;
 
-    public GeoIP() throws IOException {
-        Helper.instance.saveResource("GeoLite2-Country.mmdb", false);
-        File database = new File(Helper.getConfigPath("GeoLite2-Country.mmdb"));
-        countryReader = new DatabaseReader.Builder(database).build();
+    public GeoIP() {
+        try {
+            File database = new File(Helper.getConfigPath("GeoLite2-Country.mmdb"));
+            countryReader = new DatabaseReader.Builder(database).build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            SodionAuthCore.instance.loadFail();
+        }
     }
 
     @Override

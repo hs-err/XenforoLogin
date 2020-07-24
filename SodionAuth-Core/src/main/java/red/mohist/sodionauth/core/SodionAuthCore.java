@@ -128,6 +128,8 @@ public final class SodionAuthCore {
             isEnabled.set(true);
             httpClient = HttpClientBuilder.create()
                     .disableCookieManagement()
+                    .disableAuthCaching()
+                    .disableAutomaticRetries()
                     .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                             "SodionAuthWeb/1.0 Safari/537.36")
                     .build();
@@ -169,6 +171,10 @@ public final class SodionAuthCore {
             isEnabled.set(false);
             throw throwable;
         }
+    }
+    public void loadFail() {
+        api.shutdown();
+        onDisable();
     }
 
     public ScheduledExecutorService globalScheduledExecutor;

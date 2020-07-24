@@ -30,6 +30,9 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerJoinEvent(PlayerJoinEvent event) {
         AbstractPlayer abstractPlayer = BukkitLoader.instance.player2info(event.getPlayer());
+        if(!SodionAuthCore.instance.isEnabled()){
+            event.getPlayer().kickPlayer(abstractPlayer.getLang().getErrors().getServer());
+        }
         SodionAuthCore.instance.api.sendBlankInventoryPacket(abstractPlayer);
         if (!SodionAuthCore.instance.logged_in.containsKey(abstractPlayer.getUniqueId())) {
 

@@ -91,6 +91,11 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         sodionAuthCore.onDisable();
     }
 
+    @Override
+    public void shutdown() {
+        getServer().shutdown();
+    }
+
     private void hookProtocolLib() {
         if (org.bukkit.Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && Config.security.getHideInventory(true)) {
             listenerProtocolEvent = new ListenerProtocolEvent();

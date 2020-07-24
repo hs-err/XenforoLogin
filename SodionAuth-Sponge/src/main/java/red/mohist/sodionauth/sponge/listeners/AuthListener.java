@@ -34,6 +34,10 @@ public class AuthListener implements SpongeAPIListener {
                 event.getProfile().getName().get(),
                 event.getProfile().getUniqueId(),
                 event.getConnection().getAddress().getAddress());
+        if(!SodionAuthCore.instance.isEnabled()){
+            event.setMessage(Text.of(abstractPlayer.getLang().getErrors().getServer()));
+            event.setCancelled(true);
+        }
         String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
         if (canLogin != null) {
             event.setMessage(Text.of(canLogin));

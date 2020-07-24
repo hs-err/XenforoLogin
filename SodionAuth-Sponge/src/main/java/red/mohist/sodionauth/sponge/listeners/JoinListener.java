@@ -31,6 +31,9 @@ public class JoinListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onJoinEvent(Join event, @First Player spongePlayer) {
         SpongePlayer player = new SpongePlayer(spongePlayer);
+        if(!SodionAuthCore.instance.isEnabled()){
+            player.kick(player.getLang().getErrors().getServer());
+        }
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         if (!SodionAuthCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
             String canLogin = SodionAuthCore.instance.canLogin(player);
