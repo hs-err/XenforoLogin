@@ -17,6 +17,7 @@
 package red.mohist.sodionauth.core;
 
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
+import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
@@ -127,6 +128,8 @@ public final class SodionAuthCore {
                         }
                     });
             isEnabled.set(true);
+
+            DependencyManager.checkForSQLite();
 
             Helper.getLogger().info("Loading configurations...");
             loadConfig();
