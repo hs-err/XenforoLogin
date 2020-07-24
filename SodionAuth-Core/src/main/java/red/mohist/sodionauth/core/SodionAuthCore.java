@@ -174,7 +174,6 @@ public final class SodionAuthCore {
     }
     public void loadFail() {
         api.shutdown();
-        onDisable();
     }
 
     public ScheduledExecutorService globalScheduledExecutor;

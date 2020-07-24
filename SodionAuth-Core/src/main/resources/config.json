@@ -89,7 +89,7 @@
       "enableLocal": true
     },
     "GeoIP": {
-      "enable": true,
+      "enable": false,
       "lists": {
         "CN": true,
         "UNKNOWN": true

@@ -36,6 +36,11 @@ public class GeoIP implements SecuritySystem {
             countryReader = new DatabaseReader.Builder(database).build();
         } catch (IOException e) {
             e.printStackTrace();
+            Helper.getLogger().warn("Can't open GeoLite2-Country.mmdb.");
+            Helper.getLogger().warn("Download it from https://updates.maxmind.com/geoip/databases/GeoLite2-Country/update");
+            Helper.getLogger().warn("Put it into configure dir");
+            Helper.getLogger().warn("Otherwise you should turn Geoip of in config file");
+            Helper.getLogger().warn("Set protection.GeoIP.enable false");
             SodionAuthCore.instance.loadFail();
         }
     }
