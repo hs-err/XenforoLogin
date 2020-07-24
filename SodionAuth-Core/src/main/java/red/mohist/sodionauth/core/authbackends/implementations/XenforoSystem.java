@@ -24,9 +24,13 @@ import com.google.gson.JsonSyntaxException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.fluent.Form;
-import org.apache.http.client.fluent.Request;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -50,7 +54,6 @@ public class XenforoSystem implements AuthBackendSystem {
 
     @Nonnull
     @Override
-    @SuppressWarnings("deprecation")
     public ResultType register(AbstractPlayer player, String password, String email) {
         try {
             ResponseHandler<String> responseHandler = response -> {
@@ -70,17 +73,23 @@ public class XenforoSystem implements AuthBackendSystem {
                 return null;
             };
 
-            String result = Request.Post(url + "/users")
-                    .bodyForm(Form.form().add("username", player.getName())
-                            .add("password", password)
-                            .add("email", email).build())
-                    .addHeader("XF-Api-Key", key)
-                    .addHeader("XF-Api-User", "1")
-                    .execute().handleResponse(responseHandler);
+            HttpPost request = new HttpPost(url + "/users");
+            Form form = Form.form();
+            form.add("username", player.getName());
+            form.add("password", password);
+            form.add("email", email);
+            request.setEntity(new UrlEncodedFormEntity(form.build()));
+            request.addHeader("XF-Api-Key", key);
+            request.addHeader("XF-Api-User", "1");
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            String result = responseHandler.handleResponse(response);
+            response.close();
 
             if (result == null) {
                 return ResultType.SERVER_ERROR;
             }
+            // FIXME Stop using JsonParser
+            Helper.getLogger().warn("XenforoSystem is still using deprecated method to parse json");
             JsonParser parse = new JsonParser();
             JsonObject json;
             try {
@@ -142,16 +151,19 @@ public class XenforoSystem implements AuthBackendSystem {
                 return null;
             };
 
-            String result = Request.Post(url + "/auth")
-                    .bodyForm(Form.form().add("login", player.getName())
-                            .add("password", password).build())
-                    .addHeader("XF-Api-Key", key)
-                    .execute().handleResponse(responseHandler);
-
+            HttpPost request = new HttpPost(url + "/auth");
+            Form form = Form.form();
+            form.add("login", player.getName());
+            form.add("password", password);
+            request.addHeader("XF-Api-Key", key);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            String result = responseHandler.handleResponse(response);
 
             if (result == null) {
                 return ResultType.SERVER_ERROR;
             }
+            // FIXME Stop using JsonParser
+            Helper.getLogger().warn("XenforoSystem is still using deprecated method to parse json");
             JsonParser parse = new JsonParser();
             JsonObject json;
             try {
@@ -216,10 +228,11 @@ public class XenforoSystem implements AuthBackendSystem {
         };
         String result;
         try {
-            result = Request.Get(url + "/users/find-name?username=" +
-                    URLEncoder.encode(player.getName(), "UTF-8"))
-                    .addHeader("XF-Api-Key", key)
-                    .execute().handleResponse(responseHandler);
+            HttpGet request = new HttpGet(url + "/users/find-name?username=" +
+                    URLEncoder.encode(player.getName(), "UTF-8"));
+            request.addHeader("XF-Api-Key", key);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            result = responseHandler.handleResponse(response);
         } catch (IOException e) {
             e.printStackTrace();
             return ResultType.SERVER_ERROR;
@@ -228,6 +241,8 @@ public class XenforoSystem implements AuthBackendSystem {
             new ClientProtocolException("Unexpected response: null").printStackTrace();
             return ResultType.SERVER_ERROR;
         }
+        // FIXME Stop using JsonParser
+        Helper.getLogger().warn("XenforoSystem is still using deprecated method to parse json");
         JsonParser parse = new JsonParser();
         JsonObject json;
         try {

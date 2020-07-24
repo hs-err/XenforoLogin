@@ -16,6 +16,8 @@
 
 package red.mohist.sodionauth.core;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
@@ -30,6 +32,7 @@ import red.mohist.sodionauth.core.utils.LoginTicker;
 import red.mohist.sodionauth.core.utils.ResultTypeUtils;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.sql.*;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -46,13 +49,8 @@ public final class SodionAuthCore {
     public LocationInfo default_location;
     private Connection connection;
     private ExecutorService executor;
-    public ScheduledExecutorService globalScheduledExecutor;
 
-    public boolean isEnabled() {
-        return isEnabled.get();
-    }
-
-    private final AtomicBoolean isEnabled = new AtomicBoolean(false);
+    private CloseableHttpClient httpClient;
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
         try {
@@ -128,7 +126,11 @@ public final class SodionAuthCore {
                         }
                     });
             isEnabled.set(true);
-
+            httpClient = HttpClientBuilder.create()
+                    .disableCookieManagement()
+                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
+                            "SodionAuthWeb/1.0 Safari/537.36")
+                    .build();
             DependencyManager.checkForSQLite();
 
             Helper.getLogger().info("Loading configurations...");
@@ -169,6 +171,18 @@ public final class SodionAuthCore {
         }
     }
 
+    public ScheduledExecutorService globalScheduledExecutor;
+
+    public boolean isEnabled() {
+        return isEnabled.get();
+    }
+
+    private final AtomicBoolean isEnabled = new AtomicBoolean(false);
+
+    public CloseableHttpClient getHttpClient() {
+        return httpClient;
+    }
+
     public void onDisable() {
         isEnabled.set(false);
         Helper.getLogger().info("Removing existing players...");
@@ -177,6 +191,10 @@ public final class SodionAuthCore {
         }
         Helper.getLogger().info("Stopping services...");
         LoginTicker.unregister();
+        try {
+            httpClient.close();
+        } catch (IOException ignored) {
+        }
         executor.shutdown();
         globalScheduledExecutor.shutdown();
         try {
@@ -184,10 +202,12 @@ public final class SodionAuthCore {
             globalScheduledExecutor.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException ignored) {
         }
+        Helper.getLogger().info("Stopping session storage...");
         try {
             connection.close();
         } catch (Throwable ignored) {
         }
+        instance = null;
     }
 
     private void loadConfig() {

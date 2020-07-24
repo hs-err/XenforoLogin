@@ -16,13 +16,17 @@
 
 package red.mohist.sodionauth.core.dependency;
 
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 public class DependencyManager {
 
@@ -48,11 +52,17 @@ public class DependencyManager {
         if (!SQLiteLib.isFile())
             try {
                 Helper.getLogger().warn("Downloading...");
-                final Response httpResponse = Request
-                        .Get("https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.30.1/" +
-                                "sqlite-jdbc-3.30.1.jar")
-                        .execute();
-                httpResponse.saveContent(SQLiteLib);
+                HttpGet request = new HttpGet("https://repo1.maven.org/maven2/" +
+                        "org/xerial/sqlite-jdbc/3.30.1/sqlite-jdbc-3.30.1.jar");
+                CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+                final StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() < 200 || statusLine.getStatusCode() >= 300)
+                    throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                OutputStream fileOut = new FileOutputStream(SQLiteLib);
+                response.getEntity().writeTo(fileOut);
+                fileOut.flush();
+                fileOut.close();
+                response.close();
                 Helper.getLogger().info("Downloaded successfully");
             } catch (IOException e) {
                 Helper.getLogger().warn("Unable to download SQLite library", e);

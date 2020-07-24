@@ -23,9 +23,12 @@ import com.google.gson.JsonSyntaxException;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.fluent.Form;
-import org.apache.http.client.fluent.Request;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.util.EntityUtils;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -61,13 +64,15 @@ public class WebSystem implements AuthBackendSystem {
         };
         String result;
         try {
-            result = Request.Post(url)
-                    .bodyForm(Form.form().add("action", "register")
-                            .add("email", email)
-                            .add("username", player.getName())
-                            .add("password", password).build())
-                    .addHeader("XenforoLogin-Key", key)
-                    .execute().handleResponse(responseHandler);
+            HttpPost request = new HttpPost(url);
+            Form form = Form.form();
+            form.add("email", email);
+            form.add("username", player.getName());
+            form.add("password", password);
+            request.setEntity(new UrlEncodedFormEntity(form.build()));
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            result = responseHandler.handleResponse(response);
+            response.close();
         } catch (IOException e) {
             e.printStackTrace();
             return ResultType.SERVER_ERROR;
@@ -157,12 +162,16 @@ public class WebSystem implements AuthBackendSystem {
         };
         String result;
         try {
-            result = Request.Post(url)
-                    .bodyForm(Form.form().add("action", "login")
-                            .add("username", player.getName())
-                            .add("password", password).build())
-                    .addHeader("XenforoLogin-Key", key)
-                    .execute().handleResponse(responseHandler);
+            HttpPost request = new HttpPost(url);
+            Form form = Form.form();
+            form.add("action", "login");
+            form.add("username", player.getName());
+            form.add("password", password);
+            request.setEntity(new UrlEncodedFormEntity(form.build()));
+            request.addHeader("SodionAuth-Key", key);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            result = responseHandler.handleResponse(response);
+            response.close();
         } catch (IOException e) {
             e.printStackTrace();
             return ResultType.SERVER_ERROR;
@@ -263,11 +272,15 @@ public class WebSystem implements AuthBackendSystem {
         };
         String result;
         try {
-            result = Request.Post(url)
-                    .bodyForm(Form.form().add("action", "join")
-                            .add("username", player.getName()).build())
-                    .addHeader("XenforoLogin-Key", key)
-                    .execute().handleResponse(responseHandler);
+            HttpPost request = new HttpPost(url);
+            Form form = Form.form();
+            form.add("action", "join");
+            form.add("username", player.getName());
+            request.setEntity(new UrlEncodedFormEntity(form.build()));
+            request.addHeader("SodionAuth-Key", key);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            result = responseHandler.handleResponse(response);
+            response.close();
         } catch (IOException e) {
             e.printStackTrace();
             return ResultType.SERVER_ERROR;

@@ -18,8 +18,10 @@ package red.mohist.sodionauth.core.protection.implementations.antiproxies.implem
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.fluent.Request;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.protection.implementations.antiproxies.ProxySystem;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ import java.util.regex.Pattern;
 
 public class QiYun implements ProxySystem {
     private final CopyOnWriteArrayList<String> proxyList;
+    private final Pattern pattern = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
 
     public QiYun() {
         proxyList = new CopyOnWriteArrayList<>();
@@ -48,15 +51,14 @@ public class QiYun implements ProxySystem {
             return null;
         };
 
-        String result = Request.Get("http://www.89ip.cn/tqdl.html?api=1&num=9999")
-                .addHeader("accept", "*/*")
-                .addHeader("connection", "Keep-Alive")
-                .addHeader("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)")
-                .execute().handleResponse(responseHandler);
+        HttpGet request = new HttpGet("http://www.89ip.cn/tqdl.html?api=1&num=9999");
+        request.addHeader("accept", "*/*");
+        CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+        String result = responseHandler.handleResponse(response);
+
         if (result == null) {
             throw new IOException("Result is null");
         }
-        Pattern pattern = Pattern.compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
         Matcher matcher = pattern.matcher(result);
         while (matcher.find()) {
             String ip = matcher.group();
