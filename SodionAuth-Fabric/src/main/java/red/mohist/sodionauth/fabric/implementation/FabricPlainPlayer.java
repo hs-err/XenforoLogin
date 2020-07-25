@@ -16,10 +16,10 @@
 
 package red.mohist.sodionauth.fabric.implementation;
 
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.*;
 
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,12 +50,87 @@ public class FabricPlainPlayer extends AbstractPlayer {
     }
 
     @Override
+    public void setLocation(LocationInfo location) {
+
+    }
+
+    @Override
     public int getGameMode() {
         return 0;
     }
 
     @Override
     public void setGameMode(int i) {
+
+    }
+
+    @Override
+    public double getHealth() {
+        return 0;
+    }
+
+    @Override
+    public void setHealth(double health) {
+
+    }
+
+    @Override
+    public double getMaxHealth() {
+        return 0;
+    }
+
+    @Override
+    public void setMaxHealth(double maxHealth) {
+
+    }
+
+    @Override
+    public float getFallDistance() {
+        return 0;
+    }
+
+    @Override
+    public void setFallDistance(float fallDistance) {
+
+    }
+
+    @Override
+    public VelocityInfo getVelocity() {
+        return null;
+    }
+
+    @Override
+    public void setVelocity(VelocityInfo velocity) {
+
+    }
+
+    @Override
+    public FoodInfo getFood() {
+        return null;
+    }
+
+    @Override
+    public void setFood(FoodInfo food) {
+
+    }
+
+    @Override
+    public int getRemainingAir() {
+        return 0;
+    }
+
+    @Override
+    public void setRemainingAir(int remainingAir) {
+
+    }
+
+    @Override
+    public Collection<EffectInfo> getEffects() {
+        return null;
+    }
+
+    @Override
+    public void setEffects(Collection<EffectInfo> effects) {
 
     }
 

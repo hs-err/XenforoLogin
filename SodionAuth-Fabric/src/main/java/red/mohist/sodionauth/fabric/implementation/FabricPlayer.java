@@ -17,18 +17,29 @@
 package red.mohist.sodionauth.fabric.implementation;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Suppliers;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.HungerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.level.ServerWorldProperties;
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.*;
+import red.mohist.sodionauth.fabric.FabricLoader;
 import red.mohist.sodionauth.fabric.data.Data;
 
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 public class FabricPlayer extends AbstractPlayer {
 
@@ -37,6 +48,24 @@ public class FabricPlayer extends AbstractPlayer {
     }
 
     private final ServerPlayerEntity handle;
+    private static final Supplier<Field> getExhaustionField = Suppliers.memoize(() -> {
+        try {
+            final Field exhaustion = HungerManager.class.getDeclaredField("exhaustion");
+            exhaustion.setAccessible(true);
+            return exhaustion;
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException("Cannot get exhaustion field", e);
+        }
+    });
+    private static final Supplier<Field> getSaturationField = Suppliers.memoize(() -> {
+        try {
+            final Field saturation = HungerManager.class.getDeclaredField("foodSaturationLevel");
+            saturation.setAccessible(true);
+            return saturation;
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException("Cannot get saturation field", e);
+        }
+    });
 
     public FabricPlayer(ServerPlayerEntity handle) {
         super(handle.getName().getString(), handle.getUuid(),
@@ -88,6 +117,29 @@ public class FabricPlayer extends AbstractPlayer {
     }
 
     @Override
+    public void setLocation(LocationInfo location) {
+        Preconditions.checkState(!handle.isDisconnected());
+        Preconditions.checkNotNull(location);
+        ServerWorld world = null;
+        for (ServerWorld current : Data.serverInstance.getWorlds()) {
+            if (((ServerWorldProperties) current.getLevelProperties())
+                    .getLevelName().equals(location.world)) {
+                world = current;
+                break;
+            }
+        }
+        Preconditions.checkArgument(world != null, "Invaild world");
+        handle.teleport(
+                world,
+                location.x,
+                location.y,
+                location.z,
+                location.yaw,
+                location.pitch
+        );
+    }
+
+    @Override
     public int getGameMode() {
         Preconditions.checkState(!handle.isDisconnected());
         return handle.interactionManager.getGameMode().getId();
@@ -97,6 +149,128 @@ public class FabricPlayer extends AbstractPlayer {
     public void setGameMode(int gameMode) {
         Preconditions.checkState(!handle.isDisconnected());
         handle.setGameMode(GameMode.byId(gameMode, GameMode.SURVIVAL));
+    }
+
+    @Override
+    public double getHealth() {
+        Preconditions.checkState(!handle.isDisconnected());
+        return handle.getHealth();
+    }
+
+    @Override
+    public void setHealth(double health) {
+        Preconditions.checkState(!handle.isDisconnected());
+        handle.setHealth((float) health);
+    }
+
+    @Override
+    public double getMaxHealth() {
+        Preconditions.checkState(!handle.isDisconnected());
+        return handle.getMaxHealth();
+    }
+
+    @Override
+    public void setMaxHealth(double maxHealth) {
+        Preconditions.checkState(!handle.isDisconnected());
+        throw new UnsupportedOperationException("Setting max health in fabric is not implemented yet");
+    }
+
+    @Override
+    public float getFallDistance() {
+        Preconditions.checkState(!handle.isDisconnected());
+        return handle.fallDistance;
+    }
+
+    @Override
+    public void setFallDistance(float fallDistance) {
+        Preconditions.checkState(!handle.isDisconnected());
+        handle.fallDistance = fallDistance;
+    }
+
+    @Override
+    public VelocityInfo getVelocity() {
+        Preconditions.checkState(!handle.isDisconnected());
+        return VelocityInfo.create(
+                handle.getVelocity().x,
+                handle.getVelocity().y,
+                handle.getVelocity().z
+        );
+    }
+
+    @Override
+    public void setVelocity(VelocityInfo velocity) {
+        Preconditions.checkState(!handle.isDisconnected());
+        handle.setVelocity(velocity.x, velocity.y, velocity.z);
+    }
+
+    @Override
+    public FoodInfo getFood() {
+        Preconditions.checkState(!handle.isDisconnected());
+        try {
+            return FoodInfo.create(
+                    handle.getHungerManager().getFoodLevel(),
+                    getExhaustionField.get().getFloat(handle.getHungerManager()),
+                    handle.getHungerManager().getSaturationLevel()
+            );
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Unable to get exhaustion", e);
+        }
+    }
+
+    @Override
+    public void setFood(FoodInfo food) {
+        Preconditions.checkState(!handle.isDisconnected());
+        handle.getHungerManager().setFoodLevel(food.foodLevel);
+        try {
+            getExhaustionField.get().setFloat(handle.getHungerManager(), (float) food.exhaustion);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Unable to set exhaustion", e);
+        }
+        try {
+            getSaturationField.get().setFloat(handle.getHungerManager(), (float) food.saturation);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Unable to set saturation", e);
+        }
+    }
+
+    @Override
+    public int getRemainingAir() {
+        Preconditions.checkState(!handle.isDisconnected());
+        return handle.getMaxAir() - handle.getAir();
+    }
+
+    @Override
+    public void setRemainingAir(int remainingAir) {
+        Preconditions.checkState(!handle.isDisconnected());
+        handle.setAir(handle.getMaxAir() - remainingAir);
+    }
+
+    @Override
+    public Collection<EffectInfo> getEffects() {
+        Preconditions.checkState(!handle.isDisconnected());
+        ArrayList<EffectInfo> effects = new ArrayList<>(handle.getStatusEffects().size());
+        for (StatusEffectInstance statusEffect : handle.getStatusEffects()) {
+            effects.add(EffectInfo.create(
+                    Objects.requireNonNull(Registry.STATUS_EFFECT.getId(statusEffect.getEffectType())).toString(),
+                    statusEffect.getAmplifier(),
+                    statusEffect.getDuration()
+            ));
+        }
+        return Collections.unmodifiableList(effects);
+    }
+
+    @Override
+    public void setEffects(Collection<EffectInfo> effects) {
+        Preconditions.checkState(!handle.isDisconnected());
+        if (handle.clearStatusEffects())
+            FabricLoader.logger.warn("Cannot clear " + handle.getName() + " status effects cleanly");
+        for (EffectInfo effect : effects) {
+            handle.addStatusEffect(new StatusEffectInstance(
+                    Registry.STATUS_EFFECT.get(new Identifier(effect.type)),
+                    effect.duration,
+                    effect.amplifier
+            ));
+        }
     }
 
     @Override
