@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.fabric.mixinhelper;
 
+import net.minecraft.network.OffThreadException;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -34,6 +35,7 @@ public class MixinServerPlayNetworkHandlerHelper {
             if (Config.security.getCancelChatAfterLogin()) {
                 abstractPlayer.sendMessage(abstractPlayer.getLang().getLoggedIn());
                 ci.cancel();
+                throw OffThreadException.INSTANCE; // Alternative solution
             }
             return;
         }
