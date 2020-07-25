@@ -29,30 +29,35 @@ import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.sponge.SpongeLoader;
 
+import java.net.InetAddress;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class SpongePlayer extends AbstractPlayer {
+public class SpongePlainPlayer extends AbstractPlayer {
 
-    private final Player handle;
-
-    public SpongePlayer(Player handle) {
-        super(handle.getName(), handle.getUniqueId(), handle.getConnection().getAddress().getAddress());
-        this.handle = handle;
+    public SpongePlainPlayer(String name, UUID uuid, InetAddress address) {
+        super(name, uuid, address);
     }
 
     @Override
     public void sendMessage(String message) {
-        handle.sendMessage(Text.of(message));
+        Objects.requireNonNull(Sponge.getServer().getPlayer(getUniqueId())).get().sendMessage(Text.of(message));
     }
 
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
         CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
-        if(Sponge.getServer().isMainThread()){
-            booleanCompletableFuture.complete(handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
-                    .get().getLocation(location.x, location.y, location.z)));
-        }else{
-            Sponge.getScheduler().createTaskBuilder().execute(()->{
+        if (Sponge.getServer().isMainThread()) {
+            booleanCompletableFuture.complete(Sponge.getServer().getPlayer(getUniqueId()).get().setLocation(
+                    Sponge.getServer().getWorld(location.world).get().getLocation(
+                            location.x,
+                            location.y,
+                            location.z
+                    )
+            ));
+        } else {
+            Sponge.getScheduler().createTaskBuilder().execute(() -> {
                 try {
                     booleanCompletableFuture.complete(teleport(location).get());
                 } catch (Throwable e) {
@@ -65,12 +70,12 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
-        handle.kick(Text.of(message));
+        Sponge.getServer().getPlayer(getUniqueId()).get().kick(Text.of(message));
     }
 
     @Override
     public LocationInfo getLocation() {
-        Location<World> location = handle.getLocation();
+        Location<World> location = Sponge.getServer().getPlayer(getUniqueId()).get().getLocation();
         return new LocationInfo(
                 location.getExtent().getName(),
                 location.getX(),
@@ -82,6 +87,7 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public int getGameMode() {
+        Player handle = Sponge.getServer().getPlayer(getUniqueId()).get();
         GameMode gameMode = handle.gameMode().get();
         if (GameModes.SURVIVAL.equals(gameMode)) {
             return 0;
@@ -98,22 +104,23 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void setGameMode(int gameMode) {
-        if(Sponge.getServer().isMainThread()){
+        if (Sponge.getServer().isMainThread()) {
+            Player handle = Sponge.getServer().getPlayer(getUniqueId()).get();
             switch (gameMode) {
                 case 0:
-                    handle.offer(Keys.GAME_MODE,GameModes.SURVIVAL);
+                    handle.offer(Keys.GAME_MODE, GameModes.SURVIVAL);
                     return;
                 case 1:
-                    handle.offer(Keys.GAME_MODE,GameModes.CREATIVE);
+                    handle.offer(Keys.GAME_MODE, GameModes.CREATIVE);
                     return;
                 case 2:
-                    handle.offer(Keys.GAME_MODE,GameModes.ADVENTURE);
+                    handle.offer(Keys.GAME_MODE, GameModes.ADVENTURE);
                     return;
                 case 3:
-                    handle.offer(Keys.GAME_MODE,GameModes.SPECTATOR);
+                    handle.offer(Keys.GAME_MODE, GameModes.SPECTATOR);
             }
-        }else{
-            Sponge.getScheduler().createTaskBuilder().execute(()->{
+        } else {
+            Sponge.getScheduler().createTaskBuilder().execute(() -> {
                 setGameMode(gameMode);
             }).submit(SpongeLoader.instance);
         }
@@ -121,6 +128,7 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public boolean isOnline() {
-        return handle.isOnline();
+        return Sponge.getServer().getPlayer(getUniqueId()).get().isOnline();
     }
 }
+

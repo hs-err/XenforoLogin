@@ -25,34 +25,34 @@ import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 
+import java.net.InetAddress;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class BukkitPlayer extends AbstractPlayer {
-    private final Player handle;
+public class BukkitPlainPlayer extends AbstractPlayer {
 
-    public BukkitPlayer(Player handle) {
-        super(handle.getName(), handle.getUniqueId(), Objects.requireNonNull(handle.getAddress()).getAddress());
-        this.handle = handle;
+    public BukkitPlainPlayer(String name, UUID uuid, InetAddress address) {
+        super(name, uuid, address);
     }
 
     @Override
     public void sendMessage(String message) {
-        handle.sendMessage(message);
+        Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).sendMessage(message);
     }
 
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
         try {
             try {
-                return handle.teleportAsync(new Location(Bukkit.getWorld(location.world),
+                return Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).teleportAsync(new Location(Bukkit.getWorld(location.world),
                         location.x, location.y, location.z, location.yaw, location.pitch));
             } catch (NoSuchMethodError e) {
                 BukkitLoader.instance.getLogger()
                         .warning("You are not running Paper? Using synchronized teleport.");
                 CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
                 Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
-                        booleanCompletableFuture.complete(handle.teleport(new Location(Bukkit.getWorld(location.world),
+                        booleanCompletableFuture.complete(Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).teleport(new Location(Bukkit.getWorld(location.world),
                                 location.x, location.y, location.z, location.yaw, location.pitch))));
                 return booleanCompletableFuture;
             }
@@ -65,41 +65,49 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
-        Bukkit.getScheduler().runTask(BukkitLoader.instance, () -> handle.kickPlayer(message));
+        Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).kickPlayer(message);
     }
 
     @Override
     public LocationInfo getLocation() {
-        final Location holderLocation = handle.getLocation();
+        final Location location = Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).getLocation();
         return new LocationInfo(
-                holderLocation.getWorld().getName(),
-                holderLocation.getX(),
-                holderLocation.getY(),
-                holderLocation.getZ(),
-                holderLocation.getYaw(),
-                holderLocation.getPitch()
+                location.getWorld().getName(),
+                location.getX(),
+                location.getY(),
+                location.getZ(),
+                location.getYaw(),
+                location.getPitch()
         );
     }
 
     @Override
     public int getGameMode() {
-        return handle.getGameMode().getValue();
+        Player player = Bukkit.getPlayer(getUniqueId());
+        if (player != null) {
+            //noinspection deprecation
+            return player.getGameMode().getValue();
+        } else {
+            BukkitLoader.instance.getLogger().warning("fail to get gamemode");
+            return 0;
+        }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void setGameMode(int gameMode) {
-        GameMode gm = GameMode.getByValue(gameMode);
-        if (gm != null) {
-            Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->
-                    handle.setGameMode(gm));
-        } else {
-            BukkitLoader.instance.getLogger().warning("fail to set gamemode" + gameMode);
+        Player player = Bukkit.getPlayer(getUniqueId());
+        if (player != null) {
+            @SuppressWarnings("deprecation") GameMode gm = GameMode.getByValue(gameMode);
+            if (gm != null) {
+                player.setGameMode(gm);
+            } else {
+                BukkitLoader.instance.getLogger().warning("fail to set gamemode" + gameMode);
+            }
         }
     }
 
     @Override
     public boolean isOnline() {
-        return handle.isOnline();
+        return Objects.requireNonNull(Bukkit.getPlayer(getUniqueId())).isOnline();
     }
 }
