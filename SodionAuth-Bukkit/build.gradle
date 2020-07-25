@@ -26,7 +26,8 @@ plugins {
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
-    providedCompile project(path: ":SodionAuth-Core", configuration: "shadow")
+    implementation project(":SodionAuth-Core")
+    implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
 }
 
 processResources {
