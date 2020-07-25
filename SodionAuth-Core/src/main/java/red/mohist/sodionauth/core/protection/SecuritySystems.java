@@ -16,11 +16,12 @@
 
 package red.mohist.sodionauth.core.protection;
 
-import org.reflections.Reflections;
+
 import red.mohist.sodionauth.core.config.MainConfiguration;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.libs.reflections.Reflections;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

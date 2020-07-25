@@ -16,18 +16,16 @@
 
 package red.mohist.sodionauth.core.protection.implementations.antiproxies;
 
-import org.reflections.Reflections;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.libs.reflections.Reflections;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class ProxySystems implements SecuritySystem {

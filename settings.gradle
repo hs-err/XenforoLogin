@@ -31,4 +31,5 @@ include(':SodionAuth-Core')
 include(':SodionAuth-Fabric')
 include(':SodionAuth-YggdrasilServer')
 include(':SodionAuth-Sponge')
+include 'SodionAuth-Libs'
 
