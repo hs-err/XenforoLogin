@@ -21,19 +21,39 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.IllegalPluginAccessException;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.*;
+import red.mohist.sodionauth.core.utils.Helper;
 
+import java.net.InetAddress;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class BukkitPlayer extends AbstractPlayer {
-    private final Player handle;
+    private Player handle;
 
     public BukkitPlayer(Player handle) {
         super(handle.getName(), handle.getUniqueId(), Objects.requireNonNull(handle.getAddress()).getAddress());
         this.handle = handle;
+    }
+
+    public BukkitPlayer(String name, UUID uuid, InetAddress address) {
+        super(name, uuid, address);
+    }
+
+    public void checkHandle(){
+        if(handle==null){
+            handle=Bukkit.getPlayer(getUniqueId());
+            if(handle==null){
+                Helper.getLogger().warn("No player can be call.");
+            }
+        }
     }
 
     @Override
@@ -82,6 +102,11 @@ public class BukkitPlayer extends AbstractPlayer {
     }
 
     @Override
+    public void setLocation(LocationInfo location) {
+        teleport(location);
+    }
+
+    @Override
     public int getGameMode() {
         return handle.getGameMode().getValue();
     }
@@ -99,7 +124,120 @@ public class BukkitPlayer extends AbstractPlayer {
     }
 
     @Override
+    public double getHealth() {
+        checkHandle();
+        return handle.getHealth();
+    }
+
+    @Override
+    public void setHealth(double health) {
+        checkHandle();
+        handle.setHealth(health);
+    }
+
+    @Override
+    public double getMaxHealth() {
+        checkHandle();
+        return handle.getMaxHealth();
+    }
+
+    @Override
+    public void setMaxHealth(double maxHealth) {
+        checkHandle();
+        handle.setMaxHealth(maxHealth);
+    }
+
+    @Override
+    public float getFallDistance() {
+        checkHandle();
+        return handle.getFallDistance();
+    }
+
+    @Override
+    public void setFallDistance(float fallDistance) {
+        checkHandle();
+        handle.setFallDistance(fallDistance);
+    }
+
+    @Override
+    public VelocityInfo getVelocity() {
+        checkHandle();
+        Vector v3d = handle.getVelocity();
+        return VelocityInfo.create(v3d.getX(),v3d.getY(),v3d.getZ());
+    }
+
+    @Override
+    public void setVelocity(VelocityInfo velocity) {
+        checkHandle();
+        handle.setVelocity(new Vector(velocity.x,velocity.y,velocity.z));
+    }
+
+    @Override
+    public FoodInfo getFood() {
+        checkHandle();
+        return FoodInfo.create(
+                handle.getFoodLevel(),
+                handle.getExhaustion(),
+                handle.getSaturation()
+        );
+    }
+
+    @Override
+    public void setFood(FoodInfo food) {
+        checkHandle();
+        handle.setFoodLevel(food.foodLevel);
+        handle.setExhaustion((float) food.exhaustion);
+        handle.setSaturation((float) food.saturation);
+    }
+
+    @Override
+    public int getRemainingAir() {
+        checkHandle();
+        return handle.getRemainingAir();
+    }
+
+    @Override
+    public void setRemainingAir(int remainingAir) {
+        checkHandle();
+        handle.setRemainingAir(remainingAir);
+    }
+
+    @Override
+    public Collection<EffectInfo> getEffects() {
+        checkHandle();
+        Collection<EffectInfo> effects = new LinkedList<>();
+        for (PotionEffect effect : handle.getActivePotionEffects()) {
+            effects.add(EffectInfo.create(effect.getType().getName(),effect.getAmplifier(),effect.getDuration()));
+        }
+        return effects;
+    }
+
+    @Override
+    public void setEffects(Collection<EffectInfo> effects) {
+        checkHandle();
+        for (PotionEffectType effectType : PotionEffectType.values()) {
+            handle.removePotionEffect(effectType);
+        }
+        for (EffectInfo effect : effects) {
+            PotionEffectType potionEffectType=PotionEffectType.getByName(effect.type);
+            if(potionEffectType!=null) {
+                handle.addPotionEffect(new PotionEffect(
+                        potionEffectType,
+                        effect.duration,
+                        effect.amplifier
+                ));
+            }
+        }
+    }
+
+    @Override
     public boolean isOnline() {
+        if(handle==null){
+            handle=Bukkit.getPlayer(getUniqueId());
+        }
+        if(handle==null){
+            return false;
+        }
         return handle.isOnline();
     }
 }

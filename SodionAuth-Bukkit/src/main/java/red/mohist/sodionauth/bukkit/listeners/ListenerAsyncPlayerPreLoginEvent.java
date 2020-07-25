@@ -19,7 +19,7 @@ package red.mohist.sodionauth.bukkit.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import red.mohist.sodionauth.bukkit.implementation.BukkitPlainPlayer;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -33,7 +33,7 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
         if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
             return;
         }
-        AbstractPlayer abstractPlayer = new BukkitPlainPlayer(
+        AbstractPlayer abstractPlayer = new BukkitPlayer(
                 event.getName(), event.getUniqueId(), event.getAddress());
         if(!SodionAuthCore.instance.isEnabled()){
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, abstractPlayer.getLang().getErrors().getServer());

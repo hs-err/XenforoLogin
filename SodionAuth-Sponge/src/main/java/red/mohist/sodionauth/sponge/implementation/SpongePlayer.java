@@ -16,37 +16,60 @@
 
 package red.mohist.sodionauth.sponge.implementation;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.entity.FoodData;
+import org.spongepowered.api.data.value.BaseValue;
+import org.spongepowered.api.data.value.mutable.MutableBoundedValue;
+import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.SpongeLoader;
 
+import java.net.InetAddress;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class SpongePlayer extends AbstractPlayer {
 
-    private final Player handle;
+    private Player handle;
 
     public SpongePlayer(Player handle) {
         super(handle.getName(), handle.getUniqueId(), handle.getConnection().getAddress().getAddress());
         this.handle = handle;
     }
+    public SpongePlayer(String name, UUID uuid, InetAddress address) {
+        super(name, uuid, address);
+    }
+    public void checkHandle(){
+        if(handle==null){
+            Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(getUniqueId());
+            if(!optionalPlayer.isPresent()){
+                Helper.getLogger().warn("No player can be call.");
+            }else{
+                handle=optionalPlayer.get();
+            }
+        }
+    }
 
     @Override
     public void sendMessage(String message) {
+        checkHandle();
         handle.sendMessage(Text.of(message));
     }
 
     @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
+        checkHandle();
         CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
         if(Sponge.getServer().isMainThread()){
             booleanCompletableFuture.complete(handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
@@ -65,11 +88,13 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
+        checkHandle();
         handle.kick(Text.of(message));
     }
 
     @Override
     public LocationInfo getLocation() {
+        checkHandle();
         Location<World> location = handle.getLocation();
         return new LocationInfo(
                 location.getExtent().getName(),
@@ -81,7 +106,12 @@ public class SpongePlayer extends AbstractPlayer {
     }
 
     @Override
+    public void setLocation(LocationInfo location) {
+        teleport(location);
+    }
+
     public int getGameMode() {
+        checkHandle();
         GameMode gameMode = handle.gameMode().get();
         if (GameModes.SURVIVAL.equals(gameMode)) {
             return 0;
@@ -98,6 +128,7 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void setGameMode(int gameMode) {
+        checkHandle();
         if(Sponge.getServer().isMainThread()){
             switch (gameMode) {
                 case 0:
@@ -120,7 +151,121 @@ public class SpongePlayer extends AbstractPlayer {
     }
 
     @Override
+    public double getHealth() {
+        checkHandle();
+        return handle.getHealthData().health().get();
+    }
+
+    @Override
+    public void setHealth(double health) {
+        checkHandle();
+        handle.offer(Keys.HEALTH,health);
+    }
+
+    @Override
+    public double getMaxHealth() {
+        checkHandle();
+        return handle.getHealthData().maxHealth().get();
+    }
+
+    @Override
+    public void setMaxHealth(double maxHealth) {
+        checkHandle();
+        handle.offer(Keys.MAX_HEALTH,maxHealth);
+    }
+
+    @Override
+    public float getFallDistance() {
+        checkHandle();
+        return handle.get(Keys.FALL_DISTANCE).orElse((float) 0);
+    }
+
+    @Override
+    public void setFallDistance(float fallDistance) {
+        checkHandle();
+        handle.offer(Keys.FALL_DISTANCE,fallDistance);
+    }
+
+    @Override
+    public VelocityInfo getVelocity() {
+        checkHandle();
+        Vector3d v3d = handle.getVelocity();
+        return VelocityInfo.create(v3d.getX(),v3d.getY(),v3d.getZ());
+    }
+
+    @Override
+    public void setVelocity(VelocityInfo velocity) {
+        checkHandle();
+        handle.setVelocity(new Vector3d(velocity.x,velocity.y,velocity.z));
+    }
+
+    @Override
+    public FoodInfo getFood() {
+        checkHandle();
+        FoodData foodData = handle.getFoodData();
+        return FoodInfo.create(
+                foodData.foodLevel().get(),
+                foodData.exhaustion().get(),
+                foodData.saturation().get()
+        );
+    }
+
+    @Override
+    public void setFood(FoodInfo food) {
+        checkHandle();
+        handle.offer(Keys.FOOD_LEVEL,food.foodLevel);
+        handle.offer(Keys.EXHAUSTION,food.exhaustion);
+        handle.offer(Keys.SATURATION,food.saturation);
+    }
+
+    @Override
+    public int getRemainingAir() {
+        checkHandle();
+        Optional<MutableBoundedValue<Integer>> remainingAir = handle.getValue(Keys.REMAINING_AIR);
+        return remainingAir.map(BaseValue::get).orElse(0);
+    }
+
+    @Override
+    public void setRemainingAir(int remainingAir) {
+        checkHandle();
+        handle.offer(Keys.REMAINING_AIR,remainingAir);
+    }
+
+    @Override
+    public Collection<EffectInfo> getEffects() {
+        checkHandle();
+        Collection<EffectInfo> effectInfoCollection = new LinkedList<>();
+        handle.get(Keys.POTION_EFFECTS).ifPresent(value -> {
+            for (PotionEffect effect : value) {
+                effectInfoCollection.add(EffectInfo.create(effect.getType().getId(),effect.getAmplifier(),effect.getDuration()));
+            }
+        });
+        return effectInfoCollection;
+    }
+
+    @Override
+    public void setEffects(Collection<EffectInfo> effects) {
+        checkHandle();
+        List<PotionEffect> potionEffects = new LinkedList<>();
+        for (EffectInfo effect : effects) {
+            // potionEffects.add(
+            //         PotionEffect.builder()
+            //                 .potionType(PotionEffectTypes)
+            //                 .amplifier(effect.amplifier)
+            //                 .duration(effect.duration)
+            //                 .build());
+            // TODO: get PotionEffectType by ID
+        }
+        handle.offer(Keys.POTION_EFFECTS,potionEffects);
+
+    }
+
     public boolean isOnline() {
-        return handle.isOnline();
+        if(handle==null){
+            Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(getUniqueId());
+            return optionalPlayer.map(User::isOnline).orElse(false);
+        }else {
+            return handle.isOnline();
+        }
     }
 }

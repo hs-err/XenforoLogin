@@ -22,13 +22,14 @@ import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Lang;
 
 import java.net.InetAddress;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractPlayer {
-    private final String name;
-    private final UUID uuid;
-    private final InetAddress address;
+    protected final String name;
+    protected final UUID uuid;
+    protected final InetAddress address;
 
     public AbstractPlayer(String name, UUID uuid, InetAddress address) {
         this.name = name;
@@ -60,10 +61,55 @@ public abstract class AbstractPlayer {
     public abstract void kick(String message);
 
     public abstract LocationInfo getLocation();
+    public abstract void setLocation(LocationInfo location);
 
     public abstract int getGameMode();
-
     public abstract void setGameMode(int gameMode);
 
+    public abstract double getHealth();
+    public abstract void setHealth(double health);
+
+    public abstract double getMaxHealth();
+    public abstract void setMaxHealth(double maxHealth);
+
+    public abstract float getFallDistance();
+    public abstract void setFallDistance(float fallDistance);
+
+    public abstract VelocityInfo getVelocity();
+    public abstract void setVelocity(VelocityInfo velocity);
+
+    public abstract FoodInfo getFood();
+    public abstract void setFood(FoodInfo food);
+
+    public abstract int getRemainingAir();
+    public abstract void setRemainingAir(int remainingAir);
+
+    public abstract Collection<EffectInfo> getEffects();
+    public abstract void setEffects(Collection<EffectInfo> effects);
+
+    public PlayerInfo getPlayerInfo(){
+        PlayerInfo playerInfo=new PlayerInfo();
+        playerInfo.location=getLocation();
+        playerInfo.gameMode=getGameMode();
+        playerInfo.health=getHealth();
+        playerInfo.maxHealth=getMaxHealth();
+        playerInfo.fallDistance=getFallDistance();
+        playerInfo.velocity=getVelocity();
+        playerInfo.food=getFood();
+        playerInfo.remainingAir=getRemainingAir();
+        playerInfo.effects=getEffects();
+        return playerInfo;
+    }
+    public void setPlayerInfo(PlayerInfo playerInfo){
+        setLocation(playerInfo.location);
+        setGameMode(playerInfo.gameMode);
+        setHealth(playerInfo.health);
+        setMaxHealth(playerInfo.maxHealth);
+        setFallDistance(playerInfo.fallDistance);
+        setVelocity(playerInfo.velocity);
+        setFood(playerInfo.food);
+        setRemainingAir(playerInfo.remainingAir);
+        setEffects(playerInfo.effects);
+    }
     public abstract boolean isOnline();
 }

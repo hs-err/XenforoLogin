@@ -24,13 +24,13 @@ import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.sponge.implementation.SpongePlainPlayer;
+import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
 public class AuthListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onAuthEvent(Auth event, @First GameProfile profile) {
-        AbstractPlayer abstractPlayer = new SpongePlainPlayer(
+        AbstractPlayer abstractPlayer = new SpongePlayer(
                 event.getProfile().getName().get(),
                 event.getProfile().getUniqueId(),
                 event.getConnection().getAddress().getAddress());
