@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.bukkit.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerPreLoginEvent;
@@ -35,6 +36,12 @@ public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
                 event.getName(), event.getUniqueId(), event.getAddress());
         if(!SodionAuthCore.instance.isEnabled()){
             event.setKickMessage(abstractPlayer.getLang().getErrors().getServer());
+            return;
+        }
+        if(Bukkit.getPlayerExact(event.getName())!=null){
+            new Exception().printStackTrace();
+            event.setKickMessage(abstractPlayer.getLang().getErrors().getLoginExist());
+            return;
         }
         if (!SodionAuthCore.instance.logged_in.containsKey(event.getUniqueId())) {
             String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);

@@ -22,6 +22,7 @@ public class EffectInfo {
     public int duration=0;
     public static EffectInfo create(String type,int amplifier,int duration){
         EffectInfo effect=new EffectInfo();
+        effect.type=type;
         effect.amplifier=amplifier;
         effect.duration=duration;
         return effect;

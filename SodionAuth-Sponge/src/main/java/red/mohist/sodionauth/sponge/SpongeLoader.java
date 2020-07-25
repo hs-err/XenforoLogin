@@ -32,7 +32,9 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.FoodInfo;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.libs.reflections.Reflections;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
@@ -40,10 +42,7 @@ import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 @Plugin(
         id = "sodionauth",
@@ -162,6 +161,29 @@ public class SpongeLoader implements PlatformAdapter {
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
-
+        if(player instanceof SpongePlayer){
+            Runnable run = () -> {
+                Player handle = ((SpongePlayer) player).handle;
+                handle.respawnPlayer();
+                player.setEffects(new LinkedList<>());
+                player.setHealth(20);
+                player.setRemainingAir(0);
+                player.setMaxHealth(20);
+                player.setFood(new FoodInfo());
+                if (Config.security.getSpectatorLogin()) {
+                    player.setGameMode(3);
+                } else {
+                    player.setGameMode(Config.security.getDefaultGamemode());
+                }
+            };
+            if(Sponge.getServer().isMainThread()){
+                run.run();
+            }else{
+                Sponge.getScheduler()
+                        .createTaskBuilder()
+                        .execute(run)
+                        .submit(this);
+            }
+        }
     }
 }

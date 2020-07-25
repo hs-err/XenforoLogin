@@ -58,7 +58,11 @@ public class ResultTypeUtils {
                 player.kick(player.getLang().getErrors().getUserExist());
                 return false;
             case EMAIL_WRONG:
+                player.sendMessage(player.getLang().getErrors().getEmail());
+                SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                return false;
             case EMAIL_EXIST:
+                player.sendMessage(player.getLang().getErrors().getMailExist());
                 SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 return false;
         }

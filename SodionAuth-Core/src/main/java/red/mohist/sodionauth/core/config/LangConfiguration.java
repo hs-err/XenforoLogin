@@ -243,6 +243,7 @@ public class LangConfiguration {
         private String unknown;
         private String mailExist;
         private String userExist;
+        private String loginExist;
 
         public String getProxy(Map<String, String> data) {
             String result = getProxy();
@@ -578,6 +579,27 @@ public class LangConfiguration {
 
         public String getUserExist() {
             return userExist != null ? userExist : Lang.all.errors.userExist;
+        }
+
+        public String getLoginExist(Map<String, String> data) {
+            String result = getLoginExist();
+            if (result == null) {
+                StringBuilder resultBuilder = new StringBuilder("userExist");
+                resultBuilder.append("\n");
+                for (Map.Entry<String, String> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                }
+                result = resultBuilder.toString();
+                return result;
+            }
+            for (Map.Entry<String, String> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            }
+            return result;
+        }
+
+        public String getLoginExist() {
+            return loginExist != null ? loginExist : Lang.all.errors.loginExist;
         }
     }
 }

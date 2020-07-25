@@ -90,6 +90,7 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public LocationInfo getLocation() {
+        checkHandle();
         final Location holderLocation = handle.getLocation();
         return new LocationInfo(
                 holderLocation.getWorld().getName(),
@@ -215,8 +216,8 @@ public class BukkitPlayer extends AbstractPlayer {
     @Override
     public void setEffects(Collection<EffectInfo> effects) {
         checkHandle();
-        for (PotionEffectType effectType : PotionEffectType.values()) {
-            handle.removePotionEffect(effectType);
+        for (PotionEffect effect : handle.getActivePotionEffects()) {
+            handle.removePotionEffect(effect.getType());
         }
         for (EffectInfo effect : effects) {
             PotionEffectType potionEffectType=PotionEffectType.getByName(effect.type);
@@ -239,5 +240,14 @@ public class BukkitPlayer extends AbstractPlayer {
             return false;
         }
         return handle.isOnline();
+    }
+
+    @Override
+    public void setPlayerInfo(PlayerInfo playerInfo) {
+        if(!Bukkit.isPrimaryThread()){
+            Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->{setPlayerInfo(playerInfo);});
+            return;
+        }
+        super.setPlayerInfo(playerInfo);
     }
 }

@@ -35,7 +35,6 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
         }
         SodionAuthCore.instance.api.sendBlankInventoryPacket(abstractPlayer);
         if (!SodionAuthCore.instance.logged_in.containsKey(abstractPlayer.getUniqueId())) {
-
             String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
             if (canLogin != null) {
                 SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());

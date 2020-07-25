@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.sponge.listeners;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
@@ -37,6 +38,12 @@ public class AuthListener implements SpongeAPIListener {
         if(!SodionAuthCore.instance.isEnabled()){
             event.setMessage(Text.of(abstractPlayer.getLang().getErrors().getServer()));
             event.setCancelled(true);
+            return;
+        }
+        if(Sponge.getServer().getPlayer(abstractPlayer.getName()).isPresent()){
+            event.setMessage(Text.of(abstractPlayer.getLang().getErrors().getLoginExist()));
+            event.setCancelled(true);
+            return;
         }
         String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
         if (canLogin != null) {

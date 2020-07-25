@@ -23,6 +23,8 @@ import org.spongepowered.api.data.manipulator.mutable.entity.FoodData;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.mutable.MutableBoundedValue;
 import org.spongepowered.api.effect.potion.PotionEffect;
+import org.spongepowered.api.effect.potion.PotionEffectType;
+import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
@@ -35,13 +37,15 @@ import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.SpongeLoader;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class SpongePlayer extends AbstractPlayer {
 
-    private Player handle;
+    public Player handle;
 
     public SpongePlayer(Player handle) {
         super(handle.getName(), handle.getUniqueId(), handle.getConnection().getAddress().getAddress());
@@ -72,7 +76,7 @@ public class SpongePlayer extends AbstractPlayer {
         checkHandle();
         CompletableFuture<Boolean> booleanCompletableFuture = new CompletableFuture<>();
         if(Sponge.getServer().isMainThread()){
-            booleanCompletableFuture.complete(handle.setLocationSafely(Sponge.getServer().getWorld(location.world)
+            booleanCompletableFuture.complete(handle.setLocation(Sponge.getServer().getWorld(location.world)
                     .get().getLocation(location.x, location.y, location.z)));
         }else{
             Sponge.getScheduler().createTaskBuilder().execute(()->{
@@ -89,6 +93,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void kick(String message) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{kick(message);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.kick(Text.of(message));
     }
 
@@ -107,6 +118,7 @@ public class SpongePlayer extends AbstractPlayer {
 
     @Override
     public void setLocation(LocationInfo location) {
+        checkHandle();
         teleport(location);
     }
 
@@ -129,24 +141,25 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setGameMode(int gameMode) {
         checkHandle();
-        if(Sponge.getServer().isMainThread()){
-            switch (gameMode) {
-                case 0:
-                    handle.offer(Keys.GAME_MODE,GameModes.SURVIVAL);
-                    return;
-                case 1:
-                    handle.offer(Keys.GAME_MODE,GameModes.CREATIVE);
-                    return;
-                case 2:
-                    handle.offer(Keys.GAME_MODE,GameModes.ADVENTURE);
-                    return;
-                case 3:
-                    handle.offer(Keys.GAME_MODE,GameModes.SPECTATOR);
-            }
-        }else{
-            Sponge.getScheduler().createTaskBuilder().execute(()->{
-                setGameMode(gameMode);
-            }).submit(SpongeLoader.instance);
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setGameMode(gameMode);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
+        switch (gameMode) {
+            case 0:
+                handle.offer(Keys.GAME_MODE,GameModes.SURVIVAL);
+                return;
+            case 1:
+                handle.offer(Keys.GAME_MODE,GameModes.CREATIVE);
+                return;
+            case 2:
+                handle.offer(Keys.GAME_MODE,GameModes.ADVENTURE);
+                return;
+            case 3:
+                handle.offer(Keys.GAME_MODE,GameModes.SPECTATOR);
         }
     }
 
@@ -159,6 +172,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setHealth(double health) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setHealth(health);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.offer(Keys.HEALTH,health);
     }
 
@@ -171,6 +191,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setMaxHealth(double maxHealth) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setMaxHealth(maxHealth);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.offer(Keys.MAX_HEALTH,maxHealth);
     }
 
@@ -183,6 +210,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setFallDistance(float fallDistance) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setFallDistance(fallDistance);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.offer(Keys.FALL_DISTANCE,fallDistance);
     }
 
@@ -196,6 +230,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setVelocity(VelocityInfo velocity) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setVelocity(velocity);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.setVelocity(new Vector3d(velocity.x,velocity.y,velocity.z));
     }
 
@@ -213,6 +254,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setFood(FoodInfo food) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setFood(food);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.offer(Keys.FOOD_LEVEL,food.foodLevel);
         handle.offer(Keys.EXHAUSTION,food.exhaustion);
         handle.offer(Keys.SATURATION,food.saturation);
@@ -228,6 +276,13 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setRemainingAir(int remainingAir) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setRemainingAir(remainingAir);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         handle.offer(Keys.REMAINING_AIR,remainingAir);
     }
 
@@ -246,18 +301,37 @@ public class SpongePlayer extends AbstractPlayer {
     @Override
     public void setEffects(Collection<EffectInfo> effects) {
         checkHandle();
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setEffects(effects);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
         List<PotionEffect> potionEffects = new LinkedList<>();
         for (EffectInfo effect : effects) {
-            // potionEffects.add(
-            //         PotionEffect.builder()
-            //                 .potionType(PotionEffectTypes)
-            //                 .amplifier(effect.amplifier)
-            //                 .duration(effect.duration)
-            //                 .build());
-            // TODO: get PotionEffectType by ID
+            for (Field field : PotionEffectTypes.class.getFields()) {
+                if(field.getType()== PotionEffectType.class
+                        && Modifier.isStatic(field.getModifiers())){
+                    try {
+                        if(((PotionEffectType) field.get(PotionEffect.class)).getId().equals(effect.type)){
+                            potionEffects.add(
+                                    PotionEffect.builder()
+                                            .potionType(((PotionEffectType) field.get(PotionEffect.class)))
+                                            .amplifier(effect.amplifier)
+                                            .duration(effect.duration)
+                                            .particles(true)
+                                            .ambience(false)
+                                            .build());
+                            break;
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         handle.offer(Keys.POTION_EFFECTS,potionEffects);
-
     }
 
     public boolean isOnline() {
@@ -267,5 +341,17 @@ public class SpongePlayer extends AbstractPlayer {
         }else {
             return handle.isOnline();
         }
+    }
+
+    @Override
+    public void setPlayerInfo(PlayerInfo playerInfo) {
+        if(!Sponge.getServer().isMainThread()){
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{setPlayerInfo(playerInfo);})
+                    .submit(SpongeLoader.instance);
+            return;
+        }
+        super.setPlayerInfo(playerInfo);
     }
 }

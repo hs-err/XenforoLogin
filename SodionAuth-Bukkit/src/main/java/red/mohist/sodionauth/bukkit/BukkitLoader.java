@@ -27,6 +27,7 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.FoodInfo;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -34,10 +35,7 @@ import red.mohist.sodionauth.core.utils.LoginTicker;
 import red.mohist.sodionauth.libs.reflections.Reflections;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
@@ -142,12 +140,6 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
         return allPlayers;
     }
 
-    public void sendBlankInventoryPacket(Player player) {
-        if (listenerProtocolEvent != null) {
-            listenerProtocolEvent.sendBlankInventoryPacket(player);
-        }
-    }
-
     @Override
     public LocationInfo getSpawn(String world) {
         Location spawn_location = Objects.requireNonNull(Bukkit.getWorld(getDefaultWorld())).getSpawnLocation();
@@ -171,10 +163,23 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
-        if (listenerProtocolEvent != null) {
-            Player p = Bukkit.getPlayer(player.getUniqueId());
-            if (p != null) {
-                sendBlankInventoryPacket(p);
+        Player p = Bukkit.getPlayer(player.getUniqueId());
+        if (p != null) {
+            if (listenerProtocolEvent != null) {
+                listenerProtocolEvent.sendBlankInventoryPacket(p);
+            }
+            if(p.isDead()){
+                p.spigot().respawn();
+            }
+            player.setEffects(new LinkedList<>());
+            player.setHealth(20);
+            player.setRemainingAir(0);
+            player.setMaxHealth(20);
+            player.setFood(new FoodInfo());
+            if(Config.security.getSpectatorLogin()) {
+                player.setGameMode(3);
+            }else{
+                player.setGameMode(Config.security.getDefaultGamemode());
             }
         }
     }

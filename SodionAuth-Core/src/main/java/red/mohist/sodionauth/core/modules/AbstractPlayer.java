@@ -101,7 +101,9 @@ public abstract class AbstractPlayer {
         return playerInfo;
     }
     public void setPlayerInfo(PlayerInfo playerInfo){
-        setLocation(playerInfo.location);
+        if(Config.teleport.getTpBackAfterLogin()) {
+            setLocation(playerInfo.location);
+        }
         setGameMode(playerInfo.gameMode);
         setHealth(playerInfo.health);
         setMaxHealth(playerInfo.maxHealth);

@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core.modules;
 
-import com.google.gson.Gson;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.utils.Config;
 
@@ -24,7 +23,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class PlayerInfo {
-    public LocationInfo location = SodionAuthCore.instance.default_location;
+    public LocationInfo location = SodionAuthCore.instance.spawn_location;
     public Integer gameMode = Config.security.getDefaultGamemode();
     public double health=20;
     public double maxHealth=20;
@@ -33,12 +32,4 @@ public class PlayerInfo {
     public FoodInfo food=new FoodInfo();
     public int remainingAir=0;
     public Collection<EffectInfo> effects=new LinkedList<>();
-
-    public String serialize() {
-       return new Gson().toJson(this);
-    }
-
-    public static PlayerInfo deserialize(String info){
-        return new Gson().fromJson(info,PlayerInfo.class);
-    }
 }

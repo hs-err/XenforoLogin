@@ -24,6 +24,7 @@
     "nameIncorrect": "§6[§1XenforoLogin§6]§1§f You should use \"[correct]\", not this to login.",
     "unknown": "§6[§1XenforoLogin§6]§1§f Unknown error. Web send \"[message]\"",
     "mailExist": "§6[§1XenforoLogin§6]§1§f Your email already exists in our database. Try another one.",
-    "userExist": "§6[§1XenforoLogin§6]§1§f Your username is already registered in our database. Try another one."
+    "userExist": "§6[§1XenforoLogin§6]§1§f Your username is already registered in our database. Try another one.",
+    "loginExist": "§6[§1XenforoLogin§6]§1§f You have been logged from another place."
   }
 }
