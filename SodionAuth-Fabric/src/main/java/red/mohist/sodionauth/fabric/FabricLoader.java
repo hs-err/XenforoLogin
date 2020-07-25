@@ -106,6 +106,11 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
     }
 
     @Override
+    public void shutdown() {
+        Data.serverInstance.shutdown();
+    }
+
+    @Override
     public LocationInfo getSpawn(String world) {
         Preconditions.checkNotNull(world);
         for (ServerWorld world1 : Data.serverInstance.getWorlds()) {
