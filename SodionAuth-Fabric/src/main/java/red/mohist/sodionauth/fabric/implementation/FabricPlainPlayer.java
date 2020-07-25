@@ -1,0 +1,66 @@
+/*
+ * Copyright 2020 Mohist-Community
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package red.mohist.sodionauth.fabric.implementation;
+
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+
+import java.net.InetAddress;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+public class FabricPlainPlayer extends AbstractPlayer {
+
+    public FabricPlainPlayer(String name, UUID uuid, InetAddress address) {
+        super(name, uuid, address);
+    }
+
+    @Override
+    public void sendMessage(String s) {
+
+    }
+
+    @Override
+    public CompletableFuture<Boolean> teleport(LocationInfo locationInfo) {
+        return null;
+    }
+
+    @Override
+    public void kick(String s) {
+
+    }
+
+    @Override
+    public LocationInfo getLocation() {
+        return null;
+    }
+
+    @Override
+    public int getGameMode() {
+        return 0;
+    }
+
+    @Override
+    public void setGameMode(int i) {
+
+    }
+
+    @Override
+    public boolean isOnline() {
+        return false;
+    }
+}
