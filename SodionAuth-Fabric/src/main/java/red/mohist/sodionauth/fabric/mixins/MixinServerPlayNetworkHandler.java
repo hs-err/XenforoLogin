@@ -16,9 +16,38 @@
 
 package red.mohist.sodionauth.fabric.mixins;
 
+import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.fabric.data.Data;
+import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
 
 @Mixin(ServerPlayNetworkHandler.class)
 public class MixinServerPlayNetworkHandler {
+
+    @Shadow
+    public ServerPlayerEntity player;
+
+    @Inject(method = "onGameMessage", at = @At("HEAD"), cancellable = true)
+    public void onGameMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
+        if (Data.serverInstance.isOnThread()) return;
+        AbstractPlayer abstractPlayer = new FabricPlayer(this.player);
+        if (!SodionAuthCore.instance.needCancelled(abstractPlayer)) {
+            if (Config.security.getCancelChatAfterLogin()) {
+                abstractPlayer.sendMessage(abstractPlayer.getLang().getLoggedIn());
+                ci.cancel();
+            }
+            return;
+        }
+        SodionAuthCore.instance.onChat(abstractPlayer, packet.getChatMessage());
+    }
+
 }

@@ -17,16 +17,21 @@
 package red.mohist.sodionauth.fabric.mixins;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.implementation.FabricPlainPlayer;
+import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -56,12 +61,28 @@ public class MixinPlayerManager {
             reason = SodionAuthCore.instance.canJoin(abstractPlayer).get();
         } catch (InterruptedException | ExecutionException e) {
             SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+            MixinLogger.logger.error("Error while authenticate " + profile.getName(), e);
             throw new RuntimeException(e);
         }
         if (reason != null) {
             SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+            MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
             cir.setReturnValue(new LiteralText(reason));
         }
+    }
+
+    @Inject(method = "onPlayerConnect", at = @At("HEAD"))
+    public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+        AbstractPlayer abstractPlayer = new FabricPlayer(player);
+        MixinLogger.logger.info("Calling onJoin for " + player.getName().asString());
+        SodionAuthCore.instance.onJoin(abstractPlayer);
+    }
+
+    @Inject(method = "remove", at = @At("TAIL"))
+    public void onRemovePlayer(ServerPlayerEntity player, CallbackInfo ci) {
+        AbstractPlayer abstractPlayer = new FabricPlayer(player);
+        MixinLogger.logger.info("Calling onRemovePlayer for " + player.getName());
+        SodionAuthCore.instance.onQuit(abstractPlayer);
     }
 
 }

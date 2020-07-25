@@ -90,4 +90,17 @@ public class FabricPlayer extends AbstractPlayer {
     public boolean isOnline() {
         return !handle.isDisconnected();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FabricPlayer that = (FabricPlayer) o;
+        return handle.equals(that.handle);
+    }
+
+    @Override
+    public int hashCode() {
+        return handle.getUuid().hashCode();
+    }
 }
