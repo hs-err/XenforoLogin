@@ -17,15 +17,12 @@
 package red.mohist.sodionauth.fabric.mixinhelper;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.implementation.FabricPlainPlayer;
-import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
@@ -61,15 +58,4 @@ public class MixinPlayerManagerHelper {
         }
     }
 
-    public static void onPlayerConnect(ServerPlayerEntity player) {
-        AbstractPlayer abstractPlayer = new FabricPlayer(player);
-        MixinLogger.logger.info("Calling onJoin for " + player.getName().asString());
-        SodionAuthCore.instance.onJoin(abstractPlayer);
-    }
-
-    public static void onRemovePlayer(ServerPlayerEntity player) {
-        AbstractPlayer abstractPlayer = new FabricPlayer(player);
-        MixinLogger.logger.info("Calling onRemovePlayer for " + player.getName());
-        SodionAuthCore.instance.onQuit(abstractPlayer);
-    }
 }

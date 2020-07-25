@@ -19,8 +19,9 @@ package red.mohist.sodionauth.fabric.implementation;
 import com.google.common.base.Preconditions;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
+import net.minecraft.text.LiteralText;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.level.ServerWorldProperties;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.fabric.data.Data;
@@ -30,6 +31,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class FabricPlayer extends AbstractPlayer {
+
+    public ServerPlayerEntity getHandle() {
+        return handle;
+    }
 
     private final ServerPlayerEntity handle;
 
@@ -42,7 +47,7 @@ public class FabricPlayer extends AbstractPlayer {
     @Override
     public void sendMessage(String message) {
         Preconditions.checkState(!handle.isDisconnected());
-        handle.sendMessage(Text.method_30163(message), false);
+        handle.sendMessage(new LiteralText(message), false);
     }
 
     @Override
@@ -65,13 +70,21 @@ public class FabricPlayer extends AbstractPlayer {
     @Override
     public void kick(String message) {
         Preconditions.checkState(!handle.isDisconnected());
-        handle.networkHandler.disconnect(Text.method_30163(message));
+        handle.networkHandler.disconnect(new LiteralText(message));
     }
 
     @Override
     public LocationInfo getLocation() {
         Preconditions.checkState(!handle.isDisconnected());
-        return null;
+        return new LocationInfo(
+                ((ServerWorldProperties) handle.world.getLevelProperties())
+                        .getLevelName(),
+                handle.getX(),
+                handle.getY(),
+                handle.getZ(),
+                handle.yaw,
+                handle.pitch
+        );
     }
 
     @Override

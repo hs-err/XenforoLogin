@@ -4,6 +4,7 @@
   "package": "red.mohist.sodionauth.fabric.mixins",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "MixinClientConnection",
     "MixinDedicatedServer",
     "MixinMinecraftServer",
     "MixinPlayerManager",

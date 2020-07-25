@@ -138,7 +138,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
-        ServerPlayerEntity fabricPlayer = Data.serverInstance.getPlayerManager().getPlayer(player.getName());
+        ServerPlayerEntity fabricPlayer = ((FabricPlayer) player).getHandle();
         assert fabricPlayer != null;
         fabricPlayer.networkHandler.sendPacket(new InventoryS2CPacket(-1,
                 DefaultedList.ofSize(54, ItemStack.EMPTY)));

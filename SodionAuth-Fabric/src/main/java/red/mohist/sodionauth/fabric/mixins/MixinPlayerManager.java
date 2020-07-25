@@ -17,14 +17,11 @@
 package red.mohist.sodionauth.fabric.mixins;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.mohist.sodionauth.fabric.mixinhelper.MixinPlayerManagerHelper;
 
@@ -37,16 +34,6 @@ public class MixinPlayerManager {
     @Inject(method = "checkCanJoin", at = @At("RETURN"))
     public void onCheckCanJoin(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
         MixinPlayerManagerHelper.onCheckCanJoin((InetSocketAddress) address, profile, cir);
-    }
-
-    @Inject(method = "onPlayerConnect", at = @At("HEAD"))
-    public void onPlayerConnect(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-        MixinPlayerManagerHelper.onPlayerConnect(player);
-    }
-
-    @Inject(method = "remove", at = @At("TAIL"))
-    public void onRemovePlayer(ServerPlayerEntity player, CallbackInfo ci) {
-        MixinPlayerManagerHelper.onRemovePlayer(player);
     }
 
 }

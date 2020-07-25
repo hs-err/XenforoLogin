@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.data.Data;
 import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
 
@@ -37,5 +38,12 @@ public class MixinServerPlayNetworkHandlerHelper {
             return;
         }
         SodionAuthCore.instance.onChat(abstractPlayer, packet.getChatMessage());
+    }
+
+    public static void onInit(ServerPlayerEntity player) {
+        MixinLogger.logger.info("Restoring networkHandler to ServerPlayerEntity");
+        AbstractPlayer abstractPlayer = new FabricPlayer(player);
+        MixinLogger.logger.info("Calling onJoin for " + player.getName().asString());
+        SodionAuthCore.instance.onJoin(abstractPlayer);
     }
 }

@@ -16,32 +16,39 @@
 
 package red.mohist.sodionauth.fabric.mixins;
 
+import javassist.bytecode.Opcode;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.listener.PacketListener;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import red.mohist.sodionauth.fabric.mixinhelper.MixinServerPlayNetworkHandlerHelper;
+import red.mohist.sodionauth.fabric.mixinhelper.MixinClientConnectionHelper;
 
-@Mixin(ServerPlayNetworkHandler.class)
-public class MixinServerPlayNetworkHandler {
-
-    @Inject(method = "<init>", at = @At("TAIL"))
-    public void onInit(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-        MixinServerPlayNetworkHandlerHelper.onInit(player);
-    }
+@Mixin(ClientConnection.class)
+public abstract class MixinClientConnection {
 
     @Shadow
-    public ServerPlayerEntity player;
+    private PacketListener packetListener;
 
-    @Inject(method = "onGameMessage", at = @At("HEAD"), cancellable = true)
-    public void onGameMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {
-        MixinServerPlayNetworkHandlerHelper.onGameMessage(packet, ci, player);
+    @Shadow
+    public abstract PacketListener getPacketListener();
+
+    @Inject(
+            method = "handleDisconnection",
+            at = @At(
+                    value = "FIELD",
+                    target = "Lnet/minecraft/network/ClientConnection;disconnected:Z",
+                    opcode = Opcode.PUTFIELD,
+                    by = -1
+            )
+    )
+    public void beforeDisconnect(CallbackInfo ci) {
+        MixinClientConnectionHelper.onBeforeDisconnect(
+                ((ServerPlayNetworkHandler) getPacketListener()).player
+        );
     }
 
 }

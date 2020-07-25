@@ -14,30 +14,18 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.utils;
+package red.mohist.sodionauth.fabric.mixinhelper;
 
-import com.google.common.collect.Sets;
+import net.minecraft.server.network.ServerPlayerEntity;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.fabric.MixinLogger;
+import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
 
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-public class LoginTicker {
-
-    private static final Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
-
-    public static void register() {
-        SodionAuthCore.instance.globalScheduledExecutor
-                .scheduleAtFixedRate(LoginTicker::run, 0,
-                        LoginTickPlayer.showTipTime, TimeUnit.SECONDS);
-    }
-
-    public static void add(AbstractPlayer player) {
-        tickers.add(new LoginTickPlayer(player));
-    }
-
-    public static void run() {
-        tickers.removeIf(current -> current.tick() == LoginTickPlayer.TickResult.DONE);
+public class MixinClientConnectionHelper {
+    public static void onBeforeDisconnect(ServerPlayerEntity player) {
+        AbstractPlayer abstractPlayer = new FabricPlayer(player);
+        MixinLogger.logger.info("Calling onRemovePlayer for " + player.getName().asString());
+        SodionAuthCore.instance.onQuit(abstractPlayer);
     }
 }

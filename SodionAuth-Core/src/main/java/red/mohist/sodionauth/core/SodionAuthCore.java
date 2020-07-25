@@ -195,7 +195,6 @@ public final class SodionAuthCore {
             onQuit(abstractPlayer);
         }
         Helper.getLogger().info("Stopping services...");
-        LoginTicker.unregister();
         try {
             httpClient.close();
         } catch (IOException ignored) {
