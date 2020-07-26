@@ -18,6 +18,7 @@ package red.mohist.sodionauth.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
+import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.hasher.HasherTool;
 import red.mohist.sodionauth.core.hasher.HasherTools;
@@ -41,6 +42,10 @@ public class MysqlSystem implements AuthBackendSystem {
     private final String passwordHash;
     private final HasherTool hasherTool;
     private Connection connection;
+
+    static {
+        DependencyManager.checkForMySQL();
+    }
 
     public MysqlSystem(String host, String username, String password, String database, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
         this.host = host;

@@ -76,4 +76,48 @@ public class DependencyManager {
 
     }
 
+    public static void checkForMySQL() {
+        Helper.getLogger().info("Checking if MySQL library is present...");
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Helper.getLogger().info("MySQL library present");
+            return;
+        } catch (ClassNotFoundException e) {
+            Helper.getLogger().warn("Cannot find MySQL library");
+        } catch (Exception e) {
+            Helper.getLogger().warn("Cannot load MySQL library");
+        }
+
+        File librariesPath = new File(Helper.getConfigPath("libraries"));
+        librariesPath.mkdirs();
+
+        File MySQLib = librariesPath.toPath().resolve("mysql-connector-java-8.0.21.jar").toFile();
+
+        if (!MySQLib.isFile())
+            try {
+                Helper.getLogger().warn("Downloading...");
+                HttpGet request = new HttpGet("https://repo1.maven.org/maven2/" +
+                        "mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar");
+                CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+                final StatusLine statusLine = response.getStatusLine();
+                if (statusLine.getStatusCode() < 200 || statusLine.getStatusCode() >= 300)
+                    throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                OutputStream fileOut = new FileOutputStream(MySQLib);
+                response.getEntity().writeTo(fileOut);
+                fileOut.flush();
+                fileOut.close();
+                response.close();
+                Helper.getLogger().info("Downloaded successfully");
+            } catch (IOException e) {
+                Helper.getLogger().warn("Unable to download MySQL library", e);
+                throw new RuntimeException(e);
+            }
+        Helper.getLogger().info("Loading it into memory...");
+
+        reflectionClassLoader.addJarToClasspath(MySQLib.toPath());
+
+        DependencyManager.checkForMySQL();
+
+    }
+
 }
