@@ -25,6 +25,7 @@ public class MainConfiguration {
 
     private String defaultLang;
     private ApiBean api;
+    private DependenciesBean dependencies;
     private SessionBean session;
     private YggdrasilBean yggdrasil;
     private SpawnBean spawn;
@@ -37,63 +38,39 @@ public class MainConfiguration {
     }
 
     public String getDefaultLang() {
-        return defaultLang != null ? defaultLang : Config.all.defaultLang;
-    }
-
-    public ApiBean getApi(ApiBean def) {
-        return getApi() == null ? def : getApi();
+        return defaultLang != null ? defaultLang : Config.fallback.defaultLang;
     }
 
     public ApiBean getApi() {
-        return api != null ? api : Config.all.api;
-    }
-
-    public SessionBean getSession(SessionBean def) {
-        return getSession() == null ? def : getSession();
+        return api != null ? api : Config.fallback.api;
     }
 
     public SessionBean getSession() {
-        return session != null ? session : Config.all.session;
-    }
-
-    public YggdrasilBean getYggdrasil(YggdrasilBean def) {
-        return getYggdrasil() == null ? def : getYggdrasil();
+        return session != null ? session : Config.fallback.session;
     }
 
     public YggdrasilBean getYggdrasil() {
-        return yggdrasil != null ? yggdrasil : Config.all.yggdrasil;
-    }
-
-    public SpawnBean getSpawn(SpawnBean def) {
-        return getSpawn() == null ? def : getSpawn();
+        return yggdrasil != null ? yggdrasil : Config.fallback.yggdrasil;
     }
 
     public SpawnBean getSpawn() {
-        return spawn != null ? spawn : Config.all.spawn;
-    }
-
-    public TeleportBean getTeleport(TeleportBean def) {
-        return getTeleport() == null ? def : getTeleport();
+        return spawn != null ? spawn : Config.fallback.spawn;
     }
 
     public TeleportBean getTeleport() {
-        return teleport != null ? teleport : Config.all.teleport;
-    }
-
-    public SecurityBean getSecurity(SecurityBean def) {
-        return getSecurity() == null ? def : getSecurity();
+        return teleport != null ? teleport : Config.fallback.teleport;
     }
 
     public SecurityBean getSecurity() {
-        return security != null ? security : Config.all.security;
-    }
-
-    public ProtectionBean getProtection(ProtectionBean def) {
-        return getProtection() == null ? def : getProtection();
+        return security != null ? security : Config.fallback.security;
     }
 
     public ProtectionBean getProtection() {
-        return protection != null ? protection : Config.all.protection;
+        return protection != null ? protection : Config.fallback.protection;
+    }
+
+    public DependenciesBean getDependencies() {
+        return dependencies != null ? dependencies : Config.fallback.dependencies;
     }
 
     public static class ApiBean {
@@ -109,7 +86,7 @@ public class MainConfiguration {
         }
 
         public String getSystem() {
-            return system != null ? system : Config.all.api.system;
+            return system != null ? system : Config.fallback.api.system;
         }
 
         public Boolean getAllowRegister(Boolean def) {
@@ -117,7 +94,7 @@ public class MainConfiguration {
         }
 
         public Boolean getAllowRegister() {
-            return allowRegister != null ? allowRegister : Config.all.api.allowRegister;
+            return allowRegister != null ? allowRegister : Config.fallback.api.allowRegister;
         }
 
         public XenforoBean getXenforo(XenforoBean def) {
@@ -125,7 +102,7 @@ public class MainConfiguration {
         }
 
         public XenforoBean getXenforo() {
-            return xenforo != null ? xenforo : Config.all.api.xenforo;
+            return xenforo != null ? xenforo : Config.fallback.api.xenforo;
         }
 
         public WebBean getWeb(WebBean def) {
@@ -133,7 +110,7 @@ public class MainConfiguration {
         }
 
         public WebBean getWeb() {
-            return web != null ? web : Config.all.api.web;
+            return web != null ? web : Config.fallback.api.web;
         }
 
         public SqliteBean getSqlite(SqliteBean def) {
@@ -141,7 +118,7 @@ public class MainConfiguration {
         }
 
         public SqliteBean getSqlite() {
-            return sqlite != null ? sqlite : Config.all.api.sqlite;
+            return sqlite != null ? sqlite : Config.fallback.api.sqlite;
         }
 
         public MysqlBean getMysql(MysqlBean def) {
@@ -149,7 +126,7 @@ public class MainConfiguration {
         }
 
         public MysqlBean getMysql() {
-            return mysql != null ? mysql : Config.all.api.mysql;
+            return mysql != null ? mysql : Config.fallback.api.mysql;
         }
 
         public static class XenforoBean {
@@ -161,7 +138,7 @@ public class MainConfiguration {
             }
 
             public String getUrl() {
-                return url != null ? url : Config.all.api.xenforo.url;
+                return url != null ? url : Config.fallback.api.xenforo.url;
             }
 
             public String getKey(String def) {
@@ -169,7 +146,7 @@ public class MainConfiguration {
             }
 
             public String getKey() {
-                return key != null ? key : Config.all.api.xenforo.key;
+                return key != null ? key : Config.fallback.api.xenforo.key;
             }
         }
 
@@ -182,7 +159,7 @@ public class MainConfiguration {
             }
 
             public String getUrl() {
-                return url != null ? url : Config.all.api.web.url;
+                return url != null ? url : Config.fallback.api.web.url;
             }
 
             public String getKey(String def) {
@@ -190,7 +167,7 @@ public class MainConfiguration {
             }
 
             public String getKey() {
-                return key != null ? key : Config.all.api.web.key;
+                return key != null ? key : Config.fallback.api.web.key;
             }
         }
 
@@ -210,7 +187,7 @@ public class MainConfiguration {
             }
 
             public String getPath() {
-                return path != null ? path : Config.all.api.sqlite.path;
+                return path != null ? path : Config.fallback.api.sqlite.path;
             }
 
             public Boolean getAbsolute(Boolean def) {
@@ -218,7 +195,7 @@ public class MainConfiguration {
             }
 
             public Boolean getAbsolute() {
-                return absolute != null ? absolute : Config.all.api.sqlite.absolute;
+                return absolute != null ? absolute : Config.fallback.api.sqlite.absolute;
             }
 
             public String getTableName(String def) {
@@ -226,7 +203,7 @@ public class MainConfiguration {
             }
 
             public String getTableName() {
-                return tableName != null ? tableName : Config.all.api.sqlite.tableName;
+                return tableName != null ? tableName : Config.fallback.api.sqlite.tableName;
             }
 
             public String getEmailField(String def) {
@@ -234,7 +211,7 @@ public class MainConfiguration {
             }
 
             public String getEmailField() {
-                return emailField != null ? emailField : Config.all.api.sqlite.emailField;
+                return emailField != null ? emailField : Config.fallback.api.sqlite.emailField;
             }
 
             public String getUsernameField(String def) {
@@ -242,7 +219,7 @@ public class MainConfiguration {
             }
 
             public String getUsernameField() {
-                return usernameField != null ? usernameField : Config.all.api.sqlite.usernameField;
+                return usernameField != null ? usernameField : Config.fallback.api.sqlite.usernameField;
             }
 
             public String getPasswordField(String def) {
@@ -250,7 +227,7 @@ public class MainConfiguration {
             }
 
             public String getPasswordField() {
-                return passwordField != null ? passwordField : Config.all.api.sqlite.passwordField;
+                return passwordField != null ? passwordField : Config.fallback.api.sqlite.passwordField;
             }
 
             public String getSaltField(String def) {
@@ -258,7 +235,7 @@ public class MainConfiguration {
             }
 
             public String getSaltField() {
-                return saltField != null ? saltField : Config.all.api.sqlite.saltField;
+                return saltField != null ? saltField : Config.fallback.api.sqlite.saltField;
             }
 
             public Integer getSaltLength(Integer def) {
@@ -266,7 +243,7 @@ public class MainConfiguration {
             }
 
             public Integer getSaltLength() {
-                return saltLength != null ? saltLength : Config.all.api.sqlite.saltLength;
+                return saltLength != null ? saltLength : Config.fallback.api.sqlite.saltLength;
             }
 
             public String getPasswordHash(String def) {
@@ -274,7 +251,7 @@ public class MainConfiguration {
             }
 
             public String getPasswordHash() {
-                return passwordHash != null ? passwordHash : Config.all.api.sqlite.passwordHash;
+                return passwordHash != null ? passwordHash : Config.fallback.api.sqlite.passwordHash;
             }
         }
 
@@ -296,7 +273,7 @@ public class MainConfiguration {
             }
 
             public String getHost() {
-                return host != null ? host : Config.all.api.mysql.host;
+                return host != null ? host : Config.fallback.api.mysql.host;
             }
 
             public String getUsername(String def) {
@@ -304,7 +281,7 @@ public class MainConfiguration {
             }
 
             public String getUsername() {
-                return username != null ? username : Config.all.api.mysql.username;
+                return username != null ? username : Config.fallback.api.mysql.username;
             }
 
             public String getPassword(String def) {
@@ -312,7 +289,7 @@ public class MainConfiguration {
             }
 
             public String getPassword() {
-                return password != null ? password : Config.all.api.mysql.password;
+                return password != null ? password : Config.fallback.api.mysql.password;
             }
 
             public String getDatabase(String def) {
@@ -320,7 +297,7 @@ public class MainConfiguration {
             }
 
             public String getDatabase() {
-                return database != null ? database : Config.all.api.mysql.database;
+                return database != null ? database : Config.fallback.api.mysql.database;
             }
 
             public String getTableName(String def) {
@@ -328,7 +305,7 @@ public class MainConfiguration {
             }
 
             public String getTableName() {
-                return tableName != null ? tableName : Config.all.api.mysql.tableName;
+                return tableName != null ? tableName : Config.fallback.api.mysql.tableName;
             }
 
             public String getEmailField(String def) {
@@ -336,7 +313,7 @@ public class MainConfiguration {
             }
 
             public String getEmailField() {
-                return emailField != null ? emailField : Config.all.api.mysql.emailField;
+                return emailField != null ? emailField : Config.fallback.api.mysql.emailField;
             }
 
             public String getUsernameField(String def) {
@@ -344,7 +321,7 @@ public class MainConfiguration {
             }
 
             public String getUsernameField() {
-                return usernameField != null ? usernameField : Config.all.api.mysql.usernameField;
+                return usernameField != null ? usernameField : Config.fallback.api.mysql.usernameField;
             }
 
             public String getPasswordField(String def) {
@@ -352,7 +329,7 @@ public class MainConfiguration {
             }
 
             public String getPasswordField() {
-                return passwordField != null ? passwordField : Config.all.api.mysql.passwordField;
+                return passwordField != null ? passwordField : Config.fallback.api.mysql.passwordField;
             }
 
             public String getSaltField(String def) {
@@ -360,7 +337,7 @@ public class MainConfiguration {
             }
 
             public String getSaltField() {
-                return saltField != null ? saltField : Config.all.api.mysql.saltField;
+                return saltField != null ? saltField : Config.fallback.api.mysql.saltField;
             }
 
             public Integer getSaltLength(Integer def) {
@@ -368,7 +345,7 @@ public class MainConfiguration {
             }
 
             public Integer getSaltLength() {
-                return saltLength != null ? saltLength : Config.all.api.mysql.saltLength;
+                return saltLength != null ? saltLength : Config.fallback.api.mysql.saltLength;
             }
 
             public String getPasswordHash(String def) {
@@ -376,8 +353,16 @@ public class MainConfiguration {
             }
 
             public String getPasswordHash() {
-                return passwordHash != null ? passwordHash : Config.all.api.mysql.passwordHash;
+                return passwordHash != null ? passwordHash : Config.fallback.api.mysql.passwordHash;
             }
+        }
+    }
+
+    public static class DependenciesBean {
+        private String mavenRepository;
+
+        public String getMavenRepository() {
+            return mavenRepository != null ? mavenRepository : Config.fallback.dependencies.mavenRepository;
         }
     }
 
@@ -390,7 +375,7 @@ public class MainConfiguration {
         }
 
         public Boolean getEnable() {
-            return enable != null ? enable : Config.all.session.enable;
+            return enable != null ? enable : Config.fallback.session.enable;
         }
 
         public Integer getTimeout(Integer def) {
@@ -398,7 +383,7 @@ public class MainConfiguration {
         }
 
         public Integer getTimeout() {
-            return timeout != null ? timeout : Config.all.session.timeout;
+            return timeout != null ? timeout : Config.fallback.session.timeout;
         }
     }
 
@@ -413,7 +398,7 @@ public class MainConfiguration {
         }
 
         public ServerBean getServer() {
-            return server != null ? server : Config.all.yggdrasil.server;
+            return server != null ? server : Config.fallback.yggdrasil.server;
         }
 
         public TokenBean getToken(TokenBean def) {
@@ -421,7 +406,7 @@ public class MainConfiguration {
         }
 
         public TokenBean getToken() {
-            return token != null ? token : Config.all.yggdrasil.token;
+            return token != null ? token : Config.fallback.yggdrasil.token;
         }
 
         public CoreBean getCore(CoreBean def) {
@@ -429,7 +414,7 @@ public class MainConfiguration {
         }
 
         public CoreBean getCore() {
-            return core != null ? core : Config.all.yggdrasil.core;
+            return core != null ? core : Config.fallback.yggdrasil.core;
         }
 
         public RatelimitBean getRatelimit(RatelimitBean def) {
@@ -437,7 +422,7 @@ public class MainConfiguration {
         }
 
         public RatelimitBean getRatelimit() {
-            return ratelimit != null ? ratelimit : Config.all.yggdrasil.ratelimit;
+            return ratelimit != null ? ratelimit : Config.fallback.yggdrasil.ratelimit;
         }
 
         public static class ServerBean {
@@ -448,7 +433,7 @@ public class MainConfiguration {
             }
 
             public Integer getPort() {
-                return port != null ? port : Config.all.yggdrasil.server.port;
+                return port != null ? port : Config.fallback.yggdrasil.server.port;
             }
         }
 
@@ -463,7 +448,7 @@ public class MainConfiguration {
             }
 
             public Integer getTimeToFullyExpired() {
-                return timeToFullyExpired != null ? timeToFullyExpired : Config.all.yggdrasil.token.timeToFullyExpired;
+                return timeToFullyExpired != null ? timeToFullyExpired : Config.fallback.yggdrasil.token.timeToFullyExpired;
             }
 
             public Boolean getEnableTimeToPartiallyExpired(Boolean def) {
@@ -471,7 +456,7 @@ public class MainConfiguration {
             }
 
             public Boolean getEnableTimeToPartiallyExpired() {
-                return enableTimeToPartiallyExpired != null ? enableTimeToPartiallyExpired : Config.all.yggdrasil.token.enableTimeToPartiallyExpired;
+                return enableTimeToPartiallyExpired != null ? enableTimeToPartiallyExpired : Config.fallback.yggdrasil.token.enableTimeToPartiallyExpired;
             }
 
             public Integer getTimeToPartiallyExpired(Integer def) {
@@ -479,7 +464,7 @@ public class MainConfiguration {
             }
 
             public Integer getTimeToPartiallyExpired() {
-                return timeToPartiallyExpired != null ? timeToPartiallyExpired : Config.all.yggdrasil.token.timeToPartiallyExpired;
+                return timeToPartiallyExpired != null ? timeToPartiallyExpired : Config.fallback.yggdrasil.token.timeToPartiallyExpired;
             }
 
             public Boolean getOnlyLastSessionAvailable(Boolean def) {
@@ -487,7 +472,7 @@ public class MainConfiguration {
             }
 
             public Boolean getOnlyLastSessionAvailable() {
-                return onlyLastSessionAvailable != null ? onlyLastSessionAvailable : Config.all.yggdrasil.token.onlyLastSessionAvailable;
+                return onlyLastSessionAvailable != null ? onlyLastSessionAvailable : Config.fallback.yggdrasil.token.onlyLastSessionAvailable;
             }
         }
 
@@ -501,7 +486,7 @@ public class MainConfiguration {
             }
 
             public String getServerName() {
-                return serverName != null ? serverName : Config.all.yggdrasil.core.serverName;
+                return serverName != null ? serverName : Config.fallback.yggdrasil.core.serverName;
             }
 
             public String getUrl(String def) {
@@ -509,7 +494,7 @@ public class MainConfiguration {
             }
 
             public String getUrl() {
-                return url != null ? url : Config.all.yggdrasil.core.url;
+                return url != null ? url : Config.fallback.yggdrasil.core.url;
             }
 
             public List<String> getSkinDomains(List<String> def) {
@@ -517,7 +502,7 @@ public class MainConfiguration {
             }
 
             public List<String> getSkinDomains() {
-                return skinDomains != null ? skinDomains : Config.all.yggdrasil.core.skinDomains;
+                return skinDomains != null ? skinDomains : Config.fallback.yggdrasil.core.skinDomains;
             }
         }
 
@@ -529,7 +514,7 @@ public class MainConfiguration {
             }
 
             public String getLimitDuration() {
-                return limitDuration != null ? limitDuration : Config.all.yggdrasil.ratelimit.limitDuration;
+                return limitDuration != null ? limitDuration : Config.fallback.yggdrasil.ratelimit.limitDuration;
             }
         }
     }
@@ -547,7 +532,7 @@ public class MainConfiguration {
         }
 
         public String getWorld() {
-            return world != null ? world : Config.all.spawn.world;
+            return world != null ? world : Config.fallback.spawn.world;
         }
 
         public Double getX(Double def) {
@@ -555,7 +540,7 @@ public class MainConfiguration {
         }
 
         public Double getX() {
-            return x != null ? x : Config.all.spawn.x;
+            return x != null ? x : Config.fallback.spawn.x;
         }
 
         public Double getY(Double def) {
@@ -563,7 +548,7 @@ public class MainConfiguration {
         }
 
         public Double getY() {
-            return y != null ? y : Config.all.spawn.y;
+            return y != null ? y : Config.fallback.spawn.y;
         }
 
         public Double getZ(Double def) {
@@ -571,7 +556,7 @@ public class MainConfiguration {
         }
 
         public Double getZ() {
-            return z != null ? z : Config.all.spawn.z;
+            return z != null ? z : Config.fallback.spawn.z;
         }
 
         public Float getYaw(Float def) {
@@ -579,7 +564,7 @@ public class MainConfiguration {
         }
 
         public Float getYaw() {
-            return yaw != null ? yaw : Config.all.spawn.yaw;
+            return yaw != null ? yaw : Config.fallback.spawn.yaw;
         }
 
         public Float getPitch(Float def) {
@@ -587,7 +572,7 @@ public class MainConfiguration {
         }
 
         public Float getPitch() {
-            return pitch != null ? pitch : Config.all.spawn.pitch;
+            return pitch != null ? pitch : Config.fallback.spawn.pitch;
         }
     }
 
@@ -600,7 +585,7 @@ public class MainConfiguration {
         }
 
         public Boolean getTpSpawnBeforeLogin() {
-            return tpSpawnBeforeLogin != null ? tpSpawnBeforeLogin : Config.all.teleport.tpSpawnBeforeLogin;
+            return tpSpawnBeforeLogin != null ? tpSpawnBeforeLogin : Config.fallback.teleport.tpSpawnBeforeLogin;
         }
 
         public Boolean getTpBackAfterLogin(Boolean def) {
@@ -608,7 +593,7 @@ public class MainConfiguration {
         }
 
         public Boolean getTpBackAfterLogin() {
-            return tpBackAfterLogin != null ? tpBackAfterLogin : Config.all.teleport.tpBackAfterLogin;
+            return tpBackAfterLogin != null ? tpBackAfterLogin : Config.fallback.teleport.tpBackAfterLogin;
         }
     }
 
@@ -625,7 +610,7 @@ public class MainConfiguration {
         }
 
         public Boolean getHideInventory() {
-            return hideInventory != null ? hideInventory : Config.all.security.hideInventory;
+            return hideInventory != null ? hideInventory : Config.fallback.security.hideInventory;
         }
 
         public Boolean getSpectatorLogin(Boolean def) {
@@ -633,7 +618,7 @@ public class MainConfiguration {
         }
 
         public Boolean getSpectatorLogin() {
-            return spectatorLogin != null ? spectatorLogin : Config.all.security.spectatorLogin;
+            return spectatorLogin != null ? spectatorLogin : Config.fallback.security.spectatorLogin;
         }
 
         public Integer getDefaultGamemode(Integer def) {
@@ -641,7 +626,7 @@ public class MainConfiguration {
         }
 
         public Integer getDefaultGamemode() {
-            return defaultGamemode != null ? defaultGamemode : Config.all.security.defaultGamemode;
+            return defaultGamemode != null ? defaultGamemode : Config.fallback.security.defaultGamemode;
         }
 
         public Integer getShowTipsTime(Integer def) {
@@ -649,7 +634,7 @@ public class MainConfiguration {
         }
 
         public Integer getShowTipsTime() {
-            return showTipsTime != null ? showTipsTime : Config.all.security.showTipsTime;
+            return showTipsTime != null ? showTipsTime : Config.fallback.security.showTipsTime;
         }
 
         public Integer getMaxLoginTime(Integer def) {
@@ -657,7 +642,7 @@ public class MainConfiguration {
         }
 
         public Integer getMaxLoginTime() {
-            return maxLoginTime != null ? maxLoginTime : Config.all.security.maxLoginTime;
+            return maxLoginTime != null ? maxLoginTime : Config.fallback.security.maxLoginTime;
         }
 
         public Boolean getCancelChatAfterLogin(Boolean def) {
@@ -665,7 +650,7 @@ public class MainConfiguration {
         }
 
         public Boolean getCancelChatAfterLogin() {
-            return cancelChatAfterLogin != null ? cancelChatAfterLogin : Config.all.security.cancelChatAfterLogin;
+            return cancelChatAfterLogin != null ? cancelChatAfterLogin : Config.fallback.security.cancelChatAfterLogin;
         }
     }
 
@@ -679,7 +664,7 @@ public class MainConfiguration {
         }
 
         public ProxySystemsBean getProxySystems() {
-            return ProxySystems != null ? ProxySystems : Config.all.protection.ProxySystems;
+            return ProxySystems != null ? ProxySystems : Config.fallback.protection.ProxySystems;
         }
 
         public GeoIPBean getGeoIP(GeoIPBean def) {
@@ -687,7 +672,7 @@ public class MainConfiguration {
         }
 
         public GeoIPBean getGeoIP() {
-            return GeoIP != null ? GeoIP : Config.all.protection.GeoIP;
+            return GeoIP != null ? GeoIP : Config.fallback.protection.GeoIP;
         }
 
         public RateLimitBean getRateLimit(RateLimitBean def) {
@@ -695,7 +680,7 @@ public class MainConfiguration {
         }
 
         public RateLimitBean getRateLimit() {
-            return RateLimit != null ? RateLimit : Config.all.protection.RateLimit;
+            return RateLimit != null ? RateLimit : Config.fallback.protection.RateLimit;
         }
 
         public static class ProxySystemsBean {
@@ -709,7 +694,7 @@ public class MainConfiguration {
             }
 
             public Boolean getEnable() {
-                return enable != null ? enable : Config.all.protection.ProxySystems.enable;
+                return enable != null ? enable : Config.fallback.protection.ProxySystems.enable;
             }
 
             public Integer getUpdateTime(Integer def) {
@@ -717,7 +702,7 @@ public class MainConfiguration {
             }
 
             public Integer getUpdateTime() {
-                return updateTime != null ? updateTime : Config.all.protection.ProxySystems.updateTime;
+                return updateTime != null ? updateTime : Config.fallback.protection.ProxySystems.updateTime;
             }
 
             public Map<String, Boolean> getProxiesProvider(Map<String, Boolean> def) {
@@ -725,7 +710,7 @@ public class MainConfiguration {
             }
 
             public Map<String, Boolean> getProxiesProvider() {
-                return proxiesProvider != null ? proxiesProvider : Config.all.protection.ProxySystems.proxiesProvider;
+                return proxiesProvider != null ? proxiesProvider : Config.fallback.protection.ProxySystems.proxiesProvider;
             }
 
             public Boolean getEnableLocal(Boolean def) {
@@ -733,7 +718,7 @@ public class MainConfiguration {
             }
 
             public Boolean getEnableLocal() {
-                return enableLocal != null ? enableLocal : Config.all.protection.ProxySystems.enableLocal;
+                return enableLocal != null ? enableLocal : Config.fallback.protection.ProxySystems.enableLocal;
             }
         }
 
@@ -747,7 +732,7 @@ public class MainConfiguration {
             }
 
             public Boolean getEnable() {
-                return enable != null ? enable : Config.all.protection.GeoIP.enable;
+                return enable != null ? enable : Config.fallback.protection.GeoIP.enable;
             }
 
             public Map<String, Boolean> getLists(Map<String, Boolean> def) {
@@ -755,7 +740,7 @@ public class MainConfiguration {
             }
 
             public Map<String, Boolean> getLists() {
-                return lists != null ? lists : Config.all.protection.GeoIP.lists;
+                return lists != null ? lists : Config.fallback.protection.GeoIP.lists;
             }
 
             public Boolean getOther(Boolean def) {
@@ -763,7 +748,7 @@ public class MainConfiguration {
             }
 
             public Boolean getOther() {
-                return other != null ? other : Config.all.protection.GeoIP.other;
+                return other != null ? other : Config.fallback.protection.GeoIP.other;
             }
         }
 
@@ -779,7 +764,7 @@ public class MainConfiguration {
             }
 
             public Boolean getEnable() {
-                return enable != null ? enable : Config.all.protection.RateLimit.enable;
+                return enable != null ? enable : Config.fallback.protection.RateLimit.enable;
             }
 
             public Integer getPermitsPerSecond(Integer def) {
@@ -787,7 +772,7 @@ public class MainConfiguration {
             }
 
             public Integer getPermitsPerSecond() {
-                return permitsPerSecond != null ? permitsPerSecond : Config.all.protection.RateLimit.permitsPerSecond;
+                return permitsPerSecond != null ? permitsPerSecond : Config.fallback.protection.RateLimit.permitsPerSecond;
             }
 
             public JoinBean getJoin(JoinBean def) {
@@ -795,7 +780,7 @@ public class MainConfiguration {
             }
 
             public JoinBean getJoin() {
-                return join != null ? join : Config.all.protection.RateLimit.join;
+                return join != null ? join : Config.fallback.protection.RateLimit.join;
             }
 
             public RegisterBean getRegister(RegisterBean def) {
@@ -803,7 +788,7 @@ public class MainConfiguration {
             }
 
             public RegisterBean getRegister() {
-                return register != null ? register : Config.all.protection.RateLimit.register;
+                return register != null ? register : Config.fallback.protection.RateLimit.register;
             }
 
             public LoginBean getLogin(LoginBean def) {
@@ -811,7 +796,7 @@ public class MainConfiguration {
             }
 
             public LoginBean getLogin() {
-                return login != null ? login : Config.all.protection.RateLimit.login;
+                return login != null ? login : Config.fallback.protection.RateLimit.login;
             }
 
             public static class JoinBean {
@@ -823,7 +808,7 @@ public class MainConfiguration {
                 }
 
                 public Boolean getEnable() {
-                    return enable != null ? enable : Config.all.protection.RateLimit.join.enable;
+                    return enable != null ? enable : Config.fallback.protection.RateLimit.join.enable;
                 }
 
                 public Integer getPermits(Integer def) {
@@ -831,7 +816,7 @@ public class MainConfiguration {
                 }
 
                 public Integer getPermits() {
-                    return permits != null ? permits : Config.all.protection.RateLimit.join.permits;
+                    return permits != null ? permits : Config.fallback.protection.RateLimit.join.permits;
                 }
             }
 
@@ -844,7 +829,7 @@ public class MainConfiguration {
                 }
 
                 public Boolean getEnable() {
-                    return enable != null ? enable : Config.all.protection.RateLimit.register.enable;
+                    return enable != null ? enable : Config.fallback.protection.RateLimit.register.enable;
                 }
 
                 public Integer getPermits(Integer def) {
@@ -852,7 +837,7 @@ public class MainConfiguration {
                 }
 
                 public Integer getPermits() {
-                    return permits != null ? permits : Config.all.protection.RateLimit.register.permits;
+                    return permits != null ? permits : Config.fallback.protection.RateLimit.register.permits;
                 }
             }
 
@@ -865,7 +850,7 @@ public class MainConfiguration {
                 }
 
                 public Boolean getEnable() {
-                    return enable != null ? enable : Config.all.protection.RateLimit.login.enable;
+                    return enable != null ? enable : Config.fallback.protection.RateLimit.login.enable;
                 }
 
                 public Integer getPermits(Integer def) {
@@ -873,7 +858,7 @@ public class MainConfiguration {
                 }
 
                 public Integer getPermits() {
-                    return permits != null ? permits : Config.all.protection.RateLimit.login.permits;
+                    return permits != null ? permits : Config.fallback.protection.RateLimit.login.permits;
                 }
             }
         }

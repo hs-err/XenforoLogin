@@ -36,6 +36,9 @@
       "passwordHash": "BCrypt"
     }
   },
+  "dependencies": {
+    "mavenRepository": "https://repo1.maven.org/maven2/"
+  },
   "session": {
     "enable": false,
     "timeout": 3600

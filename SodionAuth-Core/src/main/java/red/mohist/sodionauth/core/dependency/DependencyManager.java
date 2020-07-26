@@ -21,6 +21,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
+import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.File;
@@ -52,7 +53,7 @@ public class DependencyManager {
         if (!SQLiteLib.isFile())
             try {
                 Helper.getLogger().warn("Downloading...");
-                HttpGet request = new HttpGet("https://repo1.maven.org/maven2/" +
+                HttpGet request = new HttpGet(Config.dependencies.getMavenRepository() +
                         "org/xerial/sqlite-jdbc/3.30.1/sqlite-jdbc-3.30.1.jar");
                 CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
                 final StatusLine statusLine = response.getStatusLine();
@@ -96,7 +97,7 @@ public class DependencyManager {
         if (!MySQLib.isFile())
             try {
                 Helper.getLogger().warn("Downloading...");
-                HttpGet request = new HttpGet("https://repo1.maven.org/maven2/" +
+                HttpGet request = new HttpGet(Config.dependencies.getMavenRepository() +
                         "mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar");
                 CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
                 final StatusLine statusLine = response.getStatusLine();

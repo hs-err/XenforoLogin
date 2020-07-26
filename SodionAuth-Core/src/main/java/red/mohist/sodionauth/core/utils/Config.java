@@ -25,9 +25,10 @@ import java.nio.charset.StandardCharsets;
 @SuppressWarnings("unused")
 public class Config {
     public static MainConfiguration instance;
-    public static MainConfiguration all;
+    public static MainConfiguration fallback;
     public static String defaultLang;
     public static MainConfiguration.ApiBean api;
+    public static MainConfiguration.DependenciesBean dependencies;
     public static MainConfiguration.SessionBean session;
     public static MainConfiguration.YggdrasilBean yggdrasil;
     public static MainConfiguration.SpawnBean spawn;
@@ -46,12 +47,13 @@ public class Config {
 
         InputStream defaultFileReader = Helper.instance.getResource("config.json");
         InputStreamReader defaultInputStreamReader = new InputStreamReader(defaultFileReader, StandardCharsets.UTF_8);
-        all = new Gson().fromJson(defaultInputStreamReader, MainConfiguration.class);
+        fallback = new Gson().fromJson(defaultInputStreamReader, MainConfiguration.class);
         defaultInputStreamReader.close();
         defaultFileReader.close();
 
         defaultLang = instance.getDefaultLang();
         api = instance.getApi();
+        dependencies = instance.getDependencies();
         session = instance.getSession();
         yggdrasil = instance.getYggdrasil();
         spawn = instance.getSpawn();
