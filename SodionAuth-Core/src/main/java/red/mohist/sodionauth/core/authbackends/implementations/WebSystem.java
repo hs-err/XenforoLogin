@@ -27,8 +27,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
@@ -43,16 +41,10 @@ import java.io.IOException;
 public class WebSystem implements AuthBackendSystem {
     private final String url;
     private final String key;
-    private CloseableHttpClient httpClient;
 
     public WebSystem(String url, String key) {
         this.url = url;
         this.key = key;
-        httpClient = HttpClientBuilder.create()
-                .disableCookieManagement()
-                .setUserAgent("SodionAuth/2.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
-                        "SodionAuthWeb/1.0 Safari/537.36")
-                .build();
     }
 
     @Nonnull
@@ -78,7 +70,7 @@ public class WebSystem implements AuthBackendSystem {
             form.add("username", player.getName());
             form.add("password", password);
             request.setEntity(new UrlEncodedFormEntity(form.build()));
-            CloseableHttpResponse response = httpClient.execute(request);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
             result = responseHandler.handleResponse(response);
             response.close();
         } catch (IOException e) {
@@ -177,7 +169,7 @@ public class WebSystem implements AuthBackendSystem {
             form.add("password", password);
             request.setEntity(new UrlEncodedFormEntity(form.build()));
             request.addHeader("SodionAuth-Key", key);
-            CloseableHttpResponse response = httpClient.execute(request);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
             result = responseHandler.handleResponse(response);
             response.close();
         } catch (IOException e) {
@@ -286,7 +278,7 @@ public class WebSystem implements AuthBackendSystem {
             form.add("username", player.getName());
             request.setEntity(new UrlEncodedFormEntity(form.build()));
             request.addHeader("SodionAuth-Key", key);
-            CloseableHttpResponse response = httpClient.execute(request);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
             result = responseHandler.handleResponse(response);
             response.close();
         } catch (IOException e) {
