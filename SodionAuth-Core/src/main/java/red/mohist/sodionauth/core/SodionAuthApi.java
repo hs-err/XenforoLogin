@@ -28,14 +28,17 @@ public final class SodionAuthApi {
     public static void login(AbstractPlayer player) throws AuthenticatedException {
         SodionAuthCore.instance.login(player);
     }
-    public static boolean isLogin(AbstractPlayer player){
+
+    public static boolean isLogin(AbstractPlayer player) {
         return !SodionAuthCore.instance.needCancelled(player);
     }
-    public static boolean register(AbstractPlayer player,String email,String password) {
-        return SodionAuthCore.instance.register(player,email,password);
+
+    public static boolean register(AbstractPlayer player, String email, String password) {
+        return SodionAuthCore.instance.register(player, email, password);
     }
-    public static boolean isRegister(AbstractPlayer player){
-        switch (SodionAuthCore.instance.logged_in.getOrDefault(player.getUniqueId(),null)){
+
+    public static boolean isRegister(AbstractPlayer player) {
+        switch (SodionAuthCore.instance.logged_in.getOrDefault(player.getUniqueId(), null)) {
             case LOGGED_IN:
             case NEED_LOGIN:
             case NEED_CHECK:
@@ -47,7 +50,7 @@ public final class SodionAuthApi {
         }
         switch (AuthBackendSystems.getCurrentSystem()
                 .join(player)
-                .shouldLogin(false)){
+                .shouldLogin(false)) {
             case OK:
             case ERROR_NAME:
                 return true;
@@ -55,10 +58,11 @@ public final class SodionAuthApi {
                 return false;
         }
     }
-    public static boolean isRegister(String playerName){
+
+    public static boolean isRegister(String playerName) {
         switch (AuthBackendSystems.getCurrentSystem()
                 .join(new PlainPlayer(playerName, UUID.randomUUID(), InetAddress.getLoopbackAddress()))
-                .shouldLogin(false)){
+                .shouldLogin(false)) {
             case OK:
             case ERROR_NAME:
                 return true;

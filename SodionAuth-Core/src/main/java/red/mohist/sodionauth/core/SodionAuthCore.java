@@ -47,13 +47,14 @@ import java.util.regex.Pattern;
 public final class SodionAuthCore {
 
     public static SodionAuthCore instance;
+    private final AtomicBoolean isEnabled = new AtomicBoolean(false);
     public PlatformAdapter api;
     public ConcurrentMap<UUID, StatusType> logged_in;
     public LocationInfo default_location;
     public LocationInfo spawn_location;
+    public ScheduledExecutorService globalScheduledExecutor;
     private Connection connection;
     private ExecutorService executor;
-
     private CloseableHttpClient httpClient;
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
@@ -148,11 +149,11 @@ public final class SodionAuthCore {
             Helper.getLogger().info("Initializing session storage...");
             try {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
-                if (!connection.getMetaData().getTables(null, null, "last_info", new String[] { "TABLE" }).next()) {
+                if (!connection.getMetaData().getTables(null, null, "last_info", new String[]{"TABLE"}).next()) {
                     PreparedStatement pps = connection.prepareStatement("CREATE TABLE last_info (uuid NOT NULL,info,PRIMARY KEY (uuid));");
                     pps.executeUpdate();
                 }
-                if (!connection.getMetaData().getTables(null, null, "sessions", new String[] { "TABLE" }).next()) {
+                if (!connection.getMetaData().getTables(null, null, "sessions", new String[]{"TABLE"}).next()) {
                     PreparedStatement pps = connection.prepareStatement("CREATE TABLE sessions (uuid NOT NULL,ip,time,PRIMARY KEY (uuid));");
                     pps.executeUpdate();
                 }
@@ -176,17 +177,14 @@ public final class SodionAuthCore {
             throw throwable;
         }
     }
+
     public void loadFail() {
         api.shutdown();
     }
 
-    public ScheduledExecutorService globalScheduledExecutor;
-
     public boolean isEnabled() {
         return isEnabled.get();
     }
-
-    private final AtomicBoolean isEnabled = new AtomicBoolean(false);
 
     public CloseableHttpClient getHttpClient() {
         return httpClient;
@@ -235,8 +233,8 @@ public final class SodionAuthCore {
     }
 
     public void login(AbstractPlayer player) throws AuthenticatedException {
-        if(logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
-                .equals(StatusType.LOGGED_IN)){
+        if (logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
+                .equals(StatusType.LOGGED_IN)) {
             throw new AuthenticatedException();
         }
         logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
@@ -274,7 +272,7 @@ public final class SodionAuthCore {
         player.sendMessage(player.getLang().getSuccess());
     }
 
-    public boolean register(AbstractPlayer player,String email,String password) {
+    public boolean register(AbstractPlayer player, String email, String password) {
         return ResultTypeUtils.handle(player,
                 AuthBackendSystems.getCurrentSystem()
                         .register(player, password, email).shouldLogin(true));
@@ -429,7 +427,7 @@ public final class SodionAuthCore {
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
                     executor.execute(() -> {
-                        if (register(player,status.email,status.password)) {
+                        if (register(player, status.email, status.password)) {
                             SodionAuthCore.instance.logged_in.put(
                                     player.getUniqueId(), StatusType.LOGGED_IN);
                         } else {

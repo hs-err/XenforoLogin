@@ -29,6 +29,10 @@ import java.sql.*;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class MysqlSystem implements AuthBackendSystem {
+    static {
+        DependencyManager.checkForMySQL();
+    }
+
     private final String host;
     private final String username;
     private final String password;
@@ -42,10 +46,6 @@ public class MysqlSystem implements AuthBackendSystem {
     private final String passwordHash;
     private final HasherTool hasherTool;
     private Connection connection;
-
-    static {
-        DependencyManager.checkForMySQL();
-    }
 
     public MysqlSystem(String host, String username, String password, String database, String tableName, String emailField, String usernameField, String passwordField, String saltField, int saltLength, String passwordHash) {
         this.host = host;
@@ -63,7 +63,7 @@ public class MysqlSystem implements AuthBackendSystem {
         this.hasherTool = HasherTools.getCurrentSystem();
         try {
             connection = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database + "?useSSL=false&serverTimezone=UTC", username, password);
-            if (!connection.getMetaData().getTables(null, null, tableName, new String[] { "TABLE" }).next()) {
+            if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(

@@ -16,5 +16,5 @@
 
 package red.mohist.sodionauth.core.exception;
 
-public class AuthenticatedException extends Exception{
+public class AuthenticatedException extends Exception {
 }

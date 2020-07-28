@@ -168,7 +168,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             if (listenerProtocolEvent != null) {
                 listenerProtocolEvent.sendBlankInventoryPacket(p);
             }
-            if(p.isDead()){
+            if (p.isDead()) {
                 p.spigot().respawn();
             }
             player.setEffects(new LinkedList<>());
@@ -176,9 +176,9 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             player.setRemainingAir(0);
             player.setMaxHealth(20);
             player.setFood(new FoodInfo());
-            if(Config.security.getSpectatorLogin()) {
+            if (Config.security.getSpectatorLogin()) {
                 player.setGameMode(3);
-            }else{
+            } else {
                 player.setGameMode(Config.security.getDefaultGamemode());
             }
         }

@@ -18,13 +18,14 @@ package red.mohist.sodionauth.core.modules;
 
 public class EffectInfo {
     public String type;
-    public int amplifier=0;
-    public int duration=0;
-    public static EffectInfo create(String type,int amplifier,int duration){
-        EffectInfo effect=new EffectInfo();
-        effect.type=type;
-        effect.amplifier=amplifier;
-        effect.duration=duration;
+    public int amplifier = 0;
+    public int duration = 0;
+
+    public static EffectInfo create(String type, int amplifier, int duration) {
+        EffectInfo effect = new EffectInfo();
+        effect.type = type;
+        effect.amplifier = amplifier;
+        effect.duration = duration;
         return effect;
     }
 }

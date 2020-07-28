@@ -43,7 +43,7 @@ public class Lang {
 
     public static void init() throws IOException {
         ArrayList<String> languageList = new ArrayList<>(ImmutableList.of(
-                "en","zh-CN"
+                "en", "zh-CN"
         ));
         for (String language : languageList) {
             Helper.instance.saveResource("lang/" + language + ".json", false);

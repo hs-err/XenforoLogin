@@ -17,14 +17,15 @@
 package red.mohist.sodionauth.core.modules;
 
 public class FoodInfo {
-    public int foodLevel=20;
-    public double exhaustion=0;
-    public double saturation=5;
-    public static FoodInfo create(int foodLevel, double exhaustion, double saturation){
-        FoodInfo foodInfo=new FoodInfo();
-        foodInfo.foodLevel=foodLevel;
-        foodInfo.exhaustion=exhaustion;
-        foodInfo.saturation=saturation;
+    public int foodLevel = 20;
+    public double exhaustion = 0;
+    public double saturation = 5;
+
+    public static FoodInfo create(int foodLevel, double exhaustion, double saturation) {
+        FoodInfo foodInfo = new FoodInfo();
+        foodInfo.foodLevel = foodLevel;
+        foodInfo.exhaustion = exhaustion;
+        foodInfo.saturation = saturation;
         return foodInfo;
     }
 }

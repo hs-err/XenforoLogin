@@ -47,10 +47,10 @@ public class BukkitPlayer extends AbstractPlayer {
         super(name, uuid, address);
     }
 
-    public void checkHandle(){
-        if(handle==null){
-            handle=Bukkit.getPlayer(getUniqueId());
-            if(handle==null){
+    public void checkHandle() {
+        if (handle == null) {
+            handle = Bukkit.getPlayer(getUniqueId());
+            if (handle == null) {
                 Helper.getLogger().warn("No player can be call.");
             }
         }
@@ -164,13 +164,13 @@ public class BukkitPlayer extends AbstractPlayer {
     public VelocityInfo getVelocity() {
         checkHandle();
         Vector v3d = handle.getVelocity();
-        return VelocityInfo.create(v3d.getX(),v3d.getY(),v3d.getZ());
+        return VelocityInfo.create(v3d.getX(), v3d.getY(), v3d.getZ());
     }
 
     @Override
     public void setVelocity(VelocityInfo velocity) {
         checkHandle();
-        handle.setVelocity(new Vector(velocity.x,velocity.y,velocity.z));
+        handle.setVelocity(new Vector(velocity.x, velocity.y, velocity.z));
     }
 
     @Override
@@ -208,7 +208,7 @@ public class BukkitPlayer extends AbstractPlayer {
         checkHandle();
         Collection<EffectInfo> effects = new LinkedList<>();
         for (PotionEffect effect : handle.getActivePotionEffects()) {
-            effects.add(EffectInfo.create(effect.getType().getName(),effect.getAmplifier(),effect.getDuration()));
+            effects.add(EffectInfo.create(effect.getType().getName(), effect.getAmplifier(), effect.getDuration()));
         }
         return effects;
     }
@@ -220,8 +220,8 @@ public class BukkitPlayer extends AbstractPlayer {
             handle.removePotionEffect(effect.getType());
         }
         for (EffectInfo effect : effects) {
-            PotionEffectType potionEffectType=PotionEffectType.getByName(effect.type);
-            if(potionEffectType!=null) {
+            PotionEffectType potionEffectType = PotionEffectType.getByName(effect.type);
+            if (potionEffectType != null) {
                 handle.addPotionEffect(new PotionEffect(
                         potionEffectType,
                         effect.duration,
@@ -233,10 +233,10 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public boolean isOnline() {
-        if(handle==null){
-            handle=Bukkit.getPlayer(getUniqueId());
+        if (handle == null) {
+            handle = Bukkit.getPlayer(getUniqueId());
         }
-        if(handle==null){
+        if (handle == null) {
             return false;
         }
         return handle.isOnline();
@@ -244,8 +244,10 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public void setPlayerInfo(PlayerInfo playerInfo) {
-        if(!Bukkit.isPrimaryThread()){
-            Bukkit.getScheduler().runTask(BukkitLoader.instance, () ->{setPlayerInfo(playerInfo);});
+        if (!Bukkit.isPrimaryThread()) {
+            Bukkit.getScheduler().runTask(BukkitLoader.instance, () -> {
+                setPlayerInfo(playerInfo);
+            });
             return;
         }
         super.setPlayerInfo(playerInfo);

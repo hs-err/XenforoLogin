@@ -26,7 +26,7 @@ public class YggdrasilServerLoader implements PlatformAdapter {
 
     @Override
     public void shutdown() {
-        
+
     }
 
     @Override

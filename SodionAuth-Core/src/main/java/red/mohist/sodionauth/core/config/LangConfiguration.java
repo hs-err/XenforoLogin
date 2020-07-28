@@ -209,7 +209,7 @@ public class LangConfiguration {
         private String mailExist;
         private String userExist;
         private String loginExist;
-        
+
         public String getPrefix() {
             return prefix != null ? prefix : Lang.all.errors.prefix;
         }

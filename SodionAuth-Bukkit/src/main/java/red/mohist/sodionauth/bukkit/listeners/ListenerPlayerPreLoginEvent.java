@@ -34,11 +34,11 @@ public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
         }
         AbstractPlayer abstractPlayer = new BukkitPlayer(
                 event.getName(), event.getUniqueId(), event.getAddress());
-        if(!SodionAuthCore.instance.isEnabled()){
+        if (!SodionAuthCore.instance.isEnabled()) {
             event.setKickMessage(abstractPlayer.getLang().getErrors().getServer());
             return;
         }
-        if(Bukkit.getPlayerExact(event.getName())!=null){
+        if (Bukkit.getPlayerExact(event.getName()) != null) {
             new Exception().printStackTrace();
             event.setKickMessage(abstractPlayer.getLang().getErrors().getLoginExist());
             return;

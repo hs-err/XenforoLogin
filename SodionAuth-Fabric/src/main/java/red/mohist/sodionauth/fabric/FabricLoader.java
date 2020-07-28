@@ -75,6 +75,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
         try {
             new Helper(configDir.toString(), new LogProvider() {
                 final Logger logger = LogManager.getLogger("SodionAuth|Main");
+
                 @Override
                 public void info(String info) {
                     logger.info(info);
