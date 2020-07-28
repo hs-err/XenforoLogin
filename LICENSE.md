@@ -18,6 +18,10 @@ Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
+## SodionAuth-Libs
+
+Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
+
 ## SodionAuth-Sponge
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
