@@ -1,0 +1,30 @@
+{
+  "prefix": "§6§l[§eSodion§bAuth§6§l]§f",
+  "registerEmail": "SodionAuthPlease send your email to register.",
+  "registerPassword": "SodionAuthPlease send your password.",
+  "registerPasswordConfirm": "SodionAuthPlease send your password again.",
+  "loggedIn": "SodionAuthYou have already logged in.",
+  "success": "SodionAuthLogged in successfully.",
+  "session": "SodionAuthAuto login by session.",
+  "needLogin": "SodionAuthPlease enter your password directly in chat.",
+  "errors": {
+    "prefix": "§6§l[§eSodion§bAuth§6§l]§c",
+    "proxy": "SodionAuthProxy address have baned.",
+    "rateLimit": "SodionAuthRate limited.",
+    "countryLimit": "SodionAuthCountry limited.",
+    "email": "SodionAuthWrong Email.",
+    "server": "SodionAuthThere is an issue when connecting to the server, contact the administrator.",
+    "confirm": "SodionAuthPassword is NOT identical to the first one.",
+    "handle": "SodionAuthSorry, we will finish your request soon. If it takes too long, contact the administrator.",
+    "password": "SodionAuthWrong password.",
+    "key": "SodionAuthPlease check api.key [key]",
+    "url": "SodionAuthPlease check api.url [url]",
+    "noUser": "SodionAuthYou are not whitelisted on this server.",
+    "timeOut": "SodionAuthLogin timed out!",
+    "nameIncorrect": "SodionAuthYou should use \"[correct]\", not this to login.",
+    "unknown": "SodionAuthUnknown error. Web send \"[message]\"",
+    "mailExist": "SodionAuthYour email already exists in our database. Try another one.",
+    "userExist": "SodionAuthYour username is already registered in our database. Try another one.",
+    "loginExist": "SodionAuthYou have been logged from another place."
+  }
+}

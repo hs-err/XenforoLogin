@@ -22,16 +22,19 @@ import java.util.Map;
 
 public class LangConfiguration {
 
+    private String prefix;
     private String registerEmail;
     private String registerPassword;
     private String registerPasswordConfirm;
     private String loggedIn;
     private String success;
     private String session;
-    private String lastLogin;
-    private String lastLoginUnknown;
     private String needLogin;
     private ErrorsBean errors;
+
+    public String getPrefix() {
+        return prefix != null ? prefix : Lang.all.prefix;
+    }
 
     public String getRegisterEmail(Map<String, String> data) {
         String result = getRegisterEmail();
@@ -51,7 +54,8 @@ public class LangConfiguration {
     }
 
     public String getRegisterEmail() {
-        return registerEmail != null ? registerEmail : Lang.all.registerEmail;
+        return getPrefix() +
+                (registerEmail != null ? registerEmail : Lang.all.registerEmail);
     }
 
     public String getRegisterPassword(Map<String, String> data) {
@@ -72,7 +76,8 @@ public class LangConfiguration {
     }
 
     public String getRegisterPassword() {
-        return registerPassword != null ? registerPassword : Lang.all.registerPassword;
+        return getPrefix() +
+                (registerPassword != null ? registerPassword : Lang.all.registerPassword);
     }
 
     public String getRegisterPasswordConfirm(Map<String, String> data) {
@@ -93,7 +98,8 @@ public class LangConfiguration {
     }
 
     public String getRegisterPasswordConfirm() {
-        return registerPasswordConfirm != null ? registerPasswordConfirm : Lang.all.registerPasswordConfirm;
+        return getPrefix() +
+                (registerPasswordConfirm != null ? registerPasswordConfirm : Lang.all.registerPasswordConfirm);
     }
 
     public String getLoggedIn(Map<String, String> data) {
@@ -114,7 +120,8 @@ public class LangConfiguration {
     }
 
     public String getLoggedIn() {
-        return loggedIn != null ? loggedIn : Lang.all.loggedIn;
+        return getPrefix() +
+                (loggedIn != null ? loggedIn : Lang.all.loggedIn);
     }
 
     public String getSuccess(Map<String, String> data) {
@@ -135,7 +142,8 @@ public class LangConfiguration {
     }
 
     public String getSuccess() {
-        return success != null ? success : Lang.all.success;
+        return getPrefix() +
+                (success != null ? success : Lang.all.success);
     }
 
     public String getSession(Map<String, String> data) {
@@ -156,49 +164,8 @@ public class LangConfiguration {
     }
 
     public String getSession() {
-        return session != null ? session : Lang.all.session;
-    }
-
-    public String getLastLogin(Map<String, String> data) {
-        String result = getLastLogin();
-        if (result == null) {
-            StringBuilder resultBuilder = new StringBuilder("lastLogin");
-            resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
-            }
-            result = resultBuilder.toString();
-            return result;
-        }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
-        }
-        return result;
-    }
-
-    public String getLastLogin() {
-        return lastLogin != null ? lastLogin : Lang.all.lastLogin;
-    }
-
-    public String getLastLoginUnknown(Map<String, String> data) {
-        String result = getLastLoginUnknown();
-        if (result == null) {
-            StringBuilder resultBuilder = new StringBuilder("lastLoginUnknown");
-            resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
-            }
-            result = resultBuilder.toString();
-            return result;
-        }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
-        }
-        return result;
-    }
-
-    public String getLastLoginUnknown() {
-        return lastLoginUnknown != null ? lastLoginUnknown : Lang.all.lastLoginUnknown;
+        return getPrefix() +
+                (session != null ? session : Lang.all.session);
     }
 
     public String getNeedLogin(Map<String, String> data) {
@@ -219,14 +186,12 @@ public class LangConfiguration {
     }
 
     public String getNeedLogin() {
-        return needLogin != null ? needLogin : Lang.all.needLogin;
-    }
-
-    public ErrorsBean getErrors() {
-        return errors != null ? errors : Lang.all.errors;
+        return getPrefix() +
+                (needLogin != null ? needLogin : Lang.all.needLogin);
     }
 
     public static class ErrorsBean {
+        private String prefix;
         private String proxy;
         private String rateLimit;
         private String countryLimit;
@@ -244,6 +209,10 @@ public class LangConfiguration {
         private String mailExist;
         private String userExist;
         private String loginExist;
+        
+        public String getPrefix() {
+            return prefix != null ? prefix : Lang.all.errors.prefix;
+        }
 
         public String getProxy(Map<String, String> data) {
             String result = getProxy();
@@ -263,7 +232,8 @@ public class LangConfiguration {
         }
 
         public String getProxy() {
-            return proxy != null ? proxy : Lang.all.errors.proxy;
+            return getPrefix() +
+                    (proxy != null ? proxy : Lang.all.errors.proxy);
         }
 
         public String getRateLimit(Map<String, String> data) {
@@ -284,7 +254,8 @@ public class LangConfiguration {
         }
 
         public String getRateLimit() {
-            return rateLimit != null ? rateLimit : Lang.all.errors.rateLimit;
+            return getPrefix() +
+                    (rateLimit != null ? rateLimit : Lang.all.errors.rateLimit);
         }
 
         public String getCountryLimit(Map<String, String> data) {
@@ -305,7 +276,8 @@ public class LangConfiguration {
         }
 
         public String getCountryLimit() {
-            return countryLimit != null ? countryLimit : Lang.all.errors.countryLimit;
+            return getPrefix() +
+                    (countryLimit != null ? countryLimit : Lang.all.errors.countryLimit);
         }
 
         public String getEmail(Map<String, String> data) {
@@ -326,7 +298,8 @@ public class LangConfiguration {
         }
 
         public String getEmail() {
-            return email != null ? email : Lang.all.errors.email;
+            return getPrefix() +
+                    (email != null ? email : Lang.all.errors.email);
         }
 
         public String getServer(Map<String, String> data) {
@@ -347,7 +320,8 @@ public class LangConfiguration {
         }
 
         public String getServer() {
-            return server != null ? server : Lang.all.errors.server;
+            return getPrefix() +
+                    (server != null ? server : Lang.all.errors.server);
         }
 
         public String getConfirm(Map<String, String> data) {
@@ -368,7 +342,8 @@ public class LangConfiguration {
         }
 
         public String getConfirm() {
-            return confirm != null ? confirm : Lang.all.errors.confirm;
+            return getPrefix() +
+                    (confirm != null ? confirm : Lang.all.errors.confirm);
         }
 
         public String getHandle(Map<String, String> data) {
@@ -389,7 +364,8 @@ public class LangConfiguration {
         }
 
         public String getHandle() {
-            return handle != null ? handle : Lang.all.errors.handle;
+            return getPrefix() +
+                    (handle != null ? handle : Lang.all.errors.handle);
         }
 
         public String getPassword(Map<String, String> data) {
@@ -410,7 +386,8 @@ public class LangConfiguration {
         }
 
         public String getPassword() {
-            return password != null ? password : Lang.all.errors.password;
+            return getPrefix() +
+                    (password != null ? password : Lang.all.errors.password);
         }
 
         public String getKey(Map<String, String> data) {
@@ -431,7 +408,8 @@ public class LangConfiguration {
         }
 
         public String getKey() {
-            return key != null ? key : Lang.all.errors.key;
+            return getPrefix() +
+                    (key != null ? key : Lang.all.errors.key);
         }
 
         public String getUrl(Map<String, String> data) {
@@ -452,7 +430,8 @@ public class LangConfiguration {
         }
 
         public String getUrl() {
-            return url != null ? url : Lang.all.errors.url;
+            return getPrefix() +
+                    (url != null ? url : Lang.all.errors.url);
         }
 
         public String getNoUser(Map<String, String> data) {
@@ -473,7 +452,8 @@ public class LangConfiguration {
         }
 
         public String getNoUser() {
-            return noUser != null ? noUser : Lang.all.errors.noUser;
+            return getPrefix() +
+                    (noUser != null ? noUser : Lang.all.errors.noUser);
         }
 
         public String getTimeOut(Map<String, String> data) {
@@ -494,7 +474,8 @@ public class LangConfiguration {
         }
 
         public String getTimeOut() {
-            return timeOut != null ? timeOut : Lang.all.errors.timeOut;
+            return getPrefix() +
+                    (timeOut != null ? timeOut : Lang.all.errors.timeOut);
         }
 
         public String getNameIncorrect(Map<String, String> data) {
@@ -515,7 +496,8 @@ public class LangConfiguration {
         }
 
         public String getNameIncorrect() {
-            return nameIncorrect != null ? nameIncorrect : Lang.all.errors.nameIncorrect;
+            return getPrefix() +
+                    (nameIncorrect != null ? nameIncorrect : Lang.all.errors.nameIncorrect);
         }
 
         public String getUnknown(Map<String, String> data) {
@@ -536,7 +518,8 @@ public class LangConfiguration {
         }
 
         public String getUnknown() {
-            return unknown != null ? unknown : Lang.all.errors.unknown;
+            return getPrefix() +
+                    (unknown != null ? unknown : Lang.all.errors.unknown);
         }
 
         public String getMailExist(Map<String, String> data) {
@@ -557,7 +540,8 @@ public class LangConfiguration {
         }
 
         public String getMailExist() {
-            return mailExist != null ? mailExist : Lang.all.errors.mailExist;
+            return getPrefix() +
+                    (mailExist != null ? mailExist : Lang.all.errors.mailExist);
         }
 
         public String getUserExist(Map<String, String> data) {
@@ -578,13 +562,14 @@ public class LangConfiguration {
         }
 
         public String getUserExist() {
-            return userExist != null ? userExist : Lang.all.errors.userExist;
+            return getPrefix() +
+                    (userExist != null ? userExist : Lang.all.errors.userExist);
         }
 
         public String getLoginExist(Map<String, String> data) {
             String result = getLoginExist();
             if (result == null) {
-                StringBuilder resultBuilder = new StringBuilder("userExist");
+                StringBuilder resultBuilder = new StringBuilder("loginExist");
                 resultBuilder.append("\n");
                 for (Map.Entry<String, String> entry : data.entrySet()) {
                     resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
@@ -599,7 +584,8 @@ public class LangConfiguration {
         }
 
         public String getLoginExist() {
-            return loginExist != null ? loginExist : Lang.all.errors.loginExist;
+            return getPrefix() +
+                    (loginExist != null ? loginExist : Lang.all.errors.loginExist);
         }
     }
 }

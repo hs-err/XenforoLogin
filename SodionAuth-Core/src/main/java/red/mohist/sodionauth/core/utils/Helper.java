@@ -95,8 +95,6 @@ public class Helper {
             if (url == null) {
                 return null;
             }
-
-            getLogger().info("Loading resource " + url);
             URLConnection connection = url.openConnection();
             connection.setUseCaches(false);
             return connection.getInputStream();
