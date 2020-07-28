@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.fabric.mixins;
+package red.mohist.sodionauth.fabric.mixininterface;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.network.ServerLoginNetworkHandler;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import red.mohist.sodionauth.fabric.mixininterface.IServerLoginNetworkHandler;
 
-@Mixin(ServerLoginNetworkHandler.class)
-public class MixinServerLoginNetworkHandler implements IServerLoginNetworkHandler {
+public interface IServerLoginNetworkHandler {
 
-    @Shadow
-    private GameProfile profile;
+    GameProfile getGameProfile();
 
-    @Override
-    public GameProfile getGameProfile() {
-        return profile;
-    }
 }
