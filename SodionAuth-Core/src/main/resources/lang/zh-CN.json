@@ -8,6 +8,7 @@
   "session": "自动登录。",
   "needLogin": "请在聊天栏输入你的密码。",
   "errors": {
+    "prefix": "§6§l[§e钠离子§b登录§6§l]§c",
     "proxy": "代理地址已被禁用。",
     "rateLimit": "速率限制。",
     "countryLimit": "国家限制。",

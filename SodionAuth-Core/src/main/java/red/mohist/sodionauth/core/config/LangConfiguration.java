@@ -190,6 +190,10 @@ public class LangConfiguration {
                 (needLogin != null ? needLogin : Lang.all.needLogin);
     }
 
+    public ErrorsBean getErrors() {
+        return errors;
+    }
+
     public static class ErrorsBean {
         private String prefix;
         private String proxy;
