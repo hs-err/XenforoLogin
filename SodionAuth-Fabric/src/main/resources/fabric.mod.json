@@ -12,7 +12,7 @@
     "homepage": "https://mohist.red/",
     "sources": "https://github.com/Mohist-Community/SodionAuth"
   },
-  "license": "LGPLv3",
+  "license": "Apache-2.0",
   "icon": "",
   "environment": "server",
   "entrypoints": {
