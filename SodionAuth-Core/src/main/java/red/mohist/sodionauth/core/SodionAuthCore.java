@@ -23,6 +23,7 @@ import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
@@ -233,7 +234,11 @@ public final class SodionAuthCore {
         return !logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN).equals(StatusType.LOGGED_IN);
     }
 
-    public void login(AbstractPlayer player) {
+    public void login(AbstractPlayer player) throws AuthenticatedException {
+        if(logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
+                .equals(StatusType.LOGGED_IN)){
+            throw new AuthenticatedException();
+        }
         logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
             PreparedStatement pps = connection.prepareStatement("SELECT * FROM last_info WHERE uuid=? LIMIT 1;");
@@ -267,6 +272,12 @@ public final class SodionAuthCore {
         api.onLogin(player);
         Helper.getLogger().warn("Logging in " + player.getUniqueId());
         player.sendMessage(player.getLang().getSuccess());
+    }
+
+    public boolean register(AbstractPlayer player,String email,String password) {
+        return ResultTypeUtils.handle(player,
+                AuthBackendSystems.getCurrentSystem()
+                        .register(player, password, email).shouldLogin(true));
     }
 
     public void message(AbstractPlayer player) {
@@ -418,10 +429,7 @@ public final class SodionAuthCore {
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
                     executor.execute(() -> {
-                        boolean result = ResultTypeUtils.handle(player,
-                                AuthBackendSystems.getCurrentSystem()
-                                        .register(player, status.password, status.email).shouldLogin(true));
-                        if (result) {
+                        if (register(player,status.email,status.password)) {
                             SodionAuthCore.instance.logged_in.put(
                                     player.getUniqueId(), StatusType.LOGGED_IN);
                         } else {
