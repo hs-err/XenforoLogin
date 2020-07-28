@@ -48,12 +48,12 @@ public class DependencyManager {
         File librariesPath = new File(Helper.getConfigPath("libraries"));
         librariesPath.mkdirs();
 
-        File SQLiteLib = librariesPath.toPath().resolve("sqlite-jdbc-3.30.1.jar").toFile();
+        File SQLiteLib = librariesPath.toPath().resolve("sqlite-jdbc-3.32.3.1.jar").toFile();
 
         if (!SQLiteLib.isFile())
             try {
                 Helper.getLogger().info("Downloading SQLite library...");
-                downloadFile(SQLiteLib, "org/xerial/sqlite-jdbc/3.30.1/sqlite-jdbc-3.30.1.jar");
+                downloadFile(SQLiteLib, "org/xerial/sqlite-jdbc/3.32.3.1/sqlite-jdbc-3.32.3.1.jar");
             } catch (IOException e) {
                 Helper.getLogger().warn("Unable to download SQLite library", e);
             }
@@ -61,7 +61,7 @@ public class DependencyManager {
             Helper.getLogger().info("SQLite library file present");
 
         boolean matchChecksum = isMatchChecksum(SQLiteLib,
-                "org/xerial/sqlite-jdbc/3.30.1/sqlite-jdbc-3.30.1.jar.sha1");
+                "org/xerial/sqlite-jdbc/3.32.3.1/sqlite-jdbc-3.32.3.1.jar.sha1");
 
         if (matchChecksum) {
             Helper.getLogger().info("Checksum matched, loading it into memory...");
