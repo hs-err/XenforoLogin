@@ -17,6 +17,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'war'
+    id 'maven-publish'
 }
 
 allprojects {
@@ -51,6 +52,25 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        //noinspection GroovyAssignabilityCheck
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(shadowJar) {
+                builtBy shadowJar
+            }
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
     }
 }
 
