@@ -53,6 +53,21 @@ subprojects {
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
     }
+
+    afterEvaluate {
+        publishing {
+            publications {
+                Library(MavenPublication) {
+                    if (!project.name.equals("SodionAuth-Fabric")) {
+                        from components.java
+                        if (project.tasks.findByName("shadowJar") != null) {
+                            artifact shadowJar
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 // configure the maven publication
@@ -60,7 +75,8 @@ publishing {
     publications {
         //noinspection GroovyAssignabilityCheck
         shadow(MavenPublication) {
-            publication -> project.shadow.component(publication)
+            from components.java
+            artifact shadowJar
         }
     }
 
