@@ -37,7 +37,11 @@ public final class SodionAuthApi {
         return SodionAuthCore.instance.register(player, email, password);
     }
 
-    public static boolean isRegister(AbstractPlayer player) {
+    public static boolean register(AbstractPlayer player, String password) {
+        throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    public static boolean isRegistered(AbstractPlayer player) {
         switch (SodionAuthCore.instance.logged_in.getOrDefault(player.getUniqueId(), null)) {
             case LOGGED_IN:
             case NEED_LOGIN:
@@ -59,7 +63,7 @@ public final class SodionAuthApi {
         }
     }
 
-    public static boolean isRegister(String playerName) {
+    public static boolean isRegistered(String playerName) {
         switch (AuthBackendSystems.getCurrentSystem()
                 .join(new PlainPlayer(playerName, UUID.randomUUID(), InetAddress.getLoopbackAddress()))
                 .shouldLogin(false)) {
