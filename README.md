@@ -23,7 +23,7 @@ Development builds: https://ci.ishland.com:43333/job/SodionAuth/
   - Customized RestAPI
 - Multi-platform support:
   - Paper (Full)
-  - Mohist (Full)
+  - Mohist (Partial)
   - Spigot (Partial)
   - CraftBukkit (Partial)
   - Sponge (Partial)
