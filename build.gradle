@@ -59,12 +59,8 @@ subprojects {
 publishing {
     publications {
         //noinspection GroovyAssignabilityCheck
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(shadowJar) {
-                builtBy shadowJar
-                artifactId = jar.archiveBaseName
-            }
+        shadow(MavenPublication) {
+            publication -> project.shadow.component(publication)
         }
     }
 
