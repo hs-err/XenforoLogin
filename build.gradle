@@ -22,7 +22,9 @@ plugins {
 
 allprojects {
     group = 'red.mohist.sodionauth'
-    version = '2.0-SNAPSHOT'
+    version = '2.0-ALPHA.2'
+    // Notice another version
+    // red.mohist.sodionauth.sponge.SpongeLoader
 }
 
 subprojects {
