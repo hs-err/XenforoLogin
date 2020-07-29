@@ -63,6 +63,7 @@ publishing {
             // add all the jars that should be included when publishing to maven
             artifact(shadowJar) {
                 builtBy shadowJar
+                artifactId = jar.archiveBaseName
             }
         }
     }
