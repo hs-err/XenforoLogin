@@ -31,13 +31,13 @@ import red.mohist.sodionauth.fabric.mixinhelper.MixinServerPlayNetworkHandlerHel
 @Mixin(ServerPlayNetworkHandler.class)
 public class MixinServerPlayNetworkHandler {
 
+    @Shadow
+    public ServerPlayerEntity player;
+
     @Inject(method = "<init>", at = @At("TAIL"))
     public void onInit(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         MixinServerPlayNetworkHandlerHelper.onInit(player);
     }
-
-    @Shadow
-    public ServerPlayerEntity player;
 
     @Inject(method = "onGameMessage", at = @At("HEAD"), cancellable = true)
     public void onGameMessage(ChatMessageC2SPacket packet, CallbackInfo ci) {

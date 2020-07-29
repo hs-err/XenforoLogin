@@ -19,13 +19,16 @@ package red.mohist.sodionauth.fabric.mixins;
 import javassist.bytecode.Opcode;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.PacketListener;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.mixinhelper.MixinClientConnectionHelper;
+import red.mohist.sodionauth.fabric.mixininterface.IServerLoginNetworkHandler;
 
 @Mixin(ClientConnection.class)
 public abstract class MixinClientConnection {
@@ -46,8 +49,22 @@ public abstract class MixinClientConnection {
             )
     )
     public void beforeDisconnect(CallbackInfo ci) {
+        final PacketListener packetListener = getPacketListener();
+        if (packetListener instanceof ServerLoginNetworkHandler) {
+            MixinLogger.logger.warn("Called beforeDisconnect for " +
+                    ((IServerLoginNetworkHandler) getPacketListener()).getGameProfile().getName() +
+                    " at LOGIN stage, ignoring"
+            );
+            return;
+        }
+        if (!(packetListener instanceof ServerPlayNetworkHandler)) {
+            MixinLogger.logger.warn("Called beforeDisconnect with invalid network handler " +
+                    packetListener.getClass().getName()
+            );
+            return;
+        }
         MixinClientConnectionHelper.onBeforeDisconnect(
-                ((ServerPlayNetworkHandler) getPacketListener()).player
+                ((ServerPlayNetworkHandler) packetListener).player
         );
     }
 

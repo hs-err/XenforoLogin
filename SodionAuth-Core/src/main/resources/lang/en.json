@@ -1,0 +1,30 @@
+{
+  "prefix": "§6§l[§eSodion§bAuth§6§l]§f",
+  "registerEmail": "Please send your email to register.",
+  "registerPassword": "Please send your password.",
+  "registerPasswordConfirm": "Please send your password again.",
+  "loggedIn": "You have already logged in.",
+  "success": "Logged in successfully.",
+  "session": "Auto login by session.",
+  "needLogin": "Please enter your password directly in chat.",
+  "errors": {
+    "prefix": "§6§l[§eSodion§bAuth§6§l]§c",
+    "proxy": "Proxy address have baned.",
+    "rateLimit": "Rate limited.",
+    "countryLimit": "Country limited.",
+    "email": "Wrong Email.",
+    "server": "There is an issue when connecting to the server, contact the administrator.",
+    "confirm": "Password is NOT identical to the first one.",
+    "handle": "Sorry, we will finish your request soon. If it takes too long, contact the administrator.",
+    "password": "Wrong password.",
+    "key": "Please check api.key [key]",
+    "url": "Please check api.url [url]",
+    "noUser": "You are not whitelisted on this server.",
+    "timeOut": "Login timed out!",
+    "nameIncorrect": "You should use \"[correct]\", not this to login.",
+    "unknown": "Unknown error. Web send \"[message]\"",
+    "mailExist": "Your email already exists in our database. Try another one.",
+    "userExist": "Your username is already registered in our database. Try another one.",
+    "loginExist": "You have been logged from another place."
+  }
+}

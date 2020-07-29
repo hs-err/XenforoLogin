@@ -56,7 +56,7 @@ public class SqliteSystem implements AuthBackendSystem {
             } else {
                 connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath(path));
             }
-            if (!connection.getMetaData().getTables(null, null, tableName, new String[] { "TABLE" }).next()) {
+            if (!connection.getMetaData().getTables(null, null, tableName, new String[]{"TABLE"}).next()) {
                 PreparedStatement pps;
                 if (hasherTool.needSalt()) {
                     pps = connection.prepareStatement(

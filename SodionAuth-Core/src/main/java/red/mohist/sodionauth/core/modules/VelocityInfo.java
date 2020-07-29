@@ -17,14 +17,15 @@
 package red.mohist.sodionauth.core.modules;
 
 public class VelocityInfo {
-    public double x=0;
-    public double y=0;
-    public double z=0;
-    public static VelocityInfo create(double x,double y,double z){
-        VelocityInfo velocityInfo=new VelocityInfo();
-        velocityInfo.x=x;
-        velocityInfo.y=y;
-        velocityInfo.z=z;
+    public double x = 0;
+    public double y = 0;
+    public double z = 0;
+
+    public static VelocityInfo create(double x, double y, double z) {
+        VelocityInfo velocityInfo = new VelocityInfo();
+        velocityInfo.x = x;
+        velocityInfo.y = y;
+        velocityInfo.z = z;
         return velocityInfo;
     }
 }

@@ -1,5 +1,5 @@
 {
-  "defaultLang": "zh-CN",
+  "defaultLang": "en",
   "api": {
     "system": "sqlite",
     "allowRegister": true,

@@ -25,11 +25,11 @@ import java.util.LinkedList;
 public class PlayerInfo {
     public LocationInfo location = SodionAuthCore.instance.spawn_location;
     public Integer gameMode = Config.security.getDefaultGamemode();
-    public double health=20;
-    public double maxHealth=20;
-    public float fallDistance=0;
-    public VelocityInfo velocity=new VelocityInfo();
-    public FoodInfo food=new FoodInfo();
-    public int remainingAir=0;
-    public Collection<EffectInfo> effects=new LinkedList<>();
+    public double health = 20;
+    public double maxHealth = 20;
+    public float fallDistance = 0;
+    public VelocityInfo velocity = new VelocityInfo();
+    public FoodInfo food = new FoodInfo();
+    public int remainingAir = 0;
+    public Collection<EffectInfo> effects = new LinkedList<>();
 }

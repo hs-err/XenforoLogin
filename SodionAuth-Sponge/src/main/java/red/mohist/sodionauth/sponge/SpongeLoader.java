@@ -48,7 +48,7 @@ import java.util.*;
         id = "sodionauth",
         name = "SodionAuth",
         description = "A new generation of authentication plugin for Minecraft",
-        version = "2.0"
+        version = "2.0-SNAOSHOT"
 )
 public class SpongeLoader implements PlatformAdapter {
     public static SpongeLoader instance;
@@ -161,7 +161,7 @@ public class SpongeLoader implements PlatformAdapter {
 
     @Override
     public void sendBlankInventoryPacket(AbstractPlayer player) {
-        if(player instanceof SpongePlayer){
+        if (player instanceof SpongePlayer) {
             Runnable run = () -> {
                 Player handle = ((SpongePlayer) player).handle;
                 handle.respawnPlayer();
@@ -176,9 +176,9 @@ public class SpongeLoader implements PlatformAdapter {
                     player.setGameMode(Config.security.getDefaultGamemode());
                 }
             };
-            if(Sponge.getServer().isMainThread()){
+            if (Sponge.getServer().isMainThread()) {
                 run.run();
-            }else{
+            } else {
                 Sponge.getScheduler()
                         .createTaskBuilder()
                         .execute(run)

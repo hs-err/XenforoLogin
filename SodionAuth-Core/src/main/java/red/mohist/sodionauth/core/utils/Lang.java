@@ -43,7 +43,7 @@ public class Lang {
 
     public static void init() throws IOException {
         ArrayList<String> languageList = new ArrayList<>(ImmutableList.of(
-                "zh-CN"
+                "en", "zh-CN"
         ));
         for (String language : languageList) {
             Helper.instance.saveResource("lang/" + language + ".json", false);
@@ -55,6 +55,6 @@ public class Lang {
             fileReader.close();
         }
         def = languages.get(Config.defaultLang);
-        all = languages.get("zh-CN");
+        all = languages.get("en");
     }
 }

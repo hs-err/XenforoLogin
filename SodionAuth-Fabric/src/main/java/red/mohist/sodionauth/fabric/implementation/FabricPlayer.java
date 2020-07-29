@@ -43,11 +43,6 @@ import java.util.function.Supplier;
 
 public class FabricPlayer extends AbstractPlayer {
 
-    public ServerPlayerEntity getHandle() {
-        return handle;
-    }
-
-    private final ServerPlayerEntity handle;
     private static final Supplier<Field> getExhaustionField = Suppliers.memoize(() -> {
         try {
             final Field exhaustion = HungerManager.class.getDeclaredField("exhaustion");
@@ -66,11 +61,15 @@ public class FabricPlayer extends AbstractPlayer {
             throw new RuntimeException("Cannot get saturation field", e);
         }
     });
-
+    private final ServerPlayerEntity handle;
     public FabricPlayer(ServerPlayerEntity handle) {
         super(handle.getName().getString(), handle.getUuid(),
                 ((InetSocketAddress) handle.networkHandler.connection.getAddress()).getAddress());
         this.handle = handle;
+    }
+
+    public ServerPlayerEntity getHandle() {
+        return handle;
     }
 
     @Override

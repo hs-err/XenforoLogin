@@ -38,13 +38,7 @@ import java.nio.file.Path;
 public class ReflectionClassLoader {
 
     public static final Logger logger = LogManager.getLogger("SodionAuth|FabricDevBootstrapClassLoader");
-
-    public URLClassLoader getClassLoader() {
-        return classLoader;
-    }
-
     private final URLClassLoader classLoader;
-
     @SuppressWarnings("Guava") // we can't use java.util.Function because old Guava versions are used at runtime
     private final Supplier<Method> addUrlMethod;
 
@@ -74,14 +68,6 @@ public class ReflectionClassLoader {
         });
     }
 
-    public void addJarToClasspath(Path file) {
-        try {
-            this.addUrlMethod.get().invoke(this.classLoader, file.toUri().toURL());
-        } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static boolean isJava9OrNewer() {
         try {
             // method was added in the Java 9 release
@@ -89,6 +75,18 @@ public class ReflectionClassLoader {
             return true;
         } catch (NoSuchMethodException e) {
             return false;
+        }
+    }
+
+    public URLClassLoader getClassLoader() {
+        return classLoader;
+    }
+
+    public void addJarToClasspath(Path file) {
+        try {
+            this.addUrlMethod.get().invoke(this.classLoader, file.toUri().toURL());
+        } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

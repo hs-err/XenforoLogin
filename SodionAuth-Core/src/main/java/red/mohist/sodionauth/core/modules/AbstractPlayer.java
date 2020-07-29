@@ -61,47 +61,57 @@ public abstract class AbstractPlayer {
     public abstract void kick(String message);
 
     public abstract LocationInfo getLocation();
+
     public abstract void setLocation(LocationInfo location);
 
     public abstract int getGameMode();
+
     public abstract void setGameMode(int gameMode);
 
     public abstract double getHealth();
+
     public abstract void setHealth(double health);
 
     public abstract double getMaxHealth();
+
     public abstract void setMaxHealth(double maxHealth);
 
     public abstract float getFallDistance();
+
     public abstract void setFallDistance(float fallDistance);
 
     public abstract VelocityInfo getVelocity();
+
     public abstract void setVelocity(VelocityInfo velocity);
 
     public abstract FoodInfo getFood();
+
     public abstract void setFood(FoodInfo food);
 
     public abstract int getRemainingAir();
+
     public abstract void setRemainingAir(int remainingAir);
 
     public abstract Collection<EffectInfo> getEffects();
+
     public abstract void setEffects(Collection<EffectInfo> effects);
 
-    public PlayerInfo getPlayerInfo(){
-        PlayerInfo playerInfo=new PlayerInfo();
-        playerInfo.location=getLocation();
-        playerInfo.gameMode=getGameMode();
-        playerInfo.health=getHealth();
-        playerInfo.maxHealth=getMaxHealth();
-        playerInfo.fallDistance=getFallDistance();
-        playerInfo.velocity=getVelocity();
-        playerInfo.food=getFood();
-        playerInfo.remainingAir=getRemainingAir();
-        playerInfo.effects=getEffects();
+    public PlayerInfo getPlayerInfo() {
+        PlayerInfo playerInfo = new PlayerInfo();
+        playerInfo.location = getLocation();
+        playerInfo.gameMode = getGameMode();
+        playerInfo.health = getHealth();
+        playerInfo.maxHealth = getMaxHealth();
+        playerInfo.fallDistance = getFallDistance();
+        playerInfo.velocity = getVelocity();
+        playerInfo.food = getFood();
+        playerInfo.remainingAir = getRemainingAir();
+        playerInfo.effects = getEffects();
         return playerInfo;
     }
-    public void setPlayerInfo(PlayerInfo playerInfo){
-        if(Config.teleport.getTpBackAfterLogin()) {
+
+    public void setPlayerInfo(PlayerInfo playerInfo) {
+        if (Config.teleport.getTpBackAfterLogin()) {
             setLocation(playerInfo.location);
         }
         setGameMode(playerInfo.gameMode);
@@ -113,5 +123,6 @@ public abstract class AbstractPlayer {
         setRemainingAir(playerInfo.remainingAir);
         setEffects(playerInfo.effects);
     }
+
     public abstract boolean isOnline();
 }

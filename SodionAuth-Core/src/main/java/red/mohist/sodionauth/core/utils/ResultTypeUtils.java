@@ -19,6 +19,7 @@ package red.mohist.sodionauth.core.utils;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public class ResultTypeUtils {
@@ -27,7 +28,11 @@ public class ResultTypeUtils {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
-                    SodionAuthCore.instance.login(player);
+                    try {
+                        SodionAuthCore.instance.login(player);
+                    } catch (AuthenticatedException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                     SodionAuthCore.instance.message(player);
