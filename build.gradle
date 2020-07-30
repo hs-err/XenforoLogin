@@ -25,13 +25,6 @@ allprojects {
     version = '2.0-SNAPSHOT'
     // Notice another version
     // red.mohist.sodionauth.sponge.SpongeLoader
-
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public/' }
-        maven { url 'https://www.jitpack.io' }
-        mavenLocal()
-        mavenCentral()
-    }
 }
 
 subprojects {
@@ -54,6 +47,10 @@ subprojects {
 
         maven {
             url = 'https://repo.dmulloy2.net/nexus/repository/public/'
+        }
+        
+        maven {
+            url = 'https://www.jitpack.io'
         }
     }
 
