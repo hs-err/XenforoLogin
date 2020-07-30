@@ -48,7 +48,7 @@ import java.util.*;
         id = "sodionauth",
         name = "SodionAuth",
         description = "A new generation of authentication plugin for Minecraft",
-        version = "2.0-SNAOSHOT"
+        version = "2.0-ALPHA.2"
 )
 public class SpongeLoader implements PlatformAdapter {
     public static SpongeLoader instance;

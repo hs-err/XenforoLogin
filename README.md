@@ -4,9 +4,6 @@ A new generation of authentication plugin for Minecraft
 
 Development builds: https://ci.ishland.com:43333/job/SodionAuth/
 
-## Fabric builds
-Fabric support is still WIP. Do NOT use them unless you would like to help us. 
-
 ## Description
 - Provide an extra protection for your online server.
 - Secure your offline server.
@@ -26,13 +23,13 @@ Fabric support is still WIP. Do NOT use them unless you would like to help us.
   - Customized RestAPI
 - Multi-platform support:
   - Paper (Full)
-  - Mohist (Full)
+  - Mohist (Partial)
   - Spigot (Partial)
   - CraftBukkit (Partial)
-  - Sponge (Experimental)
+  - Sponge (Partial)
+  - Fabric (Experimental)
 
 ## Planned features
-- Support for fabric servers. (currently in development)
 - Session login.
 
 ## Usage

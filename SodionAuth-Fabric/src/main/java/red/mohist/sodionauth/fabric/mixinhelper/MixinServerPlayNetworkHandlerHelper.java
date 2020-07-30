@@ -34,12 +34,14 @@ public class MixinServerPlayNetworkHandlerHelper {
         if (!SodionAuthCore.instance.needCancelled(abstractPlayer)) {
             if (Config.security.getCancelChatAfterLogin()) {
                 abstractPlayer.sendMessage(abstractPlayer.getLang().getLoggedIn());
-                ci.cancel();
+                // ci.cancel();
                 throw OffThreadException.INSTANCE; // Alternative solution
             }
             return;
         }
         SodionAuthCore.instance.onChat(abstractPlayer, packet.getChatMessage());
+        // ci.cancel();
+        throw OffThreadException.INSTANCE; // Alternative solution
     }
 
     public static void onInit(ServerPlayerEntity player) {

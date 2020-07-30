@@ -17,9 +17,7 @@
 package red.mohist.sodionauth.fabric.implementation;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Suppliers;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.HungerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
@@ -30,8 +28,8 @@ import net.minecraft.world.level.ServerWorldProperties;
 import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.fabric.FabricLoader;
 import red.mohist.sodionauth.fabric.data.Data;
+import red.mohist.sodionauth.fabric.mixininterface.IHungerManager;
 
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,28 +37,9 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 public class FabricPlayer extends AbstractPlayer {
 
-    private static final Supplier<Field> getExhaustionField = Suppliers.memoize(() -> {
-        try {
-            final Field exhaustion = HungerManager.class.getDeclaredField("exhaustion");
-            exhaustion.setAccessible(true);
-            return exhaustion;
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Cannot get exhaustion field", e);
-        }
-    });
-    private static final Supplier<Field> getSaturationField = Suppliers.memoize(() -> {
-        try {
-            final Field saturation = HungerManager.class.getDeclaredField("foodSaturationLevel");
-            saturation.setAccessible(true);
-            return saturation;
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException("Cannot get saturation field", e);
-        }
-    });
     private final ServerPlayerEntity handle;
     public FabricPlayer(ServerPlayerEntity handle) {
         super(handle.getName().getString(), handle.getUuid(),
@@ -205,31 +184,19 @@ public class FabricPlayer extends AbstractPlayer {
     @Override
     public FoodInfo getFood() {
         Preconditions.checkState(!handle.isDisconnected());
-        try {
-            return FoodInfo.create(
-                    handle.getHungerManager().getFoodLevel(),
-                    getExhaustionField.get().getFloat(handle.getHungerManager()),
-                    handle.getHungerManager().getSaturationLevel()
-            );
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to get exhaustion", e);
-        }
+        return FoodInfo.create(
+                handle.getHungerManager().getFoodLevel(),
+                ((IHungerManager) handle.getHungerManager()).getExhaustion(),
+                handle.getHungerManager().getSaturationLevel()
+        );
     }
 
     @Override
     public void setFood(FoodInfo food) {
         Preconditions.checkState(!handle.isDisconnected());
         handle.getHungerManager().setFoodLevel(food.foodLevel);
-        try {
-            getExhaustionField.get().setFloat(handle.getHungerManager(), (float) food.exhaustion);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to set exhaustion", e);
-        }
-        try {
-            getSaturationField.get().setFloat(handle.getHungerManager(), (float) food.saturation);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Unable to set saturation", e);
-        }
+        ((IHungerManager) handle.getHungerManager()).setExhaustion((float) food.exhaustion);
+        ((IHungerManager) handle.getHungerManager()).setSaturation((float) food.saturation);
     }
 
     @Override

@@ -17,6 +17,7 @@
 package red.mohist.sodionauth.core;
 
 import com.google.gson.Gson;
+import jdk.internal.loader.ClassLoaders;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.knownspace.minitask.ITask;
@@ -69,7 +70,32 @@ public final class SodionAuthCore {
                 // WARN You are not permitted to interfere any protection that prevents loading in CatServer
                 String a0 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
                 try {
-                    Class.forName("catserver.server.CatServer");
+                    try {
+                        Class.forName("catserver.server.CatServer");
+                    } catch (Throwable e) {
+                        // System.err.println(e);
+                        try {
+                            ClassLoader.getSystemClassLoader().loadClass("catserver.server.CatServer");
+                        } catch (Throwable e1) {
+                            // System.err.println(e1);
+                            try {
+                                ClassLoaders.appClassLoader().loadClass("catserver.server.CatServer");
+                            } catch (Throwable e2) {
+                                // System.err.println(e2);
+                                ClassLoader classLoader = this.getClass().getClassLoader();
+                                while (classLoader != null) {
+                                    try {
+                                        classLoader.loadClass("catserver.server.CatServer");
+                                        break;
+                                    } catch (Throwable e3) {
+                                        // System.err.println(e3);
+                                        classLoader = classLoader.getParent();
+                                    }
+                                }
+                                throw new ClassNotFoundException();
+                            }
+                        }
+                    }
                     // WARN You are not permitted to interfere any protection that prevents loading in CatServer
                     String a1 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
                     System.out.println("======================== [ Security Check ] ========================");
