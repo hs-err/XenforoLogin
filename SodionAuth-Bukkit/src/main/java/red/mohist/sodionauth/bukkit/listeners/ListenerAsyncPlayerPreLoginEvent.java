@@ -26,6 +26,7 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
 
@@ -56,19 +57,21 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
             }
         }
 
-        String canjoin;
-        try {
-            canjoin = SodionAuthCore.instance.canJoin(abstractPlayer).get();
-        } catch (InterruptedException | ExecutionException e) {
-            SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getServer());
-            e.printStackTrace();
-            return;
-        }
-        if (canjoin != null) {
-            SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canjoin);
-        }
+        SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException((Future<String> future)->{
+            String canjoin;
+            try {
+                canjoin = future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getServer());
+                e.printStackTrace();
+                return;
+            }
+            if (canjoin != null) {
+                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canjoin);
+            }
+        });
     }
 
     @Override

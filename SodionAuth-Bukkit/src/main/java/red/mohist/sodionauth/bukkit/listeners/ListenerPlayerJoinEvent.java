@@ -44,7 +44,7 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
 
             Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            SodionAuthCore.instance.canJoin(abstractPlayer).thenAccept(result -> {
+            SodionAuthCore.instance.canJoinAsync(abstractPlayer).then(result -> {
                 if (result != null) {
                     abstractPlayer.kick(result);
                 }

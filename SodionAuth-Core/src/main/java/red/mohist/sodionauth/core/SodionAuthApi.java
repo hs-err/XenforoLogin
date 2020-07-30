@@ -16,6 +16,8 @@
 
 package red.mohist.sodionauth.core;
 
+import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
+import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -25,8 +27,13 @@ import java.net.InetAddress;
 import java.util.UUID;
 
 public final class SodionAuthApi {
+    @Deprecated
     public static void login(AbstractPlayer player) throws AuthenticatedException {
         SodionAuthCore.instance.login(player);
+    }
+
+    public static ITask<Void> loginAsync(AbstractPlayer player) {
+        return  SodionAuthCore.instance.loginAsync(player);
     }
 
     public static boolean isLogin(AbstractPlayer player) {
