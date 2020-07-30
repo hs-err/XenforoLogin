@@ -17,11 +17,14 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id 'war'
+    id 'maven-publish'
 }
 
 allprojects {
     group = 'red.mohist.sodionauth'
     version = '2.0-SNAPSHOT'
+    // Notice another version
+    // red.mohist.sodionauth.sponge.SpongeLoader
 
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public/' }
@@ -58,6 +61,38 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    afterEvaluate {
+        publishing {
+            publications {
+                Library(MavenPublication) {
+                    if (!project.name.equals("SodionAuth-Fabric")) {
+                        from components.java
+                        if (project.tasks.findByName("shadowJar") != null) {
+                            artifact shadowJar
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        //noinspection GroovyAssignabilityCheck
+        shadow(MavenPublication) {
+            from components.java
+            artifact shadowJar
+        }
+    }
+
+    // select the repositories you want to publish to
+    repositories {
+        // uncomment to publish to the local maven
+        // mavenLocal()
     }
 }
 
