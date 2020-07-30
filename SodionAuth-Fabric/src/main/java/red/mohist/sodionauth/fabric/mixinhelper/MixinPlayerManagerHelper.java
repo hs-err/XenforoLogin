@@ -64,10 +64,8 @@ public class MixinPlayerManagerHelper {
     }
 
     public static ITask<Void> onCheckCanJoinAsync(InetSocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
-        ITaskCompletionEvent<Void> ce = SodionAuthCore.instance.getStartup().makeCompletionEvent();
-        ce.complete(Helper.voidValue);
         if (cir.getReturnValue() != null) {
-            return ce.getTask();
+            return SodionAuthCore.instance.getStartup().complete();
         }
         MixinLogger.logger.info("Checking if " + profile.getName() + " can join...");
         FabricPlainPlayer abstractPlayer = new FabricPlainPlayer(profile.getName(),
@@ -78,7 +76,7 @@ public class MixinPlayerManagerHelper {
                 SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
                 MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
                 cir.setReturnValue(new LiteralText(reason));
-                return ce.getTask();
+                return SodionAuthCore.instance.getStartup().complete();
             }
         }
 

@@ -445,7 +445,7 @@ public final class SodionAuthCore {
         }
         LoginTicker.add(abstractPlayer);
         dbUniqueFlag.lock().then(()->{
-            try {
+            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)) {
                 if (Config.session.getEnable()) {
                     PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
                     pps.setString(1, abstractPlayer.getUniqueId().toString());
@@ -460,8 +460,6 @@ public final class SodionAuthCore {
             } catch (Throwable e) {
                 Helper.getLogger().warn("Fail use session.");
                 e.printStackTrace();
-            } finally {
-                dbUniqueFlag.unlock();
             }
         });
     }

@@ -15,7 +15,7 @@ dependencies {
         implementation 'com.fasterxml.jackson.core:jackson-core:2.11.1'
         implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.1'
     }
-    implementation 'com.github.KnownSpace:MiniTask:1.0.1'
+    implementation 'com.github.KnownSpace:MiniTask:1.0.2-preview'
 }
 
 shadowJar {
