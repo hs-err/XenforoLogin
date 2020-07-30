@@ -48,21 +48,19 @@ public class MixinPlayerManagerHelper {
         }
 
 
-        SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException(future->{
-            String reason;
-            try {
-                reason = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                MixinLogger.logger.error("Error while authenticate " + profile.getName(), e);
-                throw new RuntimeException(e);
-            }
-            if (reason != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
-                cir.setReturnValue(new LiteralText(reason));
-            }
-        });
+        String reason;
+        try {
+            reason = SodionAuthCore.instance.canJoinAsync(abstractPlayer).get();
+        } catch (InterruptedException | ExecutionException e) {
+            SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+            MixinLogger.logger.error("Error while authenticate " + profile.getName(), e);
+            throw new RuntimeException(e);
+        }
+        if (reason != null) {
+            SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+            MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
+            cir.setReturnValue(new LiteralText(reason));
+        }
     }
 
     public static ITask<Void> onCheckCanJoinAsync(InetSocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
