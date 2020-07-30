@@ -283,7 +283,8 @@ public final class SodionAuthCore {
     private void realLogin(AbstractPlayer player) throws AuthenticatedException {
         if (logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
                 .equals(StatusType.LOGGED_IN)) {
-            throw new AuthenticatedException();
+            //already login
+            return;
         }
         logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
