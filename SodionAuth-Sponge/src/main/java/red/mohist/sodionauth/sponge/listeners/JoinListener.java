@@ -44,7 +44,7 @@ public class JoinListener implements SpongeAPIListener {
 
             Helper.getLogger().warn("onAuthEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            SodionAuthCore.instance.canJoin(player).thenAccept(result -> {
+            SodionAuthCore.instance.canJoinAsync(player).then(result -> {
                 if (result != null) {
                     player.kick(result);
                 }

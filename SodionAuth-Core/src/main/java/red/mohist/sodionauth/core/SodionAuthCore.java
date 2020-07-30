@@ -19,6 +19,9 @@ package red.mohist.sodionauth.core;
 import com.google.gson.Gson;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.knownspace.minitask.ITask;
+import org.knownspace.minitask.ITaskFactory;
+import org.knownspace.minitask.TaskFactory;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
@@ -56,6 +59,8 @@ public final class SodionAuthCore {
     private Connection connection;
     private ExecutorService executor;
     private CloseableHttpClient httpClient;
+
+    private ITaskFactory startup;
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
         try {
@@ -130,6 +135,7 @@ public final class SodionAuthCore {
                             return thread;
                         }
                     });
+            startup = new TaskFactory(executor);
             isEnabled.set(true);
             httpClient = HttpClientBuilder.create()
                     .disableCookieManagement()
@@ -164,7 +170,7 @@ public final class SodionAuthCore {
 
             Helper.getLogger().info("Check for existing players...");
             for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
-                canJoin(abstractPlayer).thenAccept(result -> {
+                canJoinAsync(abstractPlayer).then(result->{
                     if (result != null)
                         abstractPlayer.kick(result);
                 });
@@ -206,13 +212,11 @@ public final class SodionAuthCore {
         try {
             executor.awaitTermination(30, TimeUnit.SECONDS);
             globalScheduledExecutor.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {
-        }
+        } catch (InterruptedException ignored) {}
         Helper.getLogger().info("Stopping session storage...");
         try {
             connection.close();
-        } catch (Throwable ignored) {
-        }
+        } catch (Throwable ignored) {}
         instance = null;
     }
 
@@ -320,6 +324,8 @@ public final class SodionAuthCore {
     }
 
 
+
+    @Deprecated
     public CompletableFuture<String> canJoin(AbstractPlayer player) {
         CompletableFuture<String> future = new CompletableFuture<>();
         executor.execute(() -> {
@@ -327,6 +333,18 @@ public final class SodionAuthCore {
             future.complete(canJoinHandle(player));
         });
         return future;
+    }
+
+
+    public ITaskFactory getStartup() {
+        return startup;
+    }
+
+    public ITask<String> canJoinAsync(AbstractPlayer player) {
+        return startup.startTask(()->{
+            SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
+            return canJoinHandle(player);
+        });
     }
 
     public String canJoinHandle(AbstractPlayer player) {
