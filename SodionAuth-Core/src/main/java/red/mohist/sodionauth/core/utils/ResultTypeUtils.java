@@ -22,17 +22,21 @@ import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
+import java.util.concurrent.ExecutionException;
+
 public class ResultTypeUtils {
 
     public static boolean handle(AbstractPlayer player, ResultType resultType) {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
-                    try {
-                        SodionAuthCore.instance.login(player);
-                    } catch (AuthenticatedException e) {
-                        e.printStackTrace();
-                    }
+                    SodionAuthCore.instance.loginAsync(player).thenWithException(future -> {
+                        try {
+                            future.get();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 } else {
                     SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                     SodionAuthCore.instance.message(player);

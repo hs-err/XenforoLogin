@@ -20,6 +20,11 @@ import com.google.gson.Gson;
 import jdk.internal.loader.ClassLoaders;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.knownspace.minitask.ITask;
+import org.knownspace.minitask.ITaskFactory;
+import org.knownspace.minitask.TaskFactory;
+import org.knownspace.minitask.locks.UniqueFlag;
+import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
@@ -57,6 +62,8 @@ public final class SodionAuthCore {
     private Connection connection;
     private ExecutorService executor;
     private CloseableHttpClient httpClient;
+    private ITaskFactory startup;
+    private UniqueFlag dbUniqueFlag;
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
         try {
@@ -156,6 +163,8 @@ public final class SodionAuthCore {
                             return thread;
                         }
                     });
+            startup = new TaskFactory(executor);
+            dbUniqueFlag = startup.makeUniqueFlag();
             isEnabled.set(true);
             httpClient = HttpClientBuilder.create()
                     .disableCookieManagement()
@@ -190,7 +199,7 @@ public final class SodionAuthCore {
 
             Helper.getLogger().info("Check for existing players...");
             for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
-                canJoin(abstractPlayer).thenAccept(result -> {
+                canJoinAsync(abstractPlayer).then(result->{
                     if (result != null)
                         abstractPlayer.kick(result);
                 });
@@ -232,13 +241,11 @@ public final class SodionAuthCore {
         try {
             executor.awaitTermination(30, TimeUnit.SECONDS);
             globalScheduledExecutor.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {
-        }
+        } catch (InterruptedException ignored) {}
         Helper.getLogger().info("Stopping session storage...");
         try {
             connection.close();
-        } catch (Throwable ignored) {
-        }
+        } catch (Throwable ignored) {}
         instance = null;
     }
 
@@ -258,10 +265,26 @@ public final class SodionAuthCore {
         return !logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN).equals(StatusType.LOGGED_IN);
     }
 
+    @Deprecated
     public void login(AbstractPlayer player) throws AuthenticatedException {
+        try {
+            loginAsync(player).get();
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof  AuthenticatedException) {
+                throw (AuthenticatedException)cause;
+            }
+            cause.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void realLogin(AbstractPlayer player) throws AuthenticatedException {
         if (logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
                 .equals(StatusType.LOGGED_IN)) {
-            throw new AuthenticatedException();
+            //already login
+            return;
         }
         logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         try {
@@ -298,6 +321,16 @@ public final class SodionAuthCore {
         player.sendMessage(player.getLang().getSuccess());
     }
 
+    public ITask<Void> loginAsync(AbstractPlayer player) {
+        return dbUniqueFlag.lock().then(()->{
+            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)) {
+                realLogin(player);
+            } catch (Exception e){
+                throw e;
+            }
+        });
+    }
+
     public boolean register(AbstractPlayer player, String email, String password) {
         return ResultTypeUtils.handle(player,
                 AuthBackendSystems.getCurrentSystem()
@@ -323,22 +356,26 @@ public final class SodionAuthCore {
 
     public void onQuit(AbstractPlayer player) {
         LocationInfo leave_location = player.getLocation();
-        if (!needCancelled(player)) {
-            try {
-                PreparedStatement pps = connection.prepareStatement("DELETE FROM last_info WHERE uuid = ?;");
-                pps.setString(1, player.getUniqueId().toString());
-                pps.executeUpdate();
-                pps = connection.prepareStatement("INSERT INTO last_info(uuid, info) VALUES (?, ?);");
-                pps.setString(1, player.getUniqueId().toString());
-                pps.setString(2, new Gson().toJson(player.getPlayerInfo()));
-                pps.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                Helper.getLogger().warn("Fail to save location.");
-            }
-        }
-        player.teleport(default_location);
-        logged_in.remove(player.getUniqueId());
+        dbUniqueFlag.lock().then(()->{
+            try(Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)){
+                if (!needCancelled(player)) {
+                    try {
+                        PreparedStatement pps = connection.prepareStatement("DELETE FROM last_info WHERE uuid = ?;");
+                        pps.setString(1, player.getUniqueId().toString());
+                        pps.executeUpdate();
+                        pps = connection.prepareStatement("INSERT INTO last_info(uuid, info) VALUES (?, ?);");
+                        pps.setString(1, player.getUniqueId().toString());
+                        pps.setString(2, new Gson().toJson(player.getPlayerInfo()));
+                        pps.executeUpdate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        Helper.getLogger().warn("Fail to save location.");
+                    }
+                }
+                player.teleport(default_location);
+                logged_in.remove(player.getUniqueId());
+            }catch (Exception ignore){}
+        });
     }
 
     public String canLogin(AbstractPlayer player) {
@@ -346,6 +383,8 @@ public final class SodionAuthCore {
     }
 
 
+
+    @Deprecated
     public CompletableFuture<String> canJoin(AbstractPlayer player) {
         CompletableFuture<String> future = new CompletableFuture<>();
         executor.execute(() -> {
@@ -353,6 +392,18 @@ public final class SodionAuthCore {
             future.complete(canJoinHandle(player));
         });
         return future;
+    }
+
+
+    public ITaskFactory getStartup() {
+        return startup;
+    }
+
+    public ITask<String> canJoinAsync(AbstractPlayer player) {
+        return startup.startTask(()->{
+            SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
+            return canJoinHandle(player);
+        });
     }
 
     public String canJoinHandle(AbstractPlayer player) {
@@ -394,22 +445,24 @@ public final class SodionAuthCore {
             abstractPlayer.setGameMode(3);
         }
         LoginTicker.add(abstractPlayer);
-        try {
-            if (Config.session.getEnable()) {
-                PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
-                pps.setString(1, abstractPlayer.getUniqueId().toString());
-                pps.setString(2, abstractPlayer.getAddress().getHostAddress());
-                pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.session.getTimeout()));
-                ResultSet rs = pps.executeQuery();
-                if (rs.next()) {
-                    abstractPlayer.sendMessage(abstractPlayer.getLang().getSession());
-                    login(abstractPlayer);
+        dbUniqueFlag.lock().then(()->{
+            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)) {
+                if (Config.session.getEnable()) {
+                    PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
+                    pps.setString(1, abstractPlayer.getUniqueId().toString());
+                    pps.setString(2, abstractPlayer.getAddress().getHostAddress());
+                    pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.session.getTimeout()));
+                    ResultSet rs = pps.executeQuery();
+                    if (rs.next()) {
+                        abstractPlayer.sendMessage(abstractPlayer.getLang().getSession());
+                        realLogin(abstractPlayer);
+                    }
                 }
+            } catch (Throwable e) {
+                Helper.getLogger().warn("Fail use session.");
+                e.printStackTrace();
             }
-        } catch (Throwable e) {
-            Helper.getLogger().warn("Fail use session.");
-            e.printStackTrace();
-        }
+        });
     }
 
     public void onChat(AbstractPlayer player, String message) {

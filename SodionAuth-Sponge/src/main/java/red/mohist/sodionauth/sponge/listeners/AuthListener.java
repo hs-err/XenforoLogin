@@ -51,7 +51,7 @@ public class AuthListener implements SpongeAPIListener {
             event.setCancelled(true);
             return;
         }
-        SodionAuthCore.instance.canJoin(abstractPlayer).thenAccept(result -> {
+        SodionAuthCore.instance.canJoinAsync(abstractPlayer).then(result -> {
             if (result != null) {
                 abstractPlayer.kick(result);
             }
