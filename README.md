@@ -4,6 +4,9 @@ A new generation of authentication plugin for Minecraft
 
 Development builds: https://ci.ishland.com:43333/job/SodionAuth/
 
+## Current state
+Due to hs-err's personal reason, SodionAuth is now being refactored by ishland to keep maximum maintainability. Currently SodionAuth is in feature-freeze state. 
+
 ## Description
 - Provide an extra protection for your online server.
 - Secure your offline server.
