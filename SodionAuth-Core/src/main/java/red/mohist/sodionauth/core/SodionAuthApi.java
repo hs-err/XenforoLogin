@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core;
 
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
@@ -45,7 +44,7 @@ public final class SodionAuthApi {
     }
 
     public static boolean register(AbstractPlayer player, String password) {
-        throw new UnsupportedOperationException("Not Implemented");
+        return register(player, null, password);
     }
 
     public static boolean isRegistered(AbstractPlayer player) {

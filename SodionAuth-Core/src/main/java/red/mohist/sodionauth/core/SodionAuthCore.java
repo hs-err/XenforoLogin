@@ -217,6 +217,7 @@ public final class SodionAuthCore {
         api.shutdown();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isEnabled() {
         return isEnabled.get();
     }

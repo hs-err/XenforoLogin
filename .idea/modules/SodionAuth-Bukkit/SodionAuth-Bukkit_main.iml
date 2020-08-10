@@ -4,14 +4,9 @@
     <facet type="minecraft" name="Minecraft">
       <configuration>
         <autoDetectTypes>
-          <platformType>FABRIC</platformType>
-          <platformType>MIXIN</platformType>
-          <platformType>MCP</platformType>
+          <platformType>PAPER</platformType>
         </autoDetectTypes>
       </configuration>
     </facet>
-  </component>
-  <component name="McpModuleSettings">
-    <option name="srgType" value="SRG" />
   </component>
 </module>
