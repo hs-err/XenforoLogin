@@ -22,9 +22,11 @@ import red.mohist.sodionauth.core.interfaces.LogProvider;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Helper {
     public static Helper instance;
@@ -48,6 +50,10 @@ public class Helper {
 
     public static LogProvider getLogger() {
         return Helper.instance.log;
+    }
+
+    public static String getUuidFromName(String name){
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8)).toString();
     }
 
     public void saveResource(String resourcePath, boolean replace) {

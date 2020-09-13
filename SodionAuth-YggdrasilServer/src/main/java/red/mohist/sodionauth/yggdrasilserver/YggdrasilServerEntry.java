@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.yggdrasilserver;
 
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -51,7 +52,7 @@ public class YggdrasilServerEntry {
                 logger.log(Level.WARNING, info, exception);
             }
         });
-        AuthBackendSystems.reloadConfig();
+        new SodionAuthCore(new YggdrasilServerLoader());
         YggdrasilServerCore server = new YggdrasilServerCore();
         server.start();
     }

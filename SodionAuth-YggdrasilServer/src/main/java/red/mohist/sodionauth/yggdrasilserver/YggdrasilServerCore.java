@@ -16,11 +16,28 @@
 
 package red.mohist.sodionauth.yggdrasilserver;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.CharsetUtil;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.yggdrasilserver.controller.BaseConfigController;
+import red.mohist.sodionauth.yggdrasilserver.controller.Controller;
+import red.mohist.sodionauth.yggdrasilserver.modules.RequestConfig;
 import red.mohist.sodionauth.yggdrasilserver.modules.TokenPair;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
+import java.net.InetSocketAddress;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +45,10 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static io.netty.handler.codec.http.HttpUtil.is100ContinueExpected;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class YggdrasilServerCore {
@@ -40,71 +61,77 @@ public class YggdrasilServerCore {
     public YggdrasilServerCore() throws NoSuchAlgorithmException, SQLException {
         this.port = Config.yggdrasil.getServer().getPort();
         instance = this;
-        new UserProvider();
         generalKey();
+        new UserProvider();
     }
-
-    public void start() throws Exception {
-        String accessToken = UserProvider.instance.login("logos", "asdasdasdasdasd", "client");
-        if (accessToken == null) {
-            Helper.getLogger().info("Login fail");
-            return;
-        }
-
-        if (!UserProvider.instance.verifyToken("logos", "client", accessToken)) {
-            Helper.getLogger().info("Verify before fresh fail");
-            return;
-        }
-
-        TokenPair tokenPair = UserProvider.instance.refreshToken("logos", "client", accessToken);
-        if (tokenPair == null) {
-            Helper.getLogger().info("Refresh with client fail");
-            return;
-        }
-        accessToken = tokenPair.accessToken;
-        tokenPair = UserProvider.instance.refreshToken("logos", null, accessToken);
-        if (tokenPair == null) {
-            Helper.getLogger().info("Refresh without client fail");
-            return;
-        }
-        accessToken = tokenPair.accessToken;
-
-        if (!UserProvider.instance.verifyToken("logos", "client", accessToken)) {
-            Helper.getLogger().info("Verify after refresh fail");
-            return;
-        }
-
-        UserProvider.instance.invalidateToken(accessToken);
-
-        if (UserProvider.instance.verifyToken("logos", "client", accessToken)) {
-            Helper.getLogger().info("Verify after invalidate still success");
-            return;
-        }
-
-        accessToken = UserProvider.instance.login("logos", "asdasdasdasdasd", "ctoken");
-        if (accessToken == null) {
-            Helper.getLogger().info("Login.2 fail");
-            return;
-        }
-
-        if (!UserProvider.instance.signout("logos", "asdasdasdasdasd")) {
-            Helper.getLogger().info("SignOut fail");
-            return;
-        }
-
-        if (UserProvider.instance.verifyToken("logos", "ctoken", accessToken)) {
-            Helper.getLogger().info("Verify after sign out still success");
-            return;
-        }
-
-        Helper.getLogger().info("2333");
-    }
-
     private void generalKey() throws NoSuchAlgorithmException {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         gen.initialize(4096, new SecureRandom());
         rsaKeyPair = gen.genKeyPair();
         rsaPublicKey = (RSAPublicKey) rsaKeyPair.getPublic();
         rsaPrivateKey = (RSAPrivateKey) rsaKeyPair.getPrivate();
+    }
+
+    public void start() throws Exception {
+        ServerBootstrap bootstrap = new ServerBootstrap();
+        EventLoopGroup boss = new NioEventLoopGroup();
+        EventLoopGroup work = new NioEventLoopGroup();
+        bootstrap.group(boss,work)
+                .handler(new LoggingHandler(LogLevel.DEBUG))
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new HttpServerInitializer());
+
+        ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
+        System.out.println(" server start up on port : " + port);
+        f.channel().closeFuture().sync();
+
+    }
+    public static class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
+
+        @Override
+        protected void initChannel(SocketChannel channel) throws Exception {
+            ChannelPipeline pipeline = channel.pipeline();
+            pipeline.addLast(new HttpServerCodec());// http 编解码
+            pipeline.addLast("httpAggregator",new HttpObjectAggregator(512*1024)); // http 消息聚合器                                                                     512*1024为接收的最大contentlength
+            pipeline.addLast(new HttpRequestHandler());// 请求处理器
+
+        }
+    }
+    public static class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+        @Override
+        public void channelReadComplete(ChannelHandlerContext ctx) {
+            ctx.flush();
+        }
+
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
+            //100 Continue
+            if (is100ContinueExpected(req)) {
+                ctx.write(new DefaultFullHttpResponse(
+                        HttpVersion.HTTP_1_1,
+                        HttpResponseStatus.CONTINUE));
+            }
+            Controller controller;
+            switch (req.uri()){
+                default:
+                    controller=new BaseConfigController();
+            }
+            Object msg=controller.handle(new Gson().fromJson(req.content().toString(CharsetUtil.UTF_8), JsonObject.class));
+            FullHttpResponse response;
+            if(msg instanceof FullHttpResponse) {
+                response = (FullHttpResponse) msg;
+            }else{
+                response = new DefaultFullHttpResponse(
+                        HttpVersion.HTTP_1_1,
+                        HttpResponseStatus.OK,
+                        Unpooled.copiedBuffer(new Gson().toJson(msg), CharsetUtil.UTF_8));
+            }
+            // 设置头信息
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-s");
+            response.headers().set(HttpHeaderNames.SERVER, "LogosNoFox");
+            // 将html write到客户端
+            ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        }
     }
 }
