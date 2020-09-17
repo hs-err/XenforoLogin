@@ -16,9 +16,11 @@
 
 package red.mohist.sodionauth.yggdrasilserver.provider;
 
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.yggdrasilserver.implementation.PlainPlayer;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
 import red.mohist.sodionauth.yggdrasilserver.modules.Texture;
@@ -51,11 +53,23 @@ public class UserProvider {
         }
     }
 
-    public String login(String username, String password, String clientToken) throws SQLException {
-        if (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password) == ResultType.OK) {
-            String accessToken = UUID.randomUUID().toString();
-            addToken(username, clientToken, accessToken);
-            return accessToken;
+    public ResultType login(String username, String password, String clientToken) throws SQLException {
+        if(SodionAuthCore.instance.isEmail(username)){
+            if (AuthBackendSystems.getCurrentSystem().loginEmail(username, password) == ResultType.OK) {
+                String accessToken = UUID.randomUUID().toString();
+                addToken(username, clientToken, accessToken);
+                return ResultType.OK
+                        .inheritedObject("username",username)
+                        .inheritedObject("accessToken",accessToken);
+            }
+        }else {
+            if (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password) == ResultType.OK) {
+                String accessToken = UUID.randomUUID().toString();
+                addToken(username, clientToken, accessToken);
+                return ResultType.OK
+                        .inheritedObject("username",username)
+                        .inheritedObject("accessToken",accessToken);
+            }
         }
         return null;
     }
@@ -72,14 +86,44 @@ public class UserProvider {
         pps.execute();
     }
 
-    public boolean verifyToken(String username, String clientToken, String accessToken) throws SQLException {
+    public boolean join(String uuid,String accessToken,String serverId) throws SQLException {
         PreparedStatement pps;
         refresh();
 
-        pps = connection.prepareStatement("SELECT * FROM tokens WHERE `username`=? AND `clientToken`=? AND `accessToken`=? LIMIT 1;");
-        pps.setString(1, username);
-        pps.setString(2, clientToken);
-        pps.setString(3, accessToken);
+        pps = connection.prepareStatement("SELECT * FROM tokens WHERE `accessToken`=? LIMIT 1;");
+        pps.setString(1, accessToken);
+        ResultSet rs = pps.executeQuery();
+        if (!rs.next()) {
+            return false;
+        }
+        if (rs.getInt("status") == 1) {
+            pps = connection.prepareStatement(
+                    "UPDATE tokens SET `status` = ? WHERE `accessToken`=?;");
+            pps.setInt(1, 1);
+            pps.setString(2, accessToken);
+            pps.execute();
+
+            pps = connection.prepareStatement(
+                    "UPDATE tokens SET `status` = ? WHERE `accessToken` = ?;");
+            pps.setInt(1, 0);
+            pps.setString(2, accessToken);
+            pps.execute();
+        } else if(rs.getInt("status") != 0){
+            return false;
+        }
+        SessionProvider.instance.join(
+                rs.getString("username"),
+                accessToken);
+        return true;
+    }
+
+    public boolean verifyToken(String clientToken, String accessToken) throws SQLException {
+        PreparedStatement pps;
+        refresh();
+
+        pps = connection.prepareStatement("SELECT * FROM tokens WHERE `clientToken`=? AND `accessToken`=? LIMIT 1;");
+        pps.setString(1, clientToken);
+        pps.setString(2, accessToken);
         ResultSet rs = pps.executeQuery();
         if (!rs.next()) {
             return false;
@@ -88,17 +132,17 @@ public class UserProvider {
             return true;
         } else if (rs.getInt("status") == 1) {
             pps = connection.prepareStatement(
-                    "UPDATE tokens SET `status` = ? WHERE `username` = ?;");
+                    "UPDATE tokens SET `status` = ? WHERE `clientToken`=? AND `accessToken`=?;");
             pps.setInt(1, 1);
-            pps.setString(2, username);
+            pps.setString(2, clientToken);
+            pps.setString(3, accessToken);
             pps.execute();
 
             pps = connection.prepareStatement(
-                    "UPDATE tokens SET `status` = ? WHERE `username` = ? AND `clientToken` = ? AND `accessToken` = ?;");
+                    "UPDATE tokens SET `status` = ? WHERE `clientToken` = ? AND `accessToken` = ?;");
             pps.setInt(1, 0);
-            pps.setString(2, username);
-            pps.setString(3, clientToken);
-            pps.setString(4, accessToken);
+            pps.setString(2, clientToken);
+            pps.setString(3, accessToken);
             pps.execute();
             return true;
         } else {
@@ -106,23 +150,22 @@ public class UserProvider {
         }
     }
 
-    public TokenPair refreshToken(String username, String clientToken, String accessToken) throws SQLException {
+    public ResultType refreshToken(String clientToken, String accessToken) throws SQLException {
         PreparedStatement pps;
         refresh();
         if (clientToken == null) {
-            pps = connection.prepareStatement("SELECT * FROM tokens WHERE `username` = ? AND `accessToken`=? LIMIT 1;");
-            pps.setString(1, username);
-            pps.setString(2, accessToken);
+            pps = connection.prepareStatement("SELECT * FROM tokens WHERE `accessToken`=? LIMIT 1;");
+            pps.setString(1, accessToken);
         } else {
-            pps = connection.prepareStatement("SELECT * FROM tokens WHERE `username` = ? AND `clientToken`=? AND `accessToken`=? LIMIT 1;");
-            pps.setString(1, username);
+            pps = connection.prepareStatement("SELECT * FROM tokens WHERE `clientToken`=? AND `accessToken`=? LIMIT 1;");
             pps.setString(2, clientToken);
             pps.setString(3, accessToken);
         }
         ResultSet rs = pps.executeQuery();
         if (!rs.next()) {
-            return null;
+            return ResultType.PASSWORD_INCORRECT;
         }
+        String username=rs.getString("username");
         clientToken = rs.getString("clientToken");
         if (rs.getInt("status") == 0 || rs.getInt("status") == 1) {
             pps = connection.prepareStatement(
@@ -139,11 +182,11 @@ public class UserProvider {
             pps.setString(2, accessToken);
             pps.setString(3, username);
             pps.execute();
-            return new TokenPair()
-                    .setAccessToken(accessToken)
-                    .setClientToken(clientToken);
+            return ResultType.OK
+                    .inheritedObject("correct",username)
+                    .inheritedObject("accessToken",accessToken);
         } else {
-            return null;
+            return ResultType.PASSWORD_INCORRECT;
         }
     }
 

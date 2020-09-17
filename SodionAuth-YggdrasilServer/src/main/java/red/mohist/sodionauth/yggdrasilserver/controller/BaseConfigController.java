@@ -19,6 +19,7 @@ package red.mohist.sodionauth.yggdrasilserver.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.netty.handler.codec.http.FullHttpRequest;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.yggdrasilserver.YggdrasilServerCore;
 import red.mohist.sodionauth.yggdrasilserver.modules.RequestConfig;
@@ -27,7 +28,7 @@ import java.util.Base64;
 
 public class BaseConfigController implements Controller {
     @Override
-    public Object handle(JsonObject content) {
+    public Object handle(JsonElement content, FullHttpRequest request) {
         RequestConfig requestConfig=new RequestConfig();
         requestConfig
                 .addMeta("serverName", Config.yggdrasil.getCore().getServerName("SodionAuthYggdrasilServer"))

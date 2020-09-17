@@ -31,8 +31,7 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.yggdrasilserver.controller.BaseConfigController;
-import red.mohist.sodionauth.yggdrasilserver.controller.Controller;
+import red.mohist.sodionauth.yggdrasilserver.controller.*;
 import red.mohist.sodionauth.yggdrasilserver.modules.RequestConfig;
 import red.mohist.sodionauth.yggdrasilserver.modules.TokenPair;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
@@ -114,10 +113,35 @@ public class YggdrasilServerCore {
             }
             Controller controller;
             switch (req.uri()){
+                case "/":
+                    controller=new BaseConfigController();
+                    break;
+                case "/authserver/authenticate":
+                    controller=new LoginController();
+                    break;
+                case "/authserver/refresh":
+                    controller=new RefreshController();
+                    break;
+                case "/authserver/validate":
+                    controller=new ValidateController();
+                    break;
+                case "/authserver/invalidate":
+                    controller=new InvalidateController();
+                    break;
+                case "/sessionserver/session/minecraft/join":
+                    controller=new JoinController();
+                    break;
+                    // TODO: /sessionserver/session/minecraft/hasJoined?username={username}&serverId={serverId}&ip={ip}
+                    // TODO: /sessionserver/session/minecraft/profile/{uuid}?unsigned={unsigned}
+                case " /api/profiles/minecraft":
+                    controller=new ProfilesController();
+                    break;
                 default:
                     controller=new BaseConfigController();
             }
-            Object msg=controller.handle(new Gson().fromJson(req.content().toString(CharsetUtil.UTF_8), JsonObject.class));
+            Object msg=controller.handle(
+                    new Gson().fromJson(req.content().toString(CharsetUtil.UTF_8), JsonElement.class),
+                    req);
             FullHttpResponse response;
             if(msg instanceof FullHttpResponse) {
                 response = (FullHttpResponse) msg;

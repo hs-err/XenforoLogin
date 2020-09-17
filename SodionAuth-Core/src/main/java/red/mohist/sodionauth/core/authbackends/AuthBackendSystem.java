@@ -32,4 +32,7 @@ public interface AuthBackendSystem {
     @Nonnull
     ResultType join(AbstractPlayer player);
 
+    @Nonnull
+    ResultType loginEmail(String email, String password);
+
 }

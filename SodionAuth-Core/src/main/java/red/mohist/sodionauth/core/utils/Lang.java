@@ -26,10 +26,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Lang {
-    public static final ConcurrentHashMap<String, LangConfiguration> languages = new ConcurrentHashMap<>();
+    public static final Map<String, LangConfiguration> languages = new ConcurrentHashMap<>();
     public static LangConfiguration def;
     public static LangConfiguration all;
 
@@ -44,7 +45,7 @@ public class Lang {
     public static void init() throws IOException {
         ArrayList<String> languageList = new ArrayList<>();
         languageList.add("en");
-        languageList.add("zh-CN");
+        languageList.add("zh_CN");
         for (String language : languageList) {
             Helper.instance.saveResource("lang/" + language + ".json", false);
             File configFile = new File(Helper.getConfigPath("lang/" + language + ".json"));

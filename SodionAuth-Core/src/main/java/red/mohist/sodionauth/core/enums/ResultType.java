@@ -16,22 +16,20 @@
 
 package red.mohist.sodionauth.core.enums;
 
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
 
 public enum ResultType {
     OK, SERVER_ERROR, PASSWORD_INCORRECT, ERROR_NAME, NO_USER, UNKNOWN, USER_EXIST, EMAIL_EXIST, EMAIL_WRONG;
 
-    ImmutableMap<String, String> inheritedObject;
+    Map<String, Object> inheritedMap;
     private boolean shouldLogin;
 
     ResultType() {
         shouldLogin = false;
     }
 
-    public ResultType inheritedObject(ImmutableMap<String, String> inherited) {
-        inheritedObject = inherited;
+    public ResultType inheritedObject(String key,Object value) {
+        inheritedMap.put(key,value);
         return this;
     }
 
@@ -40,8 +38,15 @@ public enum ResultType {
         return this;
     }
 
-    public Map<String, String> getInheritedObject() {
-        return inheritedObject;
+    public Map<String, Object> getInheritedObject(){
+        return inheritedMap;
+    }
+    public Object getInheritedObject(String key) {
+        return inheritedMap.get(key);
+    }
+
+    public Object getInheritedObject(String key,Object defaultValue) {
+        return inheritedMap.getOrDefault(key,defaultValue);
     }
 
     public boolean isShouldLogin() {

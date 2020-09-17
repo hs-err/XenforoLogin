@@ -133,8 +133,8 @@ public class MysqlSystem implements AuthBackendSystem {
                 return ResultType.NO_USER;
             }
             if (!rs.getString(usernameField).equals(player.getName())) {
-                return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                        "correct", rs.getString(usernameField)));
+                return ResultType.ERROR_NAME.inheritedObject(
+                        "correct", rs.getString(usernameField));
             }
             if (hasherTool.needSalt()) {
                 if (!hasherTool.verify(rs.getString(passwordField), password, rs.getString(saltField))) {
@@ -163,10 +163,38 @@ public class MysqlSystem implements AuthBackendSystem {
                 return ResultType.NO_USER;
             }
             if (!rs.getString(usernameField).equals(player.getName())) {
-                return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                        "correct", rs.getString(usernameField)));
+                return ResultType.ERROR_NAME.inheritedObject(
+                        "correct", rs.getString(usernameField));
             }
             return ResultType.OK;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+    }
+
+    @Nonnull
+    @Override
+    public ResultType loginEmail(String email, String password) {
+        try {
+            PreparedStatement pps = connection.prepareStatement("SELECT * FROM " + tableName + " WHERE lower(`" + emailField + "`)=? LIMIT 1;");
+            pps.setString(1, email.toLowerCase());
+            ResultSet rs = pps.executeQuery();
+            if (!rs.next()) {
+                return ResultType.NO_USER;
+            }
+            if (hasherTool.needSalt()) {
+                if (!hasherTool.verify(rs.getString(passwordField), password, rs.getString(saltField))) {
+                    return ResultType.PASSWORD_INCORRECT;
+                }
+            } else {
+                if (!hasherTool.verify(rs.getString(passwordField), password)) {
+                    return ResultType.PASSWORD_INCORRECT;
+                }
+            }
+            return ResultType.OK.inheritedObject(
+                    "correct",rs.getString(emailField)
+            );
         } catch (SQLException e) {
             e.printStackTrace();
             return ResultType.SERVER_ERROR;

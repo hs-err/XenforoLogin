@@ -36,19 +36,19 @@ public class LangConfiguration {
         return prefix != null ? prefix : Lang.all.prefix;
     }
 
-    public String getRegisterEmail(Map<String, String> data) {
+    public String getRegisterEmail(Map<String, Object> data) {
         String result = getRegisterEmail();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("registerEmail");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -58,19 +58,19 @@ public class LangConfiguration {
                 (registerEmail != null ? registerEmail : Lang.all.registerEmail);
     }
 
-    public String getRegisterPassword(Map<String, String> data) {
+    public String getRegisterPassword(Map<String, Object> data) {
         String result = getRegisterPassword();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("registerPassword");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -80,19 +80,19 @@ public class LangConfiguration {
                 (registerPassword != null ? registerPassword : Lang.all.registerPassword);
     }
 
-    public String getRegisterPasswordConfirm(Map<String, String> data) {
+    public String getRegisterPasswordConfirm(Map<String, Object> data) {
         String result = getRegisterPasswordConfirm();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("registerPasswordConfirm");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -102,19 +102,19 @@ public class LangConfiguration {
                 (registerPasswordConfirm != null ? registerPasswordConfirm : Lang.all.registerPasswordConfirm);
     }
 
-    public String getLoggedIn(Map<String, String> data) {
+    public String getLoggedIn(Map<String, Object> data) {
         String result = getLoggedIn();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("loggedIn");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -124,19 +124,19 @@ public class LangConfiguration {
                 (loggedIn != null ? loggedIn : Lang.all.loggedIn);
     }
 
-    public String getSuccess(Map<String, String> data) {
+    public String getSuccess(Map<String, Object> data) {
         String result = getSuccess();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("success");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -146,19 +146,19 @@ public class LangConfiguration {
                 (success != null ? success : Lang.all.success);
     }
 
-    public String getSession(Map<String, String> data) {
+    public String getSession(Map<String, Object> data) {
         String result = getSession();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("session");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -168,19 +168,19 @@ public class LangConfiguration {
                 (session != null ? session : Lang.all.session);
     }
 
-    public String getNeedLogin(Map<String, String> data) {
+    public String getNeedLogin(Map<String, Object> data) {
         String result = getNeedLogin();
         if (result == null) {
             StringBuilder resultBuilder = new StringBuilder("needLogin");
             resultBuilder.append("\n");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
             }
             result = resultBuilder.toString();
             return result;
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
         }
         return result;
     }
@@ -218,19 +218,19 @@ public class LangConfiguration {
             return prefix != null ? prefix : Lang.all.errors.prefix;
         }
 
-        public String getProxy(Map<String, String> data) {
+        public String getProxy(Map<String, Object> data) {
             String result = getProxy();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("proxy");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -240,19 +240,19 @@ public class LangConfiguration {
                     (proxy != null ? proxy : Lang.all.errors.proxy);
         }
 
-        public String getRateLimit(Map<String, String> data) {
+        public String getRateLimit(Map<String, Object> data) {
             String result = getRateLimit();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("rateLimit");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -262,19 +262,19 @@ public class LangConfiguration {
                     (rateLimit != null ? rateLimit : Lang.all.errors.rateLimit);
         }
 
-        public String getCountryLimit(Map<String, String> data) {
+        public String getCountryLimit(Map<String, Object> data) {
             String result = getCountryLimit();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("countryLimit");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -284,19 +284,19 @@ public class LangConfiguration {
                     (countryLimit != null ? countryLimit : Lang.all.errors.countryLimit);
         }
 
-        public String getEmail(Map<String, String> data) {
+        public String getEmail(Map<String, Object> data) {
             String result = getEmail();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("email");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -306,19 +306,19 @@ public class LangConfiguration {
                     (email != null ? email : Lang.all.errors.email);
         }
 
-        public String getServer(Map<String, String> data) {
+        public String getServer(Map<String, Object> data) {
             String result = getServer();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("server");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -328,19 +328,19 @@ public class LangConfiguration {
                     (server != null ? server : Lang.all.errors.server);
         }
 
-        public String getConfirm(Map<String, String> data) {
+        public String getConfirm(Map<String, Object> data) {
             String result = getConfirm();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("confirm");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -350,19 +350,19 @@ public class LangConfiguration {
                     (confirm != null ? confirm : Lang.all.errors.confirm);
         }
 
-        public String getHandle(Map<String, String> data) {
+        public String getHandle(Map<String, Object> data) {
             String result = getHandle();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("handle");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -372,19 +372,19 @@ public class LangConfiguration {
                     (handle != null ? handle : Lang.all.errors.handle);
         }
 
-        public String getPassword(Map<String, String> data) {
+        public String getPassword(Map<String, Object> data) {
             String result = getPassword();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("password");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -394,19 +394,19 @@ public class LangConfiguration {
                     (password != null ? password : Lang.all.errors.password);
         }
 
-        public String getKey(Map<String, String> data) {
+        public String getKey(Map<String, Object> data) {
             String result = getKey();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("key");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -416,19 +416,19 @@ public class LangConfiguration {
                     (key != null ? key : Lang.all.errors.key);
         }
 
-        public String getUrl(Map<String, String> data) {
+        public String getUrl(Map<String, Object> data) {
             String result = getUrl();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("url");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -438,19 +438,19 @@ public class LangConfiguration {
                     (url != null ? url : Lang.all.errors.url);
         }
 
-        public String getNoUser(Map<String, String> data) {
+        public String getNoUser(Map<String, Object> data) {
             String result = getNoUser();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("noUser");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -460,19 +460,19 @@ public class LangConfiguration {
                     (noUser != null ? noUser : Lang.all.errors.noUser);
         }
 
-        public String getTimeOut(Map<String, String> data) {
+        public String getTimeOut(Map<String, Object> data) {
             String result = getTimeOut();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("timeOut");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -482,19 +482,19 @@ public class LangConfiguration {
                     (timeOut != null ? timeOut : Lang.all.errors.timeOut);
         }
 
-        public String getNameIncorrect(Map<String, String> data) {
+        public String getNameIncorrect(Map<String, Object> data) {
             String result = getNameIncorrect();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("nameIncorrect");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -504,19 +504,19 @@ public class LangConfiguration {
                     (nameIncorrect != null ? nameIncorrect : Lang.all.errors.nameIncorrect);
         }
 
-        public String getUnknown(Map<String, String> data) {
+        public String getUnknown(Map<String, Object> data) {
             String result = getUnknown();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("unknown");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -526,19 +526,19 @@ public class LangConfiguration {
                     (unknown != null ? unknown : Lang.all.errors.unknown);
         }
 
-        public String getMailExist(Map<String, String> data) {
+        public String getMailExist(Map<String, Object> data) {
             String result = getMailExist();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("mailExist");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -548,19 +548,19 @@ public class LangConfiguration {
                     (mailExist != null ? mailExist : Lang.all.errors.mailExist);
         }
 
-        public String getUserExist(Map<String, String> data) {
+        public String getUserExist(Map<String, Object> data) {
             String result = getUserExist();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("userExist");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
@@ -570,19 +570,19 @@ public class LangConfiguration {
                     (userExist != null ? userExist : Lang.all.errors.userExist);
         }
 
-        public String getLoginExist(Map<String, String> data) {
+        public String getLoginExist(Map<String, Object> data) {
             String result = getLoginExist();
             if (result == null) {
                 StringBuilder resultBuilder = new StringBuilder("loginExist");
                 resultBuilder.append("\n");
-                for (Map.Entry<String, String> entry : data.entrySet()) {
-                    resultBuilder.append(entry.getKey()).append(":").append(entry.getValue());
+                for (Map.Entry<String, Object> entry : data.entrySet()) {
+                    resultBuilder.append(entry.getKey()).append(":").append((String) entry.getValue());
                 }
                 result = resultBuilder.toString();
                 return result;
             }
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                result = result.replace("[" + entry.getKey() + "]", entry.getValue());
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }

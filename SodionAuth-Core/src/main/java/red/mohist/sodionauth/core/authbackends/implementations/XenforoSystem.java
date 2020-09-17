@@ -17,10 +17,7 @@
 package red.mohist.sodionauth.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -115,9 +112,13 @@ public class XenforoSystem implements AuthBackendSystem {
                         case "email_addresses_must_be_unique":
                             return ResultType.EMAIL_EXIST;
                         default:
-                            return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
-                                    "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
-                                    "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
+                            return ResultType.UNKNOWN
+                                    .inheritedObject(
+                                            "code",
+                                            errors.get(0).getAsJsonObject().get("code").getAsString())
+                                    .inheritedObject(
+                                            "message",
+                                            errors.get(0).getAsJsonObject().get("message").getAsString());
                     }
                 } else {
                     return ResultType.SERVER_ERROR;
@@ -181,8 +182,10 @@ public class XenforoSystem implements AuthBackendSystem {
                 if (json.get("user").getAsJsonObject().get("username").getAsString().equals(player.getName())) {
                     return ResultType.OK;
                 } else {
-                    return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                            "correct", json.getAsJsonObject("exact").get("username").getAsString()));
+                    return ResultType.ERROR_NAME
+                            .inheritedObject(
+                                    "correct",
+                                    json.getAsJsonObject("exact").get("username").getAsString());
                 }
             } else {
                 JsonArray errors = json.get("errors").getAsJsonArray();
@@ -193,9 +196,13 @@ public class XenforoSystem implements AuthBackendSystem {
                         case "requested_user_x_not_found":
                             return ResultType.NO_USER;
                         default:
-                            return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
-                                    "code", errors.get(0).getAsJsonObject().get("code").getAsString(),
-                                    "message", errors.get(0).getAsJsonObject().get("message").getAsString()));
+                            return ResultType.UNKNOWN
+                                    .inheritedObject(
+                                            "code",
+                                            errors.get(0).getAsJsonObject().get("code").getAsString())
+                                    .inheritedObject(
+                                            "message",
+                                            errors.get(0).getAsJsonObject().get("message").getAsString());
                     }
                 } else {
                     return ResultType.SERVER_ERROR;
@@ -260,9 +267,88 @@ public class XenforoSystem implements AuthBackendSystem {
             return ResultType.NO_USER;
         }
         if (!json.getAsJsonObject("exact").get("username").getAsString().equals(player.getName())) {
-            return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                    "correct", json.getAsJsonObject("exact").get("username").getAsString()));
+            return ResultType.ERROR_NAME
+                    .inheritedObject(
+                            "correct",
+                            json.getAsJsonObject("exact").get("username").getAsString());
         }
         return ResultType.OK;
     }
+
+    @Nonnull
+    @Override
+    public ResultType loginEmail(String email, String password) {
+        try {
+            ResponseHandler<String> responseHandler = response -> {
+                int status = response.getStatusLine().getStatusCode();
+                if (status == 200 || status == 400) {
+                    HttpEntity entity = response.getEntity();
+                    return entity != null ? EntityUtils.toString(entity) : null;
+                } else if (status == 403) {
+                    Helper.getLogger().warn(
+                            Lang.def.getErrors().getKey(ImmutableMap.of(
+                                    "key", key)));
+                } else if (status == 404) {
+                    Helper.getLogger().warn(
+                            Lang.def.getErrors().getUrl(ImmutableMap.of(
+                                    "url", url)));
+                }
+                return null;
+            };
+
+            HttpPost request = new HttpPost(url + "/auth");
+            Form form = Form.form();
+            form.add("login", email);
+            form.add("password", password);
+            request.addHeader("XF-Api-Key", key);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            String result = responseHandler.handleResponse(response);
+
+            if (result == null) {
+                return ResultType.SERVER_ERROR;
+            }
+            JsonObject json;
+            try {
+                json = new Gson().fromJson(result,JsonObject.class);
+            } catch (JsonSyntaxException e) {
+                Helper.getLogger().warn(result);
+                e.printStackTrace();
+                return ResultType.SERVER_ERROR;
+            }
+            if (json == null) {
+                return ResultType.SERVER_ERROR;
+            }
+            if (json.get("success") != null && json.get("success").getAsBoolean()) {
+                json.get("user").getAsJsonObject().get("username").getAsString();
+                return ResultType.OK
+                        .inheritedObject(
+                                "correct",
+                                json.getAsJsonObject("exact").get("username").getAsString());
+            } else {
+                JsonArray errors = json.get("errors").getAsJsonArray();
+                if (errors.size() > 0) {
+                    switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
+                        case "incorrect_password":
+                            return ResultType.PASSWORD_INCORRECT;
+                        case "requested_user_x_not_found":
+                            return ResultType.NO_USER;
+                        default:
+                            return ResultType.UNKNOWN
+                                    .inheritedObject(
+                                            "code",
+                                            errors.get(0).getAsJsonObject().get("code").getAsString())
+                                    .inheritedObject(
+                                            "message",
+                                            errors.get(0).getAsJsonObject().get("message").getAsString());
+                    }
+                } else {
+                    return ResultType.SERVER_ERROR;
+                }
+            }
+        } catch (Exception e) {
+            Helper.getLogger().warn("Error while checking player " + email + " data", e);
+            return ResultType.SERVER_ERROR;
+        }
+    }
+
 }

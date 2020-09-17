@@ -135,9 +135,9 @@ public class WebSystem implements AuthBackendSystem {
                     Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
-                return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
-                        "code", json.get("code").getAsString(),
-                        "message", json.get("message").getAsString()));
+                return ResultType.UNKNOWN
+                        .inheritedObject("code", json.get("code").getAsString())
+                        .inheritedObject("message", json.get("message").getAsString());
             default:
                 Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
                 Helper.getLogger().warn(result);
@@ -218,8 +218,8 @@ public class WebSystem implements AuthBackendSystem {
                     Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
-                return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                        "correct", json.get("correct").getAsString()));
+                return ResultType.ERROR_NAME.inheritedObject(
+                        "correct", json.get("correct").getAsString());
             case "no_user":
                 return ResultType.NO_USER;
             case "password_incorrect":
@@ -245,9 +245,8 @@ public class WebSystem implements AuthBackendSystem {
                     Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
-                return ResultType.UNKNOWN.inheritedObject(ImmutableMap.of(
-                        "code", json.get("code").getAsString(),
-                        "message", json.get("message").getAsString()));
+                return ResultType.UNKNOWN.inheritedObject("code", json.get("code").getAsString())
+                        .inheritedObject("message", json.get("message").getAsString());
             default:
                 Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
                 Helper.getLogger().warn(result);
@@ -327,10 +326,117 @@ public class WebSystem implements AuthBackendSystem {
                     Helper.getLogger().warn(result);
                     return ResultType.SERVER_ERROR;
                 }
-                return ResultType.ERROR_NAME.inheritedObject(ImmutableMap.of(
-                        "correct", json.get("correct").getAsString()));
+                return ResultType.ERROR_NAME.inheritedObject(
+                        "correct", json.get("correct").getAsString());
             case "no_user":
                 return ResultType.NO_USER;
+            default:
+                Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
+                Helper.getLogger().warn(result);
+                return ResultType.SERVER_ERROR;
+        }
+    }
+
+    @Nonnull
+    @Override
+    public ResultType loginEmail(String email, String password) {
+        ResponseHandler<String> responseHandler = response -> {
+            int status = response.getStatusLine().getStatusCode();
+            if (status == 200) {
+                HttpEntity entity = response.getEntity();
+                return entity != null ? EntityUtils.toString(entity) : null;
+            } else if (status == 404) {
+                Helper.getLogger().warn(
+                        Lang.def.getErrors().getUrl(ImmutableMap.of(
+                                "url", url)));
+            }
+            return null;
+        };
+        String result;
+        try {
+            HttpPost request = new HttpPost(url);
+            Form form = Form.form();
+            form.add("action", "loginEmail");
+            form.add("email", email);
+            form.add("password", password);
+            request.setEntity(new UrlEncodedFormEntity(form.build()));
+            request.addHeader("SodionAuth-Key", key);
+            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            result = responseHandler.handleResponse(response);
+            response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        if (result == null) {
+            new ClientProtocolException("Unexpected response: null").printStackTrace();
+            return ResultType.SERVER_ERROR;
+        }
+        JsonParser parse = new JsonParser();
+        JsonObject json;
+        try {
+            json = parse.parse(result).getAsJsonObject();
+        } catch (JsonSyntaxException e) {
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
+            return ResultType.SERVER_ERROR;
+        }
+        if (json == null) {
+            Helper.getLogger().warn("Json parse null.");
+            Helper.getLogger().warn(result);
+            return ResultType.SERVER_ERROR;
+        }
+        if (json.get("result") == null) {
+            Helper.getLogger().warn(".result must be required.");
+            Helper.getLogger().warn(result);
+            return ResultType.SERVER_ERROR;
+        }
+        if (json.get("result").getAsString() == null) {
+            Helper.getLogger().warn(".result must can be cast to string.");
+            Helper.getLogger().warn(result);
+            return ResultType.SERVER_ERROR;
+        }
+        switch (json.get("result").getAsString()) {
+            case "ok":
+                if (json.get("correct") == null) {
+                    Helper.getLogger().warn("if .result = ok, .correct must be required.");
+                    Helper.getLogger().warn(result);
+                    return ResultType.SERVER_ERROR;
+                }
+                if (json.get("correct").getAsString() == null) {
+                    Helper.getLogger().warn(".correct must can be cast to string.");
+                    Helper.getLogger().warn(result);
+                    return ResultType.SERVER_ERROR;
+                }
+                return ResultType.OK
+                        .inheritedObject("correct",json.get("correct").getAsString());
+            case "no_user":
+                return ResultType.NO_USER;
+            case "password_incorrect":
+                return ResultType.PASSWORD_INCORRECT;
+            case "unknown":
+                if (json.get("code") == null) {
+                    Helper.getLogger().warn("if .result is unknown,.message must be required.");
+                    Helper.getLogger().warn(result);
+                    return ResultType.SERVER_ERROR;
+                }
+                if (json.get("code").getAsString() == null) {
+                    Helper.getLogger().warn(".message must can be cast to string.");
+                    Helper.getLogger().warn(result);
+                    return ResultType.SERVER_ERROR;
+                }
+                if (json.get("message") == null) {
+                    Helper.getLogger().warn("if .result is unknown,.message must be required.");
+                    Helper.getLogger().warn(result);
+                    return ResultType.SERVER_ERROR;
+                }
+                if (json.get("message").getAsString() == null) {
+                    Helper.getLogger().warn(".message must can be cast to string.");
+                    Helper.getLogger().warn(result);
+                    return ResultType.SERVER_ERROR;
+                }
+                return ResultType.UNKNOWN.inheritedObject("code", json.get("code").getAsString())
+                        .inheritedObject("message", json.get("message").getAsString());
             default:
                 Helper.getLogger().warn(".result only can choose between ok,name_incorrect,no_user.");
                 Helper.getLogger().warn(result);

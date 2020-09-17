@@ -18,10 +18,22 @@ package red.mohist.sodionauth.yggdrasilserver.controller;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
+import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
 
-public interface Controller {
-    Object handle(JsonElement content, FullHttpRequest request) throws SQLException;
+public class InvalidateController implements Controller {
+    @Override
+    public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
+        JsonObject post=content.getAsJsonObject();
+        String accessToken = post.get("accessToken").getAsString();
+        UserProvider.instance.invalidateToken(accessToken);
+        return new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1,
+                HttpResponseStatus.NO_CONTENT);
+    }
 }

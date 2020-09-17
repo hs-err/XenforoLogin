@@ -22,41 +22,34 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.yggdrasilserver.YggdrasilServerCore;
 import red.mohist.sodionauth.yggdrasilserver.modules.LoginRespone;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.modules.RequestConfig;
+import red.mohist.sodionauth.yggdrasilserver.modules.RefreshRespone;
 import red.mohist.sodionauth.yggdrasilserver.modules.User;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.Base64;
 import java.util.UUID;
 
-public class LoginController implements Controller {
+public class RefreshController implements Controller {
     @Override
-    public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
+    public Object handle(JsonElement content, FullHttpRequest requests) throws SQLException {
         JsonObject post=content.getAsJsonObject();
-        String username = post.get("username").getAsString();
-        String password = post.get("password").getAsString();
-        String uuid = Helper.toStringUuid(username);
+        String accessToken = post.get("accessToken").getAsString();
         String clientToken = post.get("clientToken")==null
-                ? Helper.toStringUuid(UUID.randomUUID())
+                ? null
                 : post.get("clientToken").getAsString();
-        LoginRespone respone = new LoginRespone();
-        ResultType result = UserProvider.instance.login(
-                username,
-                password,
-                clientToken);
+        RefreshRespone respone = new RefreshRespone();
+        ResultType result = UserProvider.instance.refreshToken(clientToken,accessToken);
         if (result != ResultType.OK) {
             Helper.getLogger().info("Login fail");
         }
+        String username= (String) result.getInheritedObject("correct");
+        accessToken=(String) result.getInheritedObject("accessToken");
         respone.setUser(UserProvider.instance.getUser(username))
-                .addProfiles(UserProvider.instance.getProfile(username))
-                .selectedProfile(UserProvider.instance.getProfile(username))
+                .setSelectedProfile(UserProvider.instance.getProfile(username))
                 .setClientToken(clientToken)
-                .setAccessToken((String) result.getInheritedObject("accessToken"));
+                .setAccessToken(accessToken);
         return respone;
     }
 }
