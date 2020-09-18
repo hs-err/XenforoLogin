@@ -16,26 +16,25 @@
 
 package red.mohist.sodionauth.yggdrasilserver.controller;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import io.netty.handler.codec.http.*;
-import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.yggdrasilserver.modules.RefreshRespone;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
+import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ValidateController implements Controller {
+public class ProfileController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
-        JsonObject post=content.getAsJsonObject();
-        String accessToken = post.get("accessToken").getAsString();
-        String clientToken = post.get("clientToken").getAsString();
-        if(UserProvider.instance.verifyToken(clientToken,accessToken)){
-            return null;
-        }else{
-            return "err";
-        }
+        QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
+        String path=decoder.path();
+        String uuid=path.substring(path.lastIndexOf("/"));
+        return new Profile()
+                .setId(uuid)
+                .setName("unknown");
     }
 }

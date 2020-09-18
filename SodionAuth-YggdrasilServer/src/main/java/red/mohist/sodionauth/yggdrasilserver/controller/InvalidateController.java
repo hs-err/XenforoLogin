@@ -32,8 +32,6 @@ public class InvalidateController implements Controller {
         JsonObject post=content.getAsJsonObject();
         String accessToken = post.get("accessToken").getAsString();
         UserProvider.instance.invalidateToken(accessToken);
-        return new DefaultFullHttpResponse(
-                HttpVersion.HTTP_1_1,
-                HttpResponseStatus.NO_CONTENT);
+        return null;
     }
 }

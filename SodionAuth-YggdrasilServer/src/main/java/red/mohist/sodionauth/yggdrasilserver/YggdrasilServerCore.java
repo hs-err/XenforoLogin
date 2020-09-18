@@ -112,40 +112,39 @@ public class YggdrasilServerCore {
                         HttpResponseStatus.CONTINUE));
             }
             Controller controller;
-            switch (req.uri()){
-                case "/":
-                    controller=new BaseConfigController();
-                    break;
-                case "/authserver/authenticate":
-                    controller=new LoginController();
-                    break;
-                case "/authserver/refresh":
-                    controller=new RefreshController();
-                    break;
-                case "/authserver/validate":
-                    controller=new ValidateController();
-                    break;
-                case "/authserver/invalidate":
-                    controller=new InvalidateController();
-                    break;
-                case "/sessionserver/session/minecraft/join":
-                    controller=new JoinController();
-                    break;
-                    // TODO: /sessionserver/session/minecraft/hasJoined?username={username}&serverId={serverId}&ip={ip}
-                    // TODO: /sessionserver/session/minecraft/profile/{uuid}?unsigned={unsigned}
-                case " /api/profiles/minecraft":
-                    controller=new ProfilesController();
-                    break;
-                default:
-                    controller=new BaseConfigController();
+            String uri=req.uri();
+            if(uri.startsWith("/")) {
+                controller = new BaseConfigController();
+            }else if(uri.startsWith("/authserver/authenticate")){
+                controller=new LoginController();
+            }else if(uri.startsWith("/authserver/refresh")){
+                controller=new RefreshController();
+            }else if(uri.startsWith("/authserver/validate")){
+                controller=new ValidateController();
+            }else if(uri.startsWith("/authserver/invalidate")){
+                controller=new InvalidateController();
+            }else if(uri.startsWith("/sessionserver/session/minecraft/join")){
+                controller=new JoinController();
+            }else if(uri.startsWith("/sessionserver/session/minecraft/hasJoined")){
+                controller=new HasJoinedController();
+            }else if(uri.startsWith("/sessionserver/session/minecraft/profile/")){
+                controller=new ProfileController();
+            }else if(uri.startsWith("/api/profiles/minecraft")) {
+                controller = new ProfilesController();
+            }else{
+                controller=new NotFoundController();
             }
             Object msg=controller.handle(
                     new Gson().fromJson(req.content().toString(CharsetUtil.UTF_8), JsonElement.class),
                     req);
             FullHttpResponse response;
-            if(msg instanceof FullHttpResponse) {
+            if(msg == null){
+                response = new DefaultFullHttpResponse(
+                        HttpVersion.HTTP_1_1,
+                        HttpResponseStatus.NO_CONTENT);
+            }else if(msg instanceof FullHttpResponse) {
                 response = (FullHttpResponse) msg;
-            }else{
+            }else {
                 response = new DefaultFullHttpResponse(
                         HttpVersion.HTTP_1_1,
                         HttpResponseStatus.OK,

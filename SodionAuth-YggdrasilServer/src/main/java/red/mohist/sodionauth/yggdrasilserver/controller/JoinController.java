@@ -34,13 +34,9 @@ public class JoinController implements Controller {
         String accessToken = post.get("accessToken").getAsString();
         String serverId = post.get("serverId").getAsString();
         if(UserProvider.instance.join(uuid,accessToken,serverId)){
-            return new DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    HttpResponseStatus.NO_CONTENT);
+            return null;
         }else{
-            return new DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    HttpResponseStatus.OK);
+            return "err";
         }
     }
 }

@@ -37,13 +37,9 @@ public class SignOutController implements Controller {
         String username = post.get("username").getAsString();
         String password = post.get("password").getAsString();
         if(UserProvider.instance.signout(username,password)){
-            return new DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    HttpResponseStatus.NO_CONTENT);
+            return null;
         }else{
-            return new DefaultFullHttpResponse(
-                    HttpVersion.HTTP_1_1,
-                    HttpResponseStatus.OK);
+            return "err";
         }
     }
 }
