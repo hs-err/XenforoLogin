@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import red.mohist.sodionauth.core.config.LangConfiguration;
 

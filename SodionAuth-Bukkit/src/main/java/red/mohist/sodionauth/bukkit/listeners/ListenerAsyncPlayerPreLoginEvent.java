@@ -57,7 +57,7 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
             }
         }
 
-        SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException((Future<String> future)->{
+        SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException((Future<String> future) -> {
             String canjoin;
             try {
                 canjoin = future.get();

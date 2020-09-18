@@ -16,9 +16,7 @@
 
 package red.mohist.sodionauth.yggdrasilserver.controller;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.netty.handler.codec.http.FullHttpRequest;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.yggdrasilserver.YggdrasilServerCore;
@@ -29,14 +27,14 @@ import java.util.Base64;
 public class BaseConfigController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) {
-        RequestConfig requestConfig=new RequestConfig();
+        RequestConfig requestConfig = new RequestConfig();
         requestConfig
                 .addMeta("serverName", Config.yggdrasil.getCore().getServerName("SodionAuthYggdrasilServer"))
-                .addMeta("implementationName","SodionAuthYggdrasilServer")
-                .addMeta("implementationVersion","testTEST");
+                .addMeta("implementationName", "SodionAuthYggdrasilServer")
+                .addMeta("implementationVersion", "testTEST");
         Config.yggdrasil.getCore().getSkinDomains().forEach(requestConfig::addSkinDomains);
         requestConfig.setSignaturePublickey("-----BEGIN PUBLIC KEY-----\n" +
-                Base64.getMimeEncoder(76, new byte[] { '\n' }).encodeToString(YggdrasilServerCore.instance.rsaPublicKey.getEncoded()) +
+                Base64.getMimeEncoder(76, new byte[]{'\n'}).encodeToString(YggdrasilServerCore.instance.rsaPublicKey.getEncoded()) +
                 "\n-----END PUBLIC KEY-----\n");
         return requestConfig;
     }

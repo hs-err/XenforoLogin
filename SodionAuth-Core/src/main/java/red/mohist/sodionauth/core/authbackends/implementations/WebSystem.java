@@ -409,7 +409,7 @@ public class WebSystem implements AuthBackendSystem {
                     return ResultType.SERVER_ERROR;
                 }
                 return ResultType.OK
-                        .inheritedObject("correct",json.get("correct").getAsString());
+                        .inheritedObject("correct", json.get("correct").getAsString());
             case "no_user":
                 return ResultType.NO_USER;
             case "password_incorrect":

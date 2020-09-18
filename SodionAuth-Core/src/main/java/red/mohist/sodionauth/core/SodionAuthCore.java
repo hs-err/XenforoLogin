@@ -26,7 +26,6 @@ import org.knownspace.minitask.TaskFactory;
 import org.knownspace.minitask.locks.UniqueFlag;
 import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
-import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
@@ -199,7 +198,7 @@ public final class SodionAuthCore {
 
             Helper.getLogger().info("Check for existing players...");
             for (AbstractPlayer abstractPlayer : api.getAllPlayer()) {
-                canJoinAsync(abstractPlayer).then(result->{
+                canJoinAsync(abstractPlayer).then(result -> {
                     if (result != null)
                         abstractPlayer.kick(result);
                 });
@@ -242,11 +241,13 @@ public final class SodionAuthCore {
         try {
             executor.awaitTermination(30, TimeUnit.SECONDS);
             globalScheduledExecutor.awaitTermination(30, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
         Helper.getLogger().info("Stopping session storage...");
         try {
             connection.close();
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+        }
         instance = null;
     }
 
@@ -272,8 +273,8 @@ public final class SodionAuthCore {
             loginAsync(player).get();
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
-            if (cause instanceof  AuthenticatedException) {
-                throw (AuthenticatedException)cause;
+            if (cause instanceof AuthenticatedException) {
+                throw (AuthenticatedException) cause;
             }
             cause.printStackTrace();
         } catch (Exception e) {
@@ -323,10 +324,10 @@ public final class SodionAuthCore {
     }
 
     public ITask<Void> loginAsync(AbstractPlayer player) {
-        return dbUniqueFlag.lock().then(()->{
+        return dbUniqueFlag.lock().then(() -> {
             try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)) {
                 realLogin(player);
-            } catch (Exception e){
+            } catch (Exception e) {
                 throw e;
             }
         });
@@ -357,8 +358,8 @@ public final class SodionAuthCore {
 
     public void onQuit(AbstractPlayer player) {
         LocationInfo leave_location = player.getLocation();
-        dbUniqueFlag.lock().then(()->{
-            try(Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)){
+        dbUniqueFlag.lock().then(() -> {
+            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)) {
                 if (!needCancelled(player)) {
                     try {
                         PreparedStatement pps = connection.prepareStatement("DELETE FROM last_info WHERE uuid = ?;");
@@ -375,14 +376,14 @@ public final class SodionAuthCore {
                 }
                 player.teleport(default_location);
                 logged_in.remove(player.getUniqueId());
-            }catch (Exception ignore){}
+            } catch (Exception ignore) {
+            }
         });
     }
 
     public String canLogin(AbstractPlayer player) {
         return SecuritySystems.canJoin(player);
     }
-
 
 
     @Deprecated
@@ -401,7 +402,7 @@ public final class SodionAuthCore {
     }
 
     public ITask<String> canJoinAsync(AbstractPlayer player) {
-        return startup.startTask(()->{
+        return startup.startTask(() -> {
             SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
             return canJoinHandle(player);
         });
@@ -446,7 +447,7 @@ public final class SodionAuthCore {
             abstractPlayer.setGameMode(3);
         }
         LoginTicker.add(abstractPlayer);
-        dbUniqueFlag.lock().then(()->{
+        dbUniqueFlag.lock().then(() -> {
             try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(dbUniqueFlag)) {
                 if (Config.session.getEnable()) {
                     PreparedStatement pps = connection.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");

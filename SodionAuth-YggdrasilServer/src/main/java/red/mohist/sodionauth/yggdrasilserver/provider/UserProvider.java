@@ -20,14 +20,11 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.utils.Config;
-import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.yggdrasilserver.implementation.PlainPlayer;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
 import red.mohist.sodionauth.yggdrasilserver.modules.Texture;
-import red.mohist.sodionauth.yggdrasilserver.modules.TokenPair;
 import red.mohist.sodionauth.yggdrasilserver.modules.User;
 
-import java.io.Console;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.UUID;
@@ -56,23 +53,23 @@ public class UserProvider {
 
     public ResultType login(String username, String password, String clientToken) throws SQLException {
         ResultType result;
-        if(SodionAuthCore.instance.isEmail(username)){
-            result=AuthBackendSystems.getCurrentSystem().loginEmail(username, password);
+        if (SodionAuthCore.instance.isEmail(username)) {
+            result = AuthBackendSystems.getCurrentSystem().loginEmail(username, password);
             if (result == ResultType.OK) {
                 String accessToken = UUID.randomUUID().toString();
                 addToken(username, clientToken, accessToken);
                 return ResultType.OK
-                        .inheritedObject("username",username)
-                        .inheritedObject("accessToken",accessToken);
+                        .inheritedObject("username", username)
+                        .inheritedObject("accessToken", accessToken);
             }
-        }else {
-            result=AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password);
+        } else {
+            result = AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password);
             if (result == ResultType.OK) {
                 String accessToken = UUID.randomUUID().toString();
                 addToken(username, clientToken, accessToken);
                 return ResultType.OK
-                        .inheritedObject("username",username)
-                        .inheritedObject("accessToken",accessToken);
+                        .inheritedObject("username", username)
+                        .inheritedObject("accessToken", accessToken);
             }
         }
         return result;
@@ -90,7 +87,7 @@ public class UserProvider {
         pps.execute();
     }
 
-    public boolean join(String uuid,String accessToken,String serverId) throws SQLException {
+    public boolean join(String uuid, String accessToken, String serverId) throws SQLException {
         PreparedStatement pps;
         refresh();
 
@@ -112,7 +109,7 @@ public class UserProvider {
             pps.setInt(1, 0);
             pps.setString(2, accessToken);
             pps.execute();
-        } else if(rs.getInt("status") != 0){
+        } else if (rs.getInt("status") != 0) {
             return false;
         }
         SessionProvider.instance.join(
@@ -169,7 +166,7 @@ public class UserProvider {
         if (!rs.next()) {
             return ResultType.PASSWORD_INCORRECT;
         }
-        String username=rs.getString("username");
+        String username = rs.getString("username");
         clientToken = rs.getString("clientToken");
         if (rs.getInt("status") == 0 || rs.getInt("status") == 1) {
             pps = connection.prepareStatement(
@@ -187,8 +184,8 @@ public class UserProvider {
             pps.setString(3, username);
             pps.execute();
             return ResultType.OK
-                    .inheritedObject("correct",username)
-                    .inheritedObject("accessToken",accessToken);
+                    .inheritedObject("correct", username)
+                    .inheritedObject("accessToken", accessToken);
         } else {
             return ResultType.PASSWORD_INCORRECT;
         }

@@ -18,53 +18,47 @@ package red.mohist.sodionauth.yggdrasilserver.provider;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
-import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.utils.Config;
-import red.mohist.sodionauth.yggdrasilserver.implementation.PlainPlayer;
-import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.modules.Texture;
-import red.mohist.sodionauth.yggdrasilserver.modules.User;
-
-import java.nio.charset.StandardCharsets;
-import java.sql.*;
-import java.util.UUID;
 
 public class SessionProvider {
     public static SessionProvider instance;
-    public Cache<String,Session> cache;
+    public Cache<String, Session> cache;
+
     public SessionProvider() {
         instance = this;
         cache = CacheBuilder.newBuilder().build();
     }
-    public void join(String username,String serverId,String ip){
-        cache.put(username,new Session(serverId,ip));
+
+    public void join(String username, String serverId, String ip) {
+        cache.put(username, new Session(serverId, ip));
     }
-    public void join(String username,String serverId){
-        cache.put(username,new Session(serverId,null));
+
+    public void join(String username, String serverId) {
+        cache.put(username, new Session(serverId, null));
     }
-    public boolean verify(String username,String serverId,String ip){
-        Session session=cache.getIfPresent(username);
-        if(session == null){
+
+    public boolean verify(String username, String serverId, String ip) {
+        Session session = cache.getIfPresent(username);
+        if (session == null) {
             return false;
         }
-        if(!session.serverId.equals(serverId)){
+        if (!session.serverId.equals(serverId)) {
             return false;
         }
-        if(ip != null
+        if (ip != null
                 && session.ip != null
-                && !session.ip.equals(ip)){
+                && !session.ip.equals(ip)) {
             return false;
         }
         return true;
     }
-    static class Session{
+
+    static class Session {
         public String serverId;
         public String ip;
+
         public Session(String serverId, String ip) {
-            this.serverId=serverId;
-            this.ip=ip;
+            this.serverId = serverId;
+            this.ip = ip;
         }
     }
 }

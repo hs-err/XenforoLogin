@@ -18,7 +18,6 @@ package red.mohist.sodionauth.yggdrasilserver;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -30,10 +29,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 import red.mohist.sodionauth.core.utils.Config;
-import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.yggdrasilserver.controller.*;
-import red.mohist.sodionauth.yggdrasilserver.modules.RequestConfig;
-import red.mohist.sodionauth.yggdrasilserver.modules.TokenPair;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.net.InetSocketAddress;
@@ -44,7 +40,6 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,27 +48,28 @@ import static io.netty.handler.codec.http.HttpUtil.is100ContinueExpected;
 @SuppressWarnings("FieldCanBeLocal")
 public class YggdrasilServerCore {
     public static YggdrasilServerCore instance;
+    protected static Map<String, Controller> router = new ConcurrentHashMap<>();
     private final int port;
-    ChannelFuture f;
     public RSAPublicKey rsaPublicKey;
     public RSAPrivateKey rsaPrivateKey;
     public KeyPair rsaKeyPair;
-    protected static Map<String,Controller> router=new ConcurrentHashMap<>();
+    ChannelFuture f;
 
     public YggdrasilServerCore() throws NoSuchAlgorithmException, SQLException {
         this.port = Config.yggdrasil.getServer().getPort();
         instance = this;
         generalKey();
         new UserProvider();
-        router.put("/",new BaseConfigController());
-        router.put("/authserver/authenticate",new LoginController());
-        router.put("/authserver/refresh",new RefreshController());
-        router.put("/authserver/validate",new ValidateController());
-        router.put("/authserver/invalidate",new InvalidateController());
-        router.put("/sessionserver/session/minecraft/join",new JoinController());
-        router.put("/sessionserver/session/minecraft/hasJoined",new HasJoinedController());
-        router.put("/api/profiles/minecraft",new ProfileController());
+        router.put("/", new BaseConfigController());
+        router.put("/authserver/authenticate", new LoginController());
+        router.put("/authserver/refresh", new RefreshController());
+        router.put("/authserver/validate", new ValidateController());
+        router.put("/authserver/invalidate", new InvalidateController());
+        router.put("/sessionserver/session/minecraft/join", new JoinController());
+        router.put("/sessionserver/session/minecraft/hasJoined", new HasJoinedController());
+        router.put("/api/profiles/minecraft", new ProfileController());
     }
+
     private void generalKey() throws NoSuchAlgorithmException {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
         gen.initialize(4096, new SecureRandom());
@@ -87,7 +83,7 @@ public class YggdrasilServerCore {
             ServerBootstrap bootstrap = new ServerBootstrap();
             EventLoopGroup boss = new NioEventLoopGroup();
             EventLoopGroup work = new NioEventLoopGroup();
-            bootstrap.group(boss,work)
+            bootstrap.group(boss, work)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new HttpServerInitializer());
@@ -104,20 +100,23 @@ public class YggdrasilServerCore {
             }
         }).start();
     }
+
     public void stop() throws Exception {
         f.channel().close().sync();
     }
+
     public static class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 
         @Override
         protected void initChannel(SocketChannel channel) throws Exception {
             ChannelPipeline pipeline = channel.pipeline();
             pipeline.addLast(new HttpServerCodec());// http 编解码
-            pipeline.addLast("httpAggregator",new HttpObjectAggregator(512*1024)); // http 消息聚合器                                                                     512*1024为接收的最大contentlength
+            pipeline.addLast("httpAggregator", new HttpObjectAggregator(512 * 1024)); // http 消息聚合器                                                                     512*1024为接收的最大contentlength
             pipeline.addLast(new HttpRequestHandler());// 请求处理器
 
         }
     }
+
     public static class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         @Override
@@ -135,24 +134,24 @@ public class YggdrasilServerCore {
             }
             Controller controller;
             QueryStringDecoder decoder = new QueryStringDecoder(req.uri());
-            if(router.containsKey(decoder.path())){
-                controller=router.get(decoder.path());
-            }else if(decoder.path().startsWith("/sessionserver/session/minecraft/profile/")) {
+            if (router.containsKey(decoder.path())) {
+                controller = router.get(decoder.path());
+            } else if (decoder.path().startsWith("/sessionserver/session/minecraft/profile/")) {
                 controller = new ProfileController();
-            }else{
-                controller=new NotFoundController();
+            } else {
+                controller = new NotFoundController();
             }
-            Object msg=controller.handle(
+            Object msg = controller.handle(
                     new Gson().fromJson(req.content().toString(CharsetUtil.UTF_8), JsonElement.class),
                     req);
             FullHttpResponse response;
-            if(msg == null){
+            if (msg == null) {
                 response = new DefaultFullHttpResponse(
                         HttpVersion.HTTP_1_1,
                         HttpResponseStatus.NO_CONTENT);
-            }else if(msg instanceof FullHttpResponse) {
+            } else if (msg instanceof FullHttpResponse) {
                 response = (FullHttpResponse) msg;
-            }else {
+            } else {
                 response = new DefaultFullHttpResponse(
                         HttpVersion.HTTP_1_1,
                         HttpResponseStatus.OK,

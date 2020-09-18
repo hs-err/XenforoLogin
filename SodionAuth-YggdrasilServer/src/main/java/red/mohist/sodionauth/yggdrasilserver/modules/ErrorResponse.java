@@ -25,21 +25,23 @@ import io.netty.util.CharsetUtil;
 
 public class ErrorResponse extends DefaultFullHttpResponse {
     public static final ErrorResponse forbiddenOperation = new ErrorResponse(
-            new Response("ForbiddenOperationException","Invalid credentials. Invalid username or password."));
+            new Response("ForbiddenOperationException", "Invalid credentials. Invalid username or password."));
     public static final ErrorResponse illegalArgument = new ErrorResponse(
-            new Response("IllegalArgumentException","Access token already has a profile assigned.es"));
+            new Response("IllegalArgumentException", "Access token already has a profile assigned.es"));
 
-    private ErrorResponse(Object content){
+    private ErrorResponse(Object content) {
         super(HttpVersion.HTTP_1_1,
                 HttpResponseStatus.FORBIDDEN,
                 Unpooled.copiedBuffer(new Gson().toJson(content), CharsetUtil.UTF_8));
     }
-    static class Response{
+
+    static class Response {
         String error;
         String errorMessage;
-        Response(String error,String errorMessage){
-            this.error=error;
-            this.errorMessage=errorMessage;
+
+        Response(String error, String errorMessage) {
+            this.error = error;
+            this.errorMessage = errorMessage;
         }
     }
 }

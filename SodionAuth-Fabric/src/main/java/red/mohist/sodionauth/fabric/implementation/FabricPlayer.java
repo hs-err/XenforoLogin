@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FabricPlayer extends AbstractPlayer {
 
     private final ServerPlayerEntity handle;
+
     public FabricPlayer(ServerPlayerEntity handle) {
         super(handle.getName().getString(), handle.getUuid(),
                 ((InetSocketAddress) handle.networkHandler.connection.getAddress()).getAddress());

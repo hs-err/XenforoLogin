@@ -16,23 +16,19 @@
 
 package red.mohist.sodionauth.yggdrasilserver.controller;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
         QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
-        String path=decoder.path();
-        String uuid=path.substring(path.lastIndexOf("/"));
+        String path = decoder.path();
+        String uuid = path.substring(path.lastIndexOf("/"));
         return new Profile()
                 .setId(uuid)
                 .setName("unknown");

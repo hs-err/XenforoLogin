@@ -19,9 +19,7 @@ package red.mohist.sodionauth.fabric.mixinhelper;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import org.knownspace.minitask.Helper;
 import org.knownspace.minitask.ITask;
-import org.knownspace.minitask.ITaskCompletionEvent;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.fabric.MixinLogger;
@@ -81,7 +79,7 @@ public class MixinPlayerManagerHelper {
         }
 
 
-        return SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException(future->{
+        return SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException(future -> {
             String reason;
             try {
                 reason = future.get();

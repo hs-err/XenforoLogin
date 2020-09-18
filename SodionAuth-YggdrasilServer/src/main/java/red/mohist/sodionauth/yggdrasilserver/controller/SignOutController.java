@@ -18,27 +18,20 @@ package red.mohist.sodionauth.yggdrasilserver.controller;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.yggdrasilserver.modules.LoginRespone;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class SignOutController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
-        JsonObject post=content.getAsJsonObject();
+        JsonObject post = content.getAsJsonObject();
         String username = post.get("username").getAsString();
         String password = post.get("password").getAsString();
-        if(UserProvider.instance.signout(username,password)){
+        if (UserProvider.instance.signout(username, password)) {
             return null;
-        }else{
+        } else {
             return "err";
         }
     }

@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core.authbackends.implementations;
 
-import com.google.common.collect.ImmutableMap;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
@@ -193,7 +192,7 @@ public class MysqlSystem implements AuthBackendSystem {
                 }
             }
             return ResultType.OK.inheritedObject(
-                    "correct",rs.getString(emailField)
+                    "correct", rs.getString(emailField)
             );
         } catch (SQLException e) {
             e.printStackTrace();

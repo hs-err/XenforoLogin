@@ -16,15 +16,10 @@
 
 package red.mohist.sodionauth.yggdrasilserver.controller;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import io.netty.handler.codec.http.FullHttpRequest;
-import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NotFoundController implements Controller {
     @Override

@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.yggdrasilserver.controller;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.netty.handler.codec.http.FullHttpRequest;
 
 import java.sql.SQLException;

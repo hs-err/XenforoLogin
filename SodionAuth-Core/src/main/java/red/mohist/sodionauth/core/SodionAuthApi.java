@@ -32,7 +32,7 @@ public final class SodionAuthApi {
     }
 
     public static ITask<Void> loginAsync(AbstractPlayer player) {
-        return  SodionAuthCore.instance.loginAsync(player);
+        return SodionAuthCore.instance.loginAsync(player);
     }
 
     public static boolean isLogin(AbstractPlayer player) {

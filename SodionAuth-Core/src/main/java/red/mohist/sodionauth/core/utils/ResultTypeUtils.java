@@ -19,7 +19,6 @@ package red.mohist.sodionauth.core.utils;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
-import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 import java.util.concurrent.ExecutionException;

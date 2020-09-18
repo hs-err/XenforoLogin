@@ -30,8 +30,8 @@ public enum ResultType {
         inheritedMap = new LinkedHashMap<>();
     }
 
-    public ResultType inheritedObject(String key,Object value) {
-        inheritedMap.put(key,value);
+    public ResultType inheritedObject(String key, Object value) {
+        inheritedMap.put(key, value);
         return this;
     }
 
@@ -40,15 +40,16 @@ public enum ResultType {
         return this;
     }
 
-    public Map<String, Object> getInheritedObject(){
+    public Map<String, Object> getInheritedObject() {
         return inheritedMap;
     }
+
     public Object getInheritedObject(String key) {
         return inheritedMap.get(key);
     }
 
-    public Object getInheritedObject(String key,Object defaultValue) {
-        return inheritedMap.getOrDefault(key,defaultValue);
+    public Object getInheritedObject(String key, Object defaultValue) {
+        return inheritedMap.getOrDefault(key, defaultValue);
     }
 
     public boolean isShouldLogin() {

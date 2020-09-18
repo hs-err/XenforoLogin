@@ -52,14 +52,16 @@ public class Helper {
         return Helper.instance.log;
     }
 
-    public static UUID getUuidFromName(String name){
+    public static UUID getUuidFromName(String name) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
     }
-    public static String toStringUuid(UUID uuid){
-        String str=uuid.toString();
+
+    public static String toStringUuid(UUID uuid) {
+        String str = uuid.toString();
         return str.substring(0, 8) + str.substring(9, 13) + str.substring(14, 18) + str.substring(19, 23) + str.substring(24);
     }
-    public static String toStringUuid(String name){
+
+    public static String toStringUuid(String name) {
         return toStringUuid(getUuidFromName(name));
     }
 

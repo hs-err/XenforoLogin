@@ -34,10 +34,10 @@ public class MixinPlayerManager {
     @Inject(method = "checkCanJoin", at = @At("RETURN"))
     public void onCheckCanJoin(SocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
         //MixinPlayerManagerHelper.onCheckCanJoin((InetSocketAddress) address, profile, cir);
-        MixinPlayerManagerHelper.onCheckCanJoinAsync((InetSocketAddress)address,profile,cir).thenWithException(future ->{
+        MixinPlayerManagerHelper.onCheckCanJoinAsync((InetSocketAddress) address, profile, cir).thenWithException(future -> {
             try {
                 future.get();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

@@ -6,4 +6,4 @@ authors:
   - ishland
 description: A new generation of authentication plugin for Minecraft
 website: https://mohist.red/
-softdepend: [ProtocolLib]
+softdepend: [ ProtocolLib ]

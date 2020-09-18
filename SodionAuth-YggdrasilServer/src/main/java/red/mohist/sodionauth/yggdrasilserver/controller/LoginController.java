@@ -20,25 +20,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.netty.handler.codec.http.FullHttpRequest;
 import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.yggdrasilserver.YggdrasilServerCore;
-import red.mohist.sodionauth.yggdrasilserver.modules.*;
+import red.mohist.sodionauth.yggdrasilserver.modules.ErrorResponse;
+import red.mohist.sodionauth.yggdrasilserver.modules.LoginRespone;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.Base64;
 import java.util.UUID;
 
 public class LoginController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
-        JsonObject post=content.getAsJsonObject();
+        JsonObject post = content.getAsJsonObject();
         String username = post.get("username").getAsString();
         String password = post.get("password").getAsString();
         String uuid = Helper.toStringUuid(username);
-        String clientToken = post.get("clientToken")==null
+        String clientToken = post.get("clientToken") == null
                 ? Helper.toStringUuid(UUID.randomUUID())
                 : post.get("clientToken").getAsString();
         LoginRespone respone = new LoginRespone();
@@ -50,7 +47,7 @@ public class LoginController implements Controller {
             Helper.getLogger().info("Login fail");
             return null;
         }
-        switch (result){
+        switch (result) {
             case NO_USER:
             case SERVER_ERROR:
             case PASSWORD_INCORRECT:

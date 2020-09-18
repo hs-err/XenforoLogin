@@ -20,8 +20,8 @@ public interface IHungerManager {
 
     float getExhaustion();
 
-    void setSaturation(float saturation);
-
     void setExhaustion(float exhaustion);
+
+    void setSaturation(float saturation);
 
 }

@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core.authbackends.implementations;
 
-import com.google.common.collect.ImmutableMap;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.hasher.HasherTool;
@@ -186,7 +185,7 @@ public class SqliteSystem implements AuthBackendSystem {
                 }
             }
             return ResultType.OK
-                    .inheritedObject("correct",username);
+                    .inheritedObject("correct", username);
         } catch (SQLException e) {
             e.printStackTrace();
             return ResultType.SERVER_ERROR;

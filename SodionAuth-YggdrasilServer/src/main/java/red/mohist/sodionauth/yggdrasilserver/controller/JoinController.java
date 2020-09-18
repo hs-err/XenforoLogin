@@ -18,10 +18,7 @@ package red.mohist.sodionauth.yggdrasilserver.controller;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
@@ -29,13 +26,13 @@ import java.sql.SQLException;
 public class JoinController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
-        JsonObject post=content.getAsJsonObject();
+        JsonObject post = content.getAsJsonObject();
         String uuid = post.get("uuid").getAsString();
         String accessToken = post.get("accessToken").getAsString();
         String serverId = post.get("serverId").getAsString();
-        if(UserProvider.instance.join(uuid,accessToken,serverId)){
+        if (UserProvider.instance.join(uuid, accessToken, serverId)) {
             return null;
-        }else{
+        } else {
             return "err";
         }
     }

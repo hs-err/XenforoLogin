@@ -36,12 +36,12 @@ public class MixinHungerManager implements IHungerManager {
     }
 
     @Override
-    public void setSaturation(float saturation) {
-        this.foodSaturationLevel = saturation;
+    public void setExhaustion(float exhaustion) {
+        this.exhaustion = exhaustion;
     }
 
     @Override
-    public void setExhaustion(float exhaustion) {
-        this.exhaustion = exhaustion;
+    public void setSaturation(float saturation) {
+        this.foodSaturationLevel = saturation;
     }
 }

@@ -17,8 +17,8 @@
 package red.mohist.sodionauth.yggdrasilserver.controller;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import red.mohist.sodionauth.yggdrasilserver.provider.SessionProvider;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
@@ -30,13 +30,13 @@ public class HasJoinedController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
         QueryStringDecoder decoder = new QueryStringDecoder(request.uri());
-        Map<String, List<String>> parameters=decoder.parameters();
-        String username=parameters.get("username").get(0);
-        String serverId=parameters.get("serverId").get(0);
-        String ip=parameters.containsKey("ip")
+        Map<String, List<String>> parameters = decoder.parameters();
+        String username = parameters.get("username").get(0);
+        String serverId = parameters.get("serverId").get(0);
+        String ip = parameters.containsKey("ip")
                 ? parameters.get("ip").get(0)
                 : null;
-        if(SessionProvider.instance.verify(username,serverId,ip)){
+        if (SessionProvider.instance.verify(username, serverId, ip)) {
             return UserProvider.instance.getProfile("username");
         }
         return null;

@@ -20,32 +20,27 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.netty.handler.codec.http.FullHttpRequest;
 import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.yggdrasilserver.modules.LoginRespone;
-import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
 import red.mohist.sodionauth.yggdrasilserver.modules.RefreshRespone;
-import red.mohist.sodionauth.yggdrasilserver.modules.User;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class RefreshController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest requests) throws SQLException {
-        JsonObject post=content.getAsJsonObject();
+        JsonObject post = content.getAsJsonObject();
         String accessToken = post.get("accessToken").getAsString();
-        String clientToken = post.get("clientToken")==null
+        String clientToken = post.get("clientToken") == null
                 ? null
                 : post.get("clientToken").getAsString();
         RefreshRespone respone = new RefreshRespone();
-        ResultType result = UserProvider.instance.refreshToken(clientToken,accessToken);
+        ResultType result = UserProvider.instance.refreshToken(clientToken, accessToken);
         if (result != ResultType.OK) {
             Helper.getLogger().info("Login fail");
         }
-        String username= (String) result.getInheritedObject("correct");
-        accessToken=(String) result.getInheritedObject("accessToken");
+        String username = (String) result.getInheritedObject("correct");
+        accessToken = (String) result.getInheritedObject("accessToken");
         respone.setUser(UserProvider.instance.getUser(username))
                 .setSelectedProfile(UserProvider.instance.getProfile(username))
                 .setClientToken(clientToken)

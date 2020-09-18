@@ -309,7 +309,7 @@ public class XenforoSystem implements AuthBackendSystem {
             }
             JsonObject json;
             try {
-                json = new Gson().fromJson(result,JsonObject.class);
+                json = new Gson().fromJson(result, JsonObject.class);
             } catch (JsonSyntaxException e) {
                 Helper.getLogger().warn(result);
                 e.printStackTrace();

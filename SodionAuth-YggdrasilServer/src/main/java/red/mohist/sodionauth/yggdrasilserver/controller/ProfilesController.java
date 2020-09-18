@@ -18,11 +18,7 @@ package red.mohist.sodionauth.yggdrasilserver.controller;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
@@ -33,11 +29,11 @@ import java.util.List;
 public class ProfilesController implements Controller {
     @Override
     public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
-        JsonArray post=content.getAsJsonArray();
-        if(post.size() > 10){
+        JsonArray post = content.getAsJsonArray();
+        if (post.size() > 10) {
             return null;
         }
-        List<Profile> response= new ArrayList<>();
+        List<Profile> response = new ArrayList<>();
         for (JsonElement per : post) {
             response.add(UserProvider.instance.getProfile(per.getAsString()));
         }
