@@ -29,7 +29,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void sendMessage(String message) {
-
+        //
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void kick(String message) {
-
+        //
     }
 
     @Override
@@ -49,7 +49,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setLocation(LocationInfo location) {
-
+        //
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setGameMode(int gameMode) {
-
+        //
     }
 
     @Override
@@ -69,7 +69,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setHealth(double health) {
-
+        //
     }
 
     @Override
@@ -79,7 +79,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setMaxHealth(double maxHealth) {
-
+        //
     }
 
     @Override
@@ -89,7 +89,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setFallDistance(float fallDistance) {
-
+        //
     }
 
     @Override
@@ -99,7 +99,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setVelocity(VelocityInfo velocity) {
-
+        //
     }
 
     @Override
@@ -109,7 +109,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setFood(FoodInfo food) {
-
+        //
     }
 
     @Override
@@ -119,7 +119,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setRemainingAir(int remainingAir) {
-
+        //
     }
 
     @Override
@@ -129,7 +129,7 @@ public class PlainPlayer extends AbstractPlayer {
 
     @Override
     public void setEffects(Collection<EffectInfo> effects) {
-
+        //
     }
 
     @Override
