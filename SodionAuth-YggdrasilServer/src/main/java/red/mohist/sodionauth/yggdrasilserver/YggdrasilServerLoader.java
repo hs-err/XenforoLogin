@@ -20,6 +20,7 @@ import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class YggdrasilServerLoader implements PlatformAdapter {
@@ -31,13 +32,18 @@ public class YggdrasilServerLoader implements PlatformAdapter {
 
     @Override
     public LocationInfo getSpawn(String world) {
-        return null;
+        return new LocationInfo("YggdrasilServer",
+                0,
+                0,
+                0,
+                0,
+                0);
     }
 
     // TODO
     @Override
     public String getDefaultWorld() {
-        return null;
+        return "YggdrasilServer";
     }
 
     @Override
@@ -52,6 +58,6 @@ public class YggdrasilServerLoader implements PlatformAdapter {
 
     @Override
     public Collection<AbstractPlayer> getAllPlayer() {
-        return null;
+        return new ArrayList<>();
     }
 }

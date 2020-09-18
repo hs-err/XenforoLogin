@@ -27,6 +27,7 @@ import red.mohist.sodionauth.yggdrasilserver.modules.Texture;
 import red.mohist.sodionauth.yggdrasilserver.modules.TokenPair;
 import red.mohist.sodionauth.yggdrasilserver.modules.User;
 
+import java.io.Console;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.UUID;
@@ -54,8 +55,10 @@ public class UserProvider {
     }
 
     public ResultType login(String username, String password, String clientToken) throws SQLException {
+        ResultType result;
         if(SodionAuthCore.instance.isEmail(username)){
-            if (AuthBackendSystems.getCurrentSystem().loginEmail(username, password) == ResultType.OK) {
+            result=AuthBackendSystems.getCurrentSystem().loginEmail(username, password);
+            if (result == ResultType.OK) {
                 String accessToken = UUID.randomUUID().toString();
                 addToken(username, clientToken, accessToken);
                 return ResultType.OK
@@ -63,7 +66,8 @@ public class UserProvider {
                         .inheritedObject("accessToken",accessToken);
             }
         }else {
-            if (AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password) == ResultType.OK) {
+            result=AuthBackendSystems.getCurrentSystem().login(new PlainPlayer(username), password);
+            if (result == ResultType.OK) {
                 String accessToken = UUID.randomUUID().toString();
                 addToken(username, clientToken, accessToken);
                 return ResultType.OK
@@ -71,7 +75,7 @@ public class UserProvider {
                         .inheritedObject("accessToken",accessToken);
             }
         }
-        return null;
+        return result;
     }
 
     public void addToken(String username, String clientToken, String accessToken) throws SQLException {

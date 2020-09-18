@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.core.enums;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public enum ResultType {
@@ -26,6 +27,7 @@ public enum ResultType {
 
     ResultType() {
         shouldLogin = false;
+        inheritedMap = new LinkedHashMap<>();
     }
 
     public ResultType inheritedObject(String key,Object value) {

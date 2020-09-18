@@ -23,10 +23,7 @@ import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.yggdrasilserver.YggdrasilServerCore;
-import red.mohist.sodionauth.yggdrasilserver.modules.LoginRespone;
-import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.modules.RequestConfig;
-import red.mohist.sodionauth.yggdrasilserver.modules.User;
+import red.mohist.sodionauth.yggdrasilserver.modules.*;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
 import java.nio.charset.StandardCharsets;
@@ -51,7 +48,15 @@ public class LoginController implements Controller {
                 clientToken);
         if (result != ResultType.OK) {
             Helper.getLogger().info("Login fail");
+            return null;
         }
+        switch (result){
+            case NO_USER:
+            case SERVER_ERROR:
+            case PASSWORD_INCORRECT:
+                return ErrorResponse.forbiddenOperation;
+        }
+        username = (String) result.getInheritedObject("correct");
         respone.setUser(UserProvider.instance.getUser(username))
                 .addProfiles(UserProvider.instance.getProfile(username))
                 .selectedProfile(UserProvider.instance.getProfile(username))

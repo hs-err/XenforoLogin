@@ -173,7 +173,7 @@ public final class SodionAuthCore {
                     .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                             "SodionAuthWeb/1.0 Safari/537.36")
                     .build();
-            DependencyManager.checkForSQLite();
+            //DependencyManager.checkForSQLite();
 
             Helper.getLogger().info("Loading configurations...");
             loadConfig();

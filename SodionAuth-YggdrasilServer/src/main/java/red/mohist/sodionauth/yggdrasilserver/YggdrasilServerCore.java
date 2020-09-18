@@ -46,6 +46,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static io.netty.handler.codec.http.HttpUtil.is100ContinueExpected;
 
@@ -53,15 +54,25 @@ import static io.netty.handler.codec.http.HttpUtil.is100ContinueExpected;
 public class YggdrasilServerCore {
     public static YggdrasilServerCore instance;
     private final int port;
+    ChannelFuture f;
     public RSAPublicKey rsaPublicKey;
     public RSAPrivateKey rsaPrivateKey;
     public KeyPair rsaKeyPair;
+    protected static Map<String,Controller> router=new ConcurrentHashMap<>();
 
     public YggdrasilServerCore() throws NoSuchAlgorithmException, SQLException {
         this.port = Config.yggdrasil.getServer().getPort();
         instance = this;
         generalKey();
         new UserProvider();
+        router.put("/",new BaseConfigController());
+        router.put("/authserver/authenticate",new LoginController());
+        router.put("/authserver/refresh",new RefreshController());
+        router.put("/authserver/validate",new ValidateController());
+        router.put("/authserver/invalidate",new InvalidateController());
+        router.put("/sessionserver/session/minecraft/join",new JoinController());
+        router.put("/sessionserver/session/minecraft/hasJoined",new HasJoinedController());
+        router.put("/api/profiles/minecraft",new ProfileController());
     }
     private void generalKey() throws NoSuchAlgorithmException {
         KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
@@ -72,18 +83,29 @@ public class YggdrasilServerCore {
     }
 
     public void start() throws Exception {
-        ServerBootstrap bootstrap = new ServerBootstrap();
-        EventLoopGroup boss = new NioEventLoopGroup();
-        EventLoopGroup work = new NioEventLoopGroup();
-        bootstrap.group(boss,work)
-                .handler(new LoggingHandler(LogLevel.DEBUG))
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new HttpServerInitializer());
-
-        ChannelFuture f = bootstrap.bind(new InetSocketAddress(port)).sync();
-        System.out.println(" server start up on port : " + port);
-        f.channel().closeFuture().sync();
-
+        new Thread(() -> {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            EventLoopGroup boss = new NioEventLoopGroup();
+            EventLoopGroup work = new NioEventLoopGroup();
+            bootstrap.group(boss,work)
+                    .handler(new LoggingHandler(LogLevel.DEBUG))
+                    .channel(NioServerSocketChannel.class)
+                    .childHandler(new HttpServerInitializer());
+            try {
+                f = bootstrap.bind(new InetSocketAddress(port)).sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("server start up on port : " + port);
+            try {
+                f.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+    public void stop() throws Exception {
+        f.channel().close().sync();
     }
     public static class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -112,25 +134,11 @@ public class YggdrasilServerCore {
                         HttpResponseStatus.CONTINUE));
             }
             Controller controller;
-            String uri=req.uri();
-            if(uri.startsWith("/")) {
-                controller = new BaseConfigController();
-            }else if(uri.startsWith("/authserver/authenticate")){
-                controller=new LoginController();
-            }else if(uri.startsWith("/authserver/refresh")){
-                controller=new RefreshController();
-            }else if(uri.startsWith("/authserver/validate")){
-                controller=new ValidateController();
-            }else if(uri.startsWith("/authserver/invalidate")){
-                controller=new InvalidateController();
-            }else if(uri.startsWith("/sessionserver/session/minecraft/join")){
-                controller=new JoinController();
-            }else if(uri.startsWith("/sessionserver/session/minecraft/hasJoined")){
-                controller=new HasJoinedController();
-            }else if(uri.startsWith("/sessionserver/session/minecraft/profile/")){
-                controller=new ProfileController();
-            }else if(uri.startsWith("/api/profiles/minecraft")) {
-                controller = new ProfilesController();
+            QueryStringDecoder decoder = new QueryStringDecoder(req.uri());
+            if(router.containsKey(decoder.path())){
+                controller=router.get(decoder.path());
+            }else if(decoder.path().startsWith("/sessionserver/session/minecraft/profile/")) {
+                controller = new ProfileController();
             }else{
                 controller=new NotFoundController();
             }
