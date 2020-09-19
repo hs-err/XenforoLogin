@@ -66,10 +66,12 @@ public class WebSystem implements AuthBackendSystem {
         try {
             HttpPost request = new HttpPost(url);
             Form form = Form.form();
+            form.add("action", "register");
             form.add("email", email);
             form.add("username", player.getName());
             form.add("password", password);
             request.setEntity(new UrlEncodedFormEntity(form.build()));
+            request.addHeader("SodionAuth-Key", key);
             CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
             result = responseHandler.handleResponse(response);
             response.close();
