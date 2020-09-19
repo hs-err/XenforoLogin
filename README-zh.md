@@ -110,6 +110,33 @@
 }
 ````
 
+#### Flarum
+
+正确安装composer
+
+在网站根目录运行
+
+````
+composer require mohist/flarum-sodion-auth
+````
+
+在控制面板启用SodionAuth拓展
+
+编辑config.json。
+
+````json
+{
+  "api": {
+    "system": "web","_system": "这里改为web。",
+    "web": {
+      "url": "http://example.com/api/sodionAuth","_url": "这里改为你网站的地址。",
+      "key": "XXXX0000XXXX0000XXXX00_00XXXX000","_key": "这里随缘吧～毕竟flarum官方也没作速率限制。"
+    }
+}
+````
+
+享受
+
 ####  Discuz
 
 将支持文件下载到网站根目录。
@@ -203,6 +230,21 @@
 如果有迁移到[Discuz](https://www.discuz.net)[PHPWind](http://www.phpwind.net.cn)等应用的需求，请使用MD5Salt
 
 其他请根据需求自行选择，如非必要，请勿选择Plain。
+
+
+## 你们要的下载地址
+
+[https://github.com/Mohist-Community/SodionAuth/releases](稳定版和预发布版)
+
+[https://ci.ishland.com:43333/job/SodionAuth](动态构建版)
+
+## 报告问题？想要新特性？
+
+[ttps://github.com/Mohist-Community/SodionAuth/issues](GitHub issues)
+
+所有问题请使用英语提出。
+
+英语不好的可以在mcbbs中提出，但mcbbs本人不会经常看，所以说尽可能在GitHub issues提出。
 
 ## 开源协议
 
