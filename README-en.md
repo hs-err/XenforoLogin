@@ -1,75 +1,75 @@
 # SodionAuth
 
-## 是什么？
+## What is this?
 
-新生的MC登录插件。
+A new generation of Minecraft authenticate plugin.
 
-## 能做什么？
+## What can this do?
 
-- 为你的正版服务器提供额外的保护。
-- 为离线服务器提供安全。
-- 通过后端系统（如Xenforo，Discuz）实现例如“邀请码”的功能。
-- 在登录前阻止玩家做几乎任何事。
-- 将游戏与您的论坛同步
+- Offer extra protection for your online Minecraft server。
+- Protect your offline server。
+- Through the back-end system(Xenforo，Discuz, etc.) to realize the "invitation code" function。
+- Prevent player to do anything before they login.
+- Synchronize game accounts and forum accounts.
 
-## 那...优势有哪些？
+## Advantages
 
-- 自适应速率限制（智能漏桶算法）。
-- 国家限制（GeoIP）。
-- 无需指令直接在聊天栏输入密码。
-- 加载完成后完全异步的 网络+文件 IO请求。
-- 提供FastLogin支持（已pr尚未合并）。
-- 提供自动登录（session）。
-- 提供外置登录（实验）。
-- 在登录前隐藏几乎全部的状态。
-  - 位置。
-  - 背包。
-  - 游戏模式。
-  - 生命值。
-  - 食物（包含foodLevel exhaustion saturation）。
-  - 剩余氧气。
-  - 药水效果。
-- 在登录后恢复几乎全部的状态。
-  - 位置。
-  - 游戏模式。
-  - 生命值。
-  - 跌落距离。
-  - 速度矢量。
-  - 食物（包含foodLevel exhaustion saturation）。
-  - 剩余氧气。
-  - 药水效果。
-- 支持较多的后端。
-  - Xenforo。
-  - UCenter (Discuz) 。
-  - MySQL。
-  - SQLite。
-  - Customized RestAPI。
-- 支持较多的密码处理方式。
-- 支持较多的平台。
-  - Bukkit。
-    - Paper（完全）。
-    - Mohist（部分）。
-    - Spigot（部分）。
-    - CraftBukkit（(部分）。
-  - Sponge（部分）。
-  - Fabric（实验）。
+- Adaptive rate limiting(Intelligent leaky bucket algorithm).
+- Country Limitation(Using GeoIP).
+- Input password directly into your chat textbox without command.
+- Completely asynchronous Network/File IO request after load complete.
+- FastLogin support(Pull request opened but not merged yet).
+- Automate login support(Using session).
+- External login support(Experimental).
+- Hide almost all player status before login。
+  - Location.
+  - Inventory.
+  - Gamemode.
+  - Health.
+  - Food(Including foodLevel, exhaustion and saturation).
+  - Oxygen left.
+  - Potion effect.
+- Resume almost all player status after Login。
+  - Location.
+  - Gamemode.
+  - Health.
+  - Falling distance.
+  - Velocity.
+  - Food(Including foodLevel, exhaustion and saturation).
+  - Oxygen left.
+  - Potion effect.
+- Various back-end system support.
+  - Xenforo.
+  - UCenter(Discuz).
+  - MySQL.
+  - SQLite.
+  - Customized RestAPI.
+- Various password handle support.
+- Various platform support.
+  - Bukkit.
+    - Paper(Competely).
+    - Mohist(Partly).
+    - Spigot(Partly)
+    - CraftBukkit(Partly).
+  - Sponge(Partly).
+  - Fabric(Experimental).
 
-## 我就不信你这没有劣势！
+## Disadventages
 
-- 无法提供通过邮箱找回密码。
-- 外置登录无法使用皮肤。
-- Session未缓存性能较差。
-- 由于保存了较多状态，可能会使以下操作**失效**，进而引起玩家不适
-  - 在落地前一秒退出服务器，在登录后可无伤害落地
-  - 在水下无氧气时退出服务器，在未登录状态恢复氧气
-  - 在获得debuff（如中毒，凋零，饥饿）之后退出服务器，在未登录状态等待buff结束后登录，可避免伤害
-  - 在鞘翅飞行时退出服务器，再次登录获得减速
+- Cant retrieve password by e-mail.
+- External login doesnt support skins。
+- Session is not cached, resulting in poor performance.
+- Stored some player status, may resulting these action **not exist any longer**, make players uncomfortable:
+  - Quit server before landing from high area，re-login with no damage.
+  - Quit server while no oxygen left, recovering oxygen before login.
+  - Quit server because of getting debuff(Such as hungry, poison, etc.), not login until the debuff was over, not affected by the debuff.
+  - Quit server while gliding with elytra, re-login to get slow down.
 
-## 喂喂，那你这些劣势为什么不改啊
+## Why not fix the disadvantages
 
-- 部分后端未提供修改密码的API。
-- 太肝了诶，不过会做的。
-- 为了跨服！
+- Some of back-end systems dont have API to change password.
+- The work is too difficult, but it will be solved later.
+- For Crossing server!
 - 建议腐竹顶住玩家的压力保留此特性
 
 ## 怎么用？
