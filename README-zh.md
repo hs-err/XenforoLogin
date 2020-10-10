@@ -230,13 +230,13 @@ composer require mohist/flarum-sodion-auth
 
 ## 你们要的下载地址
 
-[https://github.com/Mohist-Community/SodionAuth/releases](稳定版和预发布版)
+[稳定版和预发布版](https://github.com/Mohist-Community/SodionAuth/releases)
 
-[https://ci.ishland.com:43333/job/SodionAuth](动态构建版)
+[动态构建版](https://ci.ishland.com:43333/job/SodionAuth)
 
 ## 报告问题？想要新特性？
 
-[ttps://github.com/Mohist-Community/SodionAuth/issues](GitHub issues)
+[GitHub issues](https://github.com/Mohist-Community/SodionAuth/issues)
 
 所有问题请使用英语提出。
 

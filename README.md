@@ -230,17 +230,17 @@ Others please choose according to your needs, if not necessary, do not use Plain
 
 ## Download link
 
-[https://github.com/Mohist-Community/SodionAuth/releases](Stable and Preview version)
+[Stable and Preview version](https://github.com/Mohist-Community/SodionAuth/releases)
 
-[https://ci.ishland.com:43333/job/SodionAuth](Develop Build)
+[Develop Build](https://ci.ishland.com:43333/job/SodionAuth)
 
 ## Report problem? New feature request?
 
-[ttps://github.com/Mohist-Community/SodionAuth/issues](GitHub issues)
+[GitHub issues](https://github.com/Mohist-Community/SodionAuth/issues)
 
 English only.
 
-If you have bad English, you can raise it in MCBBS, but doesn’t read it very often, so it’s best to raise it in GitHub issues.
+If you have bad English, you can raise it here, but doesn’t read it very often, so it’s best to raise it in GitHub issues.
 
 ## License
 
