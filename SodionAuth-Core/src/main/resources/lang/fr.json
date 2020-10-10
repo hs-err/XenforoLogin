@@ -1,0 +1,30 @@
+{
+  "prefix": "§6§l[§eSodion§bAuth§6§l]§f",
+  "registerEmail": "Veuillez envoyer votre email pour vous enregistrer.",
+  "registerPassword": "Veuillez envoyer votre mot de passe.",
+  "registerPasswordConfirm": "Veuillez envoyer votre mot de passe encore une fois.",
+  "loggedIn": "Vous êtes déjà connecté.",
+  "success": "Connecté avec succès !",
+  "session": "Connexion automatique à partir de votre session.",
+  "needLogin": "Veuillez entrer votre mot de passe directement dans le chat.",
+  "errors": {
+    "prefix": "§6§l[§eSodion§bAuth§6§l]§c",
+    "proxy": "L'adresse proxy a été bannie.",
+    "rateLimit": "Taux limité.",
+    "countryLimit": "Pays limité.",
+    "email": "Mauvaise email.",
+    "server": "Il y a un problème lors de la connexion au serveur, merci de contacter l'administrateur.",
+    "confirm": "Ce mot de passe ne correspond pas au premier.",
+    "handle": "Nous sommes en train de traiter votre demande. Si cela prend trop de temps, contactez l'administrateur.",
+    "password": "Mot de passe incorrect.",
+    "key": "Veuillez vérifier api.key [key]",
+    "url": "Veuillez vérifier api.url [url]",
+    "noUser": "Vous n'êtes pas dans la liste blanche de ce serveur.",
+    "timeOut": "Délai de connexion expiré !",
+    "nameIncorrect": "Vous devriez utiliser \"[correct]\", et non celui ci pour vous connecter.",
+    "unknown": "Erreur inconnue : \"[message]\"",
+    "mailExist": "Votre email existe déjà dans notre base de données. Essayez en une autre.",
+    "userExist": "Votre nom d'utilisateur existe déjà dans notre base de données. Essayez en un autre.",
+    "loginExist": "Vous êtes déjà connecté depuis un autre endroit."
+  }
+}
