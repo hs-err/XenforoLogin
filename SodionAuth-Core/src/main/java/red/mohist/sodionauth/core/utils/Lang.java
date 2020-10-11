@@ -44,6 +44,7 @@ public class Lang {
     public static void init() throws IOException {
         ArrayList<String> languageList = new ArrayList<>();
         languageList.add("en");
+        languageList.add("fr");
         languageList.add("zh_CN");
         for (String language : languageList) {
             Helper.instance.saveResource("lang/" + language + ".json", false);
