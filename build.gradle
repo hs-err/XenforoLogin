@@ -102,7 +102,7 @@ dependencies {
     // compile(project(path: ":SodionAuth-Core", configuration: "shadow"))
     implementation(project(path: ":SodionAuth-Bukkit", configuration: "shadow"))
     implementation(project(path: ":SodionAuth-Fabric", configuration: "remapShadow"))
-    // implementation(project(path: ":SodionAuth-Sponge", configuration: "shadow"))
+    implementation(project(path: ":SodionAuth-Sponge", configuration: "shadow"))
 }
 
 assemble.dependsOn(shadowJar)
