@@ -26,6 +26,7 @@ import org.knownspace.minitask.TaskFactory;
 import org.knownspace.minitask.locks.UniqueFlag;
 import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
+import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
@@ -172,7 +173,7 @@ public final class SodionAuthCore {
                     .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " +
                             "SodionAuthWeb/1.0 Safari/537.36")
                     .build();
-            //DependencyManager.checkForSQLite();
+            DependencyManager.checkForSQLite();
 
             Helper.getLogger().info("Loading configurations...");
             loadConfig();
