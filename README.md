@@ -1,5 +1,6 @@
 # SodionAuth
 
+[English](https://github.com/Mohist-Community/SodionAuth/edit/master/README.md)    |    [中文](https://github.com/Mohist-Community/SodionAuth/blob/master/README-zh.md)
 ## What is this?
 
 A new generation of Minecraft authenticate plugin.
