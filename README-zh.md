@@ -1,5 +1,7 @@
 # SodionAuth
 
+[English](https://github.com/Mohist-Community/SodionAuth/edit/master/README.md)    |    [中文](https://github.com/Mohist-Community/SodionAuth/blob/master/README-zh.md)
+
 ## 是什么？
 
 新生的MC登录插件。
