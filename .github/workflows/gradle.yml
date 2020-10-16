@@ -34,21 +34,21 @@ jobs:
       run: ./gradlew build
     - uses: actions/upload-artifact@v2
       with:
-        name: SodionAuth-All-dev.jar
+        name: SodionAuth-All-dev
         path: build/libs/*.jar
     - uses: actions/upload-artifact@v2
       with:
-        name: SodionAuth-Bukkit-dev.jar
+        name: SodionAuth-Bukkit-dev
         path: SodionAuth-Bukkit/build/libs/*-all.jar
     - uses: actions/upload-artifact@v2
       with:
-        name: SodionAuth-Fabric-dev.jar
+        name: SodionAuth-Fabric-dev
         path: SodionAuth-Fabric/build/libs/*-all.jar
     - uses: actions/upload-artifact@v2
       with:
-        name: SodionAuth-Sponge-dev.jar
+        name: SodionAuth-Sponge-dev
         path: SodionAuth-Sponge/build/libs/*-all.jar
     - uses: actions/upload-artifact@v2
       with:
-        name: SodionAuth-YggdrasilServer-dev.jar
+        name: SodionAuth-YggdrasilServer-dev
         path: SodionAuth-YggdrasilServer/build/libs/*-all.jar
