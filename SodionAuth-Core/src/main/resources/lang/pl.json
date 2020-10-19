@@ -1,0 +1,30 @@
+{
+  "prefix": "§6§l[§eSodion§bAuth§6§l]§f",
+  "registerEmail": "Wyślij adres email, aby się zarejestrować.",
+  "registerPassword": "Napisz swoje hasło.",
+  "registerPasswordConfirm": "Napisz swoje hasło jeszcze raz.",
+  "loggedIn": "Jesteś już zalogowany.",
+  "success": "Pomyślnie zalogowano.",
+  "session": "Automatycznie zalogowano.",
+  "needLogin": "Napisz swoje hasło bezpośrednio na czacie.",
+  "errors": {
+    "prefix": "§6§l[§eSodion§bAuth§6§l]§c",
+    "proxy": "Adres proxy został zbanowany.",
+    "rateLimit": "Dostęp ograniczony.",
+    "countryLimit": "Dostęp z tego kraju jest ograniczony.",
+    "email": "Zły email",
+    "server": "Wystąpił problem przy połączeniu z serwerem. Skontaktuj się z administratorem.",
+    "confirm": "Hasła nie są identyczne.",
+    "handle": "Przepraszamy, zaraz dokończymy twoje zapytanie. Jeżeli trwa to zbyt długo, skontaktuj się z administratorem.",
+    "password": "Złe hasło.",
+    "key": "Sprawdź proszę api.key [key].",
+    "url": "Sprawdź proszę api.url [url].",
+    "noUser": "Nie jesteś na białej liście tego serwera!.",
+    "timeOut": "Czas oczekiwania przekroczony!",
+    "nameIncorrect": "Powinieneś użyć \"[correct]\" aby się zalgować.",
+    "unknown": "Nieznany error. Kod błędu: \"[message]\".",
+    "mailExist": "Twój email już istnieje w naszej bazie danych.",
+    "userExist": "Twoja nazwa użytkownika jest już zajęta.",
+    "loginExist": "Zostałeś zalogowany z innego miejsca."
+  }
+}
