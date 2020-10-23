@@ -23,7 +23,7 @@ public class Probe {
     public static String getJarPath() {
         final URL probeResource = Probe.class.getClassLoader().getResource("probeResource");
         if (probeResource == null) throw new IllegalStateException("Could not find probeResource");
-        return probeResource.getPath().split("!")[0].substring(6);
+        return probeResource.getPath().split("!")[0].split(":")[1].replaceAll("probeResource", "");
     }
 
 }

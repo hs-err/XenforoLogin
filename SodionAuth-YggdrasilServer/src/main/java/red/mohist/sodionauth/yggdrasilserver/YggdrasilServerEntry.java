@@ -16,16 +16,16 @@
 
 package red.mohist.sodionauth.yggdrasilserver;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class YggdrasilServerEntry {
-    private static final Logger logger = Logger
-            .getLogger("XenforoLogin-Yggdrasil-Launcher");
+    private static final Logger logger = LogManager.getLogger("XenforoLogin-Yggdrasil-Launcher");
 
 
     public static void main(String[] args) throws Exception {
@@ -38,17 +38,17 @@ public class YggdrasilServerEntry {
 
             @Override
             public void info(String info, Exception exception) {
-                logger.log(Level.INFO, info, exception);
+                logger.info(info, exception);
             }
 
             @Override
             public void warn(String info) {
-                logger.warning(info);
+                logger.warn(info);
             }
 
             @Override
             public void warn(String info, Exception exception) {
-                logger.log(Level.WARNING, info, exception);
+                logger.warn(info, exception);
             }
         });
         new SodionAuthCore(new YggdrasilServerLoader());
