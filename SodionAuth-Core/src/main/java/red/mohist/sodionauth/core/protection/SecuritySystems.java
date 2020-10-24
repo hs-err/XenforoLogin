@@ -33,7 +33,7 @@ public class SecuritySystems {
     public static void reloadConfig() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends SecuritySystem>> classes = new Reflections("red.mohist.sodionauth.core.protection.implementations")
+            Set<Class<? extends SecuritySystem>> classes = new Reflections("red.mohist.sodionauth.core.protection.implementations", SecuritySystems.class.getClassLoader())
                     .getSubTypesOf(SecuritySystem.class);
             for (Class<? extends SecuritySystem> clazz : classes) {
                 try {

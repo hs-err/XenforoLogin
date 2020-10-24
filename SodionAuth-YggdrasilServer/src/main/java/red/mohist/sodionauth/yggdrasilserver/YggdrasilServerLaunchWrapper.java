@@ -46,7 +46,9 @@ public class YggdrasilServerLaunchWrapper {
         public static String getJarPath() {
             final URL probeResource = Probe.class.getClassLoader().getResource("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class");
             if (probeResource == null) throw new IllegalStateException("Could not find probeResource");
-            return probeResource.getPath().split("!")[0].split(":")[1].replaceAll("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class", "");
+            String[] parts = probeResource.getPath().split("!")[0].split(":");
+            String s = parts.length == 1 ? parts[0] : parts[1];
+            return s.replaceAll("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class", "");
         }
 
     }
