@@ -36,7 +36,8 @@ dependencies {
     modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
     implementation project(":SodionAuth-Core")
-    implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
+    compileOnly 'com.github.KnownSpace:MiniTask:1.0.2-preview'
+    compileOnly 'org.reflections:reflections:0.9.12'
 }
 
 configurations {

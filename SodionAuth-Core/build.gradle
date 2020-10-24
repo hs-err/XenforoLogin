@@ -15,7 +15,16 @@
  */
 
 dependencies {
-    implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
+    implementation group: 'org.apache.maven.resolver', name: 'maven-resolver-impl', version: '1.6.1'
+    implementation group: 'org.apache.maven.resolver', name: 'maven-resolver-connector-basic', version: '1.6.1'
+    implementation group: 'org.apache.maven.resolver', name: 'maven-resolver-transport-http', version: '1.6.1'
+    implementation group: 'org.apache.maven', name: 'maven-resolver-provider', version: '3.5.0'
+    compileOnly 'org.reflections:reflections:0.9.12'
+    compileOnly 'org.apache.httpcomponents:fluent-hc:4.5.11'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    compileOnly 'com.maxmind.geoip2:geoip2:2.14.0'
+    implementation 'com.github.KnownSpace:MiniTask:1.0.2-preview'
     compileOnly 'com.google.guava:guava:29.0-jre'
     compileOnly 'com.google.code.gson:gson:2.8.6'
+    compileOnly 'org.mindrot:jbcrypt:0.4'
 }

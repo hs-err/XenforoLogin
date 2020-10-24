@@ -32,8 +32,9 @@ repositories {
 dependencies {
     compileOnly 'org.spongepowered:spongeapi:7.2.0'
     annotationProcessor 'org.spongepowered:spongeapi:7.2.0'
+    compileOnly 'com.github.KnownSpace:MiniTask:1.0.2-preview'
+    compileOnly 'org.reflections:reflections:0.9.12'
     implementation project(":SodionAuth-Core")
-    implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
 }
 
 sponge.plugin.id = 'sodionauth'

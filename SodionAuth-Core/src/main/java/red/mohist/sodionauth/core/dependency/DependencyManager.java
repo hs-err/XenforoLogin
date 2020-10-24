@@ -16,167 +16,320 @@
 
 package red.mohist.sodionauth.core.dependency;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import red.mohist.sodionauth.core.SodionAuthCore;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.eclipse.aether.AbstractRepositoryListener;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositoryEvent;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.impl.DefaultServiceLocator;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.transfer.AbstractTransferListener;
+import org.eclipse.aether.transfer.MetadataNotFoundException;
+import org.eclipse.aether.transfer.TransferEvent;
+import org.eclipse.aether.transfer.TransferResource;
+import org.eclipse.aether.transport.http.HttpTransporterFactory;
+import org.eclipse.aether.util.artifact.JavaScopes;
+import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BooleanSupplier;
 
 public class DependencyManager {
 
     private static final ReflectionClassLoader reflectionClassLoader = new ReflectionClassLoader();
+    private static final RepositorySystem repositorySystem;
+    private static final DefaultRepositorySystemSession repositorySystemSession;
+    private static final LocalRepository localRepo;
+
+    static {
+        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+
+        locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
+            @Override
+            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+                Helper.getLogger().warn(String.format("Service creation failed for %s with implementation %s", type, impl), new Exception(exception));
+            }
+        });
+
+        repositorySystem = locator.getService(RepositorySystem.class);
+
+        repositorySystemSession = MavenRepositorySystemUtils.newSession();
+        repositorySystemSession.setTransferListener(ConsoleTransferListener.INSTANCE);
+        repositorySystemSession.setRepositoryListener(ConsoleRepositoryListener.INSTANCE);
+        localRepo = new LocalRepository(System.getProperty("user.home").concat("/.m2/repository/"));
+        repositorySystemSession.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(repositorySystemSession, localRepo));
+        repositorySystemSession.setSystemProperties(System.getProperties());
+        repositorySystemSession.setConfigProperties(System.getProperties());
+        repositorySystemSession.setSystemProperty("os.detected.name", System.getProperty("os.name", "unknown").toLowerCase());
+        repositorySystemSession.setSystemProperty("os.detected.arch", System.getProperty("os.arch", "unknown").replaceAll("amd64", "x86_64"));
+    }
 
     public static void checkForSQLite() {
-        Helper.getLogger().info("Checking if SQLite library is present...");
-        try {
-            Class.forName("org.sqlite.JDBC");
-            Helper.getLogger().info("SQLite library present");
-            return;
-        } catch (ClassNotFoundException e) {
-            Helper.getLogger().warn("Cannot find sqlite library");
-        } catch (Exception e) {
-            Helper.getLogger().warn("Cannot load sqlite library");
-        }
-
-        File librariesPath = new File(Helper.getConfigPath("libraries"));
-        librariesPath.mkdirs();
-
-        File SQLiteLib = librariesPath.toPath().resolve("sqlite-jdbc-3.32.3.1.jar").toFile();
-
-        if (!SQLiteLib.isFile())
+        checkDependencyMaven("org.xerial", "sqlite-jdbc", "3.32.3.1", () -> {
             try {
-                Helper.getLogger().info("Downloading SQLite library...");
-                downloadFile(SQLiteLib, "org/xerial/sqlite-jdbc/3.32.3.1/sqlite-jdbc-3.32.3.1.jar");
-            } catch (IOException e) {
-                Helper.getLogger().warn("Unable to download SQLite library", e);
+                Class.forName("org.sqlite.JDBC");
+                return true;
+            } catch (Exception e) {
+                return false;
             }
-        else
-            Helper.getLogger().info("SQLite library file present");
-
-        boolean matchChecksum = isMatchChecksum(SQLiteLib,
-                "org/xerial/sqlite-jdbc/3.32.3.1/sqlite-jdbc-3.32.3.1.jar.sha1");
-
-        if (matchChecksum) {
-            Helper.getLogger().info("Checksum matched, loading it into memory...");
-            reflectionClassLoader.addJarToClasspath(SQLiteLib.toPath());
-        } else
-            Helper.getLogger().warn("Checksum not matched");
-
-        DependencyManager.checkForSQLite();
-
+        });
     }
 
     public static void checkForMySQL() {
-        Helper.getLogger().info("Checking if MySQL library is present...");
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Helper.getLogger().info("MySQL library present");
+        checkDependencyMaven("mysql", "mysql-connector-java", "8.0.21", () -> {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
+
+    }
+
+    public static void checkDependencyMaven(String group, String name, String version, BooleanSupplier isPresent) {
+        if (isPresent.getAsBoolean())
             return;
-        } catch (ClassNotFoundException e) {
-            Helper.getLogger().warn("Cannot find MySQL library");
-        } catch (Exception e) {
-            Helper.getLogger().warn("Cannot load MySQL library");
-        }
 
         File librariesPath = new File(Helper.getConfigPath("libraries"));
         librariesPath.mkdirs();
 
-        File MySQLib = librariesPath.toPath().resolve("mysql-connector-java-8.0.21.jar").toFile();
+        Artifact artifact = new DefaultArtifact(group, name, "jar", version);
+        DependencyFilter dependencyFilter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
+        CollectRequest collectRequest = new CollectRequest();
+        collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
+        collectRequest.setRepositories(Collections.singletonList(new RemoteRepository.Builder("central", "default", Config.dependencies.getMavenRepository()).build()));
+        DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
 
-        if (!MySQLib.isFile())
-            try {
-                downloadFile(MySQLib, "mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar");
-            } catch (IOException e) {
-                Helper.getLogger().warn("Unable to download MySQL library", e);
-                throw new RuntimeException(e);
+        List<ArtifactResult> artifactResults;
+        try {
+            artifactResults = new LinkedList<>(repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest).getArtifactResults());
+        } catch (DependencyResolutionException e) {
+            Helper.getLogger().warn("Error resolving dependencies", e);
+            checkDependencyMaven(group, name, version, isPresent);
+            return;
+        }
+
+        for (ArtifactResult artifactResult : artifactResults) {
+            Helper.getLogger().info(String.format("Injecting %s:%s:%s (%s) into classpath...", artifactResult.getArtifact().getGroupId(), artifactResult.getArtifact().getArtifactId(), artifactResult.getArtifact().getVersion(), artifactResult.getArtifact().getFile().toPath()));
+            reflectionClassLoader.addJarToClasspath(artifactResult.getArtifact().getFile().toPath());
+        }
+
+        checkDependencyMaven(group, name, version, isPresent);
+
+    }
+
+    public static class ConsoleRepositoryListener extends AbstractRepositoryListener {
+
+        public static final ConsoleRepositoryListener INSTANCE = new ConsoleRepositoryListener();
+
+        private ConsoleRepositoryListener() {
+
+        }
+
+        public void artifactDeployed(RepositoryEvent event) {
+            Helper.getLogger().info("Deployed " + event.getArtifact() + " to " + event.getRepository());
+        }
+
+        public void artifactDeploying(RepositoryEvent event) {
+            Helper.getLogger().info("Deploying " + event.getArtifact() + " to " + event.getRepository());
+        }
+
+        public void artifactDescriptorInvalid(RepositoryEvent event) {
+            Helper.getLogger().info("Invalid artifact descriptor for " + event.getArtifact() + ": "
+                    + event.getException().getMessage());
+        }
+
+        public void artifactDescriptorMissing(RepositoryEvent event) {
+            Helper.getLogger().info("Missing artifact descriptor for " + event.getArtifact());
+        }
+
+        public void artifactInstalled(RepositoryEvent event) {
+            Helper.getLogger().info("Installed " + event.getArtifact() + " to " + event.getFile());
+        }
+
+        public void artifactInstalling(RepositoryEvent event) {
+            Helper.getLogger().info("Installing " + event.getArtifact() + " to " + event.getFile());
+        }
+
+        public void artifactResolved(RepositoryEvent event) {
+            // Helper.getLogger().info("Resolved artifact " + event.getArtifact() + " from " + event.getRepository());
+        }
+
+        public void artifactDownloading(RepositoryEvent event) {
+            Helper.getLogger().info("Downloading artifact " + event.getArtifact() + " from " + event.getRepository());
+        }
+
+        public void artifactDownloaded(RepositoryEvent event) {
+            Helper.getLogger().info("Downloaded artifact " + event.getArtifact() + " from " + event.getRepository());
+        }
+
+        public void artifactResolving(RepositoryEvent event) {
+            // Helper.getLogger().info("Resolving artifact " + event.getArtifact());
+        }
+
+        public void metadataDeployed(RepositoryEvent event) {
+            Helper.getLogger().info("Deployed " + event.getMetadata() + " to " + event.getRepository());
+        }
+
+        public void metadataDeploying(RepositoryEvent event) {
+            Helper.getLogger().info("Deploying " + event.getMetadata() + " to " + event.getRepository());
+        }
+
+        public void metadataInstalled(RepositoryEvent event) {
+            Helper.getLogger().info("Installed " + event.getMetadata() + " to " + event.getFile());
+        }
+
+        public void metadataInstalling(RepositoryEvent event) {
+            Helper.getLogger().info("Installing " + event.getMetadata() + " to " + event.getFile());
+        }
+
+        public void metadataInvalid(RepositoryEvent event) {
+            Helper.getLogger().info("Invalid metadata " + event.getMetadata());
+        }
+
+        public void metadataResolved(RepositoryEvent event) {
+            Helper.getLogger().info("Resolved metadata " + event.getMetadata() + " from " + event.getRepository());
+        }
+
+        public void metadataResolving(RepositoryEvent event) {
+            Helper.getLogger().info("Resolving metadata " + event.getMetadata() + " from " + event.getRepository());
+        }
+    }
+
+    public static class ConsoleTransferListener extends AbstractTransferListener {
+        public static final ConsoleTransferListener INSTANCE = new ConsoleTransferListener();
+
+        private final Map<TransferResource, Long> downloads = new ConcurrentHashMap<>();
+        private int lastLength;
+
+        private ConsoleTransferListener() {
+        }
+
+        @Override
+        public void transferInitiated(TransferEvent event) {
+            String message = event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploading" : "Downloading";
+
+            Helper.getLogger().info(message + ": " + event.getResource().getRepositoryUrl() + event.getResource().getResourceName());
+        }
+
+        @Override
+        public void transferProgressed(TransferEvent event) {
+            TransferResource resource = event.getResource();
+            downloads.put(resource, event.getTransferredBytes());
+
+            StringBuilder buffer = new StringBuilder(64);
+
+            for (Map.Entry<TransferResource, Long> entry : downloads.entrySet()) {
+                long total = entry.getKey().getContentLength();
+                long complete = entry.getValue();
+
+                buffer.append(getStatus(complete, total)).append("  ");
             }
 
-        boolean matchChecksum = isMatchChecksum(MySQLib,
-                "omysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar.sha1");
+            int pad = lastLength - buffer.length();
+            lastLength = buffer.length();
+            pad(buffer, pad);
+            buffer.append('\r');
 
-        if (matchChecksum) {
-            Helper.getLogger().info("Checksum matched, loading it into memory...");
-            reflectionClassLoader.addJarToClasspath(MySQLib.toPath());
-        } else
-            Helper.getLogger().warn("Checksum not matched");
-
-        DependencyManager.checkForMySQL();
-
-    }
-
-    private static boolean isMatchChecksum(File file, String url) {
-        Helper.getLogger().info("Checking file checksum...");
-        boolean matchChecksum = false;
-        try {
-            String checksum = createSha1(file);
-            HttpGet request = new HttpGet(Config.dependencies.getMavenRepository() +
-                    url);
-            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
-            final StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() < 200 || statusLine.getStatusCode() >= 300)
-                throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
-            final InputStream content = response.getEntity().getContent();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-            StringWriter writer = new StringWriter();
-            char[] buffer = new char[40];
-            if (reader.read(buffer) < 40) throw new IOException();
-            writer.write(buffer);
-            reader.close();
-            content.close();
-            String targetChecksum = writer.toString();
-            writer.close();
-            if (targetChecksum.equals(checksum))
-                matchChecksum = true;
-            else
-                file.delete();
-        } catch (IOException e) {
-            Helper.getLogger().warn("Error while checking checksum, skipping...", e);
-            matchChecksum = true;
+            System.out.print(buffer.toString());
         }
-        return matchChecksum;
-    }
 
-    private static void downloadFile(File file, String url) throws IOException {
-        Helper.getLogger().warn("Downloading...");
-        HttpGet request = new HttpGet(Config.dependencies.getMavenRepository() +
-                url);
-        CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
-        final StatusLine statusLine = response.getStatusLine();
-        if (statusLine.getStatusCode() < 200 || statusLine.getStatusCode() >= 300)
-            throw new IOException(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
-        OutputStream fileOut = new FileOutputStream(file);
-        response.getEntity().writeTo(fileOut);
-        fileOut.flush();
-        fileOut.close();
-        response.close();
-        Helper.getLogger().info("Downloaded successfully");
-    }
-
-    private static String createSha1(File file) throws IOException {
-        MessageDigest sha1 = null;
-        try {
-            sha1 = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        try (InputStream input = new FileInputStream(file)) {
-
-            byte[] buffer = new byte[8192];
-            int len = input.read(buffer);
-
-            while (len != -1) {
-                sha1.update(buffer, 0, len);
-                len = input.read(buffer);
+        private String getStatus(long complete, long total) {
+            if (total >= 1024) {
+                return toKB(complete) + "/" + toKB(total) + " KB ";
+            } else if (total >= 0) {
+                return complete + "/" + total + " B ";
+            } else if (complete >= 1024) {
+                return toKB(complete) + " KB ";
+            } else {
+                return complete + " B ";
             }
+        }
 
-            return Hex.encodeHexString(sha1.digest());
+        private void pad(StringBuilder buffer, int spaces) {
+            String block = "                                        ";
+            while (spaces > 0) {
+                int n = Math.min(spaces, block.length());
+                buffer.append(block, 0, n);
+                spaces -= n;
+            }
+        }
+
+        @Override
+        public void transferSucceeded(TransferEvent event) {
+            transferCompleted(event);
+
+            TransferResource resource = event.getResource();
+            long contentLength = event.getTransferredBytes();
+            if (contentLength >= 0) {
+                String type = (event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploaded" : "Downloaded");
+                String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
+
+                String throughput = "";
+                long duration = System.currentTimeMillis() - resource.getTransferStartTime();
+                if (duration > 0) {
+                    long bytes = contentLength - resource.getResumeOffset();
+                    DecimalFormat format = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
+                    double kbPerSec = (bytes / 1024.0) / (duration / 1000.0);
+                    throughput = " at " + format.format(kbPerSec) + " KB/sec";
+                }
+
+                Helper.getLogger().info(type + ": " + resource.getRepositoryUrl() + resource.getResourceName() + " (" + len
+                        + throughput + ")");
+            }
+        }
+
+        @Override
+        public void transferFailed(TransferEvent event) {
+            transferCompleted(event);
+
+            if (!(event.getException() instanceof MetadataNotFoundException)) {
+                Helper.getLogger().warn("Transfer failed", event.getException());
+            }
+        }
+
+        private void transferCompleted(TransferEvent event) {
+            downloads.remove(event.getResource());
+
+            StringBuilder buffer = new StringBuilder(64);
+            pad(buffer, lastLength);
+            buffer.append('\r');
+            System.out.print(buffer.toString());
+        }
+
+        public void transferCorrupted(TransferEvent event) {
+            Helper.getLogger().warn("Corrupted transfer", event.getException());
+        }
+
+        @SuppressWarnings("checkstyle:magicnumber")
+        protected long toKB(long bytes) {
+            return (bytes + 1023) / 1024;
         }
     }
 

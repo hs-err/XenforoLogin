@@ -20,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.reflections.Reflections;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.bukkit.protocollib.ListenerProtocolEvent;
@@ -32,7 +33,6 @@ import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
-import red.mohist.sodionauth.libs.reflections.Reflections;
 
 import java.io.IOException;
 import java.util.*;

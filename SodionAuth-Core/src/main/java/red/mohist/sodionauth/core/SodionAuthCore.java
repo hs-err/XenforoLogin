@@ -134,6 +134,39 @@ public final class SodionAuthCore {
                 String a7 = "WARN You are not permitted to interfere any protection that prevents loading in CatServer";
             }
 
+            DependencyManager.checkDependencyMaven("org.mindrot", "jbcrypt", "0.4", () -> {
+                try {
+                    Class.forName("org.mindrot.jbcrypt.BCrypt");
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            });
+            DependencyManager.checkDependencyMaven("org.reflections", "reflections", "0.9.12", () -> {
+                try {
+                    Class.forName("org.reflections.Reflections");
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            });
+            DependencyManager.checkDependencyMaven("org.apache.httpcomponents", "fluent-hc", "4.5.11", () -> {
+                try {
+                    Class.forName("org.reflections.Reflections");
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            });
+            DependencyManager.checkDependencyMaven("com.maxmind.geoip2", "geoip2", "2.14.0", () -> {
+                try {
+                    Class.forName("com.maxmind.geoip2.DatabaseReader");
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            });
+
             instance = this;
             api = platformAdapter;
             logged_in = new ConcurrentHashMap<>();
