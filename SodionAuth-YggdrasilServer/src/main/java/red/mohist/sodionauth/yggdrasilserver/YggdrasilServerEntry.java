@@ -87,6 +87,14 @@ public class YggdrasilServerEntry {
                 return false;
             }
         });
+        DependencyManager.checkDependencyMaven("org.apache.logging.log4j", "log4j-slf4j-impl", "2.8.1", () -> {
+            try {
+                Class.forName("org.apache.logging.slf4j.Log4jLoggerFactory");
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        });
         new SodionAuthCore(new YggdrasilServerLoader());
         YggdrasilServerCore server = new YggdrasilServerCore();
         server.start();
