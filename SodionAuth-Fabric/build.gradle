@@ -92,7 +92,10 @@ shadowJar {
         exclude(dependency('org.lwjgl::'))
         exclude(dependency('com.google.jimfs::'))
         exclude(dependency('org.ow2.asm::'))
+        exclude(dependency('net.minecrell::'))
+        exclude(dependency('org.jline::'))
     }
+    exclude 'mappings/'
 }
 
 task("remapShadowJar", type: RemapJarTask, dependsOn: shadowJar) {

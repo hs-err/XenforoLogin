@@ -166,6 +166,14 @@ public final class SodionAuthCore {
                     return false;
                 }
             });
+            DependencyManager.checkDependencyMaven("com.google.code.findbugs", "jsr305", "3.0.2", () -> {
+                try {
+                    Class.forName("javax.annotation.Nullable");
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            });
 
             instance = this;
             api = platformAdapter;

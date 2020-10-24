@@ -42,4 +42,10 @@ processResources {
     expand(version: version)
 }
 
+shadowJar {
+    dependencies {
+        exclude(dependency('com.google.guava::'))
+    }
+}
+
 assemble.dependsOn(shadowJar)
