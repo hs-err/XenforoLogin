@@ -81,7 +81,9 @@ public class DependencyManager {
         repositorySystemSession = MavenRepositorySystemUtils.newSession();
         repositorySystemSession.setTransferListener(ConsoleTransferListener.INSTANCE);
         repositorySystemSession.setRepositoryListener(ConsoleRepositoryListener.INSTANCE);
-        localRepo = new LocalRepository(System.getProperty("user.home").concat("/.m2/repository/"));
+        String librariesPath = Helper.getConfigPath("libraries");
+        new File(librariesPath).mkdirs();
+        localRepo = new LocalRepository(librariesPath);
         repositorySystemSession.setLocalRepositoryManager(repositorySystem.newLocalRepositoryManager(repositorySystemSession, localRepo));
         repositorySystemSession.setSystemProperties(System.getProperties());
         repositorySystemSession.setConfigProperties(System.getProperties());
