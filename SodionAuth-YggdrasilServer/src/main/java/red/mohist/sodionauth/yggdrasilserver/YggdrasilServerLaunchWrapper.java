@@ -20,6 +20,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.sodionauth.core.probe.Probe;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,9 +47,17 @@ public class YggdrasilServerLaunchWrapper {
         public static String getJarPath() {
             final URL probeResource = Probe.class.getClassLoader().getResource("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class");
             if (probeResource == null) throw new IllegalStateException("Could not find probeResource");
-            String[] parts = probeResource.getPath().split("!")[0].split(":");
-            String s = parts.length == 1 ? parts[0] : parts[1];
-            return s.replaceAll("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class", "");
+            String s = probeResource.getPath();
+            int start=0;
+            int end=s.lastIndexOf("!");
+            if(s.startsWith("file:")){
+                start+=5;
+            }
+            if(File.separator.equals("\\")){
+                start+=1;
+            }
+            return s.substring(start,end==-1?s.length():end)
+                    .replaceAll("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class", "");
         }
 
     }

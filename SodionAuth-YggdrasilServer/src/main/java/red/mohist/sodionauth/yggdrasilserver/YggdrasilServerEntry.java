@@ -16,15 +16,12 @@
 
 package red.mohist.sodionauth.yggdrasilserver;
 
-import io.netty.util.internal.ThreadLocalRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.dependency.DependencyManager;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.utils.Helper;
-
-import java.util.logging.Level;
 
 public class YggdrasilServerEntry {
     private static final Logger logger = LogManager.getLogger("SodionAuth|YggdrasilServer");
