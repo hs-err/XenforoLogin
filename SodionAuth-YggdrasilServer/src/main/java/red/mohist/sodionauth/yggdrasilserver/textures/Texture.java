@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.yggdrasilserver.modules;
+package red.mohist.sodionauth.yggdrasilserver.textures;
 
-import java.util.HashMap;
+import com.google.gson.Gson;
+import red.mohist.sodionauth.yggdrasilserver.modules.Property;
+import red.mohist.sodionauth.yggdrasilserver.modules.Textures;
 
-public class Texture {
-    public String url;
-    public HashMap<String, String> metadata;
+import java.util.Base64;
 
-    public Texture setUrl(String url) {
-        this.url = url;
-        return this;
+public abstract class Texture {
+    public Property getPropertie(String username){
+        return new Property("textures",
+                Base64.getEncoder().encodeToString(
+                        new Gson().toJson(getTextures(username)).getBytes()
+                ));
     }
-
-    public Texture addMetadata(String key, String value) {
-        metadata.put(key, value);
-        return this;
-    }
-
-    public Texture removeMetadata(String key) {
-        metadata.remove(key);
-        return this;
-    }
+    public abstract Textures getTextures(String username);
 }

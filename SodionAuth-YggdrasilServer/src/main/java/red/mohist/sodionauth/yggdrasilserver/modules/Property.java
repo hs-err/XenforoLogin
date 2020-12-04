@@ -25,15 +25,18 @@ import java.util.Base64;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public class Propertie {
+public class Property {
     public final String name;
     public final String value;
     public final String signature;
 
-    public Propertie(String name, String value) {
+    public Property(String name, String value) {
+        this(name,value,sign(value));
+    }
+    public Property(String name, String value, String signature) {
         this.name = name;
         this.value = value;
-        this.signature = sign(value);
+        this.signature = signature;
     }
 
     private static String sign(String data) {

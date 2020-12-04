@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class User {
     public String id;
-    public ArrayList<Propertie> properties;
+    public ArrayList<Property> properties;
 
     public User setId(String id) {
         this.id = id;
@@ -28,7 +28,7 @@ public class User {
     }
 
     public User addProperties(String name, String value) {
-        properties.add(new Propertie(name, value));
+        properties.add(new Property(name, value));
         return this;
     }
 

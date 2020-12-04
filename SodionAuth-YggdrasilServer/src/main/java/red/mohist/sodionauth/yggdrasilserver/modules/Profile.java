@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class Profile {
     public String id;
     public String name;
-    public ArrayList<Propertie> properties;
+    public ArrayList<Property> properties;
 
     public Profile setId(String id) {
         this.id = id;
@@ -34,7 +34,12 @@ public class Profile {
     }
 
     public Profile addProperties(String name, String value) {
-        properties.add(new Propertie(name, value));
+        properties.add(new Property(name, value));
+        return this;
+    }
+
+    public Profile addProperties(Property property) {
+        properties.add(property);
         return this;
     }
 
@@ -46,5 +51,14 @@ public class Profile {
             }
         }
         return this;
+    }
+
+    public Property getProperty(String name) {
+        for (Property property : properties) {
+            if(property.name.equals(name)){
+                return property;
+            }
+        }
+        return null;
     }
 }

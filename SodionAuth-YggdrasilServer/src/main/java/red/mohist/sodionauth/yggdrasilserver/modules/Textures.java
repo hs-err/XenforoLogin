@@ -48,4 +48,29 @@ public class Textures {
         textures.remove(key);
         return this;
     }
+
+    public Textures setTime(){
+        setTimestamp((int) (System.currentTimeMillis()/1000));
+        return this;
+    }
+
+    public static class Texture {
+        public String url;
+        public HashMap<String, String> metadata;
+
+        public Texture setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public Texture addMetadata(String key, String value) {
+            metadata.put(key, value);
+            return this;
+        }
+
+        public Texture removeMetadata(String key) {
+            metadata.remove(key);
+            return this;
+        }
+    }
 }

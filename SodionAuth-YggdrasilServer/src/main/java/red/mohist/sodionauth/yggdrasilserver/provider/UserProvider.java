@@ -22,7 +22,7 @@ import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.yggdrasilserver.implementation.PlainPlayer;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.modules.Texture;
+import red.mohist.sodionauth.yggdrasilserver.modules.Textures;
 import red.mohist.sodionauth.yggdrasilserver.modules.User;
 
 import java.nio.charset.StandardCharsets;
@@ -218,12 +218,12 @@ public class UserProvider {
 
     public User getUser(String username) {
         return new User()
-                .setId(plainUUID(getUUID(username)));
+                .setId(plainUUID(username));
     }
 
     public Profile getProfile(String username) {
         return new Profile()
-                .setId(plainUUID(getUUID(username)))
+                .setId(plainUUID(username))
                 .setName(username);
         //.addProperties("textures",
         //        Base64.getEncoder().encodeToString(
@@ -233,16 +233,18 @@ public class UserProvider {
     }
 
     // TODO: 增加皮肤支持
-    public Texture getTexture(String username) {
+    public Textures getTextures(String username) {
         return null;
     }
 
-    private UUID getUUID(String username) {
+    public static UUID getUUID(String username) {
         return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
     }
-
-    private String plainUUID(UUID uuid) {
+    public static String plainUUID(UUID uuid) {
         return uuid.toString().replaceAll("-", "");
+    }
+    public static String plainUUID(String username) {
+        return plainUUID(getUUID(username));
     }
 
 }
