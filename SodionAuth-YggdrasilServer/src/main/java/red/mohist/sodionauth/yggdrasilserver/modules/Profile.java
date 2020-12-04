@@ -17,11 +17,16 @@
 package red.mohist.sodionauth.yggdrasilserver.modules;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Profile {
     public String id;
     public String name;
-    public ArrayList<Property> properties;
+    public List<Property> properties;
+
+    public Profile(){
+        properties=new ArrayList<>();
+    }
 
     public Profile setId(String id) {
         this.id = id;
