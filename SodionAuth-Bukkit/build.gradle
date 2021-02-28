@@ -25,7 +25,7 @@ plugins {
 
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.5.0'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.6.0'
     compileOnly 'org.reflections:reflections:0.9.12'
     compileOnly 'com.github.KnownSpace:MiniTask:1.0.2-preview'
     implementation project(":SodionAuth-Core")
