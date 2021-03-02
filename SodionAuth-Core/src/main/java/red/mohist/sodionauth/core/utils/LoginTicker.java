@@ -19,6 +19,7 @@ package red.mohist.sodionauth.core.utils;
 import com.google.common.collect.Sets;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,7 @@ public class LoginTicker {
     private static final Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
 
     public static void register() {
-        SodionAuthCore.instance.globalScheduledExecutor
+        Service.async.globalScheduledExecutor
                 .scheduleAtFixedRate(LoginTicker::run, 0,
                         LoginTickPlayer.showTipTime, TimeUnit.SECONDS);
     }

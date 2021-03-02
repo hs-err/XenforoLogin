@@ -31,6 +31,7 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.Lang;
 
@@ -78,7 +79,7 @@ public class XenforoSystem implements AuthBackendSystem {
             request.setEntity(new UrlEncodedFormEntity(form.build()));
             request.addHeader("XF-Api-Key", key);
             request.addHeader("XF-Api-User", "1");
-            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            CloseableHttpResponse response = Service.httpClient.execute(request);
             String result = responseHandler.handleResponse(response);
             response.close();
 
@@ -157,7 +158,7 @@ public class XenforoSystem implements AuthBackendSystem {
             form.add("login", player.getName());
             form.add("password", password);
             request.addHeader("XF-Api-Key", key);
-            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            CloseableHttpResponse response = Service.httpClient.execute(request);
             String result = responseHandler.handleResponse(response);
 
             if (result == null) {
@@ -238,7 +239,7 @@ public class XenforoSystem implements AuthBackendSystem {
             HttpGet request = new HttpGet(url + "/users/find-name?username=" +
                     URLEncoder.encode(player.getName(), "UTF-8"));
             request.addHeader("XF-Api-Key", key);
-            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            CloseableHttpResponse response = Service.httpClient.execute(request);
             result = responseHandler.handleResponse(response);
         } catch (IOException e) {
             e.printStackTrace();
@@ -301,7 +302,7 @@ public class XenforoSystem implements AuthBackendSystem {
             form.add("login", email);
             form.add("password", password);
             request.addHeader("XF-Api-Key", key);
-            CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            CloseableHttpResponse response = Service.httpClient.execute(request);
             String result = responseHandler.handleResponse(response);
 
             if (result == null) {

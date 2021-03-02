@@ -23,6 +23,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.protection.implementations.antiproxies.ProxySystem;
+import red.mohist.sodionauth.core.services.Service;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -54,7 +55,7 @@ public class LiuLiu implements ProxySystem {
 
         HttpGet request = new HttpGet("http://www.66ip.cn/mo.php?tqsl=9999");
         request.addHeader("accept", "*/*");
-        final CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+        final CloseableHttpResponse response = Service.httpClient.execute(request);
         String result = responseHandler.handleResponse(response);
         response.close();
 

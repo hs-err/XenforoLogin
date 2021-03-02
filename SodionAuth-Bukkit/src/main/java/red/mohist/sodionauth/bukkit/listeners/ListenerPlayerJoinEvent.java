@@ -20,8 +20,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
+import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -29,28 +32,23 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerJoinEvent(PlayerJoinEvent event) {
-        AbstractPlayer abstractPlayer = BukkitLoader.instance.player2info(event.getPlayer());
+        AbstractPlayer player = new BukkitPlayer(event.getPlayer());
         if (!SodionAuthCore.instance.isEnabled()) {
-            event.getPlayer().kickPlayer(abstractPlayer.getLang().getErrors().getServer());
+            event.getPlayer().kickPlayer(player.getLang().getErrors().getServer());
         }
-        SodionAuthCore.instance.api.sendBlankInventoryPacket(abstractPlayer);
-        if (!SodionAuthCore.instance.logged_in.containsKey(abstractPlayer.getUniqueId())) {
-            String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
-            if (canLogin != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                event.getPlayer().kickPlayer(canLogin);
-                return;
-            }
+        SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
+        if (!SodionAuthCore.instance.logged_in.containsKey(player.getUniqueId())) {
 
-            Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
+            Helper.getLogger().warn("AsyncPlayerPreLoginEvent and PlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            SodionAuthCore.instance.canJoinAsync(abstractPlayer).then(result -> {
-                if (result != null) {
-                    abstractPlayer.kick(result);
-                }
-            });
+
+            new CanJoinEvent(player).asyncPost();
         }
-        SodionAuthCore.instance.onJoin(abstractPlayer);
+        JoinEvent joinEvent= new JoinEvent(player);
+        if(!joinEvent.syncPost()){
+            player.kick(joinEvent.getMessage());
+        }
+        event.setJoinMessage(null);
     }
 
     @Override

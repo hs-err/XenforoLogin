@@ -22,12 +22,19 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.events.player.QuitEvent;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public class ListenerPlayerQuitEvent implements BukkitAPIListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnQuit(PlayerQuitEvent event) {
-        SodionAuthCore.instance.onQuit(new BukkitPlayer(event.getPlayer()));
+        AbstractPlayer player=new BukkitPlayer(event.getPlayer());
+        if (SodionAuthCore.instance.logged_in.get(player.getUniqueId()) != StatusType.LOGGED_IN) {
+            event.setQuitMessage(null);
+        }
+        new QuitEvent(new BukkitPlayer(event.getPlayer())).post();
     }
 
     @Override

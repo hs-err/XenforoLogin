@@ -27,6 +27,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
 import red.mohist.sodionauth.yggdrasilserver.modules.Property;
 import red.mohist.sodionauth.yggdrasilserver.modules.Textures;
@@ -57,7 +58,7 @@ public class OnlineTexture extends Texture {
             };
 
             HttpGet request = new HttpGet(url + "/sessionserver/session/minecraft/profile/" + uuid);
-            final CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            final CloseableHttpResponse response = Service.httpClient.execute(request);
             String result = responseHandler.handleResponse(response);
             response.close();
             if(result==null) {
@@ -92,7 +93,7 @@ public class OnlineTexture extends Texture {
             JsonArray jsonContent = new JsonArray();
             jsonContent.add(username);
             request.setEntity(new StringEntity(jsonContent.getAsString()));
-            final CloseableHttpResponse response = SodionAuthCore.instance.getHttpClient().execute(request);
+            final CloseableHttpResponse response = Service.httpClient.execute(request);
             String result = responseHandler.handleResponse(response);
             response.close();
 

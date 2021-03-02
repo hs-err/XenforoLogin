@@ -40,7 +40,6 @@ public class Helper {
         this.log = log;
         basePath = path;
         jsonMap = new HashMap<>();
-        Config.init();
         Lang.init();
     }
 

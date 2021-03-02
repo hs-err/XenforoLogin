@@ -23,6 +23,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 import java.util.concurrent.ExecutionException;
@@ -47,31 +48,13 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getLoginExist());
             return;
         }
-
         if (!SodionAuthCore.instance.logged_in.containsKey(event.getUniqueId())) {
-            String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
-            if (canLogin != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canLogin);
-                return;
-            }
+            SodionAuthCore.instance.logged_in.remove(event.getUniqueId());
         }
-
-        SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException((Future<String> future) -> {
-            String canjoin;
-            try {
-                canjoin = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getServer());
-                e.printStackTrace();
-                return;
-            }
-            if (canjoin != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canjoin);
-            }
-        });
+        CanJoinEvent canJoinEvent = new CanJoinEvent(abstractPlayer);
+        if(!canJoinEvent.syncPost()){
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canJoinEvent.getMessage());
+        }
     }
 
     @Override

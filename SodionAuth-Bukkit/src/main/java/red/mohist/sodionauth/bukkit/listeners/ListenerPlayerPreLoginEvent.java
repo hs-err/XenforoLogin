@@ -19,11 +19,14 @@ package red.mohist.sodionauth.bukkit.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
 
@@ -32,22 +35,23 @@ public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
         if (event.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
             return;
         }
-        AbstractPlayer abstractPlayer = new BukkitPlayer(
+        AbstractPlayer player = new BukkitPlayer(
                 event.getName(), event.getUniqueId(), event.getAddress());
         if (!SodionAuthCore.instance.isEnabled()) {
-            event.setKickMessage(abstractPlayer.getLang().getErrors().getServer());
+            event.setKickMessage(player.getLang().getErrors().getServer());
             return;
         }
         if (Bukkit.getPlayerExact(event.getName()) != null) {
             new Exception().printStackTrace();
-            event.setKickMessage(abstractPlayer.getLang().getErrors().getLoginExist());
+            event.setKickMessage(player.getLang().getErrors().getLoginExist());
             return;
         }
-        if (!SodionAuthCore.instance.logged_in.containsKey(event.getUniqueId())) {
-            String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
-            if (canLogin != null) {
-                event.setKickMessage(canLogin);
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
+        if (!SodionAuthCore.instance.logged_in.containsKey(player.getUniqueId())) {
+            Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
+            Helper.getLogger().warn("It's not a bug. Do NOT report this.");
+            CanJoinEvent canJoinEvent = new CanJoinEvent(player);
+            if(!canJoinEvent.syncPost()){
+                event.disallow(PlayerPreLoginEvent.Result.KICK_WHITELIST, canJoinEvent.getMessage());
             }
         }
     }

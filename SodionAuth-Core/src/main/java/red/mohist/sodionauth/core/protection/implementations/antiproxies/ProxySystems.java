@@ -20,6 +20,7 @@ import org.reflections.Reflections;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -54,7 +55,7 @@ public class ProxySystems implements SecuritySystem {
             }
         }
 
-        SodionAuthCore.instance.globalScheduledExecutor.scheduleAtFixedRate(() -> {
+        Service.async.globalScheduledExecutor.scheduleAtFixedRate(() -> {
             for (ProxySystem proxySystem : currentSystem) {
                 try {
                     proxySystem.refreshProxies();
