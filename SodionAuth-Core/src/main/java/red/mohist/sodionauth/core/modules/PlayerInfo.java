@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package red.mohist.sodionauth.core.modules;
 
-import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
 public class PlayerInfo {
-    public LocationInfo location = SodionAuthCore.instance.spawn_location;
+    public LocationInfo location = Service.auth.spawn_location;
     public Integer gameMode = Config.security.getDefaultGamemode();
     public double health = 20;
     public double maxHealth = 20;

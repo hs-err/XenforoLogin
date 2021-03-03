@@ -15,20 +15,25 @@
  */
 
 package red.mohist.sodionauth.core.events;
+
 import red.mohist.sodionauth.core.services.Service;
 
 public abstract class Event {
     private String name;
     private boolean async;
+
     public Event() {
         this(false);
     }
+
     public Event(boolean isAsync) {
         this.async = isAsync;
     }
-    public void asyncPost(){
+
+    public void asyncPost() {
         Service.eventBus.asyncPost(this);
     }
+
     public boolean syncPost() {
         Service.eventBus.syncPost(this);
         if (this instanceof Cancellable) {
@@ -37,21 +42,24 @@ public abstract class Event {
             return true;
         }
     }
+
     public void post() {
         Service.eventBus.post(this);
     }
+
     public String getEventName() {
         if (name == null) {
             name = getClass().getSimpleName();
         }
         return name;
     }
+
     public boolean isAsynchronous() {
         return async;
     }
 
     public Event setAsync(boolean async) {
-        this.async=async;
+        this.async = async;
         return this;
     }
 }

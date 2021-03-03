@@ -16,5 +16,5 @@
 
 package red.mohist.sodionauth.core.events;
 
-public class DownEvent extends Event{
+public class DownEvent extends Event {
 }

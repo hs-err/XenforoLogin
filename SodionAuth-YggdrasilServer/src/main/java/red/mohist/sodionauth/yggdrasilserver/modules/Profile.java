@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ public class Profile {
     public String name;
     public List<Property> properties;
 
-    public Profile(){
-        properties=new ArrayList<>();
+    public Profile() {
+        properties = new ArrayList<>();
     }
 
     public Profile setId(String id) {
@@ -60,7 +60,7 @@ public class Profile {
 
     public Property getProperty(String name) {
         for (Property property : properties) {
-            if(property.name.equals(name)){
+            if (property.name.equals(name)) {
                 return property;
             }
         }

@@ -16,7 +16,7 @@
 
 package red.mohist.sodionauth.core.events;
 
-public class AsyncEvent extends Event{
+public class AsyncEvent extends Event {
     public AsyncEvent() {
         super(true);
     }

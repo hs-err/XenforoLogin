@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package red.mohist.sodionauth.bukkit.listeners;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
@@ -46,11 +46,11 @@ public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
             event.setKickMessage(player.getLang().getErrors().getLoginExist());
             return;
         }
-        if (!SodionAuthCore.instance.logged_in.containsKey(player.getUniqueId())) {
+        if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
             Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
             CanJoinEvent canJoinEvent = new CanJoinEvent(player);
-            if(!canJoinEvent.syncPost()){
+            if (!canJoinEvent.syncPost()) {
                 event.disallow(PlayerPreLoginEvent.Result.KICK_WHITELIST, canJoinEvent.getMessage());
             }
         }

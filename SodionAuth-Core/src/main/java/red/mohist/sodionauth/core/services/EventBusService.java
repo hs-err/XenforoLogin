@@ -22,31 +22,34 @@ import red.mohist.sodionauth.core.events.Event;
 
 public class EventBusService {
     public EventBus eventBus = new EventBus();
-    public AsyncEventBus asyncEventBus = new AsyncEventBus(Service.async.executor);
-    public EventBusService(){
+    public AsyncEventBus asyncEventBus = new AsyncEventBus(Service.threadPool.executor);
+
+    public EventBusService() {
 
     }
 
     public Event post(Event event) {
-        if(event.isAsynchronous()){
+        if (event.isAsynchronous()) {
             asyncEventBus.post(event);
-        }else{
+        } else {
             eventBus.post(event);
         }
         return event;
     }
+
     public Event asyncPost(Event event) {
         event.setAsync(true);
         asyncEventBus.post(event);
         return event;
     }
+
     public Event syncPost(Event event) {
         event.setAsync(false);
         eventBus.post(event);
         return event;
     }
 
-    public EventBusService register(Object listener){
+    public EventBusService register(Object listener) {
         eventBus.register(listener);
         asyncEventBus.register(listener);
         return this;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,7 @@ import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import red.mohist.sodionauth.core.services.Service;
 
 public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
 
@@ -48,11 +46,11 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getLoginExist());
             return;
         }
-        if (!SodionAuthCore.instance.logged_in.containsKey(event.getUniqueId())) {
-            SodionAuthCore.instance.logged_in.remove(event.getUniqueId());
+        if (!Service.auth.logged_in.containsKey(event.getUniqueId())) {
+            Service.auth.logged_in.remove(event.getUniqueId());
         }
         CanJoinEvent canJoinEvent = new CanJoinEvent(abstractPlayer);
-        if(!canJoinEvent.syncPost()){
+        if (!canJoinEvent.syncPost()) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canJoinEvent.getMessage());
         }
     }

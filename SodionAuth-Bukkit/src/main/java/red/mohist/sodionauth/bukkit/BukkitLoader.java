@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.reflections.Reflections;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.bukkit.protocollib.ListenerProtocolEvent;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -32,7 +32,6 @@ import red.mohist.sodionauth.core.modules.FoodInfo;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.core.utils.LoginTicker;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,7 +39,6 @@ import java.util.*;
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public static BukkitLoader instance;
     public SodionAuthCore sodionAuthCore;
-    private ListenerProtocolEvent listenerProtocolEvent;
 
     @Override
     public void onEnable() {
@@ -86,7 +84,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
     @Override
     public void onDisable() {
-        sodionAuthCore.onDisable();
+        new DownEvent().post();
     }
 
     @Override
@@ -95,14 +93,9 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     }
 
     private void hookProtocolLib() {
-        if (org.bukkit.Bukkit.getPluginManager().getPlugin("ProtocolLib") != null && Config.security.getHideInventory(true)) {
-            listenerProtocolEvent = new ListenerProtocolEvent();
-            Helper.getLogger().info("Found ProtocolLib, hooked into ProtocolLib to use \"hide_inventory\"");
-        }
     }
 
     private void registerListeners() {
-        LoginTicker.register();
         {
             int unavailableCount = 0;
             Set<Class<? extends BukkitAPIListener>> classes = new Reflections("red.mohist.sodionauth.bukkit.listeners")
@@ -165,9 +158,6 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public void sendBlankInventoryPacket(AbstractPlayer player) {
         Player p = Bukkit.getPlayer(player.getUniqueId());
         if (p != null) {
-            if (listenerProtocolEvent != null) {
-                listenerProtocolEvent.sendBlankInventoryPacket(p);
-            }
             if (p.isDead()) {
                 p.spigot().respawn();
             }

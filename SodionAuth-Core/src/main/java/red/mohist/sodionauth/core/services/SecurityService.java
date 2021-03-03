@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.interfaces;
+package red.mohist.sodionauth.core.services;
 
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
+import com.google.common.eventbus.Subscribe;
+import red.mohist.sodionauth.core.events.BootEvent;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
+import red.mohist.sodionauth.core.protection.SecuritySystems;
 
-import java.util.Collection;
+import java.io.IOException;
 
-public interface PlatformAdapter {
-    void shutdown();
+public class SecurityService {
+    @Subscribe
+    public void onBoot(BootEvent event) throws IOException {
+        SecuritySystems.reloadConfig();
+    }
 
-    LocationInfo getSpawn(String world);
-
-    String getDefaultWorld();
-
-    void onLogin(AbstractPlayer player);
-
-    void sendBlankInventoryPacket(AbstractPlayer player);
-
-    Collection<AbstractPlayer> getAllPlayer();
+    @Subscribe
+    public void onCanJoin(CanJoinEvent event) {
+        SecuritySystems.canLogin(event.getPlayer());
+    }
 }

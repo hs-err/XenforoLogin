@@ -17,24 +17,24 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.knownspace.minitask.ITaskFactory;
 import org.knownspace.minitask.TaskFactory;
 import org.knownspace.minitask.locks.UniqueFlag;
-import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
+import red.mohist.sodionauth.core.utils.Helper;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class AsyncService {
+public class ThreadPoolService {
     public ScheduledExecutorService globalScheduledExecutor;
     public ExecutorService executor;
     public ITaskFactory startup;
     public UniqueFlag dbUniqueFlag;
-    @Subscribe
-    public void onBoot(BootEvent event){
+
+    public ThreadPoolService() {
+        Helper.getLogger().info("Initializing threadPool service...");
         executor = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
                 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
                 new ThreadFactory() {
@@ -64,8 +64,9 @@ public class AsyncService {
         startup = new TaskFactory(executor);
         dbUniqueFlag = startup.makeUniqueFlag();
     }
+
     @Subscribe
-    public void onDown(DownEvent event){
+    public void onDown(DownEvent event) {
         executor.shutdown();
         globalScheduledExecutor.shutdown();
         try {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,34 +21,40 @@ import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.PlainPlayer;
+import red.mohist.sodionauth.core.services.Service;
 
 import java.net.InetAddress;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public final class SodionAuthApi {
     @Deprecated
     public static void login(AbstractPlayer player) throws AuthenticatedException {
-        SodionAuthCore.instance.login(player);
+        try {
+            Service.auth.loginAsync(player).get();
+        } catch (Throwable e) {
+            throw new AuthenticatedException();
+        }
     }
 
     public static ITask<Void> loginAsync(AbstractPlayer player) {
-        return SodionAuthCore.instance.loginAsync(player);
+        return Service.auth.loginAsync(player);
     }
 
     public static boolean isLogin(AbstractPlayer player) {
-        return !SodionAuthCore.instance.needCancelled(player);
+        return !Service.auth.needCancelled(player);
     }
 
-    public static boolean register(AbstractPlayer player, String email, String password) {
-        return SodionAuthCore.instance.register(player, email, password);
+    public static boolean register(AbstractPlayer player, String email, String password) throws ExecutionException, InterruptedException {
+        return Service.auth.registerAsync(player, email, password).get();
     }
 
-    public static boolean register(AbstractPlayer player, String password) {
-        return register(player, null, password);
+    public static boolean register(AbstractPlayer player, String password) throws ExecutionException, InterruptedException {
+        return Service.auth.registerAsync(player, null, password).get();
     }
 
     public static boolean isRegistered(AbstractPlayer player) {
-        switch (SodionAuthCore.instance.logged_in.getOrDefault(player.getUniqueId(), null)) {
+        switch (Service.auth.logged_in.getOrDefault(player.getUniqueId(), null)) {
             case LOGGED_IN:
             case NEED_LOGIN:
             case NEED_CHECK:

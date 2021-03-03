@@ -16,20 +16,30 @@
 
 package red.mohist.sodionauth.core.services;
 
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.BootEvent;
+import red.mohist.sodionauth.core.events.DownEvent;
 
 public class Service {
     public static ConfigureService configure = new ConfigureService();
+    public static ThreadPoolService threadPool = new ThreadPoolService();
     public static EventBusService eventBus = new EventBusService();
-    public static AsyncService async = new AsyncService();
     public static HttpClientService httpClient = new HttpClientService();
     public static AuthService auth = new AuthService();
-    public Service(){
+    public static SessionService session = new SessionService();
+
+    public Service() {
         eventBus.register(configure)
+                .register(SodionAuthCore.instance)
+                .register(threadPool)
                 .register(eventBus)
-                .register(async)
                 .register(httpClient)
-                .register(auth);
-        new BootEvent().post();
+                .register(auth)
+                .register(session)
+                .register(threadPool);
+        if (!new BootEvent().syncPost()) {
+            new DownEvent().post();
+            SodionAuthCore.instance.loadFail();
+        }
     }
 }

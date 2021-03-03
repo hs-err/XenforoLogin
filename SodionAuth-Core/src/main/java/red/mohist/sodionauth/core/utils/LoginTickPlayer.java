@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +39,7 @@ public class LoginTickPlayer {
 
     public TickResult tick() {
         long now = System.currentTimeMillis();
-        if (!SodionAuthCore.instance.logged_in.containsKey(player.getUniqueId())) {
+        if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
             boolean result = ResultTypeUtils.handle(player,
                     AuthBackendSystems.getCurrentSystem()
                             .join(player)
@@ -48,19 +49,19 @@ public class LoginTickPlayer {
                         player.getName() + " didn't pass AccountExists test");
                 return TickResult.DONE;
             }
-            SodionAuthCore.instance.message(player);
+            Service.auth.sendTip(player);
             SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         }
         if ((now - startTime) / 1000 > loginTimeout
-                && SodionAuthCore.instance.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
+                && Service.auth.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
             player.kick(player.getLang().getErrors().getTimeOut());
             return TickResult.DONE;
         }
-        if (!player.isOnline() || !SodionAuthCore.instance.needCancelled(player)) {
+        if (!player.isOnline() || !Service.auth.needCancelled(player)) {
             return TickResult.DONE;
         }
 
-        SodionAuthCore.instance.message(player);
+        Service.auth.sendTip(player);
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         return TickResult.CONTINUE;
     }

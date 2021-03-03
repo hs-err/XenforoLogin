@@ -16,7 +16,7 @@
 
 package red.mohist.sodionauth.core.events;
 
-public class BootEvent extends Event implements Cancellable{
+public class BootEvent extends Event implements Cancellable {
     private boolean cancel;
 
     @Override

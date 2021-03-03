@@ -1,7 +1,5 @@
-import net.fabricmc.loom.task.RemapJarTask
-
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +13,8 @@ import net.fabricmc.loom.task.RemapJarTask
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id 'fabric-loom' version '0.4-SNAPSHOT'

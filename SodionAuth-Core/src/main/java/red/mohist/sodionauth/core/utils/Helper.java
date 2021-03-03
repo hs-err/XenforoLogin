@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public class Helper {
         this.log = log;
         basePath = path;
         jsonMap = new HashMap<>();
+        Config.init();
         Lang.init();
     }
 

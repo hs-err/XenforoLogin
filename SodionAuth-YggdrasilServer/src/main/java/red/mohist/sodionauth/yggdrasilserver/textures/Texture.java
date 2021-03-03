@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,12 @@ import red.mohist.sodionauth.yggdrasilserver.modules.Textures;
 import java.util.Base64;
 
 public abstract class Texture {
-    public Property getPropertie(String username){
+    public Property getPropertie(String username) {
         return new Property("textures",
                 Base64.getEncoder().encodeToString(
                         new Gson().toJson(getTextures(username)).getBytes()
                 ));
     }
+
     public abstract Textures getTextures(String username);
 }

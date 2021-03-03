@@ -25,16 +25,16 @@ public class ChatEvent extends Event implements Cancellable {
     private final String message;
     private boolean cancel;
 
-    public ChatEvent(AbstractPlayer player,String messgae){
-        this.player=player;
-        this.message=messgae;
+    public ChatEvent(AbstractPlayer player, String messgae) {
+        this.player = player;
+        this.message = messgae;
     }
 
-    public AbstractPlayer getPlayer(){
+    public AbstractPlayer getPlayer() {
         return player;
     }
 
-    public String getMessage(){
+    public String getMessage() {
         return message;
     }
 

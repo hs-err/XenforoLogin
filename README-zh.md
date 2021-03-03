@@ -1,6 +1,7 @@
 # SodionAuth
 
-[English](https://github.com/Mohist-Community/SodionAuth/edit/master/README.md)    |    [中文](https://github.com/Mohist-Community/SodionAuth/blob/master/README-zh.md)
+[English](https://github.com/Mohist-Community/SodionAuth/edit/master/README.md)
+|    [中文](https://github.com/Mohist-Community/SodionAuth/blob/master/README-zh.md)
 
 ## 是什么？
 
@@ -24,37 +25,37 @@
 - 提供自动登录（session）。
 - 提供外置登录（实验）。
 - 在登录前隐藏几乎全部的状态。
-  - 位置。
-  - 背包。
-  - 游戏模式。
-  - 生命值。
-  - 食物（包含foodLevel exhaustion saturation）。
-  - 剩余氧气。
-  - 药水效果。
+    - 位置。
+    - 背包。
+    - 游戏模式。
+    - 生命值。
+    - 食物（包含foodLevel exhaustion saturation）。
+    - 剩余氧气。
+    - 药水效果。
 - 在登录后恢复几乎全部的状态。
-  - 位置。
-  - 游戏模式。
-  - 生命值。
-  - 跌落距离。
-  - 速度矢量。
-  - 食物（包含foodLevel exhaustion saturation）。
-  - 剩余氧气。
-  - 药水效果。
+    - 位置。
+    - 游戏模式。
+    - 生命值。
+    - 跌落距离。
+    - 速度矢量。
+    - 食物（包含foodLevel exhaustion saturation）。
+    - 剩余氧气。
+    - 药水效果。
 - 支持较多的后端。
-  - Xenforo。
-  - UCenter (Discuz) 。
-  - MySQL。
-  - SQLite。
-  - Customized RestAPI。
+    - Xenforo。
+    - UCenter (Discuz) 。
+    - MySQL。
+    - SQLite。
+    - Customized RestAPI。
 - 支持较多的密码处理方式。
 - 支持较多的平台。
-  - Bukkit。
-    - Paper（完全）。
-    - Mohist（部分）。
-    - Spigot（部分）。
-    - CraftBukkit（(部分）。
-  - Sponge（部分）。
-  - Fabric（实验）。
+    - Bukkit。
+        - Paper（完全）。
+        - Mohist（部分）。
+        - Spigot（部分）。
+        - CraftBukkit（(部分）。
+    - Sponge（部分）。
+    - Fabric（实验）。
 
 ## 我就不信你这没有劣势！
 
@@ -62,10 +63,10 @@
 - 外置登录无法使用皮肤。
 - Session未缓存性能较差。
 - 由于保存了较多状态，可能会使以下操作**失效**，进而引起玩家不适
-  - 在落地前一秒退出服务器，在登录后可无伤害落地
-  - 在水下无氧气时退出服务器，在未登录状态恢复氧气
-  - 在获得debuff（如中毒，凋零，饥饿）之后退出服务器，在未登录状态等待buff结束后登录，可避免伤害
-  - 在鞘翅飞行时退出服务器，再次登录获得减速
+    - 在落地前一秒退出服务器，在登录后可无伤害落地
+    - 在水下无氧气时退出服务器，在未登录状态恢复氧气
+    - 在获得debuff（如中毒，凋零，饥饿）之后退出服务器，在未登录状态等待buff结束后登录，可避免伤害
+    - 在鞘翅飞行时退出服务器，再次登录获得减速
 
 ## 喂喂，那你这些劣势为什么不改啊
 
@@ -78,13 +79,13 @@
 
 ### 安装插件
 
-####  Bukkit
+#### Bukkit
 
 下载.jar文件并将其复制到 /plugins 文件夹，然后启动服务器。一切开始之后，关闭服务器。
 
 配置目录位于 /plugins/sodionauth
 
-####  Sponge，Fabric
+#### Sponge，Fabric
 
 下载.jar文件并将其复制到 /mods 文件夹，然后启动服务器。一切开始之后，关闭服务器。
 
@@ -92,7 +93,7 @@
 
 ### 配置后端
 
-####  Xenforo
+#### Xenforo
 
 在浏览器中打开（其中 http://example.com 为xenforo访问目录）：http://example.com/admin.php?api-keys
 
@@ -101,6 +102,7 @@
 复制您的密钥。
 
 编辑config.json
+
 ````json
 {
   "api": {
@@ -139,7 +141,7 @@ composer require mohist/flarum-sodion-auth
 
 享受
 
-####  Discuz
+#### Discuz
 
 安装拓展 SodionAuthDiscuz 并启用
 
@@ -156,7 +158,7 @@ composer require mohist/flarum-sodion-auth
 }
 ````
 
-####  Mysql
+#### Mysql
 
 编辑config.json。
 
@@ -180,7 +182,7 @@ composer require mohist/flarum-sodion-auth
 }
 ````
 
-####  Sqlite
+#### Sqlite
 
 编辑config.json。
 
@@ -223,12 +225,12 @@ composer require mohist/flarum-sodion-auth
 | SHA512     | 安全性中 |
 | SHA512Salt | 安全性略高 |
 
-如果有迁移到[Blessing Skin](https://github.com/bs-community/blessing-skin-server)[Xenforo](https://xenforo.com)[flarum](https://flarum.org)等现代化应用的需求，请使用BCrypt
+如果有迁移到[Blessing Skin](https://github.com/bs-community/blessing-skin-server)[Xenforo](https://xenforo.com)[flarum](https://flarum.org)
+等现代化应用的需求，请使用BCrypt
 
 如果有迁移到[Discuz](https://www.discuz.net)[PHPWind](http://www.phpwind.net.cn)等应用的需求，请使用MD5Salt
 
 其他请根据需求自行选择，如非必要，请勿选择Plain。
-
 
 ## 你们要的下载地址
 

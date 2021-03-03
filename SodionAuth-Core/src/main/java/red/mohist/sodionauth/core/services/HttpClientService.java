@@ -17,22 +17,22 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
+import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class HttpClientService {
     public CloseableHttpClient httpClient;
 
     @Subscribe
-    public void onBoot(BootEvent event){
+    public void onBoot(BootEvent event) {
+        Helper.getLogger().info("Initializing httpClient service...");
         httpClient = HttpClientBuilder.create()
                 .disableCookieManagement()
                 .disableAuthCaching()
@@ -41,13 +41,15 @@ public class HttpClientService {
                         "SodionAuthWeb/1.0 Safari/537.36")
                 .build();
     }
+
     @Subscribe
-    public void onDown(DownEvent event){
+    public void onDown(DownEvent event) {
         try {
             httpClient.close();
         } catch (IOException ignored) {
         }
     }
+
     public CloseableHttpResponse execute(HttpUriRequest request) throws IOException {
         return httpClient.execute(request);
     }

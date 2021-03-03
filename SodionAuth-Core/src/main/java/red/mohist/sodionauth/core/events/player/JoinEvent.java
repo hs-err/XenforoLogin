@@ -22,15 +22,16 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public class JoinEvent extends Event implements Cancellable {
     private final AbstractPlayer player;
-    private String message="unknown";
-    public JoinEvent(AbstractPlayer player){
-        this.player=player;
-    }
-    public AbstractPlayer getPlayer(){
-        return player;
+    private String message = "unknown";
+    private boolean cancel;
+
+    public JoinEvent(AbstractPlayer player) {
+        this.player = player;
     }
 
-    private boolean cancel;
+    public AbstractPlayer getPlayer() {
+        return player;
+    }
 
     @Override
     public boolean isCancelled() {
@@ -44,7 +45,7 @@ public class JoinEvent extends Event implements Cancellable {
 
     public void setCancelled(String message) {
         this.cancel = true;
-        this.message=message;
+        this.message = message;
     }
 
     public String getMessage() {

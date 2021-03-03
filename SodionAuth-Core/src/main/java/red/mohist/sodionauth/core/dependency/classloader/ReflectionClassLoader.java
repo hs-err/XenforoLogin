@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-/*
- * This file is part of LuckPerms, licensed under the MIT License.
- *
- *  Copyright (c) lucko (Luck) <luck@lucko.me>
- *  Copyright (c) contributors
- */
-
 package red.mohist.sodionauth.core.dependency.classloader;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.lang.reflect.InvocationTargetException;

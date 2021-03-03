@@ -18,13 +18,13 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import red.mohist.sodionauth.core.events.BootEvent;
-import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.IOException;
 
 public class ConfigureService {
     @Subscribe
     public void onBoot(BootEvent event) throws IOException {
-        Config.init();
+        Helper.getLogger().info("Initializing configure service...");
     }
 }

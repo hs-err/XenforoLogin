@@ -21,11 +21,13 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public class QuitEvent extends Event {
     private final AbstractPlayer player;
-    public QuitEvent(AbstractPlayer player){
+
+    public QuitEvent(AbstractPlayer player) {
         super(true);
-        this.player=player;
+        this.player = player;
     }
-    public AbstractPlayer getPlayer(){
+
+    public AbstractPlayer getPlayer() {
         return player;
     }
 }

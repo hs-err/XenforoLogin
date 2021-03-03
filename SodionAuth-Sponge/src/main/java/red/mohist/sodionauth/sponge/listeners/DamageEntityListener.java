@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,21 +23,20 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
 public class DamageEntityListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onDamageEntity_a(DamageEntityEvent event, @First Player player) {
-        if (SodionAuthCore.instance.needCancelled(new SpongePlayer(player))) {
+        if (Service.auth.needCancelled(new SpongePlayer(player))) {
             event.setCancelled(true);
         }
     }
 
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onDamageEntity_b(DamageEntityEvent event, @Getter("getTargetEntity") Player player) {
-        if (SodionAuthCore.instance.needCancelled(new SpongePlayer(player))) {
+        if (Service.auth.needCancelled(new SpongePlayer(player))) {
             event.setCancelled(true);
         }
     }

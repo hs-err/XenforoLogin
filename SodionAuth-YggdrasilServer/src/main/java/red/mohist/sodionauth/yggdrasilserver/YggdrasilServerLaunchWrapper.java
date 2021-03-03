@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package red.mohist.sodionauth.yggdrasilserver;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import red.mohist.sodionauth.core.probe.Probe;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -48,15 +47,15 @@ public class YggdrasilServerLaunchWrapper {
             final URL probeResource = Probe.class.getClassLoader().getResource("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class");
             if (probeResource == null) throw new IllegalStateException("Could not find probeResource");
             String s = probeResource.getPath();
-            int start=0;
-            int end=s.lastIndexOf("!");
-            if(s.startsWith("file:")){
-                start+=5;
+            int start = 0;
+            int end = s.lastIndexOf("!");
+            if (s.startsWith("file:")) {
+                start += 5;
             }
-            if(File.separator.equals("\\")){
-                start+=1;
+            if (File.separator.equals("\\")) {
+                start += 1;
             }
-            return s.substring(start,end==-1?s.length():end)
+            return s.substring(start, end == -1 ? s.length() : end)
                     .replaceAll("red/mohist/sodionauth/yggdrasilserver/YggdrasilServerLaunchWrapper.class", "");
         }
 

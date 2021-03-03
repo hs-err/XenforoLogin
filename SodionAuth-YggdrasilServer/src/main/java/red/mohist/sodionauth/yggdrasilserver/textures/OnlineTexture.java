@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.yggdrasilserver.modules.Profile;
-import red.mohist.sodionauth.yggdrasilserver.modules.Property;
 import red.mohist.sodionauth.yggdrasilserver.modules.Textures;
 import red.mohist.sodionauth.yggdrasilserver.provider.UserProvider;
 
@@ -39,13 +37,15 @@ import java.util.Base64;
 
 public class OnlineTexture extends Texture {
     private final String url;
-    OnlineTexture(JsonElement config){
-        url=config.getAsJsonObject().get("url").getAsString();
+
+    OnlineTexture(JsonElement config) {
+        url = config.getAsJsonObject().get("url").getAsString();
     }
+
     public Textures getTextures(String username) {
         try {
             String uuid = getUuidByName(username);
-            if(uuid == null){
+            if (uuid == null) {
                 return null;
             }
             ResponseHandler<String> responseHandler = response -> {
@@ -61,10 +61,10 @@ public class OnlineTexture extends Texture {
             final CloseableHttpResponse response = Service.httpClient.execute(request);
             String result = responseHandler.handleResponse(response);
             response.close();
-            if(result==null) {
+            if (result == null) {
                 return null;
             }
-            Profile profile=new Gson().fromJson(result,Profile.class);
+            Profile profile = new Gson().fromJson(result, Profile.class);
             return new Gson().fromJson(
                     Arrays.toString(Base64.getDecoder().decode(profile.getProperty("textures").value)),
                     Textures.class)
@@ -78,7 +78,8 @@ public class OnlineTexture extends Texture {
             return null;
         }
     }
-    private String getUuidByName(String username){
+
+    private String getUuidByName(String username) {
         try {
             ResponseHandler<String> responseHandler = response -> {
                 int status = response.getStatusLine().getStatusCode();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-
-import java.util.concurrent.ExecutionException;
+import red.mohist.sodionauth.core.services.Service;
 
 public class ResultTypeUtils {
 
@@ -29,16 +27,10 @@ public class ResultTypeUtils {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
-                    SodionAuthCore.instance.loginAsync(player).thenWithException(future -> {
-                        try {
-                            future.get();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    });
+                    Service.auth.loginAsync(player);
                 } else {
-                    SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
-                    SodionAuthCore.instance.message(player);
+                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
+                    Service.auth.sendTip(player);
                 }
                 return true;
             case PASSWORD_INCORRECT:
@@ -50,7 +42,7 @@ public class ResultTypeUtils {
                 return false;
             case NO_USER:
                 if (Config.api.getAllowRegister(false)) {
-                    SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 } else {
                     player.kick(player.getLang().getErrors().getNoUser());
                 }
@@ -67,11 +59,11 @@ public class ResultTypeUtils {
                 return false;
             case EMAIL_WRONG:
                 player.sendMessage(player.getLang().getErrors().getEmail());
-                SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 return false;
             case EMAIL_EXIST:
                 player.sendMessage(player.getLang().getErrors().getMailExist());
-                SodionAuthCore.instance.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                 return false;
         }
         return false;

@@ -1,6 +1,8 @@
 # SodionAuth
 
-[English](https://github.com/Mohist-Community/SodionAuth/edit/master/README.md)    |    [中文](https://github.com/Mohist-Community/SodionAuth/blob/master/README-zh.md)
+[English](https://github.com/Mohist-Community/SodionAuth/edit/master/README.md)
+|    [中文](https://github.com/Mohist-Community/SodionAuth/blob/master/README-zh.md)
+
 ## What is this?
 
 A new generation of Minecraft authenticate plugin.
@@ -23,37 +25,37 @@ A new generation of Minecraft authenticate plugin.
 - Automate login support(Using session).
 - External login support(Experimental).
 - Hide almost all player status before login。
-  - Location.
-  - Inventory.
-  - Gamemode.
-  - Health.
-  - Food(Including foodLevel, exhaustion and saturation).
-  - Oxygen left.
-  - Potion effect.
+    - Location.
+    - Inventory.
+    - Gamemode.
+    - Health.
+    - Food(Including foodLevel, exhaustion and saturation).
+    - Oxygen left.
+    - Potion effect.
 - Resume almost all player status after Login。
-  - Location.
-  - Gamemode.
-  - Health.
-  - Falling distance.
-  - Velocity.
-  - Food(Including foodLevel, exhaustion and saturation).
-  - Oxygen left.
-  - Potion effect.
+    - Location.
+    - Gamemode.
+    - Health.
+    - Falling distance.
+    - Velocity.
+    - Food(Including foodLevel, exhaustion and saturation).
+    - Oxygen left.
+    - Potion effect.
 - Various back-end system support.
-  - Xenforo.
-  - UCenter(Discuz).
-  - MySQL.
-  - SQLite.
-  - Customized RestAPI.
+    - Xenforo.
+    - UCenter(Discuz).
+    - MySQL.
+    - SQLite.
+    - Customized RestAPI.
 - Various password handle support.
 - Various platform support.
-  - Bukkit.
-    - Paper(Competely).
-    - Mohist(Partly).
-    - Spigot(Partly)
-    - CraftBukkit(Partly).
-  - Sponge(Partly).
-  - Fabric(Experimental).
+    - Bukkit.
+        - Paper(Competely).
+        - Mohist(Partly).
+        - Spigot(Partly)
+        - CraftBukkit(Partly).
+    - Sponge(Partly).
+    - Fabric(Experimental).
 
 ## Disadventages
 
@@ -61,10 +63,11 @@ A new generation of Minecraft authenticate plugin.
 - External login doesnt support skins。
 - Session is not cached, resulting in poor performance.
 - Stored some player status, may resulting these action **not exist any longer**, make players uncomfortable:
-  - Quit server before landing from high area，re-login with no damage.
-  - Quit server while no oxygen left, recovering oxygen before login.
-  - Quit server because of getting debuff(Such as hungry, poison, etc.), not login until the debuff was over, not affected by the debuff.
-  - Quit server while gliding with elytra, re-login to get slow down.
+    - Quit server before landing from high area，re-login with no damage.
+    - Quit server while no oxygen left, recovering oxygen before login.
+    - Quit server because of getting debuff(Such as hungry, poison, etc.), not login until the debuff was over, not
+      affected by the debuff.
+    - Quit server while gliding with elytra, re-login to get slow down.
 
 ## Why not fix the disadvantages
 
@@ -77,21 +80,23 @@ A new generation of Minecraft authenticate plugin.
 
 ### Install
 
-####  Bukkit
+#### Bukkit
 
-Download the .jar file and copy it to /plugins folder, then start the server. After init complete at first start, shutdown server.
+Download the .jar file and copy it to /plugins folder, then start the server. After init complete at first start,
+shutdown server.
 
 The configurations are at /plugins/sodionauth folder.
 
-####  Sponge & Fabric
+#### Sponge & Fabric
 
-Download the .jar file and copy it to /mods folder, then start the server. After init complete at first start, shutdown server.
+Download the .jar file and copy it to /mods folder, then start the server. After init complete at first start, shutdown
+server.
 
 The configurations are at /config/sodionauth folder.
 
 ### Configure back-end system
 
-####  Xenforo
+#### Xenforo
 
 Open this url in browser (which http://example.com is xenforo's access directory: http://example.com/admin.php?api-keys
 
@@ -100,6 +105,7 @@ Create a super-admin key with these permissions: auth & user:read.
 Copy your key.
 
 Edit config.json
+
 ````json
 {
   "api": {
@@ -138,7 +144,7 @@ Edit config.json
 
 Enjoy.
 
-####  Discuz
+#### Discuz
 
 Download and enable SodionAuthDiscuz
 
@@ -155,7 +161,7 @@ Edit config.json
 }
 ````
 
-####  Mysql
+#### Mysql
 
 Edit config.json
 
@@ -179,7 +185,7 @@ Edit config.json
 }
 ````
 
-####  Sqlite
+#### Sqlite
 
 Edit config.json
 
@@ -222,12 +228,13 @@ Edit config.json
 | SHA512     | Common |
 | SHA512Salt | Quite High |
 
-If need to migrate to modern applications like [Blessing Skin](https://github.com/bs-community/blessing-skin-server), [Xenforo](https://xenforo.com) or [flarum](https://flarum.org), use BCrypt.
+If need to migrate to modern applications like [Blessing Skin](https://github.com/bs-community/blessing-skin-server)
+, [Xenforo](https://xenforo.com) or [flarum](https://flarum.org), use BCrypt.
 
-If need to migrate to applications like [Discuz](https://www.discuz.net)[PHPWind](http://www.phpwind.net.cn), use MD5Salt.
+If need to migrate to applications like [Discuz](https://www.discuz.net)[PHPWind](http://www.phpwind.net.cn), use
+MD5Salt.
 
 Others please choose according to your needs, if not necessary, do not use Plain.
-
 
 ## Download link
 
@@ -241,7 +248,8 @@ Others please choose according to your needs, if not necessary, do not use Plain
 
 English only.
 
-If you have bad English, you can raise it here, but doesn’t read it very often, so it’s best to raise it in GitHub issues.
+If you have bad English, you can raise it here, but doesn’t read it very often, so it’s best to raise it in GitHub
+issues.
 
 ## License
 

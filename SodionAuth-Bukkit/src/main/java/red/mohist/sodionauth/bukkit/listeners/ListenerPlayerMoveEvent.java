@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 
 
@@ -31,14 +31,14 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
         final AbstractPlayer player = BukkitLoader.instance.player2info(event.getPlayer());
-        if (SodionAuthCore.instance.needCancelled(player)) {
+        if (Service.auth.needCancelled(player)) {
             if (Config.teleport.getTpBackAfterLogin()) {
                 Location location = event.getTo();
-                location.setX(SodionAuthCore.instance.default_location.x);
+                location.setX(Service.auth.default_location.x);
                 if (Config.security.getSpectatorLogin()) {
-                    location.setY(SodionAuthCore.instance.default_location.y);
+                    location.setY(Service.auth.default_location.y);
                 }
-                location.setZ(SodionAuthCore.instance.default_location.z);
+                location.setZ(Service.auth.default_location.z);
                 event.setTo(location);
             } else {
                 Location back = event.getFrom();

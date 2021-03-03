@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,18 @@ public class UserProvider {
                             " PRIMARY KEY (`accessToken`,`accessToken`));");
             pps.executeUpdate();
         }
+    }
+
+    public static UUID getUUID(String username) {
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String plainUUID(UUID uuid) {
+        return uuid.toString().replaceAll("-", "");
+    }
+
+    public static String plainUUID(String username) {
+        return plainUUID(getUUID(username));
     }
 
     public ResultType login(String username, String password, String clientToken) throws SQLException {
@@ -235,16 +247,6 @@ public class UserProvider {
     // TODO: 增加皮肤支持
     public Textures getTextures(String username) {
         return null;
-    }
-
-    public static UUID getUUID(String username) {
-        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8));
-    }
-    public static String plainUUID(UUID uuid) {
-        return uuid.toString().replaceAll("-", "");
-    }
-    public static String plainUUID(String username) {
-        return plainUUID(getUUID(username));
     }
 
 }

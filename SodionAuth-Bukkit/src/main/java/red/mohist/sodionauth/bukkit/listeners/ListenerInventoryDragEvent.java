@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.services.Service;
 
 public class ListenerInventoryDragEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnInventoryDragEvent(InventoryDragEvent event) {
-        if (SodionAuthCore.instance.needCancelled(BukkitLoader.instance.player2info((Player) event.getWhoClicked()))) {
+        if (Service.auth.needCancelled(BukkitLoader.instance.player2info((Player) event.getWhoClicked()))) {
             event.setCancelled(true);
         }
     }

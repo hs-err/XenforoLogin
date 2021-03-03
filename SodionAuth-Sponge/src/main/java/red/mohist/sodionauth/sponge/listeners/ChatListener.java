@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class ChatListener implements SpongeAPIListener {
     @Listener
     public void onChatEvent(Chat event, @First Player spongePlayer) {
         SpongePlayer player = new SpongePlayer(spongePlayer);
-        if (!SodionAuthCore.instance.needCancelled(player)) {
+        if (!Service.auth.needCancelled(player)) {
             if (Config.security.getCancelChatAfterLogin(false)) {
                 player.sendMessage(player.getLang().getLoggedIn());
                 event.setCancelled(true);

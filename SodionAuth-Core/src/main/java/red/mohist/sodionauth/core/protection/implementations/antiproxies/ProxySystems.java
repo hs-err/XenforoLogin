@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.core.protection.implementations.antiproxies;
 
 import org.reflections.Reflections;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.services.Service;
@@ -55,7 +54,7 @@ public class ProxySystems implements SecuritySystem {
             }
         }
 
-        Service.async.globalScheduledExecutor.scheduleAtFixedRate(() -> {
+        Service.threadPool.globalScheduledExecutor.scheduleAtFixedRate(() -> {
             for (ProxySystem proxySystem : currentSystem) {
                 try {
                     proxySystem.refreshProxies();

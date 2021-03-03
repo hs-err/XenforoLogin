@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,13 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.InteractItemEvent;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
 public class InteractItemListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onInteractItemEvent(InteractItemEvent event, @First Player player) {
-        if (SodionAuthCore.instance.needCancelled(new SpongePlayer(player))) {
+        if (Service.auth.needCancelled(new SpongePlayer(player))) {
             event.setCancelled(true);
         }
     }

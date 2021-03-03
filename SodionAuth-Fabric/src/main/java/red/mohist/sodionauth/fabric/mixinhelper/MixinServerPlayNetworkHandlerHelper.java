@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Mohist-Community
+ * Copyright 2021 Mohist-Community
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class MixinServerPlayNetworkHandlerHelper {
     public static void onGameMessage(ChatMessageC2SPacket packet, CallbackInfo ci, ServerPlayerEntity player) {
         if (Data.serverInstance.isOnThread()) return;
         AbstractPlayer abstractPlayer = new FabricPlayer(player);
-        if (!SodionAuthCore.instance.needCancelled(abstractPlayer)) {
+        if (!Service.auth.needCancelled(abstractPlayer)) {
             if (Config.security.getCancelChatAfterLogin()) {
                 abstractPlayer.sendMessage(abstractPlayer.getLang().getLoggedIn());
                 ci.cancel();
