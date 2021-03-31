@@ -25,6 +25,7 @@ import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
+import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -75,6 +76,8 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             hookProtocolLib();
 
             registerListeners();
+
+            Bukkit.getScheduler().runTaskTimer(this,()->{new TickEvent().post();},0,1);
         } catch (IOException e) {
             e.printStackTrace();
             getLogger().warning("SodionAuth load fail.");

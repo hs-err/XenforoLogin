@@ -26,8 +26,8 @@ import javax.annotation.Nonnull;
 
 public class LoginTickPlayer {
 
+    int calledTimes;
     static final int showTipTime = Config.security.getShowTipsTime();
-    long startTime = System.currentTimeMillis();
     int loginTimeout = Config.security.getMaxLoginTime();
     @Nonnull
     AbstractPlayer player;
@@ -38,30 +38,25 @@ public class LoginTickPlayer {
 
 
     public TickResult tick() {
-        long now = System.currentTimeMillis();
-        if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
-            boolean result = ResultTypeUtils.handle(player,
-                    AuthBackendSystems.getCurrentSystem()
-                            .join(player)
-                            .shouldLogin(false));
-            if (!result) {
-                Helper.getLogger().warn(
-                        player.getName() + " didn't pass AccountExists test");
-                return TickResult.DONE;
-            }
-            Service.auth.sendTip(player);
-            SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
+        calledTimes++;
+        //Helper.getLogger().info("sss");
+        if (calledTimes%20 == 0
+                && !Service.auth.logged_in.containsKey(player.getUniqueId())) {
+            Helper.getLogger().info("Player " +player.getName()+" haven't been checked.");
+            return TickResult.CONTINUE;
         }
-        if ((now - startTime) / 1000 > loginTimeout
+        if (calledTimes/20 > loginTimeout
                 && Service.auth.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
             player.kick(player.getLang().getErrors().getTimeOut());
             return TickResult.DONE;
         }
-        if (!player.isOnline() || !Service.auth.needCancelled(player)) {
+        if (calledTimes%20 == 0
+            && !player.isOnline() || !Service.auth.needCancelled(player)) {
             return TickResult.DONE;
         }
-
-        Service.auth.sendTip(player);
+        if(calledTimes%((showTipTime*20))==0) {
+            Service.auth.sendTip(player);
+        }
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         return TickResult.CONTINUE;
     }

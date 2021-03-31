@@ -28,7 +28,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ThreadPoolService {
-    public ScheduledExecutorService globalScheduledExecutor;
     public ExecutorService executor;
     public ITaskFactory startup;
     public UniqueFlag dbUniqueFlag;
@@ -48,19 +47,6 @@ public class ThreadPoolService {
                         return thread;
                     }
                 });
-        globalScheduledExecutor = Executors.newScheduledThreadPool(
-                Math.max(Runtime.getRuntime().availableProcessors() / 4, 1),
-                new ThreadFactory() {
-
-                    private final AtomicLong serial = new AtomicLong(0L);
-
-                    @Override
-                    public Thread newThread(@Nonnull Runnable runnable) {
-                        final Thread thread = new Thread(runnable);
-                        thread.setName("SodionAuthScheduler - " + serial.getAndIncrement());
-                        return thread;
-                    }
-                });
         startup = new TaskFactory(executor);
         dbUniqueFlag = startup.makeUniqueFlag();
     }
@@ -68,10 +54,8 @@ public class ThreadPoolService {
     @Subscribe
     public void onDown(DownEvent event) {
         executor.shutdown();
-        globalScheduledExecutor.shutdown();
         try {
             executor.awaitTermination(30, TimeUnit.SECONDS);
-            globalScheduledExecutor.awaitTermination(30, TimeUnit.SECONDS);
         } catch (InterruptedException ignored) {
         }
     }

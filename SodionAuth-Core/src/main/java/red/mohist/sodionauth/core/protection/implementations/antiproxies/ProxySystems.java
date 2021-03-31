@@ -16,7 +16,10 @@
 
 package red.mohist.sodionauth.core.protection.implementations.antiproxies;
 
+import com.google.common.eventbus.Subscribe;
+import org.checkerframework.checker.units.qual.A;
 import org.reflections.Reflections;
+import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
 import red.mohist.sodionauth.core.services.Service;
@@ -27,10 +30,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProxySystems implements SecuritySystem {
     private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
-
+    private AtomicInteger tickTimes=new AtomicInteger(-1);
+    private final int updateTime=Config.protection.getProxySystems().getUpdateTime(60);
     public ProxySystems() {
         {
             int unavailableCount = 0;
@@ -54,7 +59,7 @@ public class ProxySystems implements SecuritySystem {
             }
         }
 
-        Service.threadPool.globalScheduledExecutor.scheduleAtFixedRate(() -> {
+        //Service.threadPool.globalScheduledExecutor.scheduleAtFixedRate(() -> {
             for (ProxySystem proxySystem : currentSystem) {
                 try {
                     proxySystem.refreshProxies();
@@ -62,9 +67,25 @@ public class ProxySystems implements SecuritySystem {
                     e.printStackTrace();
                 }
             }
-        }, 0, Config.protection.getProxySystems().getUpdateTime(60), TimeUnit.SECONDS);
+        //}, 0, Config.protection.getProxySystems().getUpdateTime(60), TimeUnit.SECONDS);
     }
-
+    @Subscribe
+    public void onTick(TickEvent tickEvent){
+        tickTimes.addAndGet(1);
+        if(tickTimes.get()==updateTime*20){
+            Service.threadPool.startup.startTask(()->{
+                for (ProxySystem proxySystem : currentSystem) {
+                    try {
+                        proxySystem.refreshProxies();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).then(()->{
+                tickTimes.set(-1);
+            });
+        }
+    }
     @Override
     public String canJoin(AbstractPlayer player) {
         String ip = player.getAddress().getHostAddress();

@@ -44,13 +44,13 @@ public class ReflectionClassLoader {
         if (classLoader instanceof URLClassLoader) {
             this.classLoader = (URLClassLoader) classLoader;
             try {
-                addUrlMethod = classLoader.getClass().getDeclaredMethod("addURL", URL.class);
+                addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                 addUrlMethod.setAccessible(true);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            throw new IllegalStateException("ClassLoader is nottance of URLClassLoader");
+            throw new IllegalStateException("ClassLoader is not a instance of URLClassLoader");
         }
     }
 
@@ -59,7 +59,7 @@ public class ReflectionClassLoader {
             // method was added in the Java 9 release
             Runtime.class.getMethod("version");
             return true;
-        } catch (NoSuchMethodException e) {
+        } catch (Throwable e) {
             return false;
         }
     }

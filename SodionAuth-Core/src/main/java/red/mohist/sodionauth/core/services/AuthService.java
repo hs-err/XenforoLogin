@@ -76,7 +76,7 @@ public class AuthService {
             new CanJoinEvent(player).post();
             new JoinEvent(player).post();
         }
-        LoginTicker.register();
+        Service.eventBus.register(new LoginTicker());
     }
 
     @Subscribe

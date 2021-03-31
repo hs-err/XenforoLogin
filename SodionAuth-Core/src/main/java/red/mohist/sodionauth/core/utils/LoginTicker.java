@@ -17,6 +17,8 @@
 package red.mohist.sodionauth.core.utils;
 
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.Subscribe;
+import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 
@@ -27,17 +29,13 @@ public class LoginTicker {
 
     private static final Set<LoginTickPlayer> tickers = Sets.newConcurrentHashSet();
 
-    public static void register() {
-        Service.threadPool.globalScheduledExecutor
-                .scheduleAtFixedRate(LoginTicker::run, 0,
-                        LoginTickPlayer.showTipTime, TimeUnit.SECONDS);
-    }
-
     public static void add(AbstractPlayer player) {
         tickers.add(new LoginTickPlayer(player));
     }
 
-    public static void run() {
+    @Subscribe()
+    public static void onTick(TickEvent tickEvent) {
+        //Helper.getLogger().info("bbb");
         tickers.removeIf(current -> current.tick() == LoginTickPlayer.TickResult.DONE);
     }
 }
