@@ -46,9 +46,11 @@ public class ListenerAsyncPlayerPreLoginEvent implements BukkitAPIListener {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, abstractPlayer.getLang().getErrors().getLoginExist());
             return;
         }
+
         if (!Service.auth.logged_in.containsKey(event.getUniqueId())) {
             Service.auth.logged_in.remove(event.getUniqueId());
         }
+
         CanJoinEvent canJoinEvent = new CanJoinEvent(abstractPlayer);
         if (!canJoinEvent.syncPost()) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, canJoinEvent.getMessage());

@@ -32,24 +32,22 @@ public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     public void OnMove(PlayerMoveEvent event) {
         final AbstractPlayer player = BukkitLoader.instance.player2info(event.getPlayer());
         if (Service.auth.needCancelled(player)) {
-            if (Config.teleport.getTpBackAfterLogin()) {
-                Location location = event.getTo();
+            Location location = event.getTo();
+            if (Config.teleport.getTpSpawnBeforeLogin()) {
                 location.setX(Service.auth.default_location.x);
                 if (Config.security.getSpectatorLogin()) {
                     location.setY(Service.auth.default_location.y);
                 }
                 location.setZ(Service.auth.default_location.z);
-                event.setTo(location);
             } else {
                 Location back = event.getFrom();
-                Location location = event.getTo();
                 location.setX(back.getX());
                 if (Config.security.getSpectatorLogin(true)) {
                     location.setY(back.getY());
                 }
                 location.setZ(back.getZ());
-                event.setTo(location);
             }
+            event.setTo(location);
         }
     }
 

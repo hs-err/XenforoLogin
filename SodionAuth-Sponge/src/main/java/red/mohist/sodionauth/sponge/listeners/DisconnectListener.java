@@ -21,6 +21,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Disconnect;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
@@ -28,7 +29,7 @@ public class DisconnectListener implements SpongeAPIListener {
 
     @Listener
     public void onDisconnectEvent(Disconnect event, @First Player player) {
-        SodionAuthCore.instance.onQuit(new SpongePlayer(player));
+        new QuitEvent(new SpongePlayer(player)).post();
     }
 
     @Override

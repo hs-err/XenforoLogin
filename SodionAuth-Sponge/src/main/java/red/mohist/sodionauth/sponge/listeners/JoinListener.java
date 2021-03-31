@@ -23,6 +23,9 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
 import org.spongepowered.api.text.Text;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
+import red.mohist.sodionauth.core.events.player.JoinEvent;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
@@ -35,22 +38,16 @@ public class JoinListener implements SpongeAPIListener {
             player.kick(player.getLang().getErrors().getServer());
         }
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
-        if (!SodionAuthCore.instance.logged_in.containsKey(spongePlayer.getUniqueId())) {
-            String canLogin = SodionAuthCore.instance.canLogin(player);
-            if (canLogin != null) {
-                spongePlayer.kick(Text.of(canLogin));
-                return;
+        if (!Service.auth.logged_in.containsKey(spongePlayer.getUniqueId())) {
+            CanJoinEvent canJoinEvent = new CanJoinEvent(player);
+            if (!canJoinEvent.syncPost()) {
+                player.kick(canJoinEvent.getMessage());
             }
 
             Helper.getLogger().warn("onAuthEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            SodionAuthCore.instance.canJoinAsync(player).then(result -> {
-                if (result != null) {
-                    player.kick(result);
-                }
-            });
         }
-        SodionAuthCore.instance.onJoin(player);
+        new JoinEvent(player).post();
     }
 
     @Override

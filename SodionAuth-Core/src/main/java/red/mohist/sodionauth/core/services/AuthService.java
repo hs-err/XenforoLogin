@@ -132,8 +132,11 @@ public class AuthService {
                 }
                 Service.auth.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
-                Service.threadPool.executor.execute(() -> ResultTypeUtils.handle(player,
-                        AuthBackendSystems.getCurrentSystem().login(player, message).shouldLogin(true)));
+                Service.threadPool.startup.startTask(() ->
+                        AuthBackendSystems.getCurrentSystem().login(player, message).shouldLogin(true))
+                        .then((result)->{
+                            ResultTypeUtils.handle(player,result);
+                        });
                 break;
             case NEED_REGISTER_EMAIL:
                 if (isEmail(message)) {
@@ -158,19 +161,15 @@ public class AuthService {
                 Service.auth.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
                 if (message.equals(status.password)) {
-                    Service.threadPool.executor.execute(() -> {
-                        try {
-                            if (registerAsync(player, status.email, status.password).get()) {
-                                Service.auth.logged_in.put(
-                                        player.getUniqueId(), StatusType.LOGGED_IN);
-                                return;
-                            }
-                        } catch (Throwable e) {
-                            e.printStackTrace();
+                    registerAsync(player, status.email, status.password).then((result)->{
+                        if(result){
+                            Service.auth.logged_in.put(
+                                    player.getUniqueId(), StatusType.LOGGED_IN);
+                        }else{
+                            Service.auth.logged_in.put(
+                                    player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                            sendTip(player);
                         }
-                        Service.auth.logged_in.put(
-                                player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                        sendTip(player);
                     });
                 } else {
                     player.sendMessage(player.getLang().getErrors().getConfirm());
@@ -281,56 +280,62 @@ public class AuthService {
 
     public ITask<Void> loginAsync(AbstractPlayer player) {
         return Service.threadPool.dbUniqueFlag.lock().then(() -> {
-            Unlocker<UniqueFlag> unlocker = new Unlocker<>(Service.threadPool.dbUniqueFlag);
-            if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
-                    .equals(StatusType.LOGGED_IN)) {
-                //already login
-                return;
-            }
-            Service.auth.logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
             try {
-                PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM last_info WHERE uuid=? LIMIT 1;");
-                pps.setString(1, player.getUniqueId().toString());
-                ResultSet rs = pps.executeQuery();
-                if (!rs.next()) {
-                    player.setPlayerInfo(new PlayerInfo());
-                } else {
-                    player.setPlayerInfo(new Gson().fromJson(rs.getString("info"), PlayerInfo.class));
+                // check if already login
+                if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
+                        .equals(StatusType.LOGGED_IN)) {
+                    return;
+                }
+                Service.auth.logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
+
+                // restore playerInfo
+                try {
+                    PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM last_info WHERE uuid=? LIMIT 1;");
+                    pps.setString(1, player.getUniqueId().toString());
+                    ResultSet rs = pps.executeQuery();
+                    if (!rs.next()) {
+                        player.setPlayerInfo(new PlayerInfo());
+                    } else {
+                        player.setPlayerInfo(new Gson().fromJson(rs.getString("info"), PlayerInfo.class));
+                    }
+                } catch (Throwable e) {
+                    player.setGameMode(Config.security.getDefaultGamemode());
+                    e.printStackTrace();
                 }
 
+                // remove playerInfo
+                try {
+                    PreparedStatement pps = Service.session.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
+                    pps.setString(1, player.getUniqueId().toString());
+                    pps.executeUpdate();
 
-            } catch (Throwable e) {
-                player.setGameMode(Config.security.getDefaultGamemode());
+                    pps = Service.session.prepareStatement("INSERT INTO sessions(uuid, ip, time) VALUES (?, ?, ?);");
+                    pps.setString(1, player.getUniqueId().toString());
+                    pps.setString(2, player.getAddress().getHostAddress());
+                    pps.setInt(3, (int) (System.currentTimeMillis() / 1000));
+                    pps.executeUpdate();
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
+                SodionAuthCore.instance.api.onLogin(player);
+                Helper.getLogger().info("Logging in " + player.getUniqueId());
+                player.sendMessage(player.getLang().getSuccess());
+            }catch (Throwable e){
                 e.printStackTrace();
             }
-
-            try {
-                PreparedStatement pps = Service.session.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
-                pps.setString(1, player.getUniqueId().toString());
-                pps.executeUpdate();
-
-                pps = Service.session.prepareStatement("INSERT INTO sessions(uuid, ip, time) VALUES (?, ?, ?);");
-                pps.setString(1, player.getUniqueId().toString());
-                pps.setString(2, player.getAddress().getHostAddress());
-                pps.setInt(3, (int) (System.currentTimeMillis() / 1000));
-                pps.executeUpdate();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            SodionAuthCore.instance.api.onLogin(player);
-            Helper.getLogger().warn("Logging in " + player.getUniqueId());
-            player.sendMessage(player.getLang().getSuccess());
+            Service.threadPool.dbUniqueFlag.unlock();
         });
     }
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
-        return Service.threadPool.startup.startTask(() -> {
-            return ResultTypeUtils.handle(player,
-                    AuthBackendSystems.getCurrentSystem()
-                            .register(player, password, email).shouldLogin(true));
+        return Service.threadPool.startup.startTask(() ->{
+            return AuthBackendSystems.getCurrentSystem()
+                    .register(player, password, email).shouldLogin(true);
+        }).then((result)->{
+            return ResultTypeUtils.handle(player,result);
         });
     }
-
     public boolean isEmail(String email) {
         if (null == email || "".equals(email)) {
             return false;
@@ -339,6 +344,4 @@ public class AuthService {
         Matcher m = p.matcher(email);
         return m.matches();
     }
-
-
 }

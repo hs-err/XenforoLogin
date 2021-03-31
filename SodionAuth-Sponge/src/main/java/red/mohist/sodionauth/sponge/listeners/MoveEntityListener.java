@@ -23,6 +23,7 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
@@ -36,30 +37,30 @@ public class MoveEntityListener implements SpongeAPIListener {
             return;
         }
 
-        if (Config.teleport.getTpSpawnBeforeLogin(true)) {
+        if (Config.teleport.getTpSpawnBeforeLogin()) {
             if (Config.security.getSpectatorLogin()) {
                 event.setCancelled(true);
                 new SpongePlayer(player).teleport(new LocationInfo(
-                        SodionAuthCore.instance.default_location.world,
-                        SodionAuthCore.instance.default_location.x,
-                        SodionAuthCore.instance.default_location.y,
-                        SodionAuthCore.instance.default_location.z,
-                        SodionAuthCore.instance.default_location.yaw,
-                        SodionAuthCore.instance.default_location.pitch
+                        Service.auth.default_location.world,
+                        Service.auth.default_location.x,
+                        Service.auth.default_location.y,
+                        Service.auth.default_location.z,
+                        Service.auth.default_location.yaw,
+                        Service.auth.default_location.pitch
                 ));
             } else {
-                if (SodionAuthCore.instance.default_location.x
+                if (Service.auth.default_location.x
                         != event.getToTransform().getPosition().getFloorX()
-                        || SodionAuthCore.instance.default_location.z
+                        || Service.auth.default_location.z
                         != event.getToTransform().getPosition().getFloorZ()) {
                     event.setCancelled(true);
                     new SpongePlayer(player).teleport(new LocationInfo(
-                            SodionAuthCore.instance.default_location.world,
-                            SodionAuthCore.instance.default_location.x,
+                            Service.auth.default_location.world,
+                            Service.auth.default_location.x,
                             event.getToTransform().getPosition().getFloorY(),
-                            SodionAuthCore.instance.default_location.z,
-                            SodionAuthCore.instance.default_location.yaw,
-                            SodionAuthCore.instance.default_location.pitch
+                            Service.auth.default_location.z,
+                            Service.auth.default_location.yaw,
+                            Service.auth.default_location.pitch
                     ));
                 }
             }
@@ -70,6 +71,14 @@ public class MoveEntityListener implements SpongeAPIListener {
                     || event.getFromTransform().getPosition().getFloorZ()
                     != event.getToTransform().getPosition().getFloorZ()) {
                 event.setCancelled(true);
+                new SpongePlayer(player).teleport(new LocationInfo(
+                        event.getToTransform().getExtent().getName(),
+                        event.getFromTransform().getPosition().getFloorX(),
+                        event.getToTransform().getPosition().getFloorY(),
+                        event.getFromTransform().getPosition().getFloorZ(),
+                        (float)event.getFromTransform().getYaw(),
+                        (float)event.getFromTransform().getPitch()
+                ));
             }
         }
     }

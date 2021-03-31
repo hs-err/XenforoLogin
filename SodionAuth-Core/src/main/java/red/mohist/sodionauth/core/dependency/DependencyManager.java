@@ -129,16 +129,25 @@ public class DependencyManager {
             artifactResults = new LinkedList<>(repositorySystem.resolveDependencies(repositorySystemSession, dependencyRequest).getArtifactResults());
         } catch (DependencyResolutionException e) {
             Helper.getLogger().warn("Error resolving dependencies", e);
-            checkDependencyMaven(group, name, version, isPresent);
             return;
         }
 
         for (ArtifactResult artifactResult : artifactResults) {
-            Helper.getLogger().info(String.format("Injecting %s:%s:%s (%s) into classpath...", artifactResult.getArtifact().getGroupId(), artifactResult.getArtifact().getArtifactId(), artifactResult.getArtifact().getVersion(), artifactResult.getArtifact().getFile().toPath()));
+            Helper.getLogger().info(
+                    String.format("Injecting %s:%s:%s (%s) into classpath...",
+                            artifactResult.getArtifact().getGroupId(),
+                            artifactResult.getArtifact().getArtifactId(),
+                            artifactResult.getArtifact().getVersion(),
+                            artifactResult.getArtifact().getFile().toPath()));
             reflectionClassLoader.addJarToClasspath(artifactResult.getArtifact().getFile().toPath());
         }
 
-        checkDependencyMaven(group, name, version, isPresent);
+        if (!isPresent.getAsBoolean()){
+            Helper.getLogger().warn(String.format("Error injecting depend %s:%s:%s into classpath...",
+                    group,
+                    name,
+                    version));
+        }
 
     }
 

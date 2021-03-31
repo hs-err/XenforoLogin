@@ -29,7 +29,7 @@ public class ReflectionClassLoader {
     private final URLClassLoader classLoader;
     private final Method addUrlMethod;
 
-    {
+    public ReflectionClassLoader() throws IllegalStateException {
         if (isJava9OrNewer()) {
             Helper.getLogger().info("It is safe to ignore any warning printed following this message " +
                     "starting with 'WARNING: An illegal reflective access operation has occurred, Illegal reflective " +
@@ -37,22 +37,20 @@ public class ReflectionClassLoader {
                     "operation of SodionAuth.");
         }
 
-        try {
-            addUrlMethod = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addUrlMethod.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public ReflectionClassLoader() throws IllegalStateException {
         ClassLoader classLoader = ReflectionClassLoader.class.getClassLoader();
-        if (classLoader.getClass().getName().startsWith("net.fabricmc.loader")) // Fabric
-            classLoader = classLoader.getParent();
+        /// if (classLoader.getClass().getName().startsWith("net.fabricmc.loader")) {
+        //     classLoader = classLoader.getParent();
+        // }
         if (classLoader instanceof URLClassLoader) {
             this.classLoader = (URLClassLoader) classLoader;
+            try {
+                addUrlMethod = classLoader.getClass().getDeclaredMethod("addURL", URL.class);
+                addUrlMethod.setAccessible(true);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            throw new IllegalStateException("ClassLoader is not instance of URLClassLoader");
+            throw new IllegalStateException("ClassLoader is nottance of URLClassLoader");
         }
     }
 
@@ -69,9 +67,9 @@ public class ReflectionClassLoader {
     public URLClassLoader getClassLoader() {
         return classLoader;
     }
-
     public void addJarToClasspath(Path file) {
         try {
+            Helper.getLogger().info(file.toUri().toURL().toString());
             this.addUrlMethod.invoke(this.classLoader, file.toUri().toURL());
         } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {
             throw new RuntimeException(e);

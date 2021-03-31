@@ -30,6 +30,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
+import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -116,6 +118,7 @@ public class SpongeLoader implements PlatformAdapter {
                     Helper.getLogger().warn("Error count: " + unavailableCount);
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
             logger.warn("SodionAuth load fail.");
@@ -125,7 +128,7 @@ public class SpongeLoader implements PlatformAdapter {
 
     @Listener
     public void onServerStop(GameStoppingServerEvent event) {
-        SodionAuthCore.instance.onDisable();
+        new DownEvent().post();
     }
 
     @Override

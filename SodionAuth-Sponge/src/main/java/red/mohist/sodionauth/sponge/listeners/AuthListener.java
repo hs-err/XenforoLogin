@@ -24,38 +24,38 @@ import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.text.Text;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
 public class AuthListener implements SpongeAPIListener {
     @Listener(order = Order.FIRST, beforeModifications = true)
     public void onAuthEvent(Auth event, @First GameProfile profile) {
-        AbstractPlayer abstractPlayer = new SpongePlayer(
+        AbstractPlayer player = new SpongePlayer(
                 event.getProfile().getName().get(),
                 event.getProfile().getUniqueId(),
                 event.getConnection().getAddress().getAddress());
         if (!SodionAuthCore.instance.isEnabled()) {
-            event.setMessage(Text.of(abstractPlayer.getLang().getErrors().getServer()));
+            event.setMessage(Text.of(player.getLang().getErrors().getServer()));
             event.setCancelled(true);
             return;
         }
-        if (Sponge.getServer().getPlayer(abstractPlayer.getName()).isPresent()) {
-            event.setMessage(Text.of(abstractPlayer.getLang().getErrors().getLoginExist()));
+        if (Sponge.getServer().getPlayer(player.getName()).isPresent()) {
+            event.setMessage(Text.of(player.getLang().getErrors().getLoginExist()));
             event.setCancelled(true);
             return;
         }
-        String canLogin = SodionAuthCore.instance.canLogin(abstractPlayer);
-        if (canLogin != null) {
-            event.setMessage(Text.of(canLogin));
-            event.setCancelled(true);
-            return;
+
+        if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
+            Service.auth.logged_in.remove(player.getUniqueId());
         }
-        SodionAuthCore.instance.canJoinAsync(abstractPlayer).then(result -> {
-            if (result != null) {
-                abstractPlayer.kick(result);
-            }
-        });
+
+        CanJoinEvent canJoinEvent = new CanJoinEvent(player);
+        if (!canJoinEvent.syncPost()) {
+            player.kick(canJoinEvent.getMessage());
+        }
     }
 
     @Override
