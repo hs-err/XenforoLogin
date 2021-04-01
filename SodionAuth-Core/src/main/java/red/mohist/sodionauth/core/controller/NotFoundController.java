@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow'
-}
+package red.mohist.sodionauth.core.controller;
 
-repositories {
-    mavenCentral()
-}
+import com.google.gson.JsonElement;
+import io.netty.handler.codec.http.FullHttpRequest;
 
-dependencies {
-    implementation project(":SodionAuth-Core")
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
-    implementation 'org.apache.logging.log4j:log4j-core:2.8.1'
-}
+import java.sql.SQLException;
 
-assemble.dependsOn(shadowJar)
-
-jar {
-    manifest {
-        attributes "Main-Class": "red.mohist.sodionauth.yggdrasilserver.YggdrasilServerLaunchWrapper"
+public class NotFoundController implements Controller {
+    @Override
+    public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
+        return null;
     }
-}
-
-shadowJar {
-    // relocate('org.apache.logging.log4j', 'red.mohist.sodionauth.yggdrasilserver.libs.log4j2')
 }

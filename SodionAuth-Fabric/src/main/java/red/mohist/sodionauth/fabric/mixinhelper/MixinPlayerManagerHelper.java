@@ -22,6 +22,9 @@ import net.minecraft.text.Text;
 import org.knownspace.minitask.ITask;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.CanJoinEvent;
+import red.mohist.sodionauth.core.events.player.JoinEvent;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.implementation.FabricPlainPlayer;
 
@@ -29,70 +32,26 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
 
 public class MixinPlayerManagerHelper {
-    @Deprecated
     public static void onCheckCanJoin(InetSocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
         if (cir.getReturnValue() != null) return;
         MixinLogger.logger.info("Checking if " + profile.getName() + " can join...");
         FabricPlainPlayer abstractPlayer = new FabricPlainPlayer(profile.getName(),
                 profile.getId(), address.getAddress());
-        if (!SodionAuthCore.instance.logged_in.containsKey(profile.getId())) {
-            String reason = SodionAuthCore.instance.canLogin(abstractPlayer);
-            if (reason != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
-                cir.setReturnValue(new LiteralText(reason));
+        if (!Service.auth.logged_in.containsKey(profile.getId())) {
+            CanJoinEvent canJoinEvent = new CanJoinEvent(abstractPlayer);
+            canJoinEvent.post();
+            if (canJoinEvent.isCancelled()) {
+                Service.auth.logged_in.remove(abstractPlayer.getUniqueId());
+                MixinLogger.logger.info(profile.getName() + " was refused to login: " + canJoinEvent.getMessage());
+                cir.setReturnValue(new LiteralText(canJoinEvent.getMessage()));
                 return;
             }
         }
 
 
-        String reason;
-        try {
-            reason = SodionAuthCore.instance.canJoinAsync(abstractPlayer).get();
-        } catch (InterruptedException | ExecutionException e) {
-            SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-            MixinLogger.logger.error("Error while authenticate " + profile.getName(), e);
-            throw new RuntimeException(e);
+        JoinEvent joinEvent = new JoinEvent(abstractPlayer);
+        if (!joinEvent.syncPost()) {
+            cir.setReturnValue(new LiteralText(joinEvent.getMessage()));
         }
-        if (reason != null) {
-            SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-            MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
-            cir.setReturnValue(new LiteralText(reason));
-        }
-    }
-
-    public static ITask<Void> onCheckCanJoinAsync(InetSocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {
-        if (cir.getReturnValue() != null) {
-            return SodionAuthCore.instance.getStartup().complete();
-        }
-        MixinLogger.logger.info("Checking if " + profile.getName() + " can join...");
-        FabricPlainPlayer abstractPlayer = new FabricPlainPlayer(profile.getName(),
-                profile.getId(), address.getAddress());
-        if (!SodionAuthCore.instance.logged_in.containsKey(profile.getId())) {
-            String reason = SodionAuthCore.instance.canLogin(abstractPlayer);
-            if (reason != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
-                cir.setReturnValue(new LiteralText(reason));
-                return SodionAuthCore.instance.getStartup().complete();
-            }
-        }
-
-
-        return SodionAuthCore.instance.canJoinAsync(abstractPlayer).thenWithException(future -> {
-            String reason;
-            try {
-                reason = future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                MixinLogger.logger.error("Error while authenticate " + profile.getName(), e);
-                throw new RuntimeException(e);
-            }
-            if (reason != null) {
-                SodionAuthCore.instance.logged_in.remove(abstractPlayer.getUniqueId());
-                MixinLogger.logger.info(profile.getName() + " was refused to login: " + reason);
-                cir.setReturnValue(new LiteralText(reason));
-            }
-        });
     }
 }

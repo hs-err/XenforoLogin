@@ -20,7 +20,10 @@ import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.ChatEvent;
+import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.data.Data;
@@ -38,7 +41,7 @@ public class MixinServerPlayNetworkHandlerHelper {
             }
             return;
         }
-        SodionAuthCore.instance.onChat(abstractPlayer, packet.getChatMessage());
+        new ChatEvent(abstractPlayer,packet.getChatMessage());
         ci.cancel();
     }
 
@@ -46,6 +49,6 @@ public class MixinServerPlayNetworkHandlerHelper {
         MixinLogger.logger.info("Restoring networkHandler to ServerPlayerEntity");
         AbstractPlayer abstractPlayer = new FabricPlayer(player);
         MixinLogger.logger.info("Calling onJoin for " + player.getName().asString());
-        SodionAuthCore.instance.onJoin(abstractPlayer);
+        new JoinEvent(abstractPlayer);
     }
 }

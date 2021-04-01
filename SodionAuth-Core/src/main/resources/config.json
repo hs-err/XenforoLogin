@@ -44,6 +44,7 @@
     "timeout": 3600
   },
   "yggdrasil": {
+    "enable": false,
     "server": {
       "port": 8080
     },

@@ -18,6 +18,7 @@ package red.mohist.sodionauth.core.dependency.classloader;
 
 import red.mohist.sodionauth.core.utils.Helper;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -69,10 +70,12 @@ public class ReflectionClassLoader {
     }
     public void addJarToClasspath(Path file) {
         try {
-            Helper.getLogger().info(file.toUri().toURL().toString());
-            this.addUrlMethod.invoke(this.classLoader, file.toUri().toURL());
-        } catch (IllegalAccessException | InvocationTargetException | MalformedURLException e) {
-            throw new RuntimeException(e);
+            Method u = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            u.setAccessible(true);
+            u.invoke(this.getClass().getClassLoader(),
+                    file.toUri().toURL());
+        }catch (Throwable e){
+            e.printStackTrace();
         }
     }
 }

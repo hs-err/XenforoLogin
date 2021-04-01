@@ -14,29 +14,7 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow'
-}
+package red.mohist.sodionauth.core.events;
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation project(":SodionAuth-Core")
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
-    implementation 'org.apache.logging.log4j:log4j-core:2.8.1'
-}
-
-assemble.dependsOn(shadowJar)
-
-jar {
-    manifest {
-        attributes "Main-Class": "red.mohist.sodionauth.yggdrasilserver.YggdrasilServerLaunchWrapper"
-    }
-}
-
-shadowJar {
-    // relocate('org.apache.logging.log4j', 'red.mohist.sodionauth.yggdrasilserver.libs.log4j2')
+public class TickEvent extends Event{
 }

@@ -388,10 +388,19 @@ public class MainConfiguration {
     }
 
     public static class YggdrasilBean {
+        private Boolean enable;
         private ServerBean server;
         private TokenBean token;
         private CoreBean core;
         private RatelimitBean ratelimit;
+
+        public Boolean getEnable(Boolean def) {
+            return getEnable() == null ? def : getEnable();
+        }
+
+        public Boolean getEnable() {
+            return enable != null ? enable : Config.fallback.yggdrasil.enable;
+        }
 
         public ServerBean getServer(ServerBean def) {
             return getServer() == null ? def : getServer();

@@ -93,8 +93,6 @@ public class YggdrasilServerEntry {
             }
         });
         new SodionAuthCore(new YggdrasilServerLoader());
-        YggdrasilServerCore server = new YggdrasilServerCore();
-        server.start();
     }
 
 }

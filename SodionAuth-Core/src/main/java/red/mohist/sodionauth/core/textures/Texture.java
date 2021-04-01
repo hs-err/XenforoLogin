@@ -14,29 +14,21 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow'
-}
+package red.mohist.sodionauth.core.textures;
 
-repositories {
-    mavenCentral()
-}
+import com.google.gson.Gson;
+import red.mohist.sodionauth.core.modules.Property;
+import red.mohist.sodionauth.core.modules.Textures;
 
-dependencies {
-    implementation project(":SodionAuth-Core")
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
-    implementation 'org.apache.logging.log4j:log4j-core:2.8.1'
-}
+import java.util.Base64;
 
-assemble.dependsOn(shadowJar)
-
-jar {
-    manifest {
-        attributes "Main-Class": "red.mohist.sodionauth.yggdrasilserver.YggdrasilServerLaunchWrapper"
+public abstract class Texture {
+    public Property getPropertie(String username) {
+        return new Property("textures",
+                Base64.getEncoder().encodeToString(
+                        new Gson().toJson(getTextures(username)).getBytes()
+                ));
     }
-}
 
-shadowJar {
-    // relocate('org.apache.logging.log4j', 'red.mohist.sodionauth.yggdrasilserver.libs.log4j2')
+    public abstract Textures getTextures(String username);
 }

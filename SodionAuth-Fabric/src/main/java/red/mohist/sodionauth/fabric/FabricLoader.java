@@ -29,6 +29,7 @@ import net.minecraft.world.level.ServerWorldProperties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -103,7 +104,7 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
     }
 
     public void onServerPreShutdown() {
-        core.onDisable();
+        new DownEvent().post();
     }
 
     @Override

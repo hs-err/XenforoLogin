@@ -42,11 +42,15 @@ import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -111,8 +115,6 @@ public class DependencyManager {
     }
 
     public static void checkDependencyMaven(String group, String name, String version, BooleanSupplier isPresent) {
-        if (isPresent.getAsBoolean())
-            return;
 
         File librariesPath = new File(Helper.getConfigPath("libraries"));
         librariesPath.mkdirs();

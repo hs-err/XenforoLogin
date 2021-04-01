@@ -18,6 +18,7 @@ package red.mohist.sodionauth.fabric.mixinhelper;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.implementation.FabricPlayer;
@@ -26,6 +27,6 @@ public class MixinClientConnectionHelper {
     public static void onBeforeDisconnect(ServerPlayerEntity player) {
         AbstractPlayer abstractPlayer = new FabricPlayer(player);
         MixinLogger.logger.info("Calling onRemovePlayer for " + player.getName().asString());
-        SodionAuthCore.instance.onQuit(abstractPlayer);
+        new QuitEvent(abstractPlayer).post();
     }
 }
