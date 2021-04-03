@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.provider;
 
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.implementation.PlainPlayer;
+import red.mohist.sodionauth.core.modules.PlainPlayer;
 import red.mohist.sodionauth.core.modules.Profile;
 import red.mohist.sodionauth.core.modules.Textures;
 import red.mohist.sodionauth.core.modules.User;

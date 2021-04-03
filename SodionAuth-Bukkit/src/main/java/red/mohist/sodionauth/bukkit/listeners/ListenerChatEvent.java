@@ -22,12 +22,23 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.events.player.ChatEvent;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.services.Service;
+import red.mohist.sodionauth.core.utils.Config;
 
 public class ListenerChatEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
+        AbstractPlayer player = new BukkitPlayer(event.getPlayer());
         if (!event.isCancelled()) {
-            event.setCancelled(new ChatEvent(new BukkitPlayer(event.getPlayer()), event.getMessage()).syncPost());
+            if (!Service.auth.needCancelled(player)) {
+                if (Config.security.getCancelChatAfterLogin(false)) {
+                    event.setCancelled(true);
+                }
+            }else{
+                event.setCancelled(true);
+                new ChatEvent(player,event.getMessage()).post();
+            }
         }
     }
 

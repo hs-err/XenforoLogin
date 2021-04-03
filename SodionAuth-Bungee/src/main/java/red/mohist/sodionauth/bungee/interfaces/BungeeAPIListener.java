@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
+package red.mohist.sodionauth.bungee.interfaces;
+
+
+import net.md_5.bungee.api.plugin.Listener;
+
+public interface BungeeAPIListener extends Listener {
+
+    void eventClass();
+
+    default boolean isAvailable() {
+        try {
+            eventClass();
+        } catch (NoClassDefFoundError e) {
+            return false;
+        }
+        return true;
+    }
+
 }

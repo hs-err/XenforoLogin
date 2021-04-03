@@ -37,10 +37,10 @@ public class ChatListener implements SpongeAPIListener {
                 player.sendMessage(player.getLang().getLoggedIn());
                 event.setCancelled(true);
             }
-            return;
+        }else {
+            event.setCancelled(true);
+            new ChatEvent(player, event.getRawMessage().toPlainSingle()).post();
         }
-        event.setCancelled(true);
-        new ChatEvent(player,event.getRawMessage().toPlainSingle()).post();
     }
 
     @Override

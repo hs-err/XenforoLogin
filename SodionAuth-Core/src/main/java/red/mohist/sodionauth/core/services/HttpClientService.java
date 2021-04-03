@@ -17,13 +17,13 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
+import red.mohist.sodionauth.libs.http.client.methods.HttpUriRequest;
+import red.mohist.sodionauth.libs.http.impl.client.CloseableHttpClient;
+import red.mohist.sodionauth.libs.http.impl.client.HttpClientBuilder;
 
 import java.io.IOException;
 

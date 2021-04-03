@@ -19,12 +19,16 @@ package red.mohist.sodionauth.sponge;
 import com.google.inject.Inject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
+import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.network.ChannelBuf;
+import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -32,6 +36,7 @@ import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
 import red.mohist.sodionauth.core.events.DownEvent;
+import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.interfaces.LogProvider;
 import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -47,6 +52,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -95,6 +101,13 @@ public class SpongeLoader implements PlatformAdapter {
 
             sodionAuthCore = new SodionAuthCore(this);
 
+            Sponge.getChannelRegistrar().getOrCreateRaw(this,"sodionauth:bungee")
+                    .addListener(Platform.Type.CLIENT,(data, connection, side) -> {
+                        Helper.getLogger().info("getMessage "
+                                + new String(data.readByteArray(),StandardCharsets.UTF_8));
+                        Sponge.getChannelRegistrar().getOrCreateRaw(this,"sodionauth:bungee")
+                                .sendTo(((PlayerConnection)connection).getPlayer(),channelBuf -> channelBuf.writeByteArray("发送的消息".getBytes(StandardCharsets.UTF_8)) );
+                    });
 
             {
                 int unavailableCount = 0;
@@ -122,8 +135,12 @@ public class SpongeLoader implements PlatformAdapter {
                     Helper.getLogger().warn("Error count: " + unavailableCount);
                 }
             }
+            Sponge.getScheduler()
+                    .createTaskBuilder()
+                    .execute(()->{new TickEvent().post();})
+                    .intervalTicks(1).submit(this);
 
-        } catch (IOException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             logger.warn("SodionAuth load fail.");
             Sponge.getServer().shutdown(Text.of("SodionAuth load fail."));
@@ -149,7 +166,6 @@ public class SpongeLoader implements PlatformAdapter {
         }
         return allPlayers;
     }
-
     @Override
     public LocationInfo getSpawn(String worldName) {
         Optional<Location<World>> world = Sponge.getServer().getWorld(worldName).map(World::getSpawnLocation);

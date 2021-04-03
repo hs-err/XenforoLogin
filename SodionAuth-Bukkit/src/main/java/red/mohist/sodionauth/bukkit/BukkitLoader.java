@@ -78,7 +78,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             registerListeners();
 
             Bukkit.getScheduler().runTaskTimer(this,()->{new TickEvent().post();},0,1);
-        } catch (IOException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             getLogger().warning("SodionAuth load fail.");
             getServer().shutdown();

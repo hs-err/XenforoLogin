@@ -50,48 +50,6 @@ public class YggdrasilServerEntry {
                 logger.warn(info, exception);
             }
         });
-        DependencyManager.checkDependencyMaven("io.netty", "netty-all", "4.1.50.Final", () -> {
-            try {
-                Class.forName("io.netty.util.NettyRuntime");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        /*
-        DependencyManager.checkDependencyMaven("com.google.code.gson", "gson", "2.8.6", () -> {
-            try {
-                Class.forName("com.google.gson.Gson");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        DependencyManager.checkDependencyMaven("com.google.guava", "guava", "29.0-jre", () -> {
-            try {
-                Class.forName("com.google.common.base.Preconditions");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        */
-        DependencyManager.checkDependencyMaven("com.blinkfox", "zealot", "1.3.1", () -> {
-            try {
-                Class.forName("com.blinkfox.zealot.core.Zealot");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-        DependencyManager.checkDependencyMaven("org.apache.logging.log4j", "log4j-slf4j-impl", "2.8.1", () -> {
-            try {
-                Class.forName("org.apache.logging.slf4j.Log4jLoggerFactory");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
         new SodionAuthCore(new YggdrasilServerLoader());
     }
 

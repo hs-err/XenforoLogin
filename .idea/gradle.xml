@@ -13,8 +13,10 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/SodionAuth-Bukkit" />
+            <option value="$PROJECT_DIR$/SodionAuth-Bungee" />
             <option value="$PROJECT_DIR$/SodionAuth-Core" />
             <option value="$PROJECT_DIR$/SodionAuth-Fabric" />
+            <option value="$PROJECT_DIR$/SodionAuth-Libs" />
             <option value="$PROJECT_DIR$/SodionAuth-Sponge" />
             <option value="$PROJECT_DIR$/SodionAuth-YggdrasilServer" />
           </set>

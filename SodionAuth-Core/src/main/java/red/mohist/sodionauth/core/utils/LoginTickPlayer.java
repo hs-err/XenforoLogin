@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 
 public class LoginTickPlayer {
 
-    int calledTimes;
+    int calledTimes=-1;
     static final int showTipTime = Config.security.getShowTipsTime();
     int loginTimeout = Config.security.getMaxLoginTime();
     @Nonnull
@@ -41,23 +41,22 @@ public class LoginTickPlayer {
         calledTimes++;
         //Helper.getLogger().info("sss");
         if (calledTimes%20 == 0
-                && !Service.auth.logged_in.containsKey(player.getUniqueId())) {
+                && (!player.isOnline() || !Service.auth.needCancelled(player))) {
+            return TickResult.DONE;
+        }
+        if (calledTimes%20 == 0
+                && !Service.auth.logged_in.containsKey(player.getUniqueId())) { ;
             Helper.getLogger().info("Player " +player.getName()+" haven't been checked.");
-            return TickResult.CONTINUE;
+            return TickResult.DONE;
         }
         if (calledTimes/20 > loginTimeout
                 && Service.auth.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
             player.kick(player.getLang().getErrors().getTimeOut());
             return TickResult.DONE;
         }
-        if (calledTimes%20 == 0
-            && !player.isOnline() || !Service.auth.needCancelled(player)) {
-            return TickResult.DONE;
-        }
         if(calledTimes%((showTipTime*20))==0) {
             Service.auth.sendTip(player);
         }
-        SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         return TickResult.CONTINUE;
     }
 

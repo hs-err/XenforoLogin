@@ -24,10 +24,6 @@ import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
-import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class SodionAuthCore {
@@ -42,6 +38,7 @@ public final class SodionAuthCore {
             api=platformAdapter;
 
             Helper.getLogger().info("Initializing basic services...");
+            /**
             DependencyManager.checkDependencyMaven("org.mindrot", "jbcrypt", "0.4", () -> {
                 try {
                     Class.forName("org.mindrot.jbcrypt.BCrypt");
@@ -90,23 +87,6 @@ public final class SodionAuthCore {
                     return false;
                 }
             });
-
-            DependencyManager.checkDependencyMaven("com.google.code.gson", "gson", "2.8.6", () -> {
-                try {
-                    Class.forName("com.google.gson.Gson");
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
-            });
-            DependencyManager.checkDependencyMaven("com.google.guava", "guava", "29.0-jre", () -> {
-                try {
-                    Class.forName("com.google.common.base.Preconditions");
-                    return true;
-                } catch (Exception e) {
-                    return false;
-                }
-            });
             DependencyManager.checkDependencyMaven("com.blinkfox", "zealot", "1.3.1", () -> {
                 try {
                     Class.forName("com.blinkfox.zealot.core.Zealot");
@@ -123,7 +103,7 @@ public final class SodionAuthCore {
                     return false;
                 }
             });
-
+             **/
             isEnabled.set(true);
             DependencyManager.checkForSQLite();
 

@@ -16,6 +16,8 @@
 
 package red.mohist.sodionauth.core.modules;
 
+import red.mohist.sodionauth.core.utils.Helper;
+
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.UUID;
@@ -23,6 +25,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlainPlayer extends AbstractPlayer {
 
+    public PlainPlayer(String name){
+        super(name, Helper.getUuidFromName(name),InetAddress.getLoopbackAddress());
+    }
     public PlainPlayer(String name, UUID uuid, InetAddress address) {
         super(name, uuid, address);
     }

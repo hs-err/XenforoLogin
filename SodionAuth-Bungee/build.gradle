@@ -1,0 +1,21 @@
+plugins {
+    id 'war'
+    id 'com.github.johnrengelman.shadow'
+}
+
+dependencies {
+    compile group: 'net.md-5', name: 'bungeecord-api', version: '1.8-SNAPSHOT'
+    compileOnly 'org.reflections:reflections:0.9.12'
+    implementation project(":SodionAuth-Core")
+
+}
+processResources {
+    expand(version: version)
+}
+
+shadowJar {
+    dependencies {
+    }
+}
+
+assemble.dependsOn(shadowJar)

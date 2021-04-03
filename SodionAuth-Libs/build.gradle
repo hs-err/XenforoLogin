@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+group 'red.mohist.sodionauth'
+version '2.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    compile group: 'org.apache.maven.resolver', name: 'maven-resolver-impl', version: '1.6.1'
+    compile group: 'org.apache.maven.resolver', name: 'maven-resolver-connector-basic', version: '1.6.1'
+    compile group: 'org.apache.maven.resolver', name: 'maven-resolver-transport-http', version: '1.6.1'
+    compile group: 'org.apache.maven', name: 'maven-resolver-provider', version: '3.6.3'
+    compile 'com.github.KnownSpace:MiniTask:1.0.2-preview'
+    compile 'com.google.code.gson:gson:2.8.6'
+    compile 'com.google.guava:guava:29.0-jre'
+
+    compile 'org.reflections:reflections:0.9.12'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'com.maxmind.geoip2:geoip2:2.14.0'
+    compile 'org.mindrot:jbcrypt:0.4'
+    compile 'io.netty:netty-all:4.1.50.Final'
+    compile 'com.blinkfox:zealot:1.3.1'
+    compile 'org.apache.httpcomponents:fluent-hc:4.5.11'
+}
+assemble.dependsOn(shadowJar)
+test {
+    useJUnitPlatform()
+}
+shadowJar {
+    relocate('org.apache.maven', 'red.mohist.sodionauth.libs.maven')
+    relocate('org.apache.http','red.mohist.sodionauth.libs.http')
+    relocate('org.apache.commons','red.mohist.sodionauth.libs.commons')
+}

@@ -35,7 +35,6 @@ public class LoginTicker {
 
     @Subscribe()
     public static void onTick(TickEvent tickEvent) {
-        //Helper.getLogger().info("bbb");
         tickers.removeIf(current -> current.tick() == LoginTickPlayer.TickResult.DONE);
     }
 }
