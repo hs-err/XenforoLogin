@@ -17,7 +17,7 @@
 package red.mohist.sodionauth.core.modules;
 
 
-import red.mohist.sodionauth.core.YggdrasilServerCore;
+import red.mohist.sodionauth.core.http.YggdrasilServerCore;
 
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;

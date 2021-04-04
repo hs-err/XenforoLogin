@@ -29,10 +29,7 @@ import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.net.InetAddress;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class BukkitPlayer extends AbstractPlayer {
@@ -59,6 +56,16 @@ public class BukkitPlayer extends AbstractPlayer {
     @Override
     public void sendMessage(String message) {
         handle.sendMessage(message);
+    }
+
+    @Override
+    public void sendClientData(String channel, byte[] data) {
+        handle.sendPluginMessage(BukkitLoader.instance,channel,data);
+    }
+
+    @Override
+    public void sendServerData(String channel, byte[] data) {
+        //
     }
 
     @Override

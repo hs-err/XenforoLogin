@@ -19,8 +19,7 @@ package red.mohist.sodionauth.yggdrasilserver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.dependency.DependencyManager;
-import red.mohist.sodionauth.core.interfaces.LogProvider;
+import red.mohist.sodionauth.core.modules.LogProvider;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class YggdrasilServerEntry {

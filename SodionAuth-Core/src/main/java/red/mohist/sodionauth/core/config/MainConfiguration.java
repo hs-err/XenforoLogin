@@ -25,6 +25,7 @@ public class MainConfiguration {
 
     private String defaultLang;
     private ApiBean api;
+    private BungeeBean bungee;
     private DependenciesBean dependencies;
     private SessionBean session;
     private YggdrasilBean yggdrasil;
@@ -43,6 +44,10 @@ public class MainConfiguration {
 
     public ApiBean getApi() {
         return api != null ? api : Config.fallback.api;
+    }
+
+    public BungeeBean getBungee() {
+        return bungee != null ? bungee : Config.fallback.bungee;
     }
 
     public SessionBean getSession() {
@@ -363,6 +368,27 @@ public class MainConfiguration {
 
         public String getMavenRepository() {
             return mavenRepository != null ? mavenRepository : Config.fallback.dependencies.mavenRepository;
+        }
+    }
+
+    public static class BungeeBean {
+        private String clientKey;
+        private String serverKey;
+
+        public String getClientKey(String def){
+            return getClientKey() == null ? def : getClientKey();
+        }
+
+        public String getClientKey(){
+            return clientKey != null ? clientKey : Config.fallback.bungee.clientKey;
+        }
+
+        public String getServerKey(String def){
+            return getServerKey() == null ? def : getServerKey();
+        }
+
+        public String getServerKey(){
+            return serverKey != null ? serverKey : Config.fallback.bungee.serverKey;
         }
     }
 

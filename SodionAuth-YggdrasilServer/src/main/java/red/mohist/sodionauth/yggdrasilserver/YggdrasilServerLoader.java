@@ -16,7 +16,7 @@
 
 package red.mohist.sodionauth.yggdrasilserver;
 
-import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 
@@ -24,6 +24,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class YggdrasilServerLoader implements PlatformAdapter {
+
+    @Override
+    public void registerPluginMessageChannel(String channel) {
+
+    }
 
     @Override
     public void shutdown() {

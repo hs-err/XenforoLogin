@@ -27,7 +27,7 @@ public class Service {
     public static HttpClientService httpClient = new HttpClientService();
     public static AuthService auth = new AuthService();
     public static SessionService session = new SessionService();
-
+    public static ProxyLoginService proxyLogin = new ProxyLoginService();
     public Service() {
         eventBus.register(configure)
                 .register(SodionAuthCore.instance)
@@ -36,7 +36,8 @@ public class Service {
                 .register(httpClient)
                 .register(auth)
                 .register(session)
-                .register(threadPool);
+                .register(threadPool)
+                .register(proxyLogin);
         if (!new BootEvent().syncPost()) {
             new DownEvent().post();
             SodionAuthCore.instance.loadFail();

@@ -28,6 +28,7 @@ public class Config {
     public static MainConfiguration fallback;
     public static String defaultLang;
     public static MainConfiguration.ApiBean api;
+    public static MainConfiguration.BungeeBean bungee;
     public static MainConfiguration.DependenciesBean dependencies;
     public static MainConfiguration.SessionBean session;
     public static MainConfiguration.YggdrasilBean yggdrasil;
@@ -53,6 +54,7 @@ public class Config {
 
         defaultLang = instance.getDefaultLang();
         api = instance.getApi();
+        bungee = instance.getBungee();
         dependencies = instance.getDependencies();
         session = instance.getSession();
         yggdrasil = instance.getYggdrasil();

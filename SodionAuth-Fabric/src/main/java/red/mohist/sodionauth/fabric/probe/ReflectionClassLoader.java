@@ -33,7 +33,7 @@ public class ReflectionClassLoader {
         if (isJava9OrNewer()) {
             Helper.getLogger().info("It is safe to ignore any warning printed following this message " +
                     "starting with 'WARNING: An illegal reflective access operation has occurred, Illegal reflective " +
-                    "access by " + red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader.class.getName() + "'. This is intended, and will not have any impact on the " +
+                    "access by " + red.mohist.sodionauth.core.utils.dependency.classloader.ReflectionClassLoader.class.getName() + "'. This is intended, and will not have any impact on the " +
                     "operation of SodionAuth.");
         }
 
@@ -46,7 +46,7 @@ public class ReflectionClassLoader {
     }
 
     public ReflectionClassLoader() throws IllegalStateException {
-        ClassLoader classLoader = red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader.class.getClassLoader();
+        ClassLoader classLoader = red.mohist.sodionauth.core.utils.dependency.classloader.ReflectionClassLoader.class.getClassLoader();
         if (classLoader.getClass().getName().startsWith("net.fabricmc.loader")) // Fabric
             classLoader = classLoader.getParent();
         if (classLoader instanceof URLClassLoader) {

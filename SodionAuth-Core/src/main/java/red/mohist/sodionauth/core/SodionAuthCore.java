@@ -17,9 +17,10 @@
 package red.mohist.sodionauth.core;
 
 import com.google.common.eventbus.Subscribe;
-import red.mohist.sodionauth.core.dependency.DependencyManager;
+import red.mohist.sodionauth.core.utils.dependency.DependencyManager;
 import red.mohist.sodionauth.core.events.DownEvent;
-import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.http.YggdrasilServerCore;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;

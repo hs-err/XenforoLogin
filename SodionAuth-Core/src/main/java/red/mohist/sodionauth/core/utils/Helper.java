@@ -17,13 +17,17 @@
 package red.mohist.sodionauth.core.utils;
 
 import com.google.gson.JsonElement;
-import red.mohist.sodionauth.core.interfaces.LogProvider;
+import red.mohist.sodionauth.core.modules.LogProvider;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -63,6 +67,36 @@ public class Helper {
 
     public static String toStringUuid(String name) {
         return toStringUuid(getUuidFromName(name));
+    }
+
+    public static String readBuffer(ByteBuffer buffer,int length){
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            builder.append(buffer.getChar());
+        }
+        return builder.toString();
+    }
+    public static void putBuffer(ByteBuffer buffer,int length,String str){
+        for (int i = 0; i < length; i++) {
+            buffer.putChar(str.charAt(i));
+        }
+    }
+
+    public static byte[] merge(byte[] a,byte[] b){
+        byte[] c= Arrays.copyOf(a,a.length+b.length);
+        System.arraycopy(b, 0, c, a.length, b.length);
+        return c;
+    }
+
+    public static byte[] sha256(byte[] a){
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(a);
+            return md.digest();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void saveResource(String resourcePath, boolean replace) {

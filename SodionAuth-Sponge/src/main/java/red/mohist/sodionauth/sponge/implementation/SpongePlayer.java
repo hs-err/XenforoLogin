@@ -29,6 +29,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.network.ChannelBuf;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -71,6 +72,19 @@ public class SpongePlayer extends AbstractPlayer {
     public void sendMessage(String message) {
         checkHandle();
         handle.sendMessage(Text.of(message));
+    }
+
+    @Override
+    public void sendClientData(String channel,byte[] data) {
+        checkHandle();
+        Sponge.getChannelRegistrar()
+                .getOrCreateRaw(this,channel)
+                .sendTo(handle, channelBuf -> channelBuf.writeBytes(data));
+    }
+
+    @Override
+    public void sendServerData(String channel, byte[] data) {
+        //
     }
 
     @Override

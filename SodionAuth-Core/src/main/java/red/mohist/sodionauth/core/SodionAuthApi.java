@@ -28,17 +28,12 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public final class SodionAuthApi {
-    @Deprecated
     public static void login(AbstractPlayer player) throws AuthenticatedException {
         try {
-            Service.auth.loginAsync(player).get();
+            login(player);
         } catch (Throwable e) {
             throw new AuthenticatedException();
         }
-    }
-
-    public static ITask<Void> loginAsync(AbstractPlayer player) {
-        return Service.auth.loginAsync(player);
     }
 
     public static boolean isLogin(AbstractPlayer player) {

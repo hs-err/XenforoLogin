@@ -19,6 +19,7 @@ package red.mohist.sodionauth.bukkit.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
+import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
@@ -28,6 +29,8 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
 
+import java.nio.charset.StandardCharsets;
+
 public class ListenerPlayerJoinEvent implements BukkitAPIListener {
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -36,6 +39,7 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
         if (!SodionAuthCore.instance.isEnabled()) {
             event.getPlayer().kickPlayer(player.getLang().getErrors().getServer());
         }
+
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
 
@@ -50,7 +54,7 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
         if (!joinEvent.syncPost()) {
             player.kick(joinEvent.getMessage());
         }
-        event.setJoinMessage(null);
+        //event.setJoinMessage(null);
     }
 
     @Override

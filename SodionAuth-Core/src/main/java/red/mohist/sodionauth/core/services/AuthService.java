@@ -26,10 +26,7 @@ import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.ResultType;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.events.BootEvent;
-import red.mohist.sodionauth.core.events.player.CanJoinEvent;
-import red.mohist.sodionauth.core.events.player.ChatEvent;
-import red.mohist.sodionauth.core.events.player.JoinEvent;
-import red.mohist.sodionauth.core.events.player.QuitEvent;
+import red.mohist.sodionauth.core.events.player.*;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
@@ -268,7 +265,7 @@ public class AuthService {
                     ResultSet rs = pps.executeQuery();
                     if (rs.next()) {
                         player.sendMessage(player.getLang().getSession());
-                        loginAsync(player);
+                        login(player);
                     }
                 }
             } catch (Throwable e) {
@@ -278,16 +275,21 @@ public class AuthService {
         });
     }
 
-    public ITask<Void> loginAsync(AbstractPlayer player) {
-        return Service.threadPool.dbUniqueFlag.lock().then(() -> {
-            try {
-                // check if already login
-                if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
-                        .equals(StatusType.LOGGED_IN)) {
-                    return;
-                }
-                Service.auth.logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
+    public void login(AbstractPlayer player){
+        // check if already login
+        if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
+                .equals(StatusType.LOGGED_IN)) {
+            return;
+        }
+        Service.auth.logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
+        new LoginEvent(player).post();
+    }
 
+    @Subscribe
+    public void loginAsync(LoginEvent event) {
+        Service.threadPool.dbUniqueFlag.lock().then(() -> {
+            AbstractPlayer player = event.getPlayer();
+            try {
                 // restore playerInfo
                 try {
                     PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM last_info WHERE uuid=? LIMIT 1;");

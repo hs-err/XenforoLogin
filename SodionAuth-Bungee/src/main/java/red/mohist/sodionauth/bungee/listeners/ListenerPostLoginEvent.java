@@ -27,16 +27,10 @@ import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
-import red.mohist.sodionauth.core.utils.Helper;
-
-import java.nio.charset.StandardCharsets;
-
 public class ListenerPostLoginEvent implements BungeeAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPostLoginEvent(PostLoginEvent event){
-        Helper.getLogger().info("oooooooooooo");
         ProxiedPlayer bungeePlayer = event.getPlayer();
-        bungeePlayer.sendData("sodionauth:bungee", ":SodionAuth-Bungee".getBytes(StandardCharsets.UTF_8));
         AbstractPlayer player = new BungeePlayer(bungeePlayer);
         if (!SodionAuthCore.instance.isEnabled()) {
             player.kick(player.getLang().getErrors().getServer());

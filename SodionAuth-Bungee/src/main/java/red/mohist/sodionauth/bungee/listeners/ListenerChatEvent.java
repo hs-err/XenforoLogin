@@ -22,6 +22,7 @@ import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import net.md_5.bungee.protocol.packet.PluginMessage;
 import red.mohist.sodionauth.bungee.implementation.BungeePlayer;
 import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;

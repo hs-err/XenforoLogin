@@ -38,6 +38,16 @@ public class PlainPlayer extends AbstractPlayer {
     }
 
     @Override
+    public void sendServerData(String channel, byte[] data) {
+        //
+    }
+
+    @Override
+    public void sendClientData(String channel, byte[] data) {
+        //
+    }
+
+    @Override
     public CompletableFuture<Boolean> teleport(LocationInfo location) {
         return null;
     }

@@ -17,15 +17,22 @@
 package red.mohist.sodionauth.core.enums;
 
 public enum StatusType {
-    NEED_CHECK, NEED_LOGIN, NEED_REGISTER_EMAIL, NEED_REGISTER_PASSWORD, NEED_REGISTER_CONFIRM, LOGGED_IN, HANDLE;
-    public String email;
-    public String password;
+    NEED_CHECK,
+    NEED_LOGIN,
+    NEED_REGISTER_EMAIL,
+    NEED_REGISTER_PASSWORD,
+    NEED_REGISTER_CONFIRM,
+    LOGGED_IN,
+    HANDLE,
+    PROXY_HANDLE;
 
+    public String email;
     public StatusType setEmail(String t) {
         email = t;
         return this;
     }
 
+    public String password;
     public StatusType setPassword(String t) {
         password = t;
         return this;

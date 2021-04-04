@@ -30,8 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
-import red.mohist.sodionauth.core.interfaces.LogProvider;
-import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.LogProvider;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -105,6 +105,11 @@ public class FabricLoader implements ModInitializer, PlatformAdapter {
 
     public void onServerPreShutdown() {
         new DownEvent().post();
+    }
+
+    @Override
+    public void registerPluginMessageChannel(String channel) {
+        //
     }
 
     @Override

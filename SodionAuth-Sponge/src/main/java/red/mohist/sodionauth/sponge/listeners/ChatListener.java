@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.sponge.listeners;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;

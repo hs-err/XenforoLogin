@@ -24,17 +24,17 @@ import org.reflections.Reflections;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.TickEvent;
-import red.mohist.sodionauth.core.interfaces.LogProvider;
-import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.LogProvider;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.FoodInfo;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
-import java.io.IOException;
 import java.util.*;
 
 public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
@@ -125,6 +125,16 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
                 Helper.getLogger().warn("Error count: " + unavailableCount);
             }
         }
+    }
+
+    @Override
+    public void registerPluginMessageChannel(String pChannel) {
+        getServer().getMessenger()
+                .registerIncomingPluginChannel(this, pChannel, (channel, player, message) -> {
+                    new ClientMessageEvent(pChannel,message,new BukkitPlayer(player)).post();
+                });
+        getServer().getMessenger()
+                .registerOutgoingPluginChannel(this, pChannel);
     }
 
     @Override

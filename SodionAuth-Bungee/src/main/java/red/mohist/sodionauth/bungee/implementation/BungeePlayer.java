@@ -22,6 +22,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import red.mohist.sodionauth.core.modules.*;
 
+import java.util.Arrays;
+
 public class BungeePlayer extends PlainPlayer {
     ProxiedPlayer player;
     public BungeePlayer(ProxiedPlayer player){
@@ -32,6 +34,16 @@ public class BungeePlayer extends PlainPlayer {
     @Override
     public void sendMessage(String message) {
         player.sendMessage(ChatMessageType.CHAT, TextComponent.fromLegacyText(message));
+    }
+
+    @Override
+    public void sendServerData(String channel, byte[] data) {
+        player.getServer().sendData(channel, data);
+    }
+
+    @Override
+    public void sendClientData(String channel, byte[] data) {
+        player.sendData(channel, data);
     }
 
     @Override

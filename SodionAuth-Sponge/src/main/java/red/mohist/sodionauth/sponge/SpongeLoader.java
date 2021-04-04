@@ -24,21 +24,19 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.SpongeEventFactory;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.network.ChannelBuf;
 import org.spongepowered.api.network.PlayerConnection;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.dependency.classloader.ReflectionClassLoader;
+import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.TickEvent;
-import red.mohist.sodionauth.core.interfaces.LogProvider;
-import red.mohist.sodionauth.core.interfaces.PlatformAdapter;
+import red.mohist.sodionauth.core.modules.LogProvider;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.FoodInfo;
 import red.mohist.sodionauth.core.modules.LocationInfo;
@@ -47,12 +45,6 @@ import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -101,14 +93,6 @@ public class SpongeLoader implements PlatformAdapter {
 
             sodionAuthCore = new SodionAuthCore(this);
 
-            Sponge.getChannelRegistrar().getOrCreateRaw(this,"sodionauth:bungee")
-                    .addListener(Platform.Type.CLIENT,(data, connection, side) -> {
-                        Helper.getLogger().info("getMessage "
-                                + new String(data.readByteArray(),StandardCharsets.UTF_8));
-                        Sponge.getChannelRegistrar().getOrCreateRaw(this,"sodionauth:bungee")
-                                .sendTo(((PlayerConnection)connection).getPlayer(),channelBuf -> channelBuf.writeByteArray("发送的消息".getBytes(StandardCharsets.UTF_8)) );
-                    });
-
             {
                 int unavailableCount = 0;
                 Set<Class<? extends SpongeAPIListener>> classes = new Reflections("red.mohist.sodionauth.sponge.listeners")
@@ -137,7 +121,9 @@ public class SpongeLoader implements PlatformAdapter {
             }
             Sponge.getScheduler()
                     .createTaskBuilder()
-                    .execute(()->{new TickEvent().post();})
+                    .execute(()->{
+                        new TickEvent().post();
+                    })
                     .intervalTicks(1).submit(this);
 
         } catch (Throwable e) {
@@ -150,6 +136,20 @@ public class SpongeLoader implements PlatformAdapter {
     @Listener
     public void onServerStop(GameStoppingServerEvent event) {
         new DownEvent().post();
+    }
+
+    @Override
+    public void registerPluginMessageChannel(String channel) {
+        Sponge.getChannelRegistrar().getOrCreateRaw(this,channel)
+                .addListener(Platform.Type.SERVER,(data, connection, side) -> {
+                    if(connection instanceof PlayerConnection) {
+                        new ClientMessageEvent(
+                                channel,
+                                data.readBytes(data.available()),
+                                new SpongePlayer(((PlayerConnection) connection).getPlayer())
+                        ).post();
+                    }
+                });
     }
 
     @Override

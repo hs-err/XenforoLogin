@@ -36,6 +36,10 @@
       "passwordHash": "BCrypt"
     }
   },
+  "bungee": {
+    "clientKey": "defaultKey",
+    "serverKey": "defaultKey"
+  },
   "dependencies": {
     "mavenRepository": "https://repo1.maven.org/maven2/"
   },

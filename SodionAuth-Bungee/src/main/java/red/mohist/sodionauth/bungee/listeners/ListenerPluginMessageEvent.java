@@ -16,17 +16,31 @@
 
 package red.mohist.sodionauth.bungee.listeners;
 
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.event.EventHandler;
+import red.mohist.sodionauth.bungee.implementation.BungeePlayer;
 import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
-import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
+import red.mohist.sodionauth.core.events.player.ServerMessageEvent;
 
-import java.nio.charset.StandardCharsets;
 
 public class ListenerPluginMessageEvent implements BungeeAPIListener {
     @EventHandler
     public void onPluginMessageEvent(PluginMessageEvent event){
-        Helper.getLogger().info("received "+event.getTag()+"  :  "+new String(event.getData(), StandardCharsets.UTF_8));
+        if(event.getSender() instanceof ProxiedPlayer) {
+            new ClientMessageEvent(
+                    event.getTag(),
+                    event.getData(),
+                    new BungeePlayer((ProxiedPlayer) event.getSender())).post();
+        }else if(event.getSender() instanceof Server
+            && event.getReceiver() instanceof ProxiedPlayer){
+            new ServerMessageEvent(
+                    event.getTag(),
+                    event.getData(),
+                    new BungeePlayer((ProxiedPlayer) event.getReceiver())).post();
+        }
     }
     @Override
     public void eventClass() {

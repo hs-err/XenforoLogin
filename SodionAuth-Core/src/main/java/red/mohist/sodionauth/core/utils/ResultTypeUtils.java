@@ -27,7 +27,7 @@ public class ResultTypeUtils {
         switch (resultType) {
             case OK:
                 if (resultType.isShouldLogin()) {
-                    Service.auth.loginAsync(player);
+                    Service.auth.login(player);
                 } else {
                     Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                     Service.auth.sendTip(player);
