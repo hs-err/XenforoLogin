@@ -16,12 +16,10 @@
 
 package red.mohist.sodionauth.sponge.listeners;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent.Chat;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.ChatEvent;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;

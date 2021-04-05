@@ -16,9 +16,6 @@
 
 package red.mohist.sodionauth.core.modules;
 
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.LocationInfo;
-
 import java.util.Collection;
 
 public interface PlatformAdapter {

@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.core.protection.implementations.antiproxies;
 
 import com.google.common.eventbus.Subscribe;
-import org.checkerframework.checker.units.qual.A;
 import org.reflections.Reflections;
 import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
@@ -29,7 +28,6 @@ import red.mohist.sodionauth.core.utils.Helper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProxySystems implements SecuritySystem {

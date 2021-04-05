@@ -41,9 +41,9 @@ import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.JavaScopes;
 import org.eclipse.aether.util.filter.DependencyFilterUtils;
-import red.mohist.sodionauth.core.utils.dependency.classloader.ReflectionClassLoader;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.dependency.classloader.ReflectionClassLoader;
 import red.mohist.sodionauth.libs.maven.repository.internal.MavenRepositorySystemUtils;
 
 import java.io.File;

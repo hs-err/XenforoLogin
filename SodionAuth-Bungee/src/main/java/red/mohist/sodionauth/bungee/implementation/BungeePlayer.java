@@ -17,12 +17,9 @@
 package red.mohist.sodionauth.bungee.implementation;
 
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import red.mohist.sodionauth.core.modules.*;
-
-import java.util.Arrays;
+import red.mohist.sodionauth.core.modules.PlainPlayer;
 
 public class BungeePlayer extends PlainPlayer {
     ProxiedPlayer player;

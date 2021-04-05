@@ -30,10 +30,10 @@ import red.mohist.sodionauth.libs.http.HttpEntity;
 import red.mohist.sodionauth.libs.http.client.ClientProtocolException;
 import red.mohist.sodionauth.libs.http.client.ResponseHandler;
 import red.mohist.sodionauth.libs.http.client.entity.UrlEncodedFormEntity;
+import red.mohist.sodionauth.libs.http.client.fluent.Form;
 import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
 import red.mohist.sodionauth.libs.http.client.methods.HttpPost;
 import red.mohist.sodionauth.libs.http.util.EntityUtils;
-import red.mohist.sodionauth.libs.http.client.fluent.Form;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;

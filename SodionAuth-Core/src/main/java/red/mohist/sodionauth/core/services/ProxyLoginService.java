@@ -28,7 +28,6 @@ import red.mohist.sodionauth.core.utils.channel.proxy.clientPacket.LoginSuccessP
 import red.mohist.sodionauth.core.utils.channel.proxy.serverPacket.ServerPacket;
 import red.mohist.sodionauth.core.utils.channel.proxy.serverPacket.ShakeTokenPacket;
 
-import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

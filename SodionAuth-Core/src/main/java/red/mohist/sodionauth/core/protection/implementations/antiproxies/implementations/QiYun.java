@@ -16,13 +16,13 @@
 
 package red.mohist.sodionauth.core.protection.implementations.antiproxies.implementations;
 
+import red.mohist.sodionauth.core.protection.implementations.antiproxies.ProxySystem;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.libs.http.HttpEntity;
 import red.mohist.sodionauth.libs.http.client.ResponseHandler;
 import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
 import red.mohist.sodionauth.libs.http.client.methods.HttpGet;
 import red.mohist.sodionauth.libs.http.util.EntityUtils;
-import red.mohist.sodionauth.core.protection.implementations.antiproxies.ProxySystem;
-import red.mohist.sodionauth.core.services.Service;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;

@@ -16,24 +16,17 @@
 
 package red.mohist.sodionauth.bungee.listeners;
 
-import net.md_5.bungee.api.connection.ConnectedPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.md_5.bungee.protocol.packet.PluginMessage;
 import red.mohist.sodionauth.bungee.implementation.BungeePlayer;
 import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
-import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.events.player.CanJoinEvent;
-import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-
-import java.nio.charset.StandardCharsets;
 
 public class ListenerChatEvent implements BungeeAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)

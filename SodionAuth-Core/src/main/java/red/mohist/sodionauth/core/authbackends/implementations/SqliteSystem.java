@@ -18,10 +18,10 @@ package red.mohist.sodionauth.core.authbackends.implementations;
 
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystem;
 import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.utils.hasher.HasherTool;
-import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.hasher.HasherTool;
+import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 
 import javax.annotation.Nonnull;
 import java.sql.*;

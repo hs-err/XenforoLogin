@@ -29,7 +29,10 @@ import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.net.InetAddress;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class BukkitPlayer extends AbstractPlayer {

@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core;
 
-import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;

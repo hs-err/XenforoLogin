@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.fabric.mixinhelper;
 
 import net.minecraft.server.network.ServerPlayerEntity;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.fabric.MixinLogger;

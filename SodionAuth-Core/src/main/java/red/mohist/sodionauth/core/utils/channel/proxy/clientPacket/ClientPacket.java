@@ -21,8 +21,6 @@ import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.channel.proxy.ProxyPacket;
 
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public abstract class ClientPacket extends ProxyPacket {

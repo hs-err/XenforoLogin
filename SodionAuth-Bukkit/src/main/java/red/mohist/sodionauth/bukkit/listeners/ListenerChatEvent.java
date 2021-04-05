@@ -19,16 +19,12 @@ package red.mohist.sodionauth.bukkit.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerChannelEvent;
-import red.mohist.sodionauth.bukkit.BukkitLoader;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.events.player.ChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
-
-import java.nio.charset.StandardCharsets;
 
 public class ListenerChatEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)

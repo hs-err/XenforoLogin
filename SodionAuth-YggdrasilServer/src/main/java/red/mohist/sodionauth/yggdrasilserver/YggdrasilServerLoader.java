@@ -16,9 +16,9 @@
 
 package red.mohist.sodionauth.yggdrasilserver;
 
-import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;

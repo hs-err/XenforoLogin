@@ -18,12 +18,8 @@ package red.mohist.sodionauth.core.utils.channel.proxy.serverPacket;
 
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.channel.proxy.BadSignException;
-import red.mohist.sodionauth.core.utils.channel.proxy.ProxyPacket;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class ShakeTokenPacket extends ServerPacket {
     public static final int id = 0;

@@ -16,14 +16,11 @@
 
 package red.mohist.sodionauth.sponge.listeners;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
-import org.spongepowered.api.network.PlayerConnection;
-import org.spongepowered.api.text.Text;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;

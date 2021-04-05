@@ -19,7 +19,6 @@ package red.mohist.sodionauth.fabric.mixinhelper;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.ChatEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;

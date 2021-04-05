@@ -37,7 +37,6 @@ processResources {
 
 shadowJar {
     dependencies {
-        exclude(dependency('com.google.guava::'))
     }
 }
 

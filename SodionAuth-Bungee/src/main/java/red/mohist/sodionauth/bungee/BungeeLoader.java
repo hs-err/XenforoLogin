@@ -24,10 +24,10 @@ import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.TickEvent;
-import red.mohist.sodionauth.core.modules.LogProvider;
-import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.LogProvider;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.Collection;

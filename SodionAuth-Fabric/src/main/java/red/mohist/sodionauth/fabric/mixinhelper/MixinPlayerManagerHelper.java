@@ -19,9 +19,7 @@ package red.mohist.sodionauth.fabric.mixinhelper;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import org.knownspace.minitask.ITask;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.services.Service;
@@ -29,7 +27,6 @@ import red.mohist.sodionauth.fabric.MixinLogger;
 import red.mohist.sodionauth.fabric.implementation.FabricPlainPlayer;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ExecutionException;
 
 public class MixinPlayerManagerHelper {
     public static void onCheckCanJoin(InetSocketAddress address, GameProfile profile, CallbackInfoReturnable<Text> cir) {

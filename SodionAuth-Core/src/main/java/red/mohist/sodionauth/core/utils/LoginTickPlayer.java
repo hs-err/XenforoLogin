@@ -16,8 +16,6 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;

@@ -20,10 +20,8 @@ import com.google.common.collect.Sets;
 import com.google.common.eventbus.Subscribe;
 import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.services.Service;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class LoginTicker {
 
