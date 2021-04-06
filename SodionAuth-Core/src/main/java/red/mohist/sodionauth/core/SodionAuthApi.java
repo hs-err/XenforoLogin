@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 public final class SodionAuthApi {
     public static void login(AbstractPlayer player) throws AuthenticatedException {
         try {
-            login(player);
+            Service.auth.login(player);
         } catch (Throwable e) {
             throw new AuthenticatedException();
         }
@@ -39,12 +39,12 @@ public final class SodionAuthApi {
         return !Service.auth.needCancelled(player);
     }
 
-    public static boolean register(AbstractPlayer player, String email, String password) throws ExecutionException, InterruptedException {
-        return Service.auth.registerAsync(player, email, password).get();
+    public static boolean register(AbstractPlayer player, String email, String password) {
+        throw new UnsupportedOperationException();
     }
 
-    public static boolean register(AbstractPlayer player, String password) throws ExecutionException, InterruptedException {
-        return Service.auth.registerAsync(player, null, password).get();
+    public static boolean register(AbstractPlayer player, String password) {
+        return Service.auth.registerSync(player, null, password);
     }
 
     public static boolean isRegistered(AbstractPlayer player) {

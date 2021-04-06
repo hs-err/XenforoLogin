@@ -331,13 +331,20 @@ public class AuthService {
     }
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
-        return Service.threadPool.startup.startTask(() ->{
-            return AuthBackendSystems.getCurrentSystem()
-                    .register(player, password, email).shouldLogin(true);
-        }).then((result)->{
-            return ResultTypeUtils.handle(player,result);
-        });
+        return Service.threadPool.startup.startTask(() ->
+                AuthBackendSystems.getCurrentSystem()
+                        .register(player, password, email).shouldLogin(true))
+                .then((result)->{
+                    return ResultTypeUtils.handle(player,result);
+                });
     }
+
+    public boolean registerSync(AbstractPlayer player, String email, String password){
+        return ResultTypeUtils.handle(player,
+                AuthBackendSystems.getCurrentSystem()
+                        .register(player, password, email).shouldLogin(true));
+    }
+
     public boolean isEmail(String email) {
         if (null == email || "".equals(email)) {
             return false;
