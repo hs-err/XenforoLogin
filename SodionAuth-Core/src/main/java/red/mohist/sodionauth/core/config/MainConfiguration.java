@@ -85,6 +85,7 @@ public class MainConfiguration {
         private WebBean web;
         private SqliteBean sqlite;
         private MysqlBean mysql;
+        private DatabaseBean database;
 
         public String getSystem(String def) {
             return getSystem() == null ? def : getSystem();
@@ -134,6 +135,15 @@ public class MainConfiguration {
             return mysql != null ? mysql : Config.fallback.api.mysql;
         }
 
+        public DatabaseBean getDatabase(DatabaseBean def) {
+            return getDatabase() == null ? def : getDatabase();
+        }
+
+        public DatabaseBean getDatabase() {
+            return database != null ? database : Config.fallback.api.database;
+        }
+
+
         public static class XenforoBean {
             private String url;
             private String key;
@@ -179,13 +189,6 @@ public class MainConfiguration {
         public static class SqliteBean {
             private String path;
             private Boolean absolute;
-            private String tableName;
-            private String emailField;
-            private String usernameField;
-            private String passwordField;
-            private String saltField;
-            private Integer saltLength;
-            private String passwordHash;
 
             public String getPath(String def) {
                 return getPath() == null ? def : getPath();
@@ -202,62 +205,6 @@ public class MainConfiguration {
             public Boolean getAbsolute() {
                 return absolute != null ? absolute : Config.fallback.api.sqlite.absolute;
             }
-
-            public String getTableName(String def) {
-                return getTableName() == null ? def : getTableName();
-            }
-
-            public String getTableName() {
-                return tableName != null ? tableName : Config.fallback.api.sqlite.tableName;
-            }
-
-            public String getEmailField(String def) {
-                return getEmailField() == null ? def : getEmailField();
-            }
-
-            public String getEmailField() {
-                return emailField != null ? emailField : Config.fallback.api.sqlite.emailField;
-            }
-
-            public String getUsernameField(String def) {
-                return getUsernameField() == null ? def : getUsernameField();
-            }
-
-            public String getUsernameField() {
-                return usernameField != null ? usernameField : Config.fallback.api.sqlite.usernameField;
-            }
-
-            public String getPasswordField(String def) {
-                return getPasswordField() == null ? def : getPasswordField();
-            }
-
-            public String getPasswordField() {
-                return passwordField != null ? passwordField : Config.fallback.api.sqlite.passwordField;
-            }
-
-            public String getSaltField(String def) {
-                return getSaltField() == null ? def : getSaltField();
-            }
-
-            public String getSaltField() {
-                return saltField != null ? saltField : Config.fallback.api.sqlite.saltField;
-            }
-
-            public Integer getSaltLength(Integer def) {
-                return getSaltLength() == null ? def : getSaltLength();
-            }
-
-            public Integer getSaltLength() {
-                return saltLength != null ? saltLength : Config.fallback.api.sqlite.saltLength;
-            }
-
-            public String getPasswordHash(String def) {
-                return getPasswordHash() == null ? def : getPasswordHash();
-            }
-
-            public String getPasswordHash() {
-                return passwordHash != null ? passwordHash : Config.fallback.api.sqlite.passwordHash;
-            }
         }
 
         public static class MysqlBean {
@@ -265,13 +212,6 @@ public class MainConfiguration {
             private String username;
             private String password;
             private String database;
-            private String tableName;
-            private String emailField;
-            private String usernameField;
-            private String passwordField;
-            private String saltField;
-            private Integer saltLength;
-            private String passwordHash;
 
             public String getHost(String def) {
                 return getHost() == null ? def : getHost();
@@ -304,13 +244,23 @@ public class MainConfiguration {
             public String getDatabase() {
                 return database != null ? database : Config.fallback.api.mysql.database;
             }
+        }
+
+        public static class DatabaseBean {
+            private String tableName;
+            private String emailField;
+            private String usernameField;
+            private String passwordField;
+            private String saltField;
+            private Integer saltLength;
+            private String passwordHash;
 
             public String getTableName(String def) {
                 return getTableName() == null ? def : getTableName();
             }
 
             public String getTableName() {
-                return tableName != null ? tableName : Config.fallback.api.mysql.tableName;
+                return tableName != null ? tableName : Config.fallback.api.database.tableName;
             }
 
             public String getEmailField(String def) {
@@ -318,7 +268,7 @@ public class MainConfiguration {
             }
 
             public String getEmailField() {
-                return emailField != null ? emailField : Config.fallback.api.mysql.emailField;
+                return emailField != null ? emailField : Config.fallback.api.database.emailField;
             }
 
             public String getUsernameField(String def) {
@@ -326,7 +276,7 @@ public class MainConfiguration {
             }
 
             public String getUsernameField() {
-                return usernameField != null ? usernameField : Config.fallback.api.mysql.usernameField;
+                return usernameField != null ? usernameField : Config.fallback.api.database.usernameField;
             }
 
             public String getPasswordField(String def) {
@@ -334,7 +284,7 @@ public class MainConfiguration {
             }
 
             public String getPasswordField() {
-                return passwordField != null ? passwordField : Config.fallback.api.mysql.passwordField;
+                return passwordField != null ? passwordField : Config.fallback.api.database.passwordField;
             }
 
             public String getSaltField(String def) {
@@ -342,7 +292,7 @@ public class MainConfiguration {
             }
 
             public String getSaltField() {
-                return saltField != null ? saltField : Config.fallback.api.mysql.saltField;
+                return saltField != null ? saltField : Config.fallback.api.database.saltField;
             }
 
             public Integer getSaltLength(Integer def) {
@@ -350,7 +300,7 @@ public class MainConfiguration {
             }
 
             public Integer getSaltLength() {
-                return saltLength != null ? saltLength : Config.fallback.api.mysql.saltLength;
+                return saltLength != null ? saltLength : Config.fallback.api.database.saltLength;
             }
 
             public String getPasswordHash(String def) {
@@ -358,7 +308,7 @@ public class MainConfiguration {
             }
 
             public String getPasswordHash() {
-                return passwordHash != null ? passwordHash : Config.fallback.api.mysql.passwordHash;
+                return passwordHash != null ? passwordHash : Config.fallback.api.database.passwordHash;
             }
         }
     }

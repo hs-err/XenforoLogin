@@ -44,15 +44,6 @@ public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
         if (Bukkit.getPlayerExact(event.getName()) != null) {
             new Exception().printStackTrace();
             event.setKickMessage(player.getLang().getErrors().getLoginExist());
-            return;
-        }
-        if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
-            Helper.getLogger().warn("AsyncPlayerPreLoginEvent isn't active. It may cause some security problems.");
-            Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            CanJoinEvent canJoinEvent = new CanJoinEvent(player);
-            if (!canJoinEvent.syncPost()) {
-                event.disallow(PlayerPreLoginEvent.Result.KICK_WHITELIST, canJoinEvent.getMessage());
-            }
         }
     }
 

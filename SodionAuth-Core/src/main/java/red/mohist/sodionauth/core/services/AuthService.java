@@ -16,14 +16,14 @@
 
 package red.mohist.sodionauth.core.services;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import org.knownspace.minitask.ITask;
 import org.knownspace.minitask.locks.UniqueFlag;
 import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
-import red.mohist.sodionauth.core.enums.ResultType;
+import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.player.*;
@@ -34,7 +34,6 @@ import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
-import red.mohist.sodionauth.core.utils.ResultTypeUtils;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -44,8 +43,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class AuthService {
 
@@ -56,7 +53,7 @@ public class AuthService {
     @Subscribe
     public void onBoot(BootEvent event) throws IOException {
         Helper.getLogger().info("Initializing auth service...");
-        AuthBackendSystems.reloadConfig();
+
         spawn_location = SodionAuthCore.instance.api.getSpawn(SodionAuthCore.instance.api.getDefaultWorld());
         default_location = new LocationInfo(
                 Config.spawn.getWorld(SodionAuthCore.instance.api.getDefaultWorld()),
@@ -113,11 +110,17 @@ public class AuthService {
     }
 
     @Subscribe
-    public void onChat(ChatEvent event) {
+    public void onChat(PlayerChatEvent event) {
+        if(event.isCancelled()){
+           return;
+        }
+        event.setCancelled(true);
         AbstractPlayer player = event.getPlayer();
         String message = event.getMessage();
         StatusType status = Service.auth.logged_in.get(player.getUniqueId());
         switch (status) {
+            case LOGGED_IN:
+                event.setCancelled(false);
             case NEED_CHECK:
                 player.sendMessage(player.getLang().getNeedLogin());
                 break;
@@ -127,53 +130,27 @@ public class AuthService {
                     player.sendMessage(canLogin);
                     return;
                 }
-                Service.auth.logged_in.put(
-                        player.getUniqueId(), StatusType.HANDLE);
-                Service.threadPool.startup.startTask(() ->
-                        AuthBackendSystems.getCurrentSystem().login(player, message).shouldLogin(true))
-                        .then((result)->{
-                            ResultTypeUtils.handle(player,result);
-                        });
+                User user = User.getByName(player.getName());
+
+                if(user == null){
+                    if (Config.api.getAllowRegister(false)) {
+                        Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                    } else {
+                        player.kick(player.getLang().getErrors().getNoUser());
+                    }
+                }else if(!user.getName().equals(player.getName())){
+                    player.kick(player.getLang().getErrors().getNameIncorrect(
+                            ImmutableMap.of("correct",user.getName())));
+                }else if(user.verifyPassword(message)){
+                    Service.auth.login(player);
+                }else{
+                    player.kick(player.getLang().getErrors().getPassword());
+                }
                 break;
             case NEED_REGISTER_EMAIL:
-                if (isEmail(message)) {
-                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(message));
-                    sendTip(player);
-                } else {
-                    player.sendMessage(player.getLang().getErrors().getEmail());
-                }
-                break;
             case NEED_REGISTER_PASSWORD:
-                Service.auth.logged_in.put(
-                        player.getUniqueId(),
-                        StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(message));
-                sendTip(player);
-                break;
             case NEED_REGISTER_CONFIRM:
-                String canRegister = SecuritySystems.canRegister(player);
-                if (canRegister != null) {
-                    player.sendMessage(canRegister);
-                    return;
-                }
-                Service.auth.logged_in.put(
-                        player.getUniqueId(), StatusType.HANDLE);
-                if (message.equals(status.password)) {
-                    registerAsync(player, status.email, status.password).then((result)->{
-                        if(result){
-                            Service.auth.logged_in.put(
-                                    player.getUniqueId(), StatusType.LOGGED_IN);
-                        }else{
-                            Service.auth.logged_in.put(
-                                    player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                            sendTip(player);
-                        }
-                    });
-                } else {
-                    player.sendMessage(player.getLang().getErrors().getConfirm());
-                    Service.auth.logged_in.put(
-                            player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
-                    sendTip(player);
-                }
+                Service.register.playerRegister(player,status,message);
                 break;
             case HANDLE:
                 player.sendMessage(player.getLang().getErrors().getHandle());
@@ -213,27 +190,22 @@ public class AuthService {
             }
             Service.auth.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
 
-            ResultType resultType = AuthBackendSystems.getCurrentSystem()
-                    .join(player)
-                    .shouldLogin(false);
-            switch (resultType) {
-                case OK:
-                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
+            User user = User.getByName(player.getName());
+
+            if(user == null){
+                if (Config.api.getAllowRegister()) {
+                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
-                case ERROR_NAME:
-                    return player.getLang().getErrors().getNameIncorrect(
-                            resultType.getInheritedObject());
-                case NO_USER:
-                    if (Config.api.getAllowRegister()) {
-                        Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                        return null;
-                    } else {
-                        return player.getLang().getErrors().getNoUser();
-                    }
-                case UNKNOWN:
-                    return player.getLang().getErrors().getUnknown(resultType.getInheritedObject());
+                } else {
+                    return player.getLang().getErrors().getNoUser();
+                }
+            }else if(!user.getName().equals(player.getName())){
+                return player.getLang().getErrors().getNameIncorrect(
+                        ImmutableMap.of("correct",user.getName()));
+            }else{
+                Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
+                return null;
             }
-            return player.getLang().getErrors().getUnknown();
         }).then(result -> {
             if (result != null) {
                 event.setCancelled(result);
@@ -328,29 +300,5 @@ public class AuthService {
             }
             Service.threadPool.dbUniqueFlag.unlock();
         });
-    }
-
-    public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
-        return Service.threadPool.startup.startTask(() ->
-                AuthBackendSystems.getCurrentSystem()
-                        .register(player, password, email).shouldLogin(true))
-                .then((result)->{
-                    return ResultTypeUtils.handle(player,result);
-                });
-    }
-
-    public boolean registerSync(AbstractPlayer player, String email, String password){
-        return ResultTypeUtils.handle(player,
-                AuthBackendSystems.getCurrentSystem()
-                        .register(player, password, email).shouldLogin(true));
-    }
-
-    public boolean isEmail(String email) {
-        if (null == email || "".equals(email)) {
-            return false;
-        }
-        Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,10}");
-        Matcher m = p.matcher(email);
-        return m.matches();
     }
 }

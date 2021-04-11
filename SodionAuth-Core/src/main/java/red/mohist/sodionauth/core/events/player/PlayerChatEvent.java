@@ -20,12 +20,12 @@ import red.mohist.sodionauth.core.events.Cancellable;
 import red.mohist.sodionauth.core.events.Event;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
-public class ChatEvent extends Event implements Cancellable {
+public class PlayerChatEvent extends Event implements Cancellable {
     private final AbstractPlayer player;
     private final String message;
     private boolean cancel;
 
-    public ChatEvent(AbstractPlayer player, String messgae) {
+    public PlayerChatEvent(AbstractPlayer player, String messgae) {
         this.player = player;
         this.message = messgae;
     }

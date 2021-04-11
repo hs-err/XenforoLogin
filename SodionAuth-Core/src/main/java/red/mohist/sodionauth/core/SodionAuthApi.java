@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core;
 
-import red.mohist.sodionauth.core.authbackends.AuthBackendSystems;
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.PlainPlayer;
@@ -24,7 +23,6 @@ import red.mohist.sodionauth.core.services.Service;
 
 import java.net.InetAddress;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public final class SodionAuthApi {
     public static void login(AbstractPlayer player) throws AuthenticatedException {
@@ -44,40 +42,14 @@ public final class SodionAuthApi {
     }
 
     public static boolean register(AbstractPlayer player, String password) {
-        return Service.auth.registerSync(player, null, password);
+        return Service.register.registerSync(player, null, password);
     }
 
     public static boolean isRegistered(AbstractPlayer player) {
-        switch (Service.auth.logged_in.getOrDefault(player.getUniqueId(), null)) {
-            case LOGGED_IN:
-            case NEED_LOGIN:
-            case NEED_CHECK:
-                return true;
-            case NEED_REGISTER_EMAIL:
-            case NEED_REGISTER_PASSWORD:
-            case NEED_REGISTER_CONFIRM:
-                return false;
-        }
-        switch (AuthBackendSystems.getCurrentSystem()
-                .join(player)
-                .shouldLogin(false)) {
-            case OK:
-            case ERROR_NAME:
-                return true;
-            default:
-                return false;
-        }
+        return false;
     }
 
     public static boolean isRegistered(String playerName) {
-        switch (AuthBackendSystems.getCurrentSystem()
-                .join(new PlainPlayer(playerName, UUID.randomUUID(), InetAddress.getLoopbackAddress()))
-                .shouldLogin(false)) {
-            case OK:
-            case ERROR_NAME:
-                return true;
-            default:
-                return false;
-        }
+        return false;
     }
 }

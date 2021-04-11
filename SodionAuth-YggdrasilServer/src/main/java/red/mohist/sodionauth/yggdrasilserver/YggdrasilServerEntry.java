@@ -25,7 +25,6 @@ import red.mohist.sodionauth.core.utils.Helper;
 public class YggdrasilServerEntry {
     private static final Logger logger = LogManager.getLogger("SodionAuth|YggdrasilServer");
 
-
     public static void main(String[] args) throws Exception {
         logger.info("Hello world!");
         new Helper(".", new LogProvider() {

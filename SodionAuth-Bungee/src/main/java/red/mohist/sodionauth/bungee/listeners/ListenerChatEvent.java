@@ -23,6 +23,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import red.mohist.sodionauth.bungee.implementation.BungeePlayer;
 import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
+import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
@@ -44,7 +45,9 @@ public class ListenerChatEvent implements BungeeAPIListener {
                 }
             }else{
                 event.setCancelled(true);
-                new red.mohist.sodionauth.core.events.player.ChatEvent(player,event.getMessage()).post();
+            }
+            if(!new PlayerChatEvent(player,event.getMessage()).syncPost()){
+                event.setCancelled(true);
             }
         }
 

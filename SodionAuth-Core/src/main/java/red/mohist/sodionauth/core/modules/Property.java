@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.core.modules;
 
 
-import red.mohist.sodionauth.core.http.YggdrasilServerCore;
 
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
@@ -44,7 +43,7 @@ public class Property {
     private static String sign(String data) {
         try {
             Signature signature = Signature.getInstance("SHA1withRSA");
-            signature.initSign(YggdrasilServerCore.instance.rsaPrivateKey, new SecureRandom());
+            //signature.initSign(YggdrasilServerCore.instance.rsaPrivateKey, new SecureRandom());
             signature.update(data.getBytes(UTF_8));
             return Base64.getEncoder().encodeToString(signature.sign());
         } catch (GeneralSecurityException e) {

@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.authbackends;
+package red.mohist.sodionauth.core.database.annotations;
 
-import red.mohist.sodionauth.core.enums.ResultType;
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.annotation.Nonnull;
-
-public interface AuthBackendSystem {
-
-    @Nonnull
-    ResultType register(AbstractPlayer player, String password, String email);
-
-    @Nonnull
-    ResultType login(AbstractPlayer player, String password);
-
-    @Nonnull
-    ResultType join(AbstractPlayer player);
-
-    @Nonnull
-    ResultType loginEmail(String email, String password);
-
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Ignore {
 }

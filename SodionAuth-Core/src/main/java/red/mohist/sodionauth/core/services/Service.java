@@ -21,23 +21,35 @@ import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 
 public class Service {
-    public static ConfigureService configure = new ConfigureService();
-    public static ThreadPoolService threadPool = new ThreadPoolService();
-    public static EventBusService eventBus = new EventBusService();
-    public static HttpClientService httpClient = new HttpClientService();
-    public static AuthService auth = new AuthService();
-    public static SessionService session = new SessionService();
-    public static ProxyLoginService proxyLogin = new ProxyLoginService();
+    public static final ConfigureService configure = new ConfigureService();
+
+    public static final ThreadPoolService threadPool = new ThreadPoolService();
+    public static final EventBusService eventBus = new EventBusService();
+
+    public static final HttpClientService httpClient = new HttpClientService();
+    public static final DatabaseService database = new DatabaseService();
+
+    public static final UserService user = new UserService();
+    public static final AuthService auth = new AuthService();
+    public static final SessionService session = new SessionService();
+    public static final ProxyLoginService proxyLogin = new ProxyLoginService();
+    public static final PasswordStrengthService passwordStrength = new PasswordStrengthService();
+    public static final RegisterService register = new RegisterService();
+    public static final UnRegisterService unRegister = new UnRegisterService();
     public Service() {
         eventBus.register(configure)
                 .register(SodionAuthCore.instance)
                 .register(threadPool)
                 .register(eventBus)
                 .register(httpClient)
+                .register(database)
                 .register(auth)
                 .register(session)
                 .register(threadPool)
-                .register(proxyLogin);
+                .register(proxyLogin)
+                .register(passwordStrength)
+                .register(register)
+                .register(unRegister);
         if (!new BootEvent().syncPost()) {
             new DownEvent().post();
             SodionAuthCore.instance.loadFail();

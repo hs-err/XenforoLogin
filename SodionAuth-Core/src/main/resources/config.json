@@ -13,20 +13,15 @@
     },
     "sqlite": {
       "path": "Users.db",
-      "absolute": false,
-      "tableName": "users",
-      "emailField": "email",
-      "usernameField": "username",
-      "passwordField": "password",
-      "saltField": "salt",
-      "saltLength": 6,
-      "passwordHash": "BCrypt"
+      "absolute": false
     },
     "mysql": {
       "host": "localhost:3306",
       "username": "sodionauth",
       "password": "sodionauth",
-      "database": "sodionauth",
+      "database": "sodionauth"
+    },
+    "database": {
       "tableName": "users",
       "emailField": "email",
       "usernameField": "username",

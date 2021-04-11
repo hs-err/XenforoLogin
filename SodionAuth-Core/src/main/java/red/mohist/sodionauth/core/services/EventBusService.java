@@ -19,12 +19,14 @@ package red.mohist.sodionauth.core.services;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import red.mohist.sodionauth.core.events.Event;
+import red.mohist.sodionauth.core.utils.Helper;
 
 public class EventBusService {
     public EventBus eventBus = new EventBus();
     public AsyncEventBus asyncEventBus = new AsyncEventBus(Service.threadPool.executor);
 
     public EventBusService() {
+        Helper.getLogger().info("Initializing eventBus service...");
 
     }
 

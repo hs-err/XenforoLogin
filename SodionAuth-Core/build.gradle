@@ -16,4 +16,8 @@
 
 dependencies {
     implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
+
+    compile 'org.teasoft:bee:1.8.99'
+    compile 'org.teasoft:honey:1.8.99'
+    compile 'org.teasoft:bee-ext:1.8.99'
 }

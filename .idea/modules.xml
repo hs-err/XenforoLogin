@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SodionAuth-Libs.iml" filepath="$PROJECT_DIR$/.idea/modules/SodionAuth-Libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/XenforoLogin-Bukkit/XenforoLogin-Bukkit.iml" filepath="$PROJECT_DIR$/XenforoLogin-Bukkit/XenforoLogin-Bukkit.iml" />
       <module fileurl="file://$PROJECT_DIR$/XenforoLogin-Core/XenforoLogin-Core.iml" filepath="$PROJECT_DIR$/XenforoLogin-Core/XenforoLogin-Core.iml" />
     </modules>

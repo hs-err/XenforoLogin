@@ -36,6 +36,7 @@ public class YggdrasilServerLaunchWrapper {
         logger.info("Wrapping JAR [" + mainPath + ", " + corePath + "] into URLClassLoader");
         URLClassLoader urlClassLoader = new URLClassLoader(new URL[]{FileSystems.getDefault().getPath(mainPath).toUri().toURL(), FileSystems.getDefault().getPath(corePath).toUri().toURL()}, YggdrasilServerLaunchWrapper.class.getClassLoader().getParent());
         logger.info("Done, invoking main...");
+        Thread.currentThread().setContextClassLoader(urlClassLoader);
         Class.forName("red.mohist.sodionauth.yggdrasilserver.YggdrasilServerEntry", true, urlClassLoader)
                 .getMethod("main", String[].class)
                 .invoke(null, (Object) args);

@@ -18,7 +18,6 @@ package red.mohist.sodionauth.core;
 
 import com.google.common.eventbus.Subscribe;
 import red.mohist.sodionauth.core.events.DownEvent;
-import red.mohist.sodionauth.core.http.YggdrasilServerCore;
 import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
@@ -109,10 +108,6 @@ public final class SodionAuthCore {
             DependencyManager.checkForSQLite();
 
             new Service();
-
-            if (Config.yggdrasil.getEnable()) {
-                new YggdrasilServerCore();
-            }
         } catch (Throwable throwable) {
             isEnabled.set(false);
             throwable.printStackTrace();

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.http.controller;
+package red.mohist.sodionauth.core.database.annotations.limits;
 
-import com.google.gson.JsonElement;
-import io.netty.handler.codec.http.FullHttpRequest;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.sql.SQLException;
-
-public class NotFoundController implements Controller {
-    @Override
-    public Object handle(JsonElement content, FullHttpRequest request) throws SQLException {
-        return null;
-    }
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface PrimaryKey {
 }

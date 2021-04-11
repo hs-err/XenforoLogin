@@ -21,7 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.events.player.ChatEvent;
+import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
@@ -37,7 +37,9 @@ public class ListenerChatEvent implements BukkitAPIListener {
                 }
             }else{
                 event.setCancelled(true);
-                new ChatEvent(player,event.getMessage()).post();
+            }
+            if(!new PlayerChatEvent(player,event.getMessage()).syncPost()){
+                event.setCancelled(true);
             }
         }
     }

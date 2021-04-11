@@ -16,23 +16,27 @@
 
 package red.mohist.sodionauth.core.services;
 
-import com.google.common.eventbus.Subscribe;
-import red.mohist.sodionauth.core.events.BootEvent;
-import red.mohist.sodionauth.core.events.player.CanJoinEvent;
-import red.mohist.sodionauth.core.protection.SecuritySystems;
+import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
+import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
-import java.io.IOException;
+public class UnRegisterService {
+    public boolean enable;
+    public UnRegisterService(){
+        Helper.getLogger().info("Initializing unRegister service...");
 
-public class SecurityService {
-    @Subscribe
-    public void onBoot(BootEvent event) throws IOException {
-        Helper.getLogger().info("Initializing security service...");
-        SecuritySystems.reloadConfig();
+        if(Config.api.getSystem().equals("sqlite")
+                || Config.api.getSystem().equals("mysql")){
+            enable=true;
+        }else{
+            enable=false;
+        }
     }
-
-    @Subscribe
-    public void onCanJoin(CanJoinEvent event) {
-        SecuritySystems.canLogin(event.getPlayer());
+    public void onChat(PlayerChatEvent event){
+        if(event.getMessage().equals(".unregister")){
+           if(!Service.auth.needCancelled(event.getPlayer())){
+               event.setCancelled(true);
+           }
+        }
     }
 }

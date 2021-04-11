@@ -37,15 +37,7 @@ public class JoinListener implements SpongeAPIListener {
             player.kick(player.getLang().getErrors().getServer());
         }
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
-        if (!Service.auth.logged_in.containsKey(spongePlayer.getUniqueId())) {
-            CanJoinEvent canJoinEvent = new CanJoinEvent(player);
-            if (!canJoinEvent.syncPost()) {
-                player.kick(canJoinEvent.getMessage());
-            }
 
-            Helper.getLogger().warn("onAuthEvent isn't active. It may cause some security problems.");
-            Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-        }
         new JoinEvent(player).post();
     }
 

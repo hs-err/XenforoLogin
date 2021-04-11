@@ -20,7 +20,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent.Chat;
-import red.mohist.sodionauth.core.events.player.ChatEvent;
+import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
@@ -38,7 +38,9 @@ public class ChatListener implements SpongeAPIListener {
             }
         }else {
             event.setCancelled(true);
-            new ChatEvent(player, event.getRawMessage().toPlainSingle()).post();
+        }
+        if(!new PlayerChatEvent(player,event.getRawMessage().toPlainSingle()).syncPost()){
+            event.setCancelled(true);
         }
     }
 
