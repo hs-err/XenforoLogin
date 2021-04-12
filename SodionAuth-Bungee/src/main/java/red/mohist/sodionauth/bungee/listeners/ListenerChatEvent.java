@@ -39,7 +39,7 @@ public class ListenerChatEvent implements BungeeAPIListener {
             ProxiedPlayer bungeePlayer = (ProxiedPlayer) event.getSender();
             AbstractPlayer player=new BungeePlayer(bungeePlayer);
             if (!Service.auth.needCancelled(player)) {
-                if (Config.security.getCancelChatAfterLogin(false)) {
+                if (Config.security.cancelChatAfterLogin) {
                     Helper.getLogger().info("Why cancel chat after login in bungee?");
                     event.setCancelled(true);
                 }

@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 public class PlayerInfo {
-    public LocationInfo location = Service.auth.spawn_location;
-    public Integer gameMode = Config.security.getDefaultGamemode();
+    public LocationInfo location = Service.login.spawn_location;
+    public Integer gameMode = Config.security.defaultGamemode;
     public double health = 20;
     public double maxHealth = 20;
     public float fallDistance = 0;

@@ -4,7 +4,8 @@
   "registerPassword": "Please send your password.",
   "registerPasswordConfirm": "Please send your password again.",
   "loggedIn": "You have already logged in.",
-  "success": "Logged in successfully.",
+  "loginSuccess": "Logged in successfully.",
+  "unRegisterSuccess": "UnRegister success.",
   "session": "Auto login by session.",
   "needLogin": "Please enter your password directly in chat.",
   "errors": {
@@ -24,7 +25,7 @@
     "nameIncorrect": "You should use \"[correct]\", not this to login.",
     "unknown": "Unknown error. Web send \"[message]\"",
     "mailExist": "Your email already exists in our database. Try another one.",
-    "userExist": "Your username is already registered in our database. Try another one.",
+    "usernameExist": "Your username is already registered in our database. Try another one.",
     "loginExist": "You have been logged from another place."
   }
 }

@@ -26,13 +26,13 @@ import java.util.Arrays;
 public abstract class ClientPacket extends ProxyPacket {
     public byte[] pack(){
         byte[] n = encode();
-        byte[] m = Helper.merge(n, Config.bungee.getClientKey().getBytes(StandardCharsets.UTF_8));
+        byte[] m = Helper.merge(n, Config.bungee.clientKey.getBytes(StandardCharsets.UTF_8));
         byte[] s = Helper.sha256(m);
         return Helper.merge(m,s);
     }
     protected boolean verify(byte[] r){
         byte[] n = encode();
-        byte[] m = Helper.merge(n, Config.bungee.getServerKey().getBytes(StandardCharsets.UTF_8));
+        byte[] m = Helper.merge(n, Config.bungee.serverKey.getBytes(StandardCharsets.UTF_8));
         byte[] s = Helper.sha256(m);
         return Arrays.equals(Helper.merge(m,s), r);
     }

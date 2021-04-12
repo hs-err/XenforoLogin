@@ -22,7 +22,7 @@
       "database": "sodionauth"
     },
     "database": {
-      "tableName": "users",
+      "tablePrefix": "sa_",
       "emailField": "email",
       "usernameField": "username",
       "passwordField": "password",
@@ -93,7 +93,7 @@
     },
     "GeoIP": {
       "enable": false,
-      "lists": {
+      "countries": {
         "CN": true,
         "UNKNOWN": true
       },
@@ -102,18 +102,9 @@
     "RateLimit": {
       "enable": true,
       "permitsPerSecond": 5,
-      "join": {
-        "enable": true,
-        "permits": 1
-      },
-      "register": {
-        "enable": true,
-        "permits": 10
-      },
-      "login": {
-        "enable": true,
-        "permits": 5
-      }
+      "join": 1,
+      "register": 10,
+      "login": 5
     }
   }
 }

@@ -33,7 +33,7 @@ public class ListenerPostLoginEvent implements BungeeAPIListener {
         ProxiedPlayer bungeePlayer = event.getPlayer();
         AbstractPlayer player = new BungeePlayer(bungeePlayer);
         if (!SodionAuthCore.instance.isEnabled()) {
-            player.kick(player.getLang().getErrors().getServer());
+            player.kick(player.getLang().errors.server);
         }
 
         if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {

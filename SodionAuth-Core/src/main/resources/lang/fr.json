@@ -4,7 +4,7 @@
   "registerPassword": "Veuillez envoyer votre mot de passe.",
   "registerPasswordConfirm": "Veuillez envoyer votre mot de passe encore une fois.",
   "loggedIn": "Vous êtes déjà connecté.",
-  "success": "Connecté avec succès !",
+  "loginSuccess": "Connecté avec succès !",
   "session": "Connexion automatique à partir de votre session.",
   "needLogin": "Veuillez entrer votre mot de passe directement dans le chat.",
   "errors": {
@@ -24,7 +24,7 @@
     "nameIncorrect": "Vous devriez utiliser \"[correct]\", et non celui ci pour vous connecter.",
     "unknown": "Erreur inconnue : \"[message]\"",
     "mailExist": "Votre email existe déjà dans notre base de données. Essayez en une autre.",
-    "userExist": "Votre nom d'utilisateur existe déjà dans notre base de données. Essayez en un autre.",
+    "usernameExist": "Votre nom d'utilisateur existe déjà dans notre base de données. Essayez en un autre.",
     "loginExist": "Vous êtes déjà connecté depuis un autre endroit."
   }
 }

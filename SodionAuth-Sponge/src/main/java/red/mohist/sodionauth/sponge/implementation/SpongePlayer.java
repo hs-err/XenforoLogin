@@ -151,7 +151,7 @@ public class SpongePlayer extends AbstractPlayer {
         } else if (GameModes.SPECTATOR.equals(gameMode)) {
             return 3;
         } else {
-            return Config.security.getDefaultGamemode(0);
+            return Config.security.defaultGamemode;
         }
     }
 

@@ -27,11 +27,12 @@ public class Config {
     public static MainConfiguration instance;
     public static MainConfiguration fallback;
     public static String defaultLang;
+    public static String serverId;
+    public static MainConfiguration.DatabaseBean database;
     public static MainConfiguration.ApiBean api;
     public static MainConfiguration.BungeeBean bungee;
     public static MainConfiguration.DependenciesBean dependencies;
     public static MainConfiguration.SessionBean session;
-    public static MainConfiguration.YggdrasilBean yggdrasil;
     public static MainConfiguration.SpawnBean spawn;
     public static MainConfiguration.TeleportBean teleport;
     public static MainConfiguration.SecurityBean security;
@@ -52,15 +53,16 @@ public class Config {
         defaultInputStreamReader.close();
         defaultFileReader.close();
 
-        defaultLang = instance.getDefaultLang();
-        api = instance.getApi();
-        bungee = instance.getBungee();
-        dependencies = instance.getDependencies();
-        session = instance.getSession();
-        yggdrasil = instance.getYggdrasil();
-        spawn = instance.getSpawn();
-        teleport = instance.getTeleport();
-        security = instance.getSecurity();
-        protection = instance.getProtection();
+        defaultLang = instance.defaultLang;
+        serverId = instance.serverId;
+        database = instance.database;
+        api = instance.api;
+        bungee = instance.bungee;
+        dependencies = instance.dependencies;
+        session = instance.session;
+        spawn = instance.spawn;
+        teleport = instance.teleport;
+        security = instance.security;
+        protection = instance.protection;
     }
 }

@@ -175,10 +175,10 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
             player.setRemainingAir(0);
             player.setMaxHealth(20);
             player.setFood(new FoodInfo());
-            if (Config.security.getSpectatorLogin()) {
+            if (Config.security.spectatorLogin) {
                 player.setGameMode(3);
             } else {
-                player.setGameMode(Config.security.getDefaultGamemode());
+                player.setGameMode(Config.security.defaultGamemode);
             }
         }
     }

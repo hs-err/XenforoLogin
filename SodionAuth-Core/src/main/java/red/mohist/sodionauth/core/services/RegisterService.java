@@ -24,30 +24,39 @@ import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
-import red.mohist.sodionauth.libs.commons.math3.analysis.function.Abs;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegisterService {
 
-    public void playerRegister(AbstractPlayer player, StatusType statusType, String message) {
-        switch (statusType) {
+    @Subscribe
+    public void onChat(PlayerChatEvent event) {
+        if(event.isCancelled()){
+            return;
+        }
+        AbstractPlayer player = event.getPlayer();
+        String message = event.getMessage();
+        StatusType status = player.getStatus();
+        switch (status) {
             case NEED_REGISTER_EMAIL:
+                event.setCancelled(true);
                 if (isEmail(message)) {
                     Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(message));
                     Service.auth.sendTip(player);
                 } else {
-                    player.sendMessage(player.getLang().getErrors().getEmail());
+                    player.sendMessage(player.getLang().errors.email);
                 }
                 break;
             case NEED_REGISTER_PASSWORD:
+                event.setCancelled(true);
                 Service.auth.logged_in.put(
                         player.getUniqueId(),
-                        StatusType.NEED_REGISTER_CONFIRM.setEmail(statusType.email).setPassword(message));
+                        StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(message));
                 Service.auth.sendTip(player);
                 break;
             case NEED_REGISTER_CONFIRM:
+                event.setCancelled(true);
                 String canRegister = SecuritySystems.canRegister(player);
                 if (canRegister != null) {
                     player.sendMessage(canRegister);
@@ -55,8 +64,8 @@ public class RegisterService {
                 }
                 Service.auth.logged_in.put(
                         player.getUniqueId(), StatusType.HANDLE);
-                if (message.equals(statusType.password)) {
-                    registerAsync(player, statusType.email, statusType.password).then((result) -> {
+                if (message.equals(status.password)) {
+                    registerAsync(player, status.email, status.password).then((result) -> {
                         if (result) {
                             Service.auth.logged_in.put(
                                     player.getUniqueId(), StatusType.LOGGED_IN);
@@ -67,7 +76,7 @@ public class RegisterService {
                         }
                     });
                 } else {
-                    player.sendMessage(player.getLang().getErrors().getConfirm());
+                    player.sendMessage(player.getLang().errors.confirm);
                     Service.auth.logged_in.put(
                             player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
                     Service.auth.sendTip(player);
@@ -87,7 +96,7 @@ public class RegisterService {
     public RegisterResult register(String username,String email,String password){
         User user = User.getByName(username);
         if(user != null){
-            return RegisterResult.USER_EXIST;
+            return RegisterResult.USERNAME_EXIST;
         }
 
         user = new User().setEmail(email.toLowerCase()).first();
@@ -112,11 +121,11 @@ public class RegisterService {
                 case OK:
                     Service.auth.login(player);
                     return true;
-                case USER_EXIST:
-                    player.kick(player.getLang().getErrors().getUserExist());
+                case USERNAME_EXIST:
+                    player.kick(player.getLang().errors.usernameExist);
                     return false;
                 case EMAIL_EXIST:
-                    player.kick(player.getLang().getErrors().getEmail());
+                    player.kick(player.getLang().errors.email);
                     return false;
                 default:
                     return false;
@@ -129,11 +138,11 @@ public class RegisterService {
             case OK:
                 Service.auth.login(player);
                 return true;
-            case USER_EXIST:
-                player.kick(player.getLang().getErrors().getUserExist());
+            case USERNAME_EXIST:
+                player.kick(player.getLang().errors.usernameExist);
                 return false;
             case EMAIL_EXIST:
-                player.kick(player.getLang().getErrors().getEmail());
+                player.kick(player.getLang().errors.email);
                 return false;
             default:
                 return false;
@@ -142,7 +151,7 @@ public class RegisterService {
 
     public enum RegisterResult {
         OK,
-        USER_EXIST,
+        USERNAME_EXIST,
         EMAIL_EXIST
     }
 

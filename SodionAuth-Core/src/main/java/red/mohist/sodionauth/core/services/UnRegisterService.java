@@ -16,26 +16,30 @@
 
 package red.mohist.sodionauth.core.services;
 
+import com.google.common.eventbus.Subscribe;
+import red.mohist.sodionauth.core.database.entities.AuthInfo;
+import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
-import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class UnRegisterService {
-    public boolean enable;
     public UnRegisterService(){
         Helper.getLogger().info("Initializing unRegister service...");
-
-        if(Config.api.getSystem().equals("sqlite")
-                || Config.api.getSystem().equals("mysql")){
-            enable=true;
-        }else{
-            enable=false;
-        }
     }
+    @Subscribe
     public void onChat(PlayerChatEvent event){
+        if(event.isCancelled()){
+            return;
+        }
         if(event.getMessage().equals(".unregister")){
            if(!Service.auth.needCancelled(event.getPlayer())){
                event.setCancelled(true);
+               User user = User.getByName(event.getPlayer().getName());
+               for (AuthInfo authInfo : user.getAuthInfo()) {
+                   authInfo.delete();
+               }
+               user.delete();
+               event.getPlayer().kick(event.getPlayer().getLang().unRegisterSuccess);
            }
         }
     }

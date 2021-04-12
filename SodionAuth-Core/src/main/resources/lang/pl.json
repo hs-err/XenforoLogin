@@ -4,7 +4,7 @@
   "registerPassword": "Napisz swoje hasło.",
   "registerPasswordConfirm": "Napisz swoje hasło jeszcze raz.",
   "loggedIn": "Jesteś już zalogowany.",
-  "success": "Pomyślnie zalogowano.",
+  "loginSuccess": "Pomyślnie zalogowano.",
   "session": "Automatycznie zalogowano.",
   "needLogin": "Napisz swoje hasło bezpośrednio na czacie.",
   "errors": {
@@ -24,7 +24,7 @@
     "nameIncorrect": "Powinieneś użyć \"[correct]\" aby się zalgować.",
     "unknown": "Nieznany error. Kod błędu: \"[message]\".",
     "mailExist": "Twój email już istnieje w naszej bazie danych.",
-    "userExist": "Twoja nazwa użytkownika jest już zajęta.",
+    "usernameExist": "Twoja nazwa użytkownika jest już zajęta.",
     "loginExist": "Zostałeś zalogowany z innego miejsca."
   }
 }

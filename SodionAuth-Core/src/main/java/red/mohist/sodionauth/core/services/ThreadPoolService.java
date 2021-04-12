@@ -34,7 +34,7 @@ public class ThreadPoolService {
 
     public ThreadPoolService() {
         Helper.getLogger().info("Initializing threadPool service...");
-        executor = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
+        executor = new ThreadPoolExecutor(1, 1,
                 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
                 new ThreadFactory() {
 

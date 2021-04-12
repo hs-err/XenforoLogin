@@ -42,7 +42,7 @@ public class DatabaseService {
         honeyFactory = BeeFactory.getHoneyFactory();
         suid = BeeFactory.getHoneyFactory().getSuid();
         suidRich = BeeFactory.getHoneyFactory().getSuidRich();
-        switch (Config.api.getSystem()) {
+        switch (Config.database.type) {
             case "sqlite":
                 mapper = new SqliteMapper();
                 break;

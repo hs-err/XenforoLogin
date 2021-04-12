@@ -32,8 +32,8 @@ public class ChatListener implements SpongeAPIListener {
     public void onChatEvent(Chat event, @First Player spongePlayer) {
         SpongePlayer player = new SpongePlayer(spongePlayer);
         if (!Service.auth.needCancelled(player)) {
-            if (Config.security.getCancelChatAfterLogin(false)) {
-                player.sendMessage(player.getLang().getLoggedIn());
+            if (Config.security.cancelChatAfterLogin) {
+                player.sendMessage(player.getLang().loggedIn);
                 event.setCancelled(true);
             }
         }else {

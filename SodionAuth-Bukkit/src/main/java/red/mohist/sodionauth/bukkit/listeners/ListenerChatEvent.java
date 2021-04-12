@@ -32,7 +32,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
         AbstractPlayer player = new BukkitPlayer(event.getPlayer());
         if (!event.isCancelled()) {
             if (!Service.auth.needCancelled(player)) {
-                if (Config.security.getCancelChatAfterLogin(false)) {
+                if (Config.security.cancelChatAfterLogin) {
                     event.setCancelled(true);
                 }
             }else{

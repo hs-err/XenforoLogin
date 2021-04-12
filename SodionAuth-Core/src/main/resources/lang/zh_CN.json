@@ -4,7 +4,8 @@
   "registerPassword": "请在聊天栏输入你的密码.",
   "registerPasswordConfirm": "请在聊天栏再次输入你的密码。",
   "loggedIn": "你已经登录过了。",
-  "success": "登录成功。",
+  "loginSuccess": "登录成功。",
+  "unRegisterSuccess": "注销成功。",
   "session": "自动登录。",
   "needLogin": "请在聊天栏输入你的密码。",
   "errors": {
@@ -24,7 +25,7 @@
     "nameIncorrect": "你应当使用 \"[correct]\" 而不是现在的来登录。",
     "unknown": "无法被插件识别的错误：\"[message]\"",
     "mailExist": "你输入的邮箱已经被注册，请尝试换一个。",
-    "userExist": "你输入的用户名已经被注册，尝试更换另一个？",
+    "usernameExist": "你输入的用户名已经被注册，尝试更换另一个？",
     "loginExist": "你已经在其他地方登录了。"
   }
 }

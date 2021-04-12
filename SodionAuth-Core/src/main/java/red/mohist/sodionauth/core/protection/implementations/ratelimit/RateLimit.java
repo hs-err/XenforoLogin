@@ -26,15 +26,15 @@ public class RateLimit implements SecuritySystem {
     private final RateLimiter rateLimiter;
 
     public RateLimit() {
-        rateLimiter = RateLimiter.create(Config.protection.getRateLimit().getPermitsPerSecond(5));
+        rateLimiter = RateLimiter.create(Config.protection.RateLimit.permitsPerSecond);
     }
 
     @Override
     public String canJoin(AbstractPlayer player) {
-        if (Config.protection.getRateLimit().getJoin().getEnable(true)) {
+        if (Config.protection.RateLimit.join>0) {
             if (!rateLimiter.tryAcquire(
-                    Config.protection.getRateLimit().getJoin().getPermits(1))) {
-                return player.getLang().getErrors().getRateLimit();
+                    Config.protection.RateLimit.join)) {
+                return player.getLang().errors.rateLimit;
             }
         }
         return null;
@@ -42,10 +42,10 @@ public class RateLimit implements SecuritySystem {
 
     @Override
     public String canLogin(AbstractPlayer player) {
-        if (Config.protection.getRateLimit().getLogin().getEnable(true)) {
+        if (Config.protection.RateLimit.login>0) {
             if (!rateLimiter.tryAcquire(
-                    Config.protection.getRateLimit().getLogin().getPermits(5))) {
-                return player.getLang().getErrors().getRateLimit();
+                    Config.protection.RateLimit.login)) {
+                return player.getLang().errors.rateLimit;
             }
         }
         return null;
@@ -53,11 +53,11 @@ public class RateLimit implements SecuritySystem {
 
     @Override
     public String canRegister(AbstractPlayer player) {
-        if (Config.protection.getRateLimit().getRegister().getEnable()) {
+        if (Config.protection.RateLimit.register>0) {
             if (!rateLimiter.tryAcquire(
-                    Config.protection.getRateLimit().getRegister().getPermits(10)
+                    Config.protection.RateLimit.register
             )) {
-                return player.getLang().getErrors().getRateLimit();
+                return player.getLang().errors.rateLimit;
             }
         }
         return null;

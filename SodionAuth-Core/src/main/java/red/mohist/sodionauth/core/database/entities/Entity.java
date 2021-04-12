@@ -43,4 +43,8 @@ public abstract class Entity implements Serializable {
             return -1;
         }
     }
+
+    public void delete(){
+        Service.database.suid.delete(this);
+    }
 }

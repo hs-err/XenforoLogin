@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProxySystems implements SecuritySystem {
     private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
     private AtomicInteger tickTimes=new AtomicInteger(-1);
-    private final int updateTime=Config.protection.getProxySystems().getUpdateTime(60);
+    private final int updateTime=Config.protection.ProxySystems.updateTime;
     public ProxySystems() {
         {
             int unavailableCount = 0;
@@ -41,7 +41,7 @@ public class ProxySystems implements SecuritySystem {
                     .getSubTypesOf(ProxySystem.class);
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
-                    if (Config.protection.getProxySystems().getProxiesProvider().getOrDefault(
+                    if (Config.protection.ProxySystems.proxiesProvider.getOrDefault(
                             clazz.getSimpleName(), true
                     )) {
                         ProxySystem proxySystem = clazz.getDeclaredConstructor().newInstance();
@@ -88,17 +88,17 @@ public class ProxySystems implements SecuritySystem {
     public String canJoin(AbstractPlayer player) {
         String ip = player.getAddress().getHostAddress();
         if (ip.equals("127.0.0.1")) {
-            if (Config.protection.getProxySystems().getEnableLocal()) {
+            if (Config.protection.ProxySystems.enableLocal) {
                 return null;
             } else {
                 Helper.getLogger().warn("find proxy by EnableLocal");
-                return player.getLang().getErrors().getProxy();
+                return player.getLang().errors.proxy;
             }
         }
         for (ProxySystem proxySystem : currentSystem) {
             if (proxySystem.isProxy(ip)) {
                 Helper.getLogger().warn("find proxy by " + proxySystem.getClass().getName());
-                return player.getLang().getErrors().getProxy();
+                return player.getLang().errors.proxy;
             }
         }
         return null;

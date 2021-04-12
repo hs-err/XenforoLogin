@@ -25,8 +25,8 @@ import javax.annotation.Nonnull;
 public class LoginTickPlayer {
 
     int calledTimes=-1;
-    static final int showTipTime = Config.security.getShowTipsTime();
-    int loginTimeout = Config.security.getMaxLoginTime();
+    static final int showTipTime = Config.security.showTipsTime;
+    int loginTimeout = Config.security.maxLoginTime;
     @Nonnull
     AbstractPlayer player;
 
@@ -49,7 +49,7 @@ public class LoginTickPlayer {
         }
         if (calledTimes/20 > loginTimeout
                 && Service.auth.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
-            player.kick(player.getLang().getErrors().getTimeOut());
+            player.kick(player.getLang().errors.timeOut);
             return TickResult.DONE;
         }
         if(calledTimes%((showTipTime*20))==0) {

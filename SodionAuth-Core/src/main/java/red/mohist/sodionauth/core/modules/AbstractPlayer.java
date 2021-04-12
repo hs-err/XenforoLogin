@@ -18,6 +18,8 @@ package red.mohist.sodionauth.core.modules;
 
 
 import red.mohist.sodionauth.core.config.LangConfiguration;
+import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Lang;
 
@@ -35,6 +37,10 @@ public abstract class AbstractPlayer {
         this.name = name;
         this.uuid = uuid;
         this.address = address;
+    }
+
+    public StatusType getStatus(){
+        return Service.auth.logged_in.get(getUniqueId());
     }
 
     public LangConfiguration getLang() {
@@ -117,7 +123,7 @@ public abstract class AbstractPlayer {
     }
 
     public void setPlayerInfo(PlayerInfo playerInfo) {
-        if (Config.teleport.getTpBackAfterLogin()) {
+        if (Config.teleport.tpBackAfterLogin) {
             setLocation(playerInfo.location);
         }
         setGameMode(playerInfo.gameMode);

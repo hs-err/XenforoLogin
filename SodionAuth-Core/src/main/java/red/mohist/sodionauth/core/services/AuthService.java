@@ -47,21 +47,20 @@ import java.util.concurrent.ExecutionException;
 public class AuthService {
 
     public LocationInfo default_location;
-    public LocationInfo spawn_location;
     public ConcurrentMap<UUID, StatusType> logged_in;
 
     @Subscribe
     public void onBoot(BootEvent event) throws IOException {
         Helper.getLogger().info("Initializing auth service...");
 
-        spawn_location = SodionAuthCore.instance.api.getSpawn(SodionAuthCore.instance.api.getDefaultWorld());
+        LocationInfo spawn_location = SodionAuthCore.instance.api.getSpawn(SodionAuthCore.instance.api.getDefaultWorld());
         default_location = new LocationInfo(
-                Config.spawn.getWorld(SodionAuthCore.instance.api.getDefaultWorld()),
-                Config.spawn.getX(spawn_location.x),
-                Config.spawn.getY(spawn_location.y),
-                Config.spawn.getZ(spawn_location.z),
-                Config.spawn.getYaw(spawn_location.yaw),
-                Config.spawn.getPitch(spawn_location.pitch)
+                Config.spawn.world!=null?Config.spawn.world:SodionAuthCore.instance.api.getDefaultWorld(),
+                Config.spawn.x!=null?Config.spawn.x:spawn_location.x,
+                Config.spawn.y!=null?Config.spawn.y:spawn_location.y,
+                Config.spawn.z!=null?Config.spawn.z:spawn_location.z,
+                Config.spawn.yaw!=null?Config.spawn.yaw:spawn_location.yaw,
+                Config.spawn.pitch!=null?Config.spawn.pitch:spawn_location.pitch
         );
 
         logged_in = new ConcurrentHashMap<>();
@@ -81,50 +80,19 @@ public class AuthService {
     }
 
     @Subscribe
-    public void onQuit(QuitEvent event) {
-        AbstractPlayer player = event.getPlayer();
-        LocationInfo leave_location = player.getLocation();
-        Service.threadPool.dbUniqueFlag.lock().then(() -> {
-            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(Service.threadPool.dbUniqueFlag)) {
-                if (!needCancelled(player)) {
-                    try {
-                        PreparedStatement pps = Service.session
-                                .prepareStatement("DELETE FROM last_info WHERE uuid = ?;");
-                        pps.setString(1, player.getUniqueId().toString());
-                        pps.executeUpdate();
-                        pps = Service.session
-                                .prepareStatement("INSERT INTO last_info(uuid, info) VALUES (?, ?);");
-                        pps.setString(1, player.getUniqueId().toString());
-                        pps.setString(2, new Gson().toJson(player.getPlayerInfo()));
-                        pps.executeUpdate();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        Helper.getLogger().warn("Fail to save location.");
-                    }
-                }
-                player.teleport(default_location);
-                Service.auth.logged_in.remove(player.getUniqueId());
-            } catch (Exception ignore) {
-            }
-        });
-    }
-
-    @Subscribe
     public void onChat(PlayerChatEvent event) {
         if(event.isCancelled()){
            return;
         }
-        event.setCancelled(true);
         AbstractPlayer player = event.getPlayer();
         String message = event.getMessage();
-        StatusType status = Service.auth.logged_in.get(player.getUniqueId());
-        switch (status) {
-            case LOGGED_IN:
-                event.setCancelled(false);
+        switch (player.getStatus()) {
             case NEED_CHECK:
-                player.sendMessage(player.getLang().getNeedLogin());
+                event.setCancelled(true);
+                player.sendMessage(player.getLang().needLogin);
                 break;
             case NEED_LOGIN:
+                event.setCancelled(true);
                 String canLogin = SecuritySystems.canLogin(player);
                 if (canLogin != null) {
                     player.sendMessage(canLogin);
@@ -133,27 +101,23 @@ public class AuthService {
                 User user = User.getByName(player.getName());
 
                 if(user == null){
-                    if (Config.api.getAllowRegister(false)) {
+                    //if (Config.api.allowRegister) {
                         Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                    } else {
-                        player.kick(player.getLang().getErrors().getNoUser());
-                    }
+                    //} else {
+                    //    player.kick(player.getLang().errors.noUser);
+                    //}
                 }else if(!user.getName().equals(player.getName())){
-                    player.kick(player.getLang().getErrors().getNameIncorrect(
+                    player.kick(player.getLang().errors.getNameIncorrect(
                             ImmutableMap.of("correct",user.getName())));
                 }else if(user.verifyPassword(message)){
                     Service.auth.login(player);
                 }else{
-                    player.kick(player.getLang().getErrors().getPassword());
+                    player.kick(player.getLang().errors.password);
                 }
                 break;
-            case NEED_REGISTER_EMAIL:
-            case NEED_REGISTER_PASSWORD:
-            case NEED_REGISTER_CONFIRM:
-                Service.register.playerRegister(player,status,message);
-                break;
             case HANDLE:
-                player.sendMessage(player.getLang().getErrors().getHandle());
+                event.setCancelled(true);
+                player.sendMessage(player.getLang().errors.handle);
                 break;
         }
     }
@@ -161,16 +125,16 @@ public class AuthService {
     public void sendTip(AbstractPlayer player) {
         switch (Service.auth.logged_in.get(player.getUniqueId())) {
             case NEED_LOGIN:
-                player.sendMessage(player.getLang().getNeedLogin());
+                player.sendMessage(player.getLang().needLogin);
                 break;
             case NEED_REGISTER_EMAIL:
-                player.sendMessage(player.getLang().getRegisterEmail());
+                player.sendMessage(player.getLang().registerEmail);
                 break;
             case NEED_REGISTER_PASSWORD:
-                player.sendMessage(player.getLang().getRegisterPassword());
+                player.sendMessage(player.getLang().registerPassword);
                 break;
             case NEED_REGISTER_CONFIRM:
-                player.sendMessage(player.getLang().getRegisterPasswordConfirm());
+                player.sendMessage(player.getLang().registerPasswordConfirm);
                 break;
         }
     }
@@ -193,14 +157,14 @@ public class AuthService {
             User user = User.getByName(player.getName());
 
             if(user == null){
-                if (Config.api.getAllowRegister()) {
+                //if (Config.api.allowRegister) {
                     Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     return null;
-                } else {
-                    return player.getLang().getErrors().getNoUser();
-                }
+                //} else {
+                //    return player.getLang().errors.noUser;
+                //}
             }else if(!user.getName().equals(player.getName())){
-                return player.getLang().getErrors().getNameIncorrect(
+                return player.getLang().errors.getNameIncorrect(
                         ImmutableMap.of("correct",user.getName()));
             }else{
                 Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
@@ -220,23 +184,23 @@ public class AuthService {
     public void onJoin(JoinEvent event) {
         AbstractPlayer player = event.getPlayer();
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
-        if (Config.teleport.getTpSpawnBeforeLogin()) {
+        if (Config.teleport.tpSpawnBeforeLogin) {
             player.teleport(default_location);
         }
-        if (Config.security.getSpectatorLogin()) {
+        if (Config.security.spectatorLogin) {
             player.setGameMode(3);
         }
         LoginTicker.add(player);
         Service.threadPool.dbUniqueFlag.lock().then(() -> {
             try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(Service.threadPool.dbUniqueFlag)) {
-                if (Config.session.getEnable()) {
+                if (Config.session.enable) {
                     PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
                     pps.setString(1, player.getUniqueId().toString());
                     pps.setString(2, player.getAddress().getHostAddress());
-                    pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.session.getTimeout()));
+                    pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.session.timeout));
                     ResultSet rs = pps.executeQuery();
                     if (rs.next()) {
-                        player.sendMessage(player.getLang().getSession());
+                        player.sendMessage(player.getLang().session);
                         login(player);
                     }
                 }
@@ -255,50 +219,5 @@ public class AuthService {
         }
         Service.auth.logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
         new LoginEvent(player).post();
-    }
-
-    @Subscribe
-    public void loginAsync(LoginEvent event) {
-        Service.threadPool.dbUniqueFlag.lock().then(() -> {
-            AbstractPlayer player = event.getPlayer();
-            try {
-                // restore playerInfo
-                try {
-                    PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM last_info WHERE uuid=? LIMIT 1;");
-                    pps.setString(1, player.getUniqueId().toString());
-                    ResultSet rs = pps.executeQuery();
-                    if (!rs.next()) {
-                        player.setPlayerInfo(new PlayerInfo());
-                    } else {
-                        player.setPlayerInfo(new Gson().fromJson(rs.getString("info"), PlayerInfo.class));
-                    }
-                } catch (Throwable e) {
-                    player.setGameMode(Config.security.getDefaultGamemode());
-                    e.printStackTrace();
-                }
-
-                // remove playerInfo
-                try {
-                    PreparedStatement pps = Service.session.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
-                    pps.setString(1, player.getUniqueId().toString());
-                    pps.executeUpdate();
-
-                    pps = Service.session.prepareStatement("INSERT INTO sessions(uuid, ip, time) VALUES (?, ?, ?);");
-                    pps.setString(1, player.getUniqueId().toString());
-                    pps.setString(2, player.getAddress().getHostAddress());
-                    pps.setInt(3, (int) (System.currentTimeMillis() / 1000));
-                    pps.executeUpdate();
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-
-                SodionAuthCore.instance.api.onLogin(player);
-                Helper.getLogger().info("Logging in " + player.getUniqueId());
-                player.sendMessage(player.getLang().getSuccess());
-            }catch (Throwable e){
-                e.printStackTrace();
-            }
-            Service.threadPool.dbUniqueFlag.unlock();
-        });
     }
 }

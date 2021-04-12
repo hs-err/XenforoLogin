@@ -119,7 +119,7 @@ public class DependencyManager {
         DependencyFilter dependencyFilter = DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE);
         CollectRequest collectRequest = new CollectRequest();
         collectRequest.setRoot(new Dependency(artifact, JavaScopes.COMPILE));
-        collectRequest.setRepositories(Collections.singletonList(new RemoteRepository.Builder("central", "default", Config.dependencies.getMavenRepository()).build()));
+        collectRequest.setRepositories(Collections.singletonList(new RemoteRepository.Builder("central", "default", Config.dependencies.mavenRepository).build()));
         DependencyRequest dependencyRequest = new DependencyRequest(collectRequest, dependencyFilter);
 
         List<ArtifactResult> artifactResults;

@@ -35,6 +35,7 @@ public class Service {
     public static final ProxyLoginService proxyLogin = new ProxyLoginService();
     public static final PasswordStrengthService passwordStrength = new PasswordStrengthService();
     public static final RegisterService register = new RegisterService();
+    public static final LoginService login = new LoginService();
     public static final UnRegisterService unRegister = new UnRegisterService();
     public Service() {
         eventBus.register(configure)
@@ -49,6 +50,7 @@ public class Service {
                 .register(proxyLogin)
                 .register(passwordStrength)
                 .register(register)
+                .register(login)
                 .register(unRegister);
         if (!new BootEvent().syncPost()) {
             new DownEvent().post();

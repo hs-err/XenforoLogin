@@ -39,7 +39,7 @@ public class GeoIP implements SecuritySystem {
             Helper.getLogger().warn("Can't open GeoLite2-Country.mmdb.");
             Helper.getLogger().warn("Download it from https://updates.maxmind.com/geoip/databases/GeoLite2-Country/update");
             Helper.getLogger().warn("Put it into configure dir");
-            Helper.getLogger().warn("Otherwise you should turn Geoip of in config file");
+            Helper.getLogger().warn("Otherwise you should turn Geoip off in config file");
             Helper.getLogger().warn("Set protection.GeoIP.enable false");
             SodionAuthCore.instance.loadFail();
         }
@@ -53,11 +53,11 @@ public class GeoIP implements SecuritySystem {
             country = countryReader.country(ipAddress).getCountry().getIsoCode();
         } catch (Throwable ignored) {
         }
-        if (Config.protection.getGeoIP().getLists().getOrDefault(country,
-                Config.protection.getGeoIP().getOther())) {
+        if (Config.protection.GeoIP.countries.getOrDefault(country,
+                Config.protection.GeoIP.other)) {
             return null;
         } else {
-            return player.getLang().getErrors().getCountryLimit();
+            return player.getLang().errors.countryLimit;
         }
     }
 

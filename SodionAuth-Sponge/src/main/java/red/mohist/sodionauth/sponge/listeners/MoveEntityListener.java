@@ -36,8 +36,8 @@ public class MoveEntityListener implements SpongeAPIListener {
             return;
         }
 
-        if (Config.teleport.getTpSpawnBeforeLogin()) {
-            if (Config.security.getSpectatorLogin()) {
+        if (Config.teleport.tpSpawnBeforeLogin) {
+            if (Config.security.spectatorLogin) {
                 event.setCancelled(true);
                 new SpongePlayer(player).teleport(new LocationInfo(
                         Service.auth.default_location.world,
