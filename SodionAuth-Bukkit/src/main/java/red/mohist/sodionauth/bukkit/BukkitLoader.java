@@ -73,7 +73,9 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
 
             registerListeners();
 
-            Bukkit.getScheduler().runTaskTimer(this,()->{new TickEvent().post();},0,1);
+            Bukkit.getScheduler().runTaskTimer(this, () -> {
+                new TickEvent().post();
+            }, 0, 1);
         } catch (Throwable e) {
             e.printStackTrace();
             getLogger().warning("SodionAuth load fail.");
@@ -127,7 +129,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     public void registerPluginMessageChannel(String pChannel) {
         getServer().getMessenger()
                 .registerIncomingPluginChannel(this, pChannel, (channel, player, message) -> {
-                    new ClientMessageEvent(pChannel,message,new BukkitPlayer(player)).post();
+                    new ClientMessageEvent(pChannel, message, new BukkitPlayer(player)).post();
                 });
         getServer().getMessenger()
                 .registerOutgoingPluginChannel(this, pChannel);

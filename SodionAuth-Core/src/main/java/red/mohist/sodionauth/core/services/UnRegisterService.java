@@ -23,24 +23,25 @@ import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class UnRegisterService {
-    public UnRegisterService(){
+    public UnRegisterService() {
         Helper.getLogger().info("Initializing unRegister service...");
     }
+
     @Subscribe
-    public void onChat(PlayerChatEvent event){
-        if(event.isCancelled()){
+    public void onChat(PlayerChatEvent event) {
+        if (event.isCancelled()) {
             return;
         }
-        if(event.getMessage().equals(".unregister")){
-           if(!Service.auth.needCancelled(event.getPlayer())){
-               event.setCancelled(true);
-               User user = User.getByName(event.getPlayer().getName());
-               for (AuthInfo authInfo : user.getAuthInfo()) {
-                   authInfo.delete();
-               }
-               user.delete();
-               event.getPlayer().kick(event.getPlayer().getLang().unRegisterSuccess);
-           }
+        if (event.getMessage().equals(".unregister")) {
+            if (!Service.auth.needCancelled(event.getPlayer())) {
+                event.setCancelled(true);
+                User user = User.getByName(event.getPlayer().getName());
+                for (AuthInfo authInfo : user.getAuthInfo()) {
+                    authInfo.delete();
+                }
+                user.delete();
+                event.getPlayer().kick(event.getPlayer().getLang().unRegisterSuccess);
+            }
         }
     }
 }

@@ -16,5 +16,5 @@
 
 package red.mohist.sodionauth.core.utils.channel.proxy;
 
-public class BadSignException extends Exception{
+public class BadSignException extends Exception {
 }

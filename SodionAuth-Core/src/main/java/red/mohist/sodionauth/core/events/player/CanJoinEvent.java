@@ -20,8 +20,6 @@ import red.mohist.sodionauth.core.events.Cancellable;
 import red.mohist.sodionauth.core.events.Event;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
-import java.util.concurrent.Callable;
-
 public class CanJoinEvent extends Event implements Cancellable {
     private final AbstractPlayer player;
     private String message = "unknown";

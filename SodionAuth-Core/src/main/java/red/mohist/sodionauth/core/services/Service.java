@@ -37,6 +37,7 @@ public class Service {
     public static final RegisterService register = new RegisterService();
     public static final LoginService login = new LoginService();
     public static final UnRegisterService unRegister = new UnRegisterService();
+
     public Service() {
         eventBus.register(configure)
                 .register(SodionAuthCore.instance)

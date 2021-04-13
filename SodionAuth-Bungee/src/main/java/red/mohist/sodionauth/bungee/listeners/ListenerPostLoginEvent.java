@@ -27,9 +27,10 @@ import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
+
 public class ListenerPostLoginEvent implements BungeeAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPostLoginEvent(PostLoginEvent event){
+    public void onPostLoginEvent(PostLoginEvent event) {
         ProxiedPlayer bungeePlayer = event.getPlayer();
         AbstractPlayer player = new BungeePlayer(bungeePlayer);
         if (!SodionAuthCore.instance.isEnabled()) {
@@ -47,6 +48,7 @@ public class ListenerPostLoginEvent implements BungeeAPIListener {
             player.kick(joinEvent.getMessage());
         }
     }
+
     @Override
     public void eventClass() {
         PostLoginEvent.class.getName();

@@ -32,12 +32,16 @@ public class DatabaseService {
     public SuidRich suidRich;
     public Mapper mapper;
 
-    public DatabaseService(){
+    public DatabaseService() {
         Helper.getLogger().info("Initializing database service...");
 
         HoneyConfig.getHoneyConfig().dbName = "SQLite";
-        HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:bee.db");
-        HoneyConfig.getHoneyConfig().loggerType="log4j2";
+        if (Config.database.sqlite.absolute) {
+            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Config.database.sqlite.path);
+        } else {
+            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Helper.getConfigPath(Config.database.sqlite.path));
+        }
+        HoneyConfig.getHoneyConfig().loggerType = "log4j2";
 
         honeyFactory = BeeFactory.getHoneyFactory();
         suid = BeeFactory.getHoneyFactory().getSuid();

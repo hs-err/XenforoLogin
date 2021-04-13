@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class BungeeLoader extends Plugin implements PlatformAdapter {
     public static BungeeLoader instance;
     public SodionAuthCore sodionAuthCore;
+
     @Override
     public void onEnable() {
         try {
@@ -72,9 +73,9 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
 
             registerListeners();
 
-            getProxy().getScheduler().schedule(this,()->{
+            getProxy().getScheduler().schedule(this, () -> {
                 new TickEvent().post();
-            },0,50, TimeUnit.MILLISECONDS);
+            }, 0, 50, TimeUnit.MILLISECONDS);
         } catch (Throwable e) {
             e.printStackTrace();
             getLogger().warning("SodionAuth load fail.");
@@ -100,7 +101,7 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
                 unavailableCount++;
                 continue;
             }
-            getProxy().getPluginManager().registerListener(this,listener);
+            getProxy().getPluginManager().registerListener(this, listener);
         }
         if (unavailableCount > 0) {
             Helper.getLogger().warn("Warning: Some features in this plugin is not available on this version of bungee");
@@ -126,7 +127,7 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
 
     @Override
     public LocationInfo getSpawn(String world) {
-        return new LocationInfo("",0,0,0,0,0);
+        return new LocationInfo("", 0, 0, 0, 0, 0);
     }
 
     @Override
@@ -136,7 +137,7 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
 
     @Override
     public void onLogin(AbstractPlayer player) {
-        Helper.getLogger().info(player.getName()+" login in");
+        Helper.getLogger().info(player.getName() + " login in");
     }
 
     @Override

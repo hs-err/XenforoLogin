@@ -31,27 +31,28 @@ import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerChatEvent implements BungeeAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChatEvent(ChatEvent event){
-        if(event.isCancelled()){
+    public void onChatEvent(ChatEvent event) {
+        if (event.isCancelled()) {
             return;
         }
-        if(event.getSender() instanceof ProxiedPlayer){
+        if (event.getSender() instanceof ProxiedPlayer) {
             ProxiedPlayer bungeePlayer = (ProxiedPlayer) event.getSender();
-            AbstractPlayer player=new BungeePlayer(bungeePlayer);
+            AbstractPlayer player = new BungeePlayer(bungeePlayer);
             if (!Service.auth.needCancelled(player)) {
                 if (Config.security.cancelChatAfterLogin) {
                     Helper.getLogger().info("Why cancel chat after login in bungee?");
                     event.setCancelled(true);
                 }
-            }else{
+            } else {
                 event.setCancelled(true);
             }
-            if(!new PlayerChatEvent(player,event.getMessage()).syncPost()){
+            if (!new PlayerChatEvent(player, event.getMessage()).syncPost()) {
                 event.setCancelled(true);
             }
         }
 
     }
+
     @Override
     public void eventClass() {
         PostLoginEvent.class.getName();

@@ -28,20 +28,21 @@ import red.mohist.sodionauth.core.events.player.ServerMessageEvent;
 
 public class ListenerPluginMessageEvent implements BungeeAPIListener {
     @EventHandler
-    public void onPluginMessageEvent(PluginMessageEvent event){
-        if(event.getSender() instanceof ProxiedPlayer) {
+    public void onPluginMessageEvent(PluginMessageEvent event) {
+        if (event.getSender() instanceof ProxiedPlayer) {
             new ClientMessageEvent(
                     event.getTag(),
                     event.getData(),
                     new BungeePlayer((ProxiedPlayer) event.getSender())).post();
-        }else if(event.getSender() instanceof Server
-            && event.getReceiver() instanceof ProxiedPlayer){
+        } else if (event.getSender() instanceof Server
+                && event.getReceiver() instanceof ProxiedPlayer) {
             new ServerMessageEvent(
                     event.getTag(),
                     event.getData(),
                     new BungeePlayer((ProxiedPlayer) event.getReceiver())).post();
         }
     }
+
     @Override
     public void eventClass() {
         PluginMessageEvent.class.getName();

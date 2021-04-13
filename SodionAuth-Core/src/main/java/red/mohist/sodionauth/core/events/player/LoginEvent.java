@@ -23,6 +23,7 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 public class LoginEvent extends Event implements Cancellable {
     private final AbstractPlayer player;
     private boolean cancel;
+
     public LoginEvent(AbstractPlayer player) {
         this.player = player;
     }
@@ -38,7 +39,7 @@ public class LoginEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        cancel=true;
+        cancel = true;
     }
 
 }

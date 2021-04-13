@@ -39,7 +39,7 @@ public abstract class AbstractPlayer {
         this.address = address;
     }
 
-    public StatusType getStatus(){
+    public StatusType getStatus() {
         return Service.auth.logged_in.get(getUniqueId());
     }
 
@@ -62,10 +62,10 @@ public abstract class AbstractPlayer {
     public abstract void sendMessage(String message);
 
     // as Bungee
-    public abstract void sendServerData(String channel,byte[] data);
+    public abstract void sendServerData(String channel, byte[] data);
 
     // as Bukkit
-    public abstract void sendClientData(String channel,byte[] data);
+    public abstract void sendClientData(String channel, byte[] data);
 
     @SuppressWarnings("UnusedReturnValue")
     public abstract CompletableFuture<Boolean> teleport(LocationInfo location);

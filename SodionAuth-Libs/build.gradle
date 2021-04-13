@@ -55,6 +55,6 @@ test {
 }
 shadowJar {
     relocate('org.apache.maven', 'red.mohist.sodionauth.libs.maven')
-    relocate('org.apache.http','red.mohist.sodionauth.libs.http')
-    relocate('org.apache.commons','red.mohist.sodionauth.libs.commons')
+    relocate('org.apache.http', 'red.mohist.sodionauth.libs.http')
+    relocate('org.apache.commons', 'red.mohist.sodionauth.libs.commons')
 }

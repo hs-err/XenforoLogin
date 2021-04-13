@@ -27,12 +27,13 @@ import red.mohist.sodionauth.core.utils.channel.proxy.clientPacket.HelloServerPa
 
 public class ListenerServerSwitchEvent implements BungeeAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onServerSwitchEvent(ServerSwitchEvent event){
+    public void onServerSwitchEvent(ServerSwitchEvent event) {
         Service.proxyLogin.serverToken.remove(event.getPlayer().getUniqueId());
         event.getPlayer().getServer().sendData(
                 ProxyChannel.name,
                 new HelloServerPacket().pack());
     }
+
     @Override
     public void eventClass() {
         PostLoginEvent.class.getName();

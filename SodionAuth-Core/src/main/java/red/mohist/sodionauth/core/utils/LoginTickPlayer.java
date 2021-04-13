@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 
 public class LoginTickPlayer {
 
-    int calledTimes=-1;
     static final int showTipTime = Config.security.showTipsTime;
+    int calledTimes = -1;
     int loginTimeout = Config.security.maxLoginTime;
     @Nonnull
     AbstractPlayer player;
@@ -38,21 +38,22 @@ public class LoginTickPlayer {
     public TickResult tick() {
         calledTimes++;
         //Helper.getLogger().info("sss");
-        if (calledTimes%20 == 0
+        if (calledTimes % 20 == 0
                 && (!player.isOnline() || !Service.auth.needCancelled(player))) {
             return TickResult.DONE;
         }
-        if (calledTimes%20 == 0
-                && !Service.auth.logged_in.containsKey(player.getUniqueId())) { ;
-            Helper.getLogger().info("Player " +player.getName()+" haven't been checked.");
+        if (calledTimes % 20 == 0
+                && !Service.auth.logged_in.containsKey(player.getUniqueId())) {
+            ;
+            Helper.getLogger().info("Player " + player.getName() + " haven't been checked.");
             return TickResult.DONE;
         }
-        if (calledTimes/20 > loginTimeout
+        if (calledTimes / 20 > loginTimeout
                 && Service.auth.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
             player.kick(player.getLang().errors.timeOut);
             return TickResult.DONE;
         }
-        if(calledTimes%((showTipTime*20))==0) {
+        if (calledTimes % ((showTipTime * 20)) == 0) {
             Service.auth.sendTip(player);
         }
         return TickResult.CONTINUE;

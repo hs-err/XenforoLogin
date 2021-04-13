@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.events.player;
+package red.mohist.sodionauth.core.config.migrates;
 
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.config.Configure;
+import red.mohist.sodionauth.core.config.MainConfiguration;
+import red.mohist.sodionauth.core.config.Migrater;
 
-public class ServerMessageEvent extends PluginMessageEvent {
-    public ServerMessageEvent(String channel, byte[] data, AbstractPlayer player) {
-        super(channel, data, player);
+public class MigrateFrom1 extends Migrater {
+    @Override
+    public void migrate(Configure pFrom, Configure pTo) {
+        MainConfiguration1 form = (MainConfiguration1) pFrom;
+        MainConfiguration to = (MainConfiguration) pTo;
     }
 }

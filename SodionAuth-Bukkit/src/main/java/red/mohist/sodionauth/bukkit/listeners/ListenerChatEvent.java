@@ -35,14 +35,15 @@ public class ListenerChatEvent implements BukkitAPIListener {
                 if (Config.security.cancelChatAfterLogin) {
                     event.setCancelled(true);
                 }
-            }else{
+            } else {
                 event.setCancelled(true);
             }
-            if(!new PlayerChatEvent(player,event.getMessage()).syncPost()){
+            if (!new PlayerChatEvent(player, event.getMessage()).syncPost()) {
                 event.setCancelled(true);
             }
         }
     }
+
     @Override
     public void eventClass() {
         AsyncPlayerChatEvent.class.getName();

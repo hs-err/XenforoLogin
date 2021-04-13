@@ -31,7 +31,7 @@ public class RateLimit implements SecuritySystem {
 
     @Override
     public String canJoin(AbstractPlayer player) {
-        if (Config.protection.RateLimit.join>0) {
+        if (Config.protection.RateLimit.join > 0) {
             if (!rateLimiter.tryAcquire(
                     Config.protection.RateLimit.join)) {
                 return player.getLang().errors.rateLimit;
@@ -42,7 +42,7 @@ public class RateLimit implements SecuritySystem {
 
     @Override
     public String canLogin(AbstractPlayer player) {
-        if (Config.protection.RateLimit.login>0) {
+        if (Config.protection.RateLimit.login > 0) {
             if (!rateLimiter.tryAcquire(
                     Config.protection.RateLimit.login)) {
                 return player.getLang().errors.rateLimit;
@@ -53,7 +53,7 @@ public class RateLimit implements SecuritySystem {
 
     @Override
     public String canRegister(AbstractPlayer player) {
-        if (Config.protection.RateLimit.register>0) {
+        if (Config.protection.RateLimit.register > 0) {
             if (!rateLimiter.tryAcquire(
                     Config.protection.RateLimit.register
             )) {

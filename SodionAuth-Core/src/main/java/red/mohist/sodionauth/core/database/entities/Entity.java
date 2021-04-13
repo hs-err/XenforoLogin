@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core.database.entities;
 
-import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -24,27 +23,27 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 public abstract class Entity implements Serializable {
-    public int save(){
+    public int save() {
         try {
             Field idField = this.getClass().getDeclaredField("id");
-            if(!idField.isAccessible()){
+            if (!idField.isAccessible()) {
                 idField.setAccessible(true);
             }
-            if(idField.get(this)==null){
+            if (idField.get(this) == null) {
                 int id = Service.database.suid.insert(this);
-                idField.set(this,id);
+                idField.set(this, id);
                 return id;
-            }else{
+            } else {
                 Service.database.suid.update(this);
                 return (int) idField.get(this);
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            Helper.getLogger().warn("Id field don't exist or accessAble, can't save.",e);
+            Helper.getLogger().warn("Id field don't exist or accessAble, can't save.", e);
             return -1;
         }
     }
 
-    public void delete(){
+    public void delete() {
         Service.database.suid.delete(this);
     }
 }

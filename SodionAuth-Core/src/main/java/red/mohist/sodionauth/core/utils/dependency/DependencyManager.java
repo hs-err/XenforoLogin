@@ -140,7 +140,7 @@ public class DependencyManager {
             reflectionClassLoader.addJarToClasspath(artifactResult.getArtifact().getFile().toPath());
         }
 
-        if (!isPresent.getAsBoolean()){
+        if (!isPresent.getAsBoolean()) {
             Helper.getLogger().warn(String.format("Error injecting depend %s:%s:%s into classpath...",
                     group,
                     name,

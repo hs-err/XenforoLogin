@@ -16,5 +16,5 @@
 
 package red.mohist.sodionauth.core.events;
 
-public class TickEvent extends Event{
+public class TickEvent extends Event {
 }

@@ -28,18 +28,19 @@ import java.util.List;
 import java.util.Locale;
 
 public class PasswordStrengthService {
-    public PasswordStrengthService(){
+    public PasswordStrengthService() {
         Helper.getLogger().info("Initializing passwordStrength service...");
     }
-    public Result verify(AbstractPlayer player, String email, String password){
+
+    public Result verify(AbstractPlayer player, String email, String password) {
         DictionaryBuilder dictionaryBuilder = new DictionaryBuilder()
                 .setDictionaryName("userInfo")
                 .setExclusion(true);
-        if(player != null && player.getName() != null){
-            dictionaryBuilder.addWord(player.getName(),0);
+        if (player != null && player.getName() != null) {
+            dictionaryBuilder.addWord(player.getName(), 0);
         }
-        if(email != null){
-            dictionaryBuilder.addWord(email,0);
+        if (email != null) {
+            dictionaryBuilder.addWord(email, 0);
         }
         List<Dictionary> dictionaryList = ConfigurationBuilder.getDefaultDictionaries();
         dictionaryList.add(dictionaryBuilder.createDictionary());
@@ -53,7 +54,7 @@ public class PasswordStrengthService {
         return nbvcxz.estimate(password);
     }
 
-    public void sendTip(AbstractPlayer player,Result result){
+    public void sendTip(AbstractPlayer player, Result result) {
         if (!result.isMinimumEntropyMet()) {
             Feedback feedback = result.getFeedback();
             if (feedback != null) {

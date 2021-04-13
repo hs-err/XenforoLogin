@@ -26,10 +26,11 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
 public class ListenerPlayerDisconnectEvent implements BungeeAPIListener {
     @EventHandler
-    public void onPlayerDisconnectEvent(PlayerDisconnectEvent event){
-        AbstractPlayer player=new BungeePlayer(event.getPlayer());
+    public void onPlayerDisconnectEvent(PlayerDisconnectEvent event) {
+        AbstractPlayer player = new BungeePlayer(event.getPlayer());
         new QuitEvent(player).post();
     }
+
     @Override
     public void eventClass() {
         PostLoginEvent.class.getName();

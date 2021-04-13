@@ -65,13 +65,14 @@ public class ReflectionClassLoader {
     public URLClassLoader getClassLoader() {
         return classLoader;
     }
+
     public void addJarToClasspath(Path file) {
         try {
             Method u = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             u.setAccessible(true);
             u.invoke(this.getClass().getClassLoader(),
                     file.toUri().toURL());
-        }catch (Throwable e){
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

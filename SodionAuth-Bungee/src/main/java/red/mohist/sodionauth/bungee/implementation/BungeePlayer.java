@@ -23,9 +23,10 @@ import red.mohist.sodionauth.core.modules.PlainPlayer;
 
 public class BungeePlayer extends PlainPlayer {
     ProxiedPlayer player;
-    public BungeePlayer(ProxiedPlayer player){
-        super(player.getName(),player.getUniqueId(),player.getAddress().getAddress());
-        this.player=player;
+
+    public BungeePlayer(ProxiedPlayer player) {
+        super(player.getName(), player.getUniqueId(), player.getAddress().getAddress());
+        this.player = player;
     }
 
     @Override

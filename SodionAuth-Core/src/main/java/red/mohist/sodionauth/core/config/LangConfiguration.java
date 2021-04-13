@@ -16,8 +16,6 @@
 
 package red.mohist.sodionauth.core.config;
 
-import red.mohist.sodionauth.core.utils.Lang;
-
 import java.util.Map;
 
 public class LangConfiguration {

@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.events.player;
 
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 
-public class ClientMessageEvent extends PluginMessageEvent{
+public class ClientMessageEvent extends PluginMessageEvent {
     public ClientMessageEvent(String channel, byte[] data, AbstractPlayer player) {
         super(channel, data, player);
     }

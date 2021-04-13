@@ -32,7 +32,7 @@ public class RegisterService {
 
     @Subscribe
     public void onChat(PlayerChatEvent event) {
-        if(event.isCancelled()){
+        if (event.isCancelled()) {
             return;
         }
         AbstractPlayer player = event.getPlayer();
@@ -85,22 +85,23 @@ public class RegisterService {
         }
     }
 
-    public boolean verifyPassword(User user,String password){
+    public boolean verifyPassword(User user, String password) {
         for (AuthInfo authInfo : user.getAuthInfo()) {
-            if(password.equals(authInfo.getData())){
+            if (password.equals(authInfo.getData())) {
                 return true;
             }
         }
         return false;
     }
-    public RegisterResult register(String username,String email,String password){
+
+    public RegisterResult register(String username, String email, String password) {
         User user = User.getByName(username);
-        if(user != null){
+        if (user != null) {
             return RegisterResult.USERNAME_EXIST;
         }
 
         user = new User().setEmail(email.toLowerCase()).first();
-        if(user != null){
+        if (user != null) {
             return RegisterResult.EMAIL_EXIST;
         }
 
@@ -115,9 +116,9 @@ public class RegisterService {
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
         return Service.threadPool.startup.startTask(
-                () ->Service.register.register(player.getName(),email,password)
-        ).then((result)->{
-            switch (result){
+                () -> Service.register.register(player.getName(), email, password)
+        ).then((result) -> {
+            switch (result) {
                 case OK:
                     Service.auth.login(player);
                     return true;
@@ -133,8 +134,8 @@ public class RegisterService {
         });
     }
 
-    public boolean registerSync(AbstractPlayer player, String email, String password){
-        switch (Service.register.register(player.getName(),email,password)){
+    public boolean registerSync(AbstractPlayer player, String email, String password) {
+        switch (Service.register.register(player.getName(), email, password)) {
             case OK:
                 Service.auth.login(player);
                 return true;
@@ -149,12 +150,6 @@ public class RegisterService {
         }
     }
 
-    public enum RegisterResult {
-        OK,
-        USERNAME_EXIST,
-        EMAIL_EXIST
-    }
-
     public boolean isEmail(String email) {
         if (null == email || "".equals(email)) {
             return false;
@@ -162,5 +157,11 @@ public class RegisterService {
         Pattern p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,10}");
         Matcher m = p.matcher(email);
         return m.matches();
+    }
+
+    public enum RegisterResult {
+        OK,
+        USERNAME_EXIST,
+        EMAIL_EXIST
     }
 }

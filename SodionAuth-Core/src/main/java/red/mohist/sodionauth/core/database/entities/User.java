@@ -21,46 +21,42 @@ import red.mohist.sodionauth.core.database.annotations.limits.NotNull;
 import red.mohist.sodionauth.core.database.annotations.limits.PrimaryKey;
 import red.mohist.sodionauth.core.services.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class User extends Entity {
-    public static User getByName(String name){
-        return new User().setLowerName(name).first();
-    }
-
-    public static User get(Integer id){
-        return new User().setId(id).first();
-    }
-
-    public User[] get(){
-        return (User[]) Service.database.suid.select(this).toArray();
-    }
-
-    public User first(){
-        List<User> users = Service.database.suid.select(this,new ConditionImpl().size(1));
-        if(users.size() > 0){
-            return users.get(0);
-        }else{
-            return null;
-        }
-    }
-
     @PrimaryKey
     private Integer id;
-
     @NotNull
     private String name;
-
     @NotNull
     private String lowerName;
-
     private String email;
     private Boolean verified;
     private String accessToken;
     private String clientToken;
     private String skinRestore;
     private String skinHash;
+
+    public static User getByName(String name) {
+        return new User().setLowerName(name).first();
+    }
+
+    public static User get(Integer id) {
+        return new User().setId(id).first();
+    }
+
+    public User[] get() {
+        return (User[]) Service.database.suid.select(this).toArray();
+    }
+
+    public User first() {
+        List<User> users = Service.database.suid.select(this, new ConditionImpl().size(1));
+        if (users.size() > 0) {
+            return users.get(0);
+        } else {
+            return null;
+        }
+    }
 
     public Integer getId() {
         return id;
@@ -140,26 +136,26 @@ public class User extends Entity {
         return this;
     }
 
-    public AuthInfo[] getAuthInfo(){
+    public AuthInfo[] getAuthInfo() {
         return Service.database.suid.select(new AuthInfo().setUserId(this.getId())).toArray(new AuthInfo[0]);
     }
 
-    public AuthInfo createAuthInfo(){
+    public AuthInfo createAuthInfo() {
         return new AuthInfo().setUserId(this.getId());
     }
 
-    public User addAuthInfo(AuthInfo authInfo){
+    public User addAuthInfo(AuthInfo authInfo) {
         Service.database.suid.insert(authInfo.setUserId(this.getId()));
         return this;
     }
 
-    public User clearAuthInfo(){
+    public User clearAuthInfo() {
         Service.database.suid.delete(new AuthInfo().setUserId(this.getId()));
         return this;
     }
 
 
-    public boolean verifyPassword(String password){
-        return Service.user.verifyPassword(this,password);
+    public boolean verifyPassword(String password) {
+        return Service.user.verifyPassword(this, password);
     }
 }

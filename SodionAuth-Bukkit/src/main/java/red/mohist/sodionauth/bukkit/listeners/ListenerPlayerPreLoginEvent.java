@@ -23,10 +23,7 @@ import org.bukkit.event.player.PlayerPreLoginEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.events.player.CanJoinEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.services.Service;
-import red.mohist.sodionauth.core.utils.Helper;
 
 public class ListenerPlayerPreLoginEvent implements BukkitAPIListener {
 

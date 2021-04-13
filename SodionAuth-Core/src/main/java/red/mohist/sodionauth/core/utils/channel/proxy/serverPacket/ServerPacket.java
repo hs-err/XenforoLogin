@@ -24,16 +24,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public abstract class ServerPacket extends ProxyPacket {
-    public byte[] pack(){
+    public byte[] pack() {
         byte[] n = encode();
         byte[] m = Helper.merge(n, Config.bungee.serverKey.getBytes(StandardCharsets.UTF_8));
         byte[] s = Helper.sha256(m);
-        return Helper.merge(m,s);
+        return Helper.merge(m, s);
     }
-    protected boolean verify(byte[] r){
+
+    protected boolean verify(byte[] r) {
         byte[] n = encode();
         byte[] m = Helper.merge(n, Config.bungee.clientKey.getBytes(StandardCharsets.UTF_8));
         byte[] s = Helper.sha256(m);
-        return Arrays.equals(Helper.merge(m,s), r);
+        return Arrays.equals(Helper.merge(m, s), r);
     }
 }

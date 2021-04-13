@@ -40,7 +40,7 @@ public class MixinServerPlayNetworkHandlerHelper {
             }
             return;
         }
-        new ChatEvent(abstractPlayer,packet.getChatMessage());
+        new ChatEvent(abstractPlayer, packet.getChatMessage());
         ci.cancel();
     }
 

@@ -18,11 +18,7 @@ package red.mohist.sodionauth.core;
 
 import red.mohist.sodionauth.core.exception.AuthenticatedException;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.modules.PlainPlayer;
 import red.mohist.sodionauth.core.services.Service;
-
-import java.net.InetAddress;
-import java.util.UUID;
 
 public final class SodionAuthApi {
     public static void login(AbstractPlayer player) throws AuthenticatedException {

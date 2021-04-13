@@ -16,10 +16,8 @@
 
 package red.mohist.sodionauth.core.database.sqlite;
 
-import org.teasoft.bee.osql.annotation.Table;
-import org.teasoft.honey.osql.core.BeeFactory;
-import red.mohist.sodionauth.core.database.annotations.Ignore;
 import red.mohist.sodionauth.core.database.Mapper;
+import red.mohist.sodionauth.core.database.annotations.Ignore;
 import red.mohist.sodionauth.core.database.annotations.limits.NotNull;
 import red.mohist.sodionauth.core.database.annotations.limits.PrimaryKey;
 
@@ -27,15 +25,15 @@ import java.lang.reflect.Field;
 
 public class SqliteMapper extends Mapper {
     @Override
-    public boolean isTableExist(String name){
+    public boolean isTableExist(String name) {
         return honeyFactory.getBeeSql().select(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='"+name+"';"
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + name + "';"
         ).size() == 1;
     }
 
     @Override
     public void dropTable(String name) {
-        honeyFactory.getBeeSql().modify("DROP TABLE "+name+";");
+        honeyFactory.getBeeSql().modify("DROP TABLE " + name + ";");
     }
 
     @Override
@@ -45,18 +43,18 @@ public class SqliteMapper extends Mapper {
         Field[] fields = entity.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
-            if(i != 0){
+            if (i != 0) {
                 sql.append(",");
             }
             sql.append(honeyFactory.getNameTranslate().toColumnName(field.getName()));
-            if(field.isAnnotationPresent(Ignore.class)){
+            if (field.isAnnotationPresent(Ignore.class)) {
                 break;
             }
             sql.append(" ").append(getTypeName(field.getType()));
-            if(field.isAnnotationPresent(PrimaryKey.class)){
+            if (field.isAnnotationPresent(PrimaryKey.class)) {
                 sql.append(" PRIMARY KEY");
             }
-            if(field.isAnnotationPresent(NotNull.class)){
+            if (field.isAnnotationPresent(NotNull.class)) {
                 sql.append(" NOT NULL");
             }
         }

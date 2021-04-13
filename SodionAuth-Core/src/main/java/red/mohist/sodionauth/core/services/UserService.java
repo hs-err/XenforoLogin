@@ -31,9 +31,9 @@ public class UserService {
         }
     }
 
-    public boolean verifyPassword(User user,String password){
+    public boolean verifyPassword(User user, String password) {
         for (AuthInfo authInfo : user.getAuthInfo()) {
-            if(password.equals(authInfo.getData())){
+            if (password.equals(authInfo.getData())) {
                 return true;
             }
         }

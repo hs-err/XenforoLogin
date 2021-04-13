@@ -18,7 +18,6 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
-import com.google.gson.Gson;
 import org.knownspace.minitask.ITask;
 import org.knownspace.minitask.locks.UniqueFlag;
 import org.knownspace.minitask.locks.Unlocker;
@@ -29,7 +28,6 @@ import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.player.*;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
-import red.mohist.sodionauth.core.modules.PlayerInfo;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -38,7 +36,6 @@ import red.mohist.sodionauth.core.utils.LoginTicker;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -55,12 +52,12 @@ public class AuthService {
 
         LocationInfo spawn_location = SodionAuthCore.instance.api.getSpawn(SodionAuthCore.instance.api.getDefaultWorld());
         default_location = new LocationInfo(
-                Config.spawn.world!=null?Config.spawn.world:SodionAuthCore.instance.api.getDefaultWorld(),
-                Config.spawn.x!=null?Config.spawn.x:spawn_location.x,
-                Config.spawn.y!=null?Config.spawn.y:spawn_location.y,
-                Config.spawn.z!=null?Config.spawn.z:spawn_location.z,
-                Config.spawn.yaw!=null?Config.spawn.yaw:spawn_location.yaw,
-                Config.spawn.pitch!=null?Config.spawn.pitch:spawn_location.pitch
+                Config.spawn.world != null ? Config.spawn.world : SodionAuthCore.instance.api.getDefaultWorld(),
+                Config.spawn.x != null ? Config.spawn.x : spawn_location.x,
+                Config.spawn.y != null ? Config.spawn.y : spawn_location.y,
+                Config.spawn.z != null ? Config.spawn.z : spawn_location.z,
+                Config.spawn.yaw != null ? Config.spawn.yaw : spawn_location.yaw,
+                Config.spawn.pitch != null ? Config.spawn.pitch : spawn_location.pitch
         );
 
         logged_in = new ConcurrentHashMap<>();
@@ -81,8 +78,8 @@ public class AuthService {
 
     @Subscribe
     public void onChat(PlayerChatEvent event) {
-        if(event.isCancelled()){
-           return;
+        if (event.isCancelled()) {
+            return;
         }
         AbstractPlayer player = event.getPlayer();
         String message = event.getMessage();
@@ -100,18 +97,18 @@ public class AuthService {
                 }
                 User user = User.getByName(player.getName());
 
-                if(user == null){
+                if (user == null) {
                     //if (Config.api.allowRegister) {
-                        Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
                     //} else {
                     //    player.kick(player.getLang().errors.noUser);
                     //}
-                }else if(!user.getName().equals(player.getName())){
+                } else if (!user.getName().equals(player.getName())) {
                     player.kick(player.getLang().errors.getNameIncorrect(
-                            ImmutableMap.of("correct",user.getName())));
-                }else if(user.verifyPassword(message)){
+                            ImmutableMap.of("correct", user.getName())));
+                } else if (user.verifyPassword(message)) {
                     Service.auth.login(player);
-                }else{
+                } else {
                     player.kick(player.getLang().errors.password);
                 }
                 break;
@@ -156,17 +153,17 @@ public class AuthService {
 
             User user = User.getByName(player.getName());
 
-            if(user == null){
+            if (user == null) {
                 //if (Config.api.allowRegister) {
-                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                    return null;
+                Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                return null;
                 //} else {
                 //    return player.getLang().errors.noUser;
                 //}
-            }else if(!user.getName().equals(player.getName())){
+            } else if (!user.getName().equals(player.getName())) {
                 return player.getLang().errors.getNameIncorrect(
-                        ImmutableMap.of("correct",user.getName()));
-            }else{
+                        ImmutableMap.of("correct", user.getName()));
+            } else {
                 Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
                 return null;
             }
@@ -211,7 +208,7 @@ public class AuthService {
         });
     }
 
-    public void login(AbstractPlayer player){
+    public void login(AbstractPlayer player) {
         // check if already login
         if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
                 .equals(StatusType.LOGGED_IN)) {

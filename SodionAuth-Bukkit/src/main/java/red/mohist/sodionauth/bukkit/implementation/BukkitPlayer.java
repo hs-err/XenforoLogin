@@ -63,7 +63,7 @@ public class BukkitPlayer extends AbstractPlayer {
 
     @Override
     public void sendClientData(String channel, byte[] data) {
-        handle.sendPluginMessage(BukkitLoader.instance,channel,data);
+        handle.sendPluginMessage(BukkitLoader.instance, channel, data);
     }
 
     @Override

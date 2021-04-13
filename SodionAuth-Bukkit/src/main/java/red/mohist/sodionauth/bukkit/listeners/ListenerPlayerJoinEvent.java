@@ -42,11 +42,11 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
 
             Helper.getLogger().warn("AsyncPlayerPreLoginEvent and PlayerPreLoginEvent isn't active. It may cause some security problems.");
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
-            Service.threadPool.startup.startTask(()->{
+            Service.threadPool.startup.startTask(() -> {
                 CanJoinEvent canJoinEvent = new CanJoinEvent(player);
                 if (!canJoinEvent.syncPost()) {
                     player.kick(canJoinEvent.getMessage());
-                }else{
+                } else {
                     JoinEvent joinEvent = new JoinEvent(player);
                     if (!joinEvent.syncPost()) {
                         player.kick(joinEvent.getMessage());

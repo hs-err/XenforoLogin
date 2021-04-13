@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.events.player;
+package red.mohist.sodionauth.core.config;
 
-import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class ServerMessageEvent extends PluginMessageEvent {
-    public ServerMessageEvent(String channel, byte[] data, AbstractPlayer player) {
-        super(channel, data, player);
-    }
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Migrate {
+    String value();
 }

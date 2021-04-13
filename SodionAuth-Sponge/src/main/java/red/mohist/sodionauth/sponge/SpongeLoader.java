@@ -33,7 +33,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
-import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
 import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Config;
@@ -117,8 +116,8 @@ public class SpongeLoader implements PlatformAdapter {
             }
             Sponge.getScheduler()
                     .createTaskBuilder()
-                    .execute(()->{
-                        new TickEvent().post();
+                    .execute(() -> {
+                        //new TickEvent().post();
                     })
                     .intervalTicks(1).submit(this);
 
@@ -136,9 +135,9 @@ public class SpongeLoader implements PlatformAdapter {
 
     @Override
     public void registerPluginMessageChannel(String channel) {
-        Sponge.getChannelRegistrar().getOrCreateRaw(this,channel)
-                .addListener(Platform.Type.SERVER,(data, connection, side) -> {
-                    if(connection instanceof PlayerConnection) {
+        Sponge.getChannelRegistrar().getOrCreateRaw(this, channel)
+                .addListener(Platform.Type.SERVER, (data, connection, side) -> {
+                    if (connection instanceof PlayerConnection) {
                         new ClientMessageEvent(
                                 channel,
                                 data.readBytes(data.available()),
@@ -162,6 +161,7 @@ public class SpongeLoader implements PlatformAdapter {
         }
         return allPlayers;
     }
+
     @Override
     public LocationInfo getSpawn(String worldName) {
         Optional<Location<World>> world = Sponge.getServer().getWorld(worldName).map(World::getSpawnLocation);

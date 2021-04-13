@@ -16,39 +16,28 @@
 
 package red.mohist.sodionauth.core.services;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
-import org.knownspace.minitask.ITask;
 import org.knownspace.minitask.locks.UniqueFlag;
 import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.database.entities.User;
-import red.mohist.sodionauth.core.enums.StatusType;
-import red.mohist.sodionauth.core.events.BootEvent;
-import red.mohist.sodionauth.core.events.player.*;
+import red.mohist.sodionauth.core.events.player.LoginEvent;
+import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
-import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.core.utils.LoginTicker;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 
 public class LoginService {
 
     public LocationInfo spawn_location;
 
-    public LoginService(){
+    public LoginService() {
         spawn_location = SodionAuthCore.instance.api.getSpawn(SodionAuthCore.instance.api.getDefaultWorld());
     }
 
@@ -83,7 +72,7 @@ public class LoginService {
 
     @Subscribe
     public void loginAsync(LoginEvent event) {
-        Service.threadPool.startup.startTask(()->{
+        Service.threadPool.startup.startTask(() -> {
             AbstractPlayer player = event.getPlayer();
             // restore playerInfo
             try {

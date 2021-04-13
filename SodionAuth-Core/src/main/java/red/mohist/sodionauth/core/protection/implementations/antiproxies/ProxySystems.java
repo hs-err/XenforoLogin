@@ -32,8 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProxySystems implements SecuritySystem {
     private static ArrayList<ProxySystem> currentSystem = new ArrayList<>();
-    private AtomicInteger tickTimes=new AtomicInteger(-1);
-    private final int updateTime=Config.protection.ProxySystems.updateTime;
+    private final int updateTime = Config.protection.ProxySystems.updateTime;
+    private AtomicInteger tickTimes = new AtomicInteger(-1);
+
     public ProxySystems() {
         {
             int unavailableCount = 0;
@@ -58,20 +59,21 @@ public class ProxySystems implements SecuritySystem {
         }
 
         //Service.threadPool.globalScheduledExecutor.scheduleAtFixedRate(() -> {
-            for (ProxySystem proxySystem : currentSystem) {
-                try {
-                    proxySystem.refreshProxies();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        for (ProxySystem proxySystem : currentSystem) {
+            try {
+                proxySystem.refreshProxies();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
         //}, 0, Config.protection.getProxySystems().getUpdateTime(60), TimeUnit.SECONDS);
     }
+
     @Subscribe
-    public void onTick(TickEvent tickEvent){
+    public void onTick(TickEvent tickEvent) {
         tickTimes.addAndGet(1);
-        if(tickTimes.get()==updateTime*20){
-            Service.threadPool.startup.startTask(()->{
+        if (tickTimes.get() == updateTime * 20) {
+            Service.threadPool.startup.startTask(() -> {
                 for (ProxySystem proxySystem : currentSystem) {
                     try {
                         proxySystem.refreshProxies();
@@ -79,11 +81,12 @@ public class ProxySystems implements SecuritySystem {
                         e.printStackTrace();
                     }
                 }
-            }).then(()->{
+            }).then(() -> {
                 tickTimes.set(-1);
             });
         }
     }
+
     @Override
     public String canJoin(AbstractPlayer player) {
         String ip = player.getAddress().getHostAddress();

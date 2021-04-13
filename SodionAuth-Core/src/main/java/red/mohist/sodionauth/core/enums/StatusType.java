@@ -27,12 +27,13 @@ public enum StatusType {
     PROXY_HANDLE;
 
     public String email;
+    public String password;
+
     public StatusType setEmail(String t) {
         email = t;
         return this;
     }
 
-    public String password;
     public StatusType setPassword(String t) {
         password = t;
         return this;

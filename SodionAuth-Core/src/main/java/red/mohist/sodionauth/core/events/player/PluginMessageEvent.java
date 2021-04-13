@@ -25,9 +25,9 @@ public abstract class PluginMessageEvent extends Event {
     private final AbstractPlayer player;
 
     public PluginMessageEvent(String channel, byte[] data, AbstractPlayer player) {
-        this.channel=channel;
-        this.data=data;
-        this.player=player;
+        this.channel = channel;
+        this.data = data;
+        this.player = player;
     }
 
     public String getChannel() {
@@ -38,7 +38,7 @@ public abstract class PluginMessageEvent extends Event {
         return data;
     }
 
-    public AbstractPlayer getPlayer(){
+    public AbstractPlayer getPlayer() {
         return player;
     }
 }

@@ -74,10 +74,10 @@ public class SpongePlayer extends AbstractPlayer {
     }
 
     @Override
-    public void sendClientData(String channel,byte[] data) {
+    public void sendClientData(String channel, byte[] data) {
         checkHandle();
         Sponge.getChannelRegistrar()
-                .getOrCreateRaw(this,channel)
+                .getOrCreateRaw(this, channel)
                 .sendTo(handle, channelBuf -> channelBuf.writeBytes(data));
     }
 

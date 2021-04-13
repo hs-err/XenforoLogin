@@ -18,11 +18,14 @@ package red.mohist.sodionauth.core.utils.channel.proxy;
 
 public abstract class ProxyPacket {
     protected abstract byte[] encode();
+
     public abstract byte[] pack();
+
     protected abstract boolean verify(byte[] s);
 
     public abstract int getSize();
-    public int getBytes(){
-        return getSize()/Byte.SIZE;
+
+    public int getBytes() {
+        return getSize() / Byte.SIZE;
     }
 }

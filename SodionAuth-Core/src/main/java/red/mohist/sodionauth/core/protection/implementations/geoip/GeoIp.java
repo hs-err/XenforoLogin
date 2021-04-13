@@ -27,10 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class GeoIP implements SecuritySystem {
+public class GeoIp implements SecuritySystem {
     private DatabaseReader countryReader;
 
-    public GeoIP() {
+    public GeoIp() {
         try {
             File database = new File(Helper.getConfigPath("GeoLite2-Country.mmdb"));
             countryReader = new DatabaseReader.Builder(database).build();
@@ -53,8 +53,8 @@ public class GeoIP implements SecuritySystem {
             country = countryReader.country(ipAddress).getCountry().getIsoCode();
         } catch (Throwable ignored) {
         }
-        if (Config.protection.GeoIP.countries.getOrDefault(country,
-                Config.protection.GeoIP.other)) {
+        if (Config.protection.GeoIp.countries.getOrDefault(country,
+                Config.protection.GeoIp.other)) {
             return null;
         } else {
             return player.getLang().errors.countryLimit;

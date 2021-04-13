@@ -69,26 +69,27 @@ public class Helper {
         return toStringUuid(getUuidFromName(name));
     }
 
-    public static String readBuffer(ByteBuffer buffer,int length){
+    public static String readBuffer(ByteBuffer buffer, int length) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < length; i++) {
             builder.append(buffer.getChar());
         }
         return builder.toString();
     }
-    public static void putBuffer(ByteBuffer buffer,int length,String str){
+
+    public static void putBuffer(ByteBuffer buffer, int length, String str) {
         for (int i = 0; i < length; i++) {
             buffer.putChar(str.charAt(i));
         }
     }
 
-    public static byte[] merge(byte[] a,byte[] b){
-        byte[] c= Arrays.copyOf(a,a.length+b.length);
+    public static byte[] merge(byte[] a, byte[] b) {
+        byte[] c = Arrays.copyOf(a, a.length + b.length);
         System.arraycopy(b, 0, c, a.length, b.length);
         return c;
     }
 
-    public static byte[] sha256(byte[] a){
+    public static byte[] sha256(byte[] a) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(a);

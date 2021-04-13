@@ -25,9 +25,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlainPlayer extends AbstractPlayer {
 
-    public PlainPlayer(String name){
-        super(name, Helper.getUuidFromName(name),InetAddress.getLoopbackAddress());
+    public PlainPlayer(String name) {
+        super(name, Helper.getUuidFromName(name), InetAddress.getLoopbackAddress());
     }
+
     public PlainPlayer(String name, UUID uuid, InetAddress address) {
         super(name, uuid, address);
     }

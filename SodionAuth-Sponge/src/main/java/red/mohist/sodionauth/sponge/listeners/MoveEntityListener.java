@@ -75,8 +75,8 @@ public class MoveEntityListener implements SpongeAPIListener {
                         event.getFromTransform().getPosition().getFloorX(),
                         event.getToTransform().getPosition().getFloorY(),
                         event.getFromTransform().getPosition().getFloorZ(),
-                        (float)event.getFromTransform().getYaw(),
-                        (float)event.getFromTransform().getPitch()
+                        (float) event.getFromTransform().getYaw(),
+                        (float) event.getFromTransform().getPitch()
                 ));
             }
         }

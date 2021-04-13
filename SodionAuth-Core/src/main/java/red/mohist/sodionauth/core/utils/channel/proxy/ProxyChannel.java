@@ -28,13 +28,13 @@ import java.util.Map;
 
 public class ProxyChannel {
     public static final String name = "sodionauth:proxy";
-    public static final Map<Integer,Class<? extends ClientPacket>> clientPackets =
-            new ImmutableMap.Builder<Integer,Class<? extends ClientPacket>>()
+    public static final Map<Integer, Class<? extends ClientPacket>> clientPackets =
+            new ImmutableMap.Builder<Integer, Class<? extends ClientPacket>>()
                     .put(0, HelloServerPacket.class)
                     .put(1, LoginSuccessPacket.class)
                     .build();
-    public static final Map<Integer,Class<? extends ServerPacket>> serverPackets =
-            new ImmutableMap.Builder<Integer,Class<? extends ServerPacket>>()
+    public static final Map<Integer, Class<? extends ServerPacket>> serverPackets =
+            new ImmutableMap.Builder<Integer, Class<? extends ServerPacket>>()
                     .put(0, ShakeTokenPacket.class)
                     .build();
 
