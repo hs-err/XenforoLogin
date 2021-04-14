@@ -51,6 +51,22 @@ public class LangConfiguration {
         public String usernameExist;
         public String loginExist;
 
+        public String getKey(Map<String, Object> data) {
+            String result = key;
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
+            }
+            return result;
+        }
+
+        public String getUrl(Map<String, Object> data) {
+            String result = url;
+            for (Map.Entry<String, Object> entry : data.entrySet()) {
+                result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
+            }
+            return result;
+        }
+
         public String getNameIncorrect(Map<String, Object> data) {
             String result = nameIncorrect;
             for (Map.Entry<String, Object> entry : data.entrySet()) {
