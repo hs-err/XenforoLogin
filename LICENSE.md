@@ -10,10 +10,6 @@ Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
-### Extra license
-
-- You are not permitted to interfere any protection that prevents loading in CatServer
-
 ## SodionAuth-Fabric
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
