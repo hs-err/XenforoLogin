@@ -256,18 +256,6 @@ Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
 
 我们根据[Apache License, Version 2.0](licenses/apache-2.0.txt)协议开源
 
-SodionAuth-Core with extra license
-
-其中SodionAuth-Core带有附加协议：
-
-````
-You are not permitted to interfere any protection that prevents loading in CatServer.
-````
-
-````
-你不被授权影响本插件阻止被CatServer加载。
-````
-
 关于协议翻译：如有争议以英文版本为准。
 
 关于商业使用：如果商业使用SodionAuth，实属我的荣幸。不过由于Apache2.0协议，你还是需要我们的授权。
