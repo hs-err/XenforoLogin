@@ -256,9 +256,3 @@ issues.
 Copyright 2020 Mohist-Community
 
 Licensed under the [Apache License, Version 2.0](licenses/apache-2.0.txt)
-
-SodionAuth-Core with extra license
-
-````
-You are not permitted to interfere any protection that prevents loading in CatServer.
-````
