@@ -16,12 +16,24 @@
 
 package red.mohist.sodionauth.core.authbackends;
 
+import red.mohist.sodionauth.core.config.MainConfiguration;
 import red.mohist.sodionauth.core.database.entities.AuthInfo;
 import red.mohist.sodionauth.core.database.entities.User;
 
-public interface AuthBackend {
-    LoginResult login(User user, AuthInfo authInfo, String password);
-    enum LoginResult{
+public abstract class AuthBackend {
+    public String friendlyName;
+    public boolean allowLogin;
+    public boolean allowRegister;
+
+
+    public AuthBackend(MainConfiguration.ApiBean.ApiConfigBean config){
+        this.friendlyName = config.friendlyName;
+        this.allowLogin = config.allowLogin;
+        this.allowRegister = config.allowRegister;
+    }
+
+    public abstract LoginResult login(User user, AuthInfo authInfo, String password);
+    public enum LoginResult{
         SUCCESS,
         ERROR_NAME {
             public String correct;
@@ -42,8 +54,8 @@ public interface AuthBackend {
         }
     }
 
-    RegisterResult register(User user,String password);
-    enum RegisterResult{
+    public abstract RegisterResult register(User user,String password);
+    public enum RegisterResult{
         SUCCESS,
         NAME_EXIST,
         EMAIL_EXIST,
@@ -52,8 +64,8 @@ public interface AuthBackend {
         ERROR_SERVER
     }
 
-    GetResult get(User user);
-    enum GetResult{
+    public abstract GetResult get(User user);
+    public enum GetResult{
         SUCCESS,
         ERROR_NAME,
         EMAIL_DIFFERENT,
@@ -70,6 +82,9 @@ public interface AuthBackend {
         };
         public GetResult setCorrect(String ss){
             return this;
+        }
+        public String getCorrect(){
+            return null;
         }
     }
 }

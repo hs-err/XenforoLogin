@@ -20,13 +20,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.Expose;
 import red.mohist.sodionauth.core.utils.Helper;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class MainConfiguration extends Configure {
 
     @Migrate("version")
-    @Expose(serialize = true, deserialize = false)
+    @Expose(deserialize = false)
     public Integer version = 2;
 
     @Migrate("defaultLang")
@@ -87,6 +88,11 @@ public class MainConfiguration extends Configure {
         @Expose
         public String passwordHash = "BCrypt";
 
+        //@Migrate("database.saltLength")
+        @Lore("The password salt length")
+        @Expose
+        public int saltLength = 6;
+
         @Expose
         public SqliteBean sqlite = new SqliteBean();
 
@@ -132,13 +138,13 @@ public class MainConfiguration extends Configure {
     public static class ApiBean extends Configure {
         @Migrate("api.xenforo")
         @Expose
-        public XenforoBean[] xenforo = {new XenforoBean()};
+        public Map<String,XenforoBean> xenforo = ImmutableMap.of("xenforo",new XenforoBean());
 
         @Migrate("api.web")
         @Expose
-        public WebBean[] web = {new WebBean()};
+        public Map<String,WebBean> web = ImmutableMap.of("web",new WebBean());
 
-        public static class XenforoBean extends Configure {
+        public static abstract class ApiConfigBean extends Configure{
             @Lore("Could player use this account to login?")
             @Expose
             public Boolean allowLogin = false;
@@ -147,6 +153,12 @@ public class MainConfiguration extends Configure {
             @Expose
             public Boolean allowRegister = false;
 
+            @Lore("The friendly name should display to user.")
+            @Expose
+            public String friendlyName = "web api";
+        }
+
+        public static class XenforoBean extends ApiConfigBean {
             @Lore("The Xenforo API url. Likes http://example.com/api .")
             @Expose
             public String url = "http://example.com/api";
@@ -157,15 +169,7 @@ public class MainConfiguration extends Configure {
             public String key = "YOUR_KEY_HERE";
         }
 
-        public static class WebBean extends Configure {
-            @Lore("Could player use this account to login?")
-            @Expose
-            public Boolean allowLogin = false;
-
-            @Lore("Will auto register when player register?")
-            @Expose
-            public Boolean allowRegister = false;
-
+        public static class WebBean extends ApiConfigBean {
             @Lore("The SodionApi url.")
             @Expose
             public String url = "http://example.com/SodionAuth.php";
@@ -289,12 +293,15 @@ public class MainConfiguration extends Configure {
 
     public static class ProtectionBean extends Configure {
         @Expose
+        @Name("proxySystems")
         public ProxySystemsBean ProxySystems = new ProxySystemsBean();
 
         @Expose
+        @Name("geoIp")
         public GeoIpBean GeoIp = new GeoIpBean();
 
         @Expose
+        @Name("rateLimit")
         public RateLimitBean RateLimit = new RateLimitBean();
 
         public static class ProxySystemsBean extends Configure {

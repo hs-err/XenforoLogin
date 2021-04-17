@@ -4,7 +4,7 @@
     <facet type="minecraft" name="Minecraft">
       <configuration>
         <autoDetectTypes>
-          <platformType>FABRIC</platformType>
+          <platformType>BUNGEECORD</platformType>
         </autoDetectTypes>
       </configuration>
     </facet>

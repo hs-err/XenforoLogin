@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.utils.hasher;
 
 import java.util.Random;
 
-public class HasherTool {
+public abstract class HasherTool {
     protected final int saltLength;
 
     public HasherTool(int saltLength) {
@@ -33,14 +33,13 @@ public class HasherTool {
         return hash(hash(data) + salt);
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean verify(String hash, String data) {
-        return hash(data).toLowerCase().equals(hash.toLowerCase());
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean verify(String hash, String data, String salt) {
-        return hash(hash(data) + salt).toLowerCase().equals(hash.toLowerCase());
+        if(needSalt()){
+            String salt = hash.substring(0,hash.indexOf("$"));
+            return hash(data+salt).equalsIgnoreCase(hash.substring(hash.indexOf("$")));
+        }else{
+            return hash(data).equalsIgnoreCase(hash);
+        }
     }
 
     public boolean needSalt() {

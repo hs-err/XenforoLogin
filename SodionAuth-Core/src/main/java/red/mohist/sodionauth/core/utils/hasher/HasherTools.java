@@ -21,65 +21,38 @@
  */
 package red.mohist.sodionauth.core.utils.hasher;
 
+import com.google.common.collect.ImmutableMap;
+import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.hasher.implementations.*;
 
+import java.util.Map;
+
 public class HasherTools {
-    private static HasherTool currentHasherTool = null;
-
-    public static void loadHasher(String name, int saltLength) {
-        HasherTool cs;
-        switch (name) {
-            case "BCrypt":
-                cs = new BCryptHasherTool(saltLength);
-                break;
-            case "MD5":
-                cs = new MD5HasherTool(saltLength);
-                break;
-            case "MD5Salt":
-                cs = new MD5SaltHasherTool(saltLength);
-                break;
-            case "Plain":
-                cs = new PlainHasherTool(saltLength);
-                break;
-            case "SHA1":
-                cs = new SHA1HasherTool(saltLength);
-                break;
-            case "SHA1Salt":
-                cs = new SHA1SaltHasherTool(saltLength);
-                break;
-            case "SHA224":
-                cs = new SHA224HasherTool(saltLength);
-                break;
-            case "SHA224Salt":
-                cs = new SHA224SaltHasherTool(saltLength);
-                break;
-            case "SHA256":
-                cs = new SHA256HasherTool(saltLength);
-                break;
-            case "SHA256Salt":
-                cs = new SHA256SaltHasherTool(saltLength);
-                break;
-            case "SHA384":
-                cs = new SHA384HasherTool(saltLength);
-                break;
-            case "SHA384Salt":
-                cs = new SHA384SaltHasherTool(saltLength);
-                break;
-            case "SHA512":
-                cs = new SHA512HasherTool(saltLength);
-                break;
-            case "SHA512Salt":
-                cs = new SHA512SaltHasherTool(saltLength);
-                break;
-            default:
-                cs = null;
-        }
-        if (cs == null) throw new NullPointerException();
-        currentHasherTool = cs;
+    private static Map<String,HasherTool> hasherTools;
+    static {
+        int saltLength = Config.database.saltLength;
+        hasherTools = new ImmutableMap.Builder<String,HasherTool>()
+                .put("BCrypt",new BCryptHasherTool(saltLength))
+                .put("MD5",new MD5HasherTool(saltLength))
+                .put("MD5Salt",new MD5SaltHasherTool(saltLength))
+                .put("Plain",new PlainHasherTool(saltLength))
+                .put("SHA1",new SHA1HasherTool(saltLength))
+                .put("SHA1Salt",new SHA1SaltHasherTool(saltLength))
+                .put("SHA224",new SHA224HasherTool(saltLength))
+                .put("SHA224Salt",new SHA224SaltHasherTool(saltLength))
+                .put("SHA256",new SHA256HasherTool(saltLength))
+                .put("SHA256Salt",new SHA256SaltHasherTool(saltLength))
+                .put("SHA384",new SHA384HasherTool(saltLength))
+                .put("SHA384Salt",new SHA384SaltHasherTool(saltLength))
+                .put("SHA512",new SHA512HasherTool(saltLength))
+                .put("SHA512Salt",new SHA512SaltHasherTool(saltLength))
+                .build();
+    }
+    public static HasherTool getByName(String name) {
+        return hasherTools.get(name);
     }
 
-    public static HasherTool getCurrentSystem() {
-        return currentHasherTool;
+    public static HasherTool getDefault() {
+        return getByName(Config.database.passwordHash);
     }
-
 }

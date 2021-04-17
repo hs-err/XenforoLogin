@@ -18,13 +18,19 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import org.knownspace.minitask.ITask;
+import red.mohist.sodionauth.core.authbackends.AuthBackend;
+import red.mohist.sodionauth.core.authbackends.AuthBackends;
 import red.mohist.sodionauth.core.database.entities.AuthInfo;
 import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.hasher.HasherTools;
+import red.mohist.sodionauth.libs.commons.codec.language.bm.Languages;
 
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,11 +113,56 @@ public class RegisterService {
 
         user = new User().setName(username).setEmail(email);
         user.save();
-        user.createAuthInfo()
-                .setType("password:plain")
-                .setData(password)
-                .save();
-        return RegisterResult.OK;
+
+        RegisterResult result = RegisterResult.OK;
+
+        if(Config.database.passwordHash != null){
+            user.createAuthInfo()
+                    .setType("password:" + Config.database.passwordHash)
+                    .setData(HasherTools.getByName(Config.database.passwordHash).hash(password))
+                    .save();
+            result.friendlyName = "this server";
+        }
+
+        User finalUser = user;
+        AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
+            if(authBackend.allowRegister) {
+                AuthBackend.GetResult getResult;
+                switch (authBackend.register(finalUser, password)) {
+                    case SUCCESS:
+                        finalUser.createAuthInfo()
+                                .setType(typeName)
+                                .save();
+                        result.setChild(RegisterResult.OK.setFriendlyName(authBackend.friendlyName));
+                        break;
+                    case EMAIL_EXIST:
+                        getResult = authBackend.get(finalUser);
+                        if(getResult.equals(AuthBackend.GetResult.SUCCESS)){
+                            if (authBackend.login(finalUser, finalUser.createAuthInfo()
+                                    .setType(typeName),password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                result.setChild(RegisterResult.OK.setFriendlyName(authBackend.friendlyName));
+                                break;
+                            }
+                        }
+                        result.setChild(RegisterResult.EMAIL_EXIST.setFriendlyName(authBackend.friendlyName));
+                        break;
+                    case NAME_EXIST:
+                        getResult = authBackend.get(finalUser);
+                        if(getResult.equals(AuthBackend.GetResult.SUCCESS)){
+                            if (authBackend.login(finalUser, finalUser.createAuthInfo()
+                                    .setType(typeName),password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                result.setChild(RegisterResult.OK.setFriendlyName(authBackend.friendlyName));
+                                break;
+                            }
+                        }
+                        result.setChild(RegisterResult.USERNAME_EXIST.setFriendlyName(authBackend.friendlyName));
+                        break;
+                    default:
+                        result.setChild(RegisterResult.FAILED.setFriendlyName(authBackend.friendlyName));
+                }
+            }
+        });
+        return result;
     }
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
@@ -120,6 +171,12 @@ public class RegisterService {
         ).then((result) -> {
             switch (result) {
                 case OK:
+                    if(result.friendlyName != null){
+                        player.sendMessage("register for "+result.friendlyName+" successfully");
+                    }
+                    for (RegisterResult childResult : result.child) {
+                        player.sendMessage("register for "+childResult.friendlyName+" successfully");
+                    }
                     Service.auth.login(player);
                     return true;
                 case USERNAME_EXIST:
@@ -135,8 +192,15 @@ public class RegisterService {
     }
 
     public boolean registerSync(AbstractPlayer player, String email, String password) {
-        switch (Service.register.register(player.getName(), email, password)) {
+        RegisterResult result = Service.register.register(player.getName(), email, password);
+        switch (result) {
             case OK:
+                if(result.friendlyName != null){
+                    player.sendMessage("register for "+result.friendlyName+" successfully");
+                }
+                for (RegisterResult childResult : result.child) {
+                    player.sendMessage("register for "+childResult.friendlyName+" successfully");
+                }
                 Service.auth.login(player);
                 return true;
             case USERNAME_EXIST:
@@ -162,6 +226,20 @@ public class RegisterService {
     public enum RegisterResult {
         OK,
         USERNAME_EXIST,
-        EMAIL_EXIST
+        EMAIL_EXIST,
+        FAILED;
+
+        public String friendlyName;
+
+        public ArrayList<RegisterResult> child = new ArrayList<>();
+
+        public RegisterResult setChild(RegisterResult child) {
+            this.child.add(child);
+            return this;
+        }
+        public RegisterResult setFriendlyName(String friendlyName) {
+            this.friendlyName = friendlyName;
+            return this;
+        }
     }
 }

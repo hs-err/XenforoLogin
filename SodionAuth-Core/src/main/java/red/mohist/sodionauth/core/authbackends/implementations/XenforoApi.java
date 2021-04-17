@@ -26,7 +26,6 @@ import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.Lang;
 import red.mohist.sodionauth.libs.http.HttpEntity;
-import red.mohist.sodionauth.libs.http.client.ResponseHandler;
 import red.mohist.sodionauth.libs.http.client.entity.UrlEncodedFormEntity;
 import red.mohist.sodionauth.libs.http.client.fluent.Form;
 import red.mohist.sodionauth.libs.http.client.methods.*;
@@ -36,11 +35,12 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-public class XenforoApi implements AuthBackend {
+public class XenforoApi extends AuthBackend {
     private final String url;
     private final String key;
 
     public XenforoApi(MainConfiguration.ApiBean.XenforoBean config) {
+        super(config);
         this.url = config.url;
         this.key = config.key;
     }

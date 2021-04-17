@@ -23,6 +23,7 @@ import red.mohist.sodionauth.core.config.*;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -45,9 +46,30 @@ public class Config {
         Helper.getLogger().info("load");
         GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithoutExposeAnnotation();
-        builder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        builder.setFieldNamingStrategy(field -> {
+            String name = field.getName();
+            Name nameAnnotation = field.getAnnotation(Name.class);
+            if(nameAnnotation != null){
+                if(nameAnnotation.plain()){
+                    return nameAnnotation.value();
+                }else{
+                    name = nameAnnotation.value();
+                }
+            }
+            StringBuilder translation = new StringBuilder();
+            int i = 0;
+            for(int length = name.length(); i < length; ++i) {
+                char character = name.charAt(i);
+                if (Character.isUpperCase(character) && translation.length() != 0) {
+                    translation.append(" ");
+                }
+                translation.append(character);
+            }
+            return translation.toString().toLowerCase();
+        });
         builder.serializeNulls();
         builder.setPrettyPrinting();
+        builder.disableHtmlEscaping();
         gson = builder.create();
 
         try {
@@ -163,17 +185,18 @@ public class Config {
     protected static JsonObject saveValue(Configure configure) throws IllegalAccessException {
         JsonObject result = new JsonObject();
         for (Field field : configure.getClass().getFields()) {
+            String translatedName = gson.fieldNamingStrategy().translateName(field);
             Lores lores = field.getAnnotation(Lores.class);
             if (lores != null) {
                 for (int i = 0; i < lores.value().length; i++) {
                     result.addProperty(
-                            "_" + field.getName() + "_" + i,
+                            "_" + translatedName + "_" + i,
                             lores.value()[i].value());
                 }
             } else {
                 Lore lore = field.getAnnotation(Lore.class);
                 if (lore != null) {
-                    result.addProperty("_" + field.getName(), lore.value());
+                    result.addProperty("_" + translatedName, lore.value());
                 }
             }
             if (Configure.class.isAssignableFrom(field.getType())) {
@@ -190,7 +213,7 @@ public class Config {
                     }
                 }
             } else {
-                result.add(field.getName(), gson.toJsonTree(field.get(configure)));
+                result.add(translatedName, gson.toJsonTree(field.get(configure)));
             }
         }
         return result;
