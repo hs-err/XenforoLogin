@@ -106,5 +106,10 @@
       <option name="name" value="UserLocalRemappedMods" />
       <option name="url" value="file:/$PROJECT_DIR$/.gradle/loom-cache/remapped_mods/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven5" />
+      <option name="name" value="maven5" />
+      <option name="url" value="https://files.minecraftforge.net/maven/" />
+    </remote-repository>
   </component>
 </project>
