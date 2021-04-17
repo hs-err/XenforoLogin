@@ -17,6 +17,7 @@ archivesBaseName = 'sodionauth'
 
 minecraft {
     mappings channel: 'official', version: '1.16.5'
+    access = file('src/main/resources/META-INF/access.cfg')
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
