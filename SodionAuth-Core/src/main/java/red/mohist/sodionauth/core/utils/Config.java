@@ -32,6 +32,7 @@ public class Config {
     public static String serverId;
     public static MainConfiguration.DatabaseBean database;
     public static MainConfiguration.ApiBean api;
+    public static MainConfiguration.PasswordBean password;
     public static MainConfiguration.BungeeBean bungee;
     public static MainConfiguration.DependenciesBean dependencies;
     public static MainConfiguration.SessionBean session;
@@ -71,7 +72,7 @@ public class Config {
         builder.setPrettyPrinting();
         builder.disableHtmlEscaping();
         gson = builder.create();
-
+        Helper.instance.saveResource("probeResource",true);
         try {
             File configFile = new File(Helper.getConfigPath("config.json"));
             FileInputStream fileReader = new FileInputStream(configFile);
@@ -105,6 +106,7 @@ public class Config {
         serverId = instance.serverId;
         database = instance.database;
         api = instance.api;
+        password = instance.password;
         bungee = instance.bungee;
         dependencies = instance.dependencies;
         session = instance.session;

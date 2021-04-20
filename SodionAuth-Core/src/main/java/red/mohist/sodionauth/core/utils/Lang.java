@@ -43,7 +43,6 @@ public class Lang {
 
     public static void init() throws IOException {
         ArrayList<String> languageList = new ArrayList<>();
-        languageList.add("de");
         languageList.add("en");
         languageList.add("fr");
         languageList.add("pl");

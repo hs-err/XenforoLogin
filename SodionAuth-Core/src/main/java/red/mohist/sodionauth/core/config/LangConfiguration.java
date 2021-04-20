@@ -19,8 +19,6 @@ package red.mohist.sodionauth.core.config;
 import java.util.Map;
 
 public class LangConfiguration {
-
-    public String prefix;
     public String registerEmail;
     public String registerPassword;
     public String registerPasswordConfirm;
@@ -32,7 +30,6 @@ public class LangConfiguration {
     public ErrorsBean errors;
 
     public static class ErrorsBean {
-        public String prefix;
         public String proxy;
         public String rateLimit;
         public String countryLimit;

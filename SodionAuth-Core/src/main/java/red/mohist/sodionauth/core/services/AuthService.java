@@ -25,6 +25,7 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.enums.StatusType;
 import red.mohist.sodionauth.core.events.BootEvent;
+import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.player.*;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
@@ -70,9 +71,9 @@ public class AuthService {
     }
 
     @Subscribe
-    public void onDown(QuitEvent event) {
+    public void onDown(DownEvent event) {
         for (AbstractPlayer abstractPlayer : SodionAuthCore.instance.api.getAllPlayer()) {
-            new QuitEvent(event.getPlayer()).post();
+            new QuitEvent(abstractPlayer).post();
         }
     }
 

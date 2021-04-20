@@ -53,6 +53,11 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
                     }
                 }
             });
+        }else{
+            JoinEvent joinEvent = new JoinEvent(player);
+            if (!joinEvent.syncPost()) {
+                player.kick(joinEvent.getMessage());
+            }
         }
     }
 

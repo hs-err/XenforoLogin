@@ -47,6 +47,9 @@ public class MainConfiguration extends Configure {
     public ApiBean api = new ApiBean();
 
     @Expose
+    public PasswordBean password = new PasswordBean();
+
+    @Expose
     public BungeeBean bungee = new BungeeBean();
 
     @Expose
@@ -178,6 +181,12 @@ public class MainConfiguration extends Configure {
             @Expose
             public String key = "YOUR_KEY_HERE";
         }
+    }
+
+    public static class PasswordBean extends Configure {
+        // @Migrate("password.minimumEntropy")
+        @Expose
+        public Integer minimumEntropy = 32;
     }
 
     public static class DependenciesBean extends Configure {

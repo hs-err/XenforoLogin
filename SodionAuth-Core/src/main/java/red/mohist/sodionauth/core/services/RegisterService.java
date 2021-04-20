@@ -17,7 +17,9 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
+import me.gosimple.nbvcxz.scoring.Result;
 import org.knownspace.minitask.ITask;
+import org.knownspace.minitask.functions.Callable;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.authbackends.AuthBackends;
 import red.mohist.sodionauth.core.database.entities.AuthInfo;
@@ -58,8 +60,19 @@ public class RegisterService {
                 event.setCancelled(true);
                 Service.auth.logged_in.put(
                         player.getUniqueId(),
-                        StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(message));
-                Service.auth.sendTip(player);
+                        StatusType.HANDLE);
+                Service.passwordStrength.verifyAsync(player, status.email, message).then((result)->{
+                    if(result.isMinimumEntropyMet()) {
+                        Service.auth.logged_in.put(
+                                player.getUniqueId(),
+                                StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(message));
+                    }else{
+                        Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(status.email));
+                        Service.passwordStrength.sendTip(player,result);
+                    }
+                    player.sendMessage("password strength: "+result.getEntropy());
+                    Service.auth.sendTip(player);
+                });
                 break;
             case NEED_REGISTER_CONFIRM:
                 event.setCancelled(true);

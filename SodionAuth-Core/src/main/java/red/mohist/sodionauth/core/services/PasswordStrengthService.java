@@ -46,7 +46,7 @@ public class PasswordStrengthService {
         dictionaryList.add(dictionaryBuilder.createDictionary());
 
         Configuration configuration = new ConfigurationBuilder()
-                .setMinimumEntropy(40d)
+                .setMinimumEntropy(Config.password.minimumEntropy.doubleValue())
                 .setLocale(Locale.forLanguageTag(Config.defaultLang))
                 .setDictionaries(dictionaryList)
                 .createConfiguration();

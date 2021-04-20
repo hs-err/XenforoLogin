@@ -37,7 +37,6 @@ public class LoginTickPlayer {
 
     public TickResult tick() {
         calledTimes++;
-        //Helper.getLogger().info("sss");
         if (calledTimes % 20 == 0
                 && (!player.isOnline() || !Service.auth.needCancelled(player))) {
             return TickResult.DONE;
