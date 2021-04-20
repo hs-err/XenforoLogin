@@ -41,7 +41,8 @@ public class DatabaseService {
         } else {
             HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Helper.getConfigPath(Config.database.sqlite.path));
         }
-        HoneyConfig.getHoneyConfig().loggerType = "log4j2";
+        // HoneyConfig.getHoneyConfig().loggerType = "log4j2";
+        HoneyConfig.getHoneyConfig().loggerType = "noLogging";
 
         honeyFactory = BeeFactory.getHoneyFactory();
         suid = BeeFactory.getHoneyFactory().getSuid();
