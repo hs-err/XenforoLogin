@@ -24,6 +24,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.1.4'
+    compileOnly 'org.reflections:reflections:0.9.12'
     implementation project(":SodionAuth-Core")
 }
 
