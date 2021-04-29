@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.bukkit.interfaces;
+package red.mohist.sodionauth.forge.interfaces;
 
 public interface ForgeAPIListener {
     void eventClass();

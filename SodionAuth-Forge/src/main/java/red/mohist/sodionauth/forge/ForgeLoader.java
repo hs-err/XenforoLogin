@@ -32,7 +32,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import red.mohist.sodionauth.bukkit.interfaces.ForgeAPIListener;
+import red.mohist.sodionauth.forge.interfaces.ForgeAPIListener;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Config;
