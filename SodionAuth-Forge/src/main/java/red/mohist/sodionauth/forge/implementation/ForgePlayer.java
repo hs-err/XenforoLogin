@@ -36,14 +36,15 @@ import net.minecraft.world.storage.IServerWorldInfo;
 import red.mohist.sodionauth.core.modules.*;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 public class ForgePlayer extends AbstractPlayer {
     private ServerPlayerEntity handle;
 
     public ForgePlayer(ServerPlayerEntity handle) {
-        super(handle.getScoreboardName(), handle.getUUID(), ((InetSocketAddress)handle.connection.connection.getRemoteAddress()).getAddress());
+        super(handle.getScoreboardName(), handle.getUUID(), ((InetSocketAddress) handle.connection.connection.getRemoteAddress()).getAddress());
         this.handle = handle;
     }
 

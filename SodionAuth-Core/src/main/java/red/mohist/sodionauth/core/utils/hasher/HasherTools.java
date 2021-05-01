@@ -28,26 +28,28 @@ import red.mohist.sodionauth.core.utils.hasher.implementations.*;
 import java.util.Map;
 
 public class HasherTools {
-    private static Map<String,HasherTool> hasherTools;
+    private static Map<String, HasherTool> hasherTools;
+
     static {
         int saltLength = Config.database.saltLength;
-        hasherTools = new ImmutableMap.Builder<String,HasherTool>()
-                .put("BCrypt",new BCryptHasherTool(saltLength))
-                .put("MD5",new MD5HasherTool(saltLength))
-                .put("MD5Salt",new MD5SaltHasherTool(saltLength))
-                .put("Plain",new PlainHasherTool(saltLength))
-                .put("SHA1",new SHA1HasherTool(saltLength))
-                .put("SHA1Salt",new SHA1SaltHasherTool(saltLength))
-                .put("SHA224",new SHA224HasherTool(saltLength))
-                .put("SHA224Salt",new SHA224SaltHasherTool(saltLength))
-                .put("SHA256",new SHA256HasherTool(saltLength))
-                .put("SHA256Salt",new SHA256SaltHasherTool(saltLength))
-                .put("SHA384",new SHA384HasherTool(saltLength))
-                .put("SHA384Salt",new SHA384SaltHasherTool(saltLength))
-                .put("SHA512",new SHA512HasherTool(saltLength))
-                .put("SHA512Salt",new SHA512SaltHasherTool(saltLength))
+        hasherTools = new ImmutableMap.Builder<String, HasherTool>()
+                .put("BCrypt", new BCryptHasherTool(saltLength))
+                .put("MD5", new MD5HasherTool(saltLength))
+                .put("MD5Salt", new MD5SaltHasherTool(saltLength))
+                .put("Plain", new PlainHasherTool(saltLength))
+                .put("SHA1", new SHA1HasherTool(saltLength))
+                .put("SHA1Salt", new SHA1SaltHasherTool(saltLength))
+                .put("SHA224", new SHA224HasherTool(saltLength))
+                .put("SHA224Salt", new SHA224SaltHasherTool(saltLength))
+                .put("SHA256", new SHA256HasherTool(saltLength))
+                .put("SHA256Salt", new SHA256SaltHasherTool(saltLength))
+                .put("SHA384", new SHA384HasherTool(saltLength))
+                .put("SHA384Salt", new SHA384SaltHasherTool(saltLength))
+                .put("SHA512", new SHA512HasherTool(saltLength))
+                .put("SHA512Salt", new SHA512SaltHasherTool(saltLength))
                 .build();
     }
+
     public static HasherTool getByName(String name) {
         return hasherTools.get(name);
     }

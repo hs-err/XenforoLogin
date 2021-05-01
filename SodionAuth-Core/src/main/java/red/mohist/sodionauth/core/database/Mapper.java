@@ -20,7 +20,6 @@ import org.teasoft.bee.osql.annotation.Entity;
 import org.teasoft.bee.osql.annotation.Table;
 import org.teasoft.honey.osql.core.BeeFactory;
 import org.teasoft.honey.osql.core.HoneyFactory;
-import red.mohist.sodionauth.core.database.annotations.Ignore;
 
 import java.lang.reflect.Field;
 
@@ -31,9 +30,9 @@ public abstract class Mapper {
     public static String translateTable(Class<?> entity) {
         if (entity.isAnnotationPresent(Table.class)) {
             return entity.getAnnotation(Table.class).value();
-        }else if(entity.isAnnotationPresent(Entity.class)) {
+        } else if (entity.isAnnotationPresent(Entity.class)) {
             return translateTable(entity.getAnnotation(Entity.class).value());
-        }else {
+        } else {
             return translateTable(entity.getSimpleName());
         }
     }
@@ -49,6 +48,7 @@ public abstract class Mapper {
     public static String translateField(Field field) {
         return translateField(field.getName());
     }
+
     public static String translateField(String name) {
         return BeeFactory.getHoneyFactory().getNameTranslate().toColumnName(name);
     }
@@ -61,7 +61,7 @@ public abstract class Mapper {
 
     public abstract boolean isFieldExist(String tableName, String fieldName);
 
-    public boolean isFieldExist(Field field){
+    public boolean isFieldExist(Field field) {
         return isFieldExist(translateTable(field), translateField(field));
     }
 
@@ -83,16 +83,16 @@ public abstract class Mapper {
 
     public abstract void createByEntity(Class<?> entity);
 
-    public void initEntity(Class<?> entity){
-        if(isTableExist(entity)){
+    public void initEntity(Class<?> entity) {
+        if (isTableExist(entity)) {
             String tableName = translateTable(entity);
             Field[] fields = entity.getDeclaredFields();
             for (Field field : fields) {
-                if(!isFieldExist(field)){
+                if (!isFieldExist(field)) {
                     addField(field);
                 }
             }
-        }else{
+        } else {
             createByEntity(entity);
         }
     }

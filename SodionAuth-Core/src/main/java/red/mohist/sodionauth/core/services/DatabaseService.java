@@ -16,7 +16,6 @@
 
 package red.mohist.sodionauth.core.services;
 
-import org.teasoft.bee.osql.NameTranslate;
 import org.teasoft.bee.osql.Suid;
 import org.teasoft.bee.osql.SuidRich;
 import org.teasoft.honey.osql.core.BeeFactory;
@@ -45,9 +44,10 @@ public class DatabaseService {
 
         honeyFactory.setNameTranslate(new UnderScoreAndCamelName() {
             private final String prefix = Config.database.tablePrefix;
+
             @Override
             public String toTableName(String entityName) {
-                return prefix+super.toTableName(entityName);
+                return prefix + super.toTableName(entityName);
             }
 
             @Override

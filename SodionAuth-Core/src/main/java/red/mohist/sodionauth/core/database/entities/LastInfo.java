@@ -68,6 +68,7 @@ public class LastInfo extends Entity {
         this.uuid = uuid;
         return this;
     }
+
     public LastInfo setUuid(UUID uuid) {
         this.uuid = Helper.toStringUuid(uuid);
         return this;

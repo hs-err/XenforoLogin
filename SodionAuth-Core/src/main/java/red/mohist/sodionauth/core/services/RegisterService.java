@@ -59,16 +59,16 @@ public class RegisterService {
                 Service.auth.logged_in.put(
                         player.getUniqueId(),
                         PlayerStatus.HANDLE());
-                Service.passwordStrength.verifyAsync(player, status.email, message).then((result)->{
-                    if(result.isMinimumEntropyMet()) {
+                Service.passwordStrength.verifyAsync(player, status.email, message).then((result) -> {
+                    if (result.isMinimumEntropyMet()) {
                         Service.auth.logged_in.put(
                                 player.getUniqueId(),
                                 PlayerStatus.NEED_REGISTER_CONFIRM().setEmail(status.email).setPassword(message));
-                    }else{
+                    } else {
                         Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
-                        Service.passwordStrength.sendTip(player,result);
+                        Service.passwordStrength.sendTip(player, result);
                     }
-                    player.sendMessage("password strength: "+result.getEntropy());
+                    player.sendMessage("password strength: " + result.getEntropy());
                     Service.auth.sendTip(player);
                 });
                 break;
@@ -127,7 +127,7 @@ public class RegisterService {
 
         RegisterResult result = RegisterResult.OK();
 
-        if(Config.database.passwordHash != null){
+        if (Config.database.passwordHash != null) {
             user.createAuthInfo()
                     .setType("password:" + Config.database.passwordHash)
                     .setData(HasherTools.getByName(Config.database.passwordHash).hash(password))
@@ -137,7 +137,7 @@ public class RegisterService {
 
         User finalUser = user;
         AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
-            if(authBackend.allowRegister) {
+            if (authBackend.allowRegister) {
                 AuthBackend.GetResult getResult;
                 switch (authBackend.register(finalUser, password)) {
                     case SUCCESS:
@@ -148,9 +148,9 @@ public class RegisterService {
                         break;
                     case EMAIL_EXIST:
                         getResult = authBackend.get(finalUser);
-                        if(getResult.equals(AuthBackend.GetResult.SUCCESS)){
+                        if (getResult.equals(AuthBackend.GetResult.SUCCESS)) {
                             if (authBackend.login(finalUser, finalUser.createAuthInfo()
-                                    .setType(typeName),password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                    .setType(typeName), password).equals(AuthBackend.LoginResult.SUCCESS)) {
                                 result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                                 break;
                             }
@@ -159,9 +159,9 @@ public class RegisterService {
                         break;
                     case NAME_EXIST:
                         getResult = authBackend.get(finalUser);
-                        if(getResult.equals(AuthBackend.GetResult.SUCCESS)){
+                        if (getResult.equals(AuthBackend.GetResult.SUCCESS)) {
                             if (authBackend.login(finalUser, finalUser.createAuthInfo()
-                                    .setType(typeName),password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                    .setType(typeName), password).equals(AuthBackend.LoginResult.SUCCESS)) {
                                 result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                                 break;
                             }
@@ -178,43 +178,43 @@ public class RegisterService {
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
         return Service.threadPool.startup.startTask(() -> {
-            try{
+            try {
                 return Service.register.register(player.getName(), email, password);
-            }catch (Exception e){
-                Helper.getLogger().warn("Exception during register for player "+player.getName() ,e);
+            } catch (Exception e) {
+                Helper.getLogger().warn("Exception during register for player " + player.getName(), e);
                 return RegisterResult.FAILED();
             }
         }).then((result) -> {
-            return handleResult(player,result);
+            return handleResult(player, result);
         });
     }
 
     public boolean registerSync(AbstractPlayer player, String email, String password) {
         RegisterResult result = Service.register.register(player.getName(), email, password);
-        return handleResult(player,result);
+        return handleResult(player, result);
     }
 
-    private boolean handleResult(AbstractPlayer player,RegisterResult result){
+    private boolean handleResult(AbstractPlayer player, RegisterResult result) {
         switch (result.type) {
             case OK:
-                if(result.friendlyName != null){
-                    player.sendMessage("register for "+result.friendlyName+" successfully");
+                if (result.friendlyName != null) {
+                    player.sendMessage("register for " + result.friendlyName + " successfully");
                 }
                 for (RegisterResult childResult : result.child) {
-                    switch (childResult.type){
+                    switch (childResult.type) {
                         case OK:
-                            if(childResult.friendlyName != null){
-                                player.sendMessage("register for "+childResult.friendlyName+" successfully");
+                            if (childResult.friendlyName != null) {
+                                player.sendMessage("register for " + childResult.friendlyName + " successfully");
                             }
                             break;
                         case USERNAME_EXIST:
-                            player.sendMessage("register for "+childResult.friendlyName+" failed: USERNAME_EXIST");
+                            player.sendMessage("register for " + childResult.friendlyName + " failed: USERNAME_EXIST");
                             break;
                         case EMAIL_EXIST:
-                            player.sendMessage("register for "+childResult.friendlyName+" failed: EMAIL_EXIST");
+                            player.sendMessage("register for " + childResult.friendlyName + " failed: EMAIL_EXIST");
                             break;
                         default:
-                            player.sendMessage("register for "+childResult.friendlyName+" failed: UNKNOWN");
+                            player.sendMessage("register for " + childResult.friendlyName + " failed: UNKNOWN");
                     }
                 }
                 Service.auth.login(player);
@@ -239,25 +239,35 @@ public class RegisterService {
         return m.matches();
     }
 
+    public enum ResultType {
+        OK,
+        USERNAME_EXIST,
+        EMAIL_EXIST,
+        FAILED;
+    }
+
     public static class RegisterResult {
         public ResultType type;
         public String friendlyName;
         public ArrayList<RegisterResult> child = new ArrayList<>();
 
-        public RegisterResult(ResultType type){
+        public RegisterResult(ResultType type) {
             this.type = type;
         }
 
-        public static RegisterResult OK(){
+        public static RegisterResult OK() {
             return new RegisterResult(ResultType.OK);
         }
-        public static RegisterResult USERNAME_EXIST(){
+
+        public static RegisterResult USERNAME_EXIST() {
             return new RegisterResult(ResultType.USERNAME_EXIST);
         }
-        public static RegisterResult EMAIL_EXIST(){
+
+        public static RegisterResult EMAIL_EXIST() {
             return new RegisterResult(ResultType.EMAIL_EXIST);
         }
-        public static RegisterResult FAILED(){
+
+        public static RegisterResult FAILED() {
             return new RegisterResult(ResultType.FAILED);
         }
 
@@ -265,15 +275,10 @@ public class RegisterService {
             this.child.add(child);
             return this;
         }
+
         public RegisterResult setFriendlyName(String friendlyName) {
             this.friendlyName = friendlyName;
             return this;
         }
-    }
-    public enum ResultType {
-        OK,
-        USERNAME_EXIST,
-        EMAIL_EXIST,
-        FAILED;
     }
 }

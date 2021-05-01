@@ -26,22 +26,29 @@ public abstract class AuthBackend {
     public boolean allowRegister;
 
 
-    public AuthBackend(MainConfiguration.ApiBean.ApiConfigBean config){
+    public AuthBackend(MainConfiguration.ApiBean.ApiConfigBean config) {
         this.friendlyName = config.friendlyName;
         this.allowLogin = config.allowLogin;
         this.allowRegister = config.allowRegister;
     }
 
     public abstract LoginResult login(User user, AuthInfo authInfo, String password);
-    public enum LoginResult{
+
+    public abstract RegisterResult register(User user, String password);
+
+    public abstract GetResult get(User user);
+
+    public enum LoginResult {
         SUCCESS,
         ERROR_NAME {
             public String correct;
-            public LoginResult setCorrect(String correct){
+
+            public LoginResult setCorrect(String correct) {
                 this.correct = correct;
                 return this;
             }
-            public String getCorrect(){
+
+            public String getCorrect() {
                 return correct;
             }
         },
@@ -49,13 +56,12 @@ public abstract class AuthBackend {
         ERROR_SERVER,
         NO_USER;
 
-        public LoginResult setCorrect(String ss){
+        public LoginResult setCorrect(String ss) {
             return this;
         }
     }
 
-    public abstract RegisterResult register(User user,String password);
-    public enum RegisterResult{
+    public enum RegisterResult {
         SUCCESS,
         NAME_EXIST,
         EMAIL_EXIST,
@@ -64,27 +70,30 @@ public abstract class AuthBackend {
         ERROR_SERVER
     }
 
-    public abstract GetResult get(User user);
-    public enum GetResult{
+    public enum GetResult {
         SUCCESS,
         ERROR_NAME,
         EMAIL_DIFFERENT,
         NO_SUCH_USER,
         ERROR_SERVER {
             public String correct;
-            public GetResult setCorrect(String correct){
+
+            public GetResult setCorrect(String correct) {
                 this.correct = correct;
                 return this;
             }
-            public String getCorrect(){
+
+            public String getCorrect() {
                 return correct;
             }
         };
-        public GetResult setCorrect(String ss){
-            return this;
-        }
-        public String getCorrect(){
+
+        public String getCorrect() {
             return null;
+        }
+
+        public GetResult setCorrect(String ss) {
+            return this;
         }
     }
 }

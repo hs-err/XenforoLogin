@@ -19,7 +19,6 @@ package red.mohist.sodionauth.core.services;
 import com.google.common.eventbus.Subscribe;
 import org.knownspace.minitask.ITaskFactory;
 import org.knownspace.minitask.TaskFactory;
-import org.knownspace.minitask.locks.UniqueFlag;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -48,7 +47,6 @@ public class ThreadPoolService {
                 });
         startup = new TaskFactory(executor);
     }
-
 
 
     @Subscribe

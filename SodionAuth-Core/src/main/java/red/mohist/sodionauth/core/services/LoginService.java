@@ -39,9 +39,9 @@ public class LoginService {
         AbstractPlayer player = event.getPlayer();
         // restore playerInfo
         LastInfo lastinfo = LastInfo.getByUuid(player.getUniqueId());
-        if(lastinfo == null){
+        if (lastinfo == null) {
             player.setPlayerInfo(new PlayerInfo());
-        }else{
+        } else {
             player.setPlayerInfo(new Gson().fromJson(lastinfo.getInfo(), PlayerInfo.class));
             lastinfo.delete();
         }

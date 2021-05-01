@@ -23,7 +23,6 @@ import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,46 +37,46 @@ public class UserService {
     }
 
     public boolean verifyPassword(User user, String password) {
-        Map<String,AuthInfo> authInfoMap = new HashMap<>();
+        Map<String, AuthInfo> authInfoMap = new HashMap<>();
         for (AuthInfo authInfo : user.getAuthInfo()) {
-            authInfoMap.put(authInfo.getType(),authInfo);
+            authInfoMap.put(authInfo.getType(), authInfo);
         }
         AtomicBoolean loginResult = new AtomicBoolean(false);
-        authInfoMap.forEach((key,authInfo)->{
-            if(authInfo.getType().startsWith("password:")){
+        authInfoMap.forEach((key, authInfo) -> {
+            if (authInfo.getType().startsWith("password:")) {
                 String hashName = authInfo.getType().substring("password:".length());
                 if (HasherTools.getByName(hashName)
-                        .verify(authInfo.getData(),password)) {
-                    if(!hashName.equals(Config.database.passwordHash)){
+                        .verify(authInfo.getData(), password)) {
+                    if (!hashName.equals(Config.database.passwordHash)) {
                         authInfo.delete();
                         user.createAuthInfo()
-                                .setType("password:"+Config.database.passwordHash)
+                                .setType("password:" + Config.database.passwordHash)
                                 .setData(HasherTools.getDefault().hash(password))
                                 .save();
                     }
                     loginResult.set(true);
                 }
-            }else{
+            } else {
                 AuthBackend authBackend = AuthBackends.getByName(authInfo.getType());
                 if (authBackend.allowLogin && authBackend
-                        .login(user,authInfo,password)
+                        .login(user, authInfo, password)
                         .equals(AuthBackend.LoginResult.SUCCESS)) {
                     loginResult.set(true);
                 }
             }
         });
-        if(loginResult.get()){
-            Map<String,Boolean> unLinkedTypes = new HashMap<>();
-            AuthBackends.authBackendMap.forEach((key,authBackend)->{
-                unLinkedTypes.put(key,false);
+        if (loginResult.get()) {
+            Map<String, Boolean> unLinkedTypes = new HashMap<>();
+            AuthBackends.authBackendMap.forEach((key, authBackend) -> {
+                unLinkedTypes.put(key, false);
             });
-            authInfoMap.forEach((key,authInfo)->{
-                unLinkedTypes.put(key,true);
+            authInfoMap.forEach((key, authInfo) -> {
+                unLinkedTypes.put(key, true);
             });
-            unLinkedTypes.forEach((key,linked)->{
-                if(!linked){
+            unLinkedTypes.forEach((key, linked) -> {
+                if (!linked) {
                     AuthBackend authBackend = AuthBackends.getByName(key);
-                    if(authBackend.allowRegister) {
+                    if (authBackend.allowRegister) {
                         AuthBackend.GetResult getResult = authBackend.get(user);
                         if (getResult.equals(AuthBackend.GetResult.SUCCESS)) {
                             if (authBackend.login(user, user.createAuthInfo()

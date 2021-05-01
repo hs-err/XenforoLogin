@@ -16,14 +16,16 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.config.*;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 @SuppressWarnings("unused")
 public class Config {
@@ -50,16 +52,16 @@ public class Config {
         builder.setFieldNamingStrategy(field -> {
             String name = field.getName();
             Name nameAnnotation = field.getAnnotation(Name.class);
-            if(nameAnnotation != null){
-                if(nameAnnotation.plain()){
+            if (nameAnnotation != null) {
+                if (nameAnnotation.plain()) {
                     return nameAnnotation.value();
-                }else{
+                } else {
                     name = nameAnnotation.value();
                 }
             }
             StringBuilder translation = new StringBuilder();
             int i = 0;
-            for(int length = name.length(); i < length; ++i) {
+            for (int length = name.length(); i < length; ++i) {
                 char character = name.charAt(i);
                 if (Character.isUpperCase(character) && translation.length() != 0) {
                     translation.append(" ");
@@ -72,7 +74,7 @@ public class Config {
         builder.setPrettyPrinting();
         builder.disableHtmlEscaping();
         gson = builder.create();
-        Helper.instance.saveResource("probeResource",true);
+        Helper.instance.saveResource("probeResource", true);
         try {
             File configFile = new File(Helper.getConfigPath("config.json"));
             FileInputStream fileReader = new FileInputStream(configFile);

@@ -64,6 +64,7 @@ public class Session extends Entity {
         this.uuid = uuid;
         return this;
     }
+
     public Session setUuid(UUID uuid) {
         this.uuid = Helper.toStringUuid(uuid);
         return this;

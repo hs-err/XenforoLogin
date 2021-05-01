@@ -28,9 +28,9 @@ import red.mohist.sodionauth.core.utils.Helper;
 import java.lang.reflect.Field;
 
 public class MysqlMapper extends Mapper {
-    public MysqlMapper(){
+    public MysqlMapper() {
         HoneyConfig.getHoneyConfig().dbName = "MySQL";
-        HoneyConfig.getHoneyConfig().setUrl("jdbc:mysql://" + Config.database.mysql.host+"/"+Config.database.mysql.database);
+        HoneyConfig.getHoneyConfig().setUrl("jdbc:mysql://" + Config.database.mysql.host + "/" + Config.database.mysql.database);
         HoneyConfig.getHoneyConfig().setUsername(Config.database.mysql.username);
         HoneyConfig.getHoneyConfig().setPassword(Config.database.mysql.password);
         honeyFactory = BeeFactory.getHoneyFactory();
@@ -39,17 +39,17 @@ public class MysqlMapper extends Mapper {
     @Override
     public boolean isTableExist(String name) {
         return honeyFactory.getBeeSql().select(
-                "SELECT table_name FROM information_schema.tables WHERE table_schema=\""+Config.database.mysql.database+"\" AND table_name=\""+name+"\";"
+                "SELECT table_name FROM information_schema.tables WHERE table_schema=\"" + Config.database.mysql.database + "\" AND table_name=\"" + name + "\";"
         ).size() == 1;
     }
 
     @Override
-    public boolean isFieldExist(String tableName, String fieldName){
+    public boolean isFieldExist(String tableName, String fieldName) {
         return honeyFactory.getBeeSql().select(
                 "SELECT table_name FROM information_schema.columns WHERE " +
-                        "table_schema=\""+Config.database.mysql.database+ "\" AND " +
-                        "table_name=\""+tableName+"\" AND " +
-                        "column_name=\""+fieldName+"\";"
+                        "table_schema=\"" + Config.database.mysql.database + "\" AND " +
+                        "table_name=\"" + tableName + "\" AND " +
+                        "column_name=\"" + fieldName + "\";"
         ).size() == 1;
     }
 
@@ -72,7 +72,7 @@ public class MysqlMapper extends Mapper {
             if (field.isAnnotationPresent(Ignore.class)) {
                 break;
             }
-            sql.append(getFieldSql(field,true));
+            sql.append(getFieldSql(field, true));
         }
         sql.append(");");
         Helper.getLogger().info(sql.toString());
@@ -80,22 +80,22 @@ public class MysqlMapper extends Mapper {
     }
 
     @Override
-    public void addField(Field field){
+    public void addField(Field field) {
         String tableName = translateTable(field);
         StringBuilder sql = new StringBuilder("ALTER TABLE `" + tableName + "` ADD");
-        sql.append(getFieldSql(field,false));
+        sql.append(getFieldSql(field, false));
         sql.append(";");
         Helper.getLogger().info(sql.toString());
         honeyFactory.getBeeSql().modify(sql.toString());
     }
 
-    private String getFieldSql(Field field,boolean setPrimaryKey) {
+    private String getFieldSql(Field field, boolean setPrimaryKey) {
         StringBuilder sql = new StringBuilder();
         sql.append("`").append(Mapper.translateField(field)).append("`");
 
         sql.append(" ").append(getTypeName(field.getType()));
 
-        if(field.getName().equals("id")){
+        if (field.getName().equals("id")) {
             sql.append(" AUTO_INCREMENT");
         }
         if (setPrimaryKey && field.isAnnotationPresent(PrimaryKey.class)) {

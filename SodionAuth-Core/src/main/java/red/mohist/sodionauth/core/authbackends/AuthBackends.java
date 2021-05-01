@@ -23,16 +23,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthBackends {
-    public static Map<String,AuthBackend> authBackendMap = new ConcurrentHashMap<>();
+    public static Map<String, AuthBackend> authBackendMap = new ConcurrentHashMap<>();
+
     static {
-        Config.api.xenforo.forEach((key,bean)->{
+        Config.api.xenforo.forEach((key, bean) -> {
             authBackendMap.put("xenforo:" + key, new XenforoApi(bean));
         });
-        Config.api.web.forEach((key,bean)->{
+        Config.api.web.forEach((key, bean) -> {
             // authBackendMap.put("web:" + key, new WebApi(bean));
         });
     }
-    public static AuthBackend getByName(String typeName){
+
+    public static AuthBackend getByName(String typeName) {
         return authBackendMap.get(typeName);
     }
 }

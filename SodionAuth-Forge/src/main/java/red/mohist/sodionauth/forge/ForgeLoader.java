@@ -17,7 +17,6 @@
 package red.mohist.sodionauth.forge;
 
 import com.google.common.base.Preconditions;
-import org.reflections.Reflections;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SWindowItemsPacket;
@@ -32,12 +31,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import red.mohist.sodionauth.forge.interfaces.ForgeAPIListener;
+import org.reflections.Reflections;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.modules.*;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.forge.implementation.ForgePlayer;
+import red.mohist.sodionauth.forge.interfaces.ForgeAPIListener;
 
 import java.io.File;
 import java.util.Collection;
@@ -189,7 +189,7 @@ public class ForgeLoader implements PlatformAdapter {
                 player.setGameMode(Config.security.defaultGamemode);
             }
 
-            serverPlayerEntity.connection.send(new SWindowItemsPacket(-1,  NonNullList.withSize(54, ItemStack.EMPTY)));
+            serverPlayerEntity.connection.send(new SWindowItemsPacket(-1, NonNullList.withSize(54, ItemStack.EMPTY)));
         }
     }
 

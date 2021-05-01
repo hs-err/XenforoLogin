@@ -140,7 +140,7 @@ public class AuthService {
     @Subscribe
     public void onCanJoin(CanJoinEvent event) throws ExecutionException, InterruptedException {
         ITask<Void> i = Service.threadPool.startup.startTask(() -> {
-            try{
+            try {
                 AbstractPlayer player = event.getPlayer();
                 logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
                 if (Service.auth.logged_in.containsKey(player.getUniqueId())
@@ -165,12 +165,12 @@ public class AuthService {
                     Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
                     return null;
                 }
-            }catch (Exception e){
-                Helper.getLogger().warn("Exception during check player "+event.getPlayer().getName() ,e);
+            } catch (Exception e) {
+                Helper.getLogger().warn("Exception during check player " + event.getPlayer().getName(), e);
                 return event.getPlayer().getLang().errors.server;
             }
-        }).then((result)->{
-            if(result != null){
+        }).then((result) -> {
+            if (result != null) {
                 event.setCancelled(true);
             }
         });

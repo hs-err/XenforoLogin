@@ -22,33 +22,42 @@ public class PlayerStatus {
     public String email;
     public String password;
 
-    public PlayerStatus(StatusType type){
-        this.type=type;
+    public PlayerStatus(StatusType type) {
+        this.type = type;
     }
-    public static PlayerStatus NEED_CHECK(){
+
+    public static PlayerStatus NEED_CHECK() {
         return new PlayerStatus(StatusType.NEED_CHECK);
     }
-    public static PlayerStatus NEED_LOGIN(){
+
+    public static PlayerStatus NEED_LOGIN() {
         return new PlayerStatus(StatusType.NEED_LOGIN);
     }
-    public static PlayerStatus NEED_REGISTER_EMAIL(){
+
+    public static PlayerStatus NEED_REGISTER_EMAIL() {
         return new PlayerStatus(StatusType.NEED_REGISTER_EMAIL);
     }
-    public static PlayerStatus NEED_REGISTER_PASSWORD(){
+
+    public static PlayerStatus NEED_REGISTER_PASSWORD() {
         return new PlayerStatus(StatusType.NEED_REGISTER_PASSWORD);
     }
-    public static PlayerStatus NEED_REGISTER_CONFIRM(){
+
+    public static PlayerStatus NEED_REGISTER_CONFIRM() {
         return new PlayerStatus(StatusType.NEED_REGISTER_CONFIRM);
     }
-    public static PlayerStatus LOGGED_IN(){
+
+    public static PlayerStatus LOGGED_IN() {
         return new PlayerStatus(StatusType.LOGGED_IN);
     }
-    public static PlayerStatus HANDLE(){
+
+    public static PlayerStatus HANDLE() {
         return new PlayerStatus(StatusType.HANDLE);
     }
-    public static PlayerStatus PROXY_HANDLE(){
+
+    public static PlayerStatus PROXY_HANDLE() {
         return new PlayerStatus(StatusType.PROXY_HANDLE);
     }
+
     public PlayerStatus setEmail(String t) {
         email = t;
         return this;
@@ -58,7 +67,8 @@ public class PlayerStatus {
         password = t;
         return this;
     }
-    public enum StatusType{
+
+    public enum StatusType {
         NEED_CHECK,
         NEED_LOGIN,
         NEED_REGISTER_EMAIL,

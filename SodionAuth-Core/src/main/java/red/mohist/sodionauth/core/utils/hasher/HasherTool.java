@@ -34,10 +34,10 @@ public abstract class HasherTool {
     }
 
     public boolean verify(String hash, String data) {
-        if(needSalt()){
-            String salt = hash.substring(0,hash.indexOf("$"));
-            return hash(data+salt).equalsIgnoreCase(hash.substring(hash.indexOf("$")));
-        }else{
+        if (needSalt()) {
+            String salt = hash.substring(0, hash.indexOf("$"));
+            return hash(data + salt).equalsIgnoreCase(hash.substring(hash.indexOf("$")));
+        } else {
             return hash(data).equalsIgnoreCase(hash);
         }
     }

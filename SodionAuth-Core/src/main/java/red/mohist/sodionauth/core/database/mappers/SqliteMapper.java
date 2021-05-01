@@ -28,7 +28,7 @@ import red.mohist.sodionauth.core.utils.Helper;
 import java.lang.reflect.Field;
 
 public class SqliteMapper extends Mapper {
-    public SqliteMapper(){
+    public SqliteMapper() {
         HoneyConfig.getHoneyConfig().dbName = "SQLite";
         if (Config.database.sqlite.absolute) {
             HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Config.database.sqlite.path);
@@ -48,7 +48,7 @@ public class SqliteMapper extends Mapper {
     @Override
     public boolean isFieldExist(String tableName, String fieldName) {
         return honeyFactory.getBeeSql().select(
-                "SELECT name FROM sqlite_master WHERE name='" + tableName + "' AND sql='"+fieldName+"';"
+                "SELECT name FROM sqlite_master WHERE name='" + tableName + "' AND sql='" + fieldName + "';"
         ).size() == 1;
     }
 

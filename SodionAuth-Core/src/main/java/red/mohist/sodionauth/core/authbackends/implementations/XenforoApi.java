@@ -17,7 +17,10 @@
 package red.mohist.sodionauth.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.config.MainConfiguration;
 import red.mohist.sodionauth.core.database.entities.AuthInfo;
@@ -28,7 +31,10 @@ import red.mohist.sodionauth.core.utils.Lang;
 import red.mohist.sodionauth.libs.http.HttpEntity;
 import red.mohist.sodionauth.libs.http.client.entity.UrlEncodedFormEntity;
 import red.mohist.sodionauth.libs.http.client.fluent.Form;
-import red.mohist.sodionauth.libs.http.client.methods.*;
+import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
+import red.mohist.sodionauth.libs.http.client.methods.HttpGet;
+import red.mohist.sodionauth.libs.http.client.methods.HttpPost;
+import red.mohist.sodionauth.libs.http.client.methods.HttpUriRequest;
 import red.mohist.sodionauth.libs.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -48,9 +54,9 @@ public class XenforoApi extends AuthBackend {
     @Override
     public LoginResult login(User user, AuthInfo authInfo, String password) {
         try {
-            JsonObject response = request("auth",ImmutableMap.of(
+            JsonObject response = request("auth", ImmutableMap.of(
                     "login", user.getName(),
-                    "password",password
+                    "password", password
             ));
             if (response.get("success") != null && response.get("success").getAsBoolean()) {
                 response.get("user").getAsJsonObject().get("username").getAsString();
@@ -78,7 +84,7 @@ public class XenforoApi extends AuthBackend {
             }
         } catch (Exception e) {
             Helper.getLogger().warn(
-                    "Error while login player " + user.getName() + " in xenforo "+url, e);
+                    "Error while login player " + user.getName() + " in xenforo " + url, e);
             return LoginResult.ERROR_SERVER;
         }
     }
@@ -86,14 +92,14 @@ public class XenforoApi extends AuthBackend {
     @Override
     public RegisterResult register(User user, String password) {
         try {
-            JsonObject response = request("users",ImmutableMap.of(
+            JsonObject response = request("users", ImmutableMap.of(
                     "username", user.getName(),
                     "email", user.getEmail(),
-                    "password",password
+                    "password", password
             ));
             if (response.get("success") != null && response.get("success").getAsBoolean()) {
                 return RegisterResult.SUCCESS;
-            }else{
+            } else {
                 JsonArray errors = response.get("errors").getAsJsonArray();
                 if (errors.size() > 0) {
                     switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
@@ -113,7 +119,7 @@ public class XenforoApi extends AuthBackend {
             }
         } catch (Exception e) {
             Helper.getLogger().warn(
-                    "Error while register player " + user.getName() + " to xenforo "+url, e);
+                    "Error while register player " + user.getName() + " to xenforo " + url, e);
             return RegisterResult.ERROR_SERVER;
         }
     }
@@ -133,24 +139,24 @@ public class XenforoApi extends AuthBackend {
             return GetResult.SUCCESS;
         } catch (Exception e) {
             Helper.getLogger().warn(
-                    "Error while get player " + user.getName() + " to xenforo "+url, e);
+                    "Error while get player " + user.getName() + " to xenforo " + url, e);
             return GetResult.ERROR_SERVER;
         }
     }
 
-    protected JsonObject request(String path, Map<String,String> data) throws IOException {
-        return request(path,data,false);
+    protected JsonObject request(String path, Map<String, String> data) throws IOException {
+        return request(path, data, false);
     }
 
     protected JsonObject request(String path) throws IOException {
-        return request(path,null,false);
+        return request(path, null, false);
     }
 
-    protected JsonObject request(String path, Map<String,String> data , boolean isGet) throws IOException {
+    protected JsonObject request(String path, Map<String, String> data, boolean isGet) throws IOException {
         HttpUriRequest request;
-        if(isGet){
+        if (isGet) {
             request = new HttpGet(url + "/" + path);
-        }else {
+        } else {
             HttpPost postRequest = new HttpPost(url + "/" + path);
             Form form = Form.form();
             data.forEach(form::add);
@@ -160,10 +166,10 @@ public class XenforoApi extends AuthBackend {
         request.addHeader("XF-Api-Key", key);
         request.addHeader("XF-Api-User", "1");
         CloseableHttpResponse response = Service.httpClient.execute(request);
-        if(response == null){
+        if (response == null) {
             throw new IOException("No response");
         }
-        switch (response.getStatusLine().getStatusCode()){
+        switch (response.getStatusLine().getStatusCode()) {
             case 200:
             case 400:
             case 404:
@@ -173,23 +179,23 @@ public class XenforoApi extends AuthBackend {
                 Helper.getLogger().warn(
                         Lang.def.errors.getKey(ImmutableMap.of(
                                 "key", key)));
-                throw new IOException("Server returns status code "+response.getStatusLine().getStatusCode());
+                throw new IOException("Server returns status code " + response.getStatusLine().getStatusCode());
             default:
-                throw new IOException("Server returns status code "+response.getStatusLine().getStatusCode());
+                throw new IOException("Server returns status code " + response.getStatusLine().getStatusCode());
         }
         HttpEntity entity = response.getEntity();
-        if(entity == null){
+        if (entity == null) {
             throw new IOException("Server returns no entity");
         }
         String content = EntityUtils.toString(entity);
-        if(content == null || content.equals("")){
+        if (content == null || content.equals("")) {
             throw new IOException("Server returns empty entity");
         }
         response.close();
         JsonObject result;
-        result = new Gson().fromJson(content,JsonObject.class);
-        if(result == null){
-            throw new JsonSyntaxException("Server returned: "+content);
+        result = new Gson().fromJson(content, JsonObject.class);
+        if (result == null) {
+            throw new JsonSyntaxException("Server returned: " + content);
         }
         return result;
     }

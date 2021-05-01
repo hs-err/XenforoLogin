@@ -31,8 +31,8 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}"
+                "Implementation-Title"  : project.name,
+                "Implementation-Version": "${version}"
         ])
     }
 }

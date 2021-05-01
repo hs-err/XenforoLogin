@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.Expose;
 import red.mohist.sodionauth.core.utils.Helper;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -141,13 +140,13 @@ public class MainConfiguration extends Configure {
     public static class ApiBean extends Configure {
         @Migrate("api.xenforo")
         @Expose
-        public Map<String,XenforoBean> xenforo = ImmutableMap.of("xenforo",new XenforoBean());
+        public Map<String, XenforoBean> xenforo = ImmutableMap.of("xenforo", new XenforoBean());
 
         @Migrate("api.web")
         @Expose
-        public Map<String,WebBean> web = ImmutableMap.of("web",new WebBean());
+        public Map<String, WebBean> web = ImmutableMap.of("web", new WebBean());
 
-        public static abstract class ApiConfigBean extends Configure{
+        public static abstract class ApiConfigBean extends Configure {
             @Lore("Could player use this account to login?")
             @Expose
             public Boolean allowLogin = false;

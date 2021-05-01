@@ -109,12 +109,15 @@ Edit config.json
 ````json
 {
   "api": {
-    "system": "xenforo","_system": "Edit this to xenforo",
+    "system": "xenforo",
+    "_system": "Edit this to xenforo",
     "xenforo": {
-      "url": "http://example.com/api","_url": "Edit this to your xenforo url",
-      "key": "XXXX0000XXXX0000XXXX00_00XXXX000","_key": "Your access key here"
+      "url": "http://example.com/api",
+      "_url": "Edit this to your xenforo url",
+      "key": "XXXX0000XXXX0000XXXX00_00XXXX000",
+      "_key": "Your access key here"
     }
-}
+  }
 ````
 
 #### Flarum
@@ -134,12 +137,15 @@ Edit config.json
 ````json
 {
   "api": {
-    "system": "web","_system": "Edit this to web",
+    "system": "web",
+    "_system": "Edit this to web",
     "web": {
-      "url": "http://example.com/api/sodionAuth","_url": "Edit this to your website's url",
-      "key": "XXXX0000XXXX0000XXXX00_00XXXX000","_key": "Try your luck here~ flarum officially does not set rate limits."
+      "url": "http://example.com/api/sodionAuth",
+      "_url": "Edit this to your website's url",
+      "key": "XXXX0000XXXX0000XXXX00_00XXXX000",
+      "_key": "Try your luck here~ flarum officially does not set rate limits."
     }
-}
+  }
 ````
 
 Enjoy.
@@ -153,12 +159,15 @@ Edit config.json
 ````json
 {
   "api": {
-    "system": "web","_system": "Edit this to web",
+    "system": "web",
+    "_system": "Edit this to web",
     "web": {
-      "url": "http://example.com/plugin.php?id=discuz_sodion_auth","_url": "Edit to your website.",
-      "key": "XXXX0000XXXX0000XXXX00_00XXXX000","_key": "Try your luck here~"
+      "url": "http://example.com/plugin.php?id=discuz_sodion_auth",
+      "_url": "Edit to your website.",
+      "key": "XXXX0000XXXX0000XXXX00_00XXXX000",
+      "_key": "Try your luck here~"
     }
-}
+  }
 ````
 
 #### Mysql
@@ -168,21 +177,33 @@ Edit config.json
 ````json
 {
   "api": {
-    "system": "mysql","_system": "mysql here",
+    "system": "mysql",
+    "_system": "mysql here",
     "mysql": {
-      "host": "localhost:3306","_host": "The host of Mysql",
-      "username": "sodionauth","_username": "Mysql username",
-      "password": "sodionauth","_password": "Mysql password",
-      "database": "sodionauth","_database": "Database name (not create automated)",
-      "tableName": "users","_tableName": "The table name that stores user data (not recommended to modify)",
-      "emailField": "email","_emailField": "The field name of the mailbox (not recommended to modify)",
-      "usernameField": "username","_usernameField": "The field name of the username (not recommended to modify)",
-      "passwordField": "password","_passwordField": "The field name of the password (not recommended to modify)",
-      "saltField": "salt","_saltField": "The field name of the salt (not recommended to modify)",
-      "saltLength": 6,"_saltLength": "The length of the salt (not recommended to modify)",
-      "passwordHash": "BCrypt","_passwordHash": "Irreversible encryption method of password, see: How to choose encryption method?"
+      "host": "localhost:3306",
+      "_host": "The host of Mysql",
+      "username": "sodionauth",
+      "_username": "Mysql username",
+      "password": "sodionauth",
+      "_password": "Mysql password",
+      "database": "sodionauth",
+      "_database": "Database name (not create automated)",
+      "tableName": "users",
+      "_tableName": "The table name that stores user data (not recommended to modify)",
+      "emailField": "email",
+      "_emailField": "The field name of the mailbox (not recommended to modify)",
+      "usernameField": "username",
+      "_usernameField": "The field name of the username (not recommended to modify)",
+      "passwordField": "password",
+      "_passwordField": "The field name of the password (not recommended to modify)",
+      "saltField": "salt",
+      "_saltField": "The field name of the salt (not recommended to modify)",
+      "saltLength": 6,
+      "_saltLength": "The length of the salt (not recommended to modify)",
+      "passwordHash": "BCrypt",
+      "_passwordHash": "Irreversible encryption method of password, see: How to choose encryption method?"
     }
-}
+  }
 ````
 
 #### Sqlite
@@ -192,19 +213,29 @@ Edit config.json
 ````json
 {
   "api": {
-    "system": "sqlite","_system": "sqlite here",
+    "system": "sqlite",
+    "_system": "sqlite here",
     "sqlite": {
-      "path": "Users.db","_path": "The path of the database",
-      "absolute": false,"_absolute": "Whether path is an absolute path",
-      "tableName": "users","_tableName": "The table name that stores user data (not recommended to modify)",
-      "emailField": "email","_emailField": "The field name of the mailbox (not recommended to modify)",
-      "usernameField": "username","_usernameField": "The field name of the username (not recommended to modify)",
-      "passwordField": "password","_passwordField": "The field name of the password (not recommended to modify)",
-      "saltField": "salt","_saltField": "The field name of the salt (not recommended to modify)",
-      "saltLength": 6,"_saltLength": "The length of the salt (not recommended to modify)",
-      "passwordHash": "BCrypt","_passwordHash": "Irreversible encryption method of password, see: How to choose encryption method?"
+      "path": "Users.db",
+      "_path": "The path of the database",
+      "absolute": false,
+      "_absolute": "Whether path is an absolute path",
+      "tableName": "users",
+      "_tableName": "The table name that stores user data (not recommended to modify)",
+      "emailField": "email",
+      "_emailField": "The field name of the mailbox (not recommended to modify)",
+      "usernameField": "username",
+      "_usernameField": "The field name of the username (not recommended to modify)",
+      "passwordField": "password",
+      "_passwordField": "The field name of the password (not recommended to modify)",
+      "saltField": "salt",
+      "_saltField": "The field name of the salt (not recommended to modify)",
+      "saltLength": 6,
+      "_saltLength": "The length of the salt (not recommended to modify)",
+      "passwordHash": "BCrypt",
+      "_passwordHash": "Irreversible encryption method of password, see: How to choose encryption method?"
     }
-}
+  }
 ````
 
 ### Start server and enjoy
