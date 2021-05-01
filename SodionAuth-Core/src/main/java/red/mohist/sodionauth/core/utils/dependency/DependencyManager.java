@@ -67,7 +67,7 @@ public class DependencyManager {
 
         locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
             @Override
-            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
+            public void serviceCreationFailed(Class<?> type, Class<?> impl, Exception exception) {
                 Helper.getLogger().warn(String.format("Service creation failed for %s with implementation %s", type, impl), new Exception(exception));
             }
         });

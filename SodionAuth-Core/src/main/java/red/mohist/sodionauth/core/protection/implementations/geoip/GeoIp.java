@@ -51,7 +51,7 @@ public class GeoIp implements SecuritySystem {
         try {
             InetAddress ipAddress = player.getAddress();
             country = countryReader.country(ipAddress).getCountry().getIsoCode();
-        } catch (Throwable ignored) {
+        } catch (Exception ignored) {
         }
         if (Config.protection.GeoIp.countries.getOrDefault(country,
                 Config.protection.GeoIp.other)) {

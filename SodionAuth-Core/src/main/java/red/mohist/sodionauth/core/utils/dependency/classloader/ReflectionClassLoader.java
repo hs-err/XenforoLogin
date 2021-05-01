@@ -57,7 +57,7 @@ public class ReflectionClassLoader {
             // method was added in the Java 9 release
             Runtime.class.getMethod("version");
             return true;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -72,7 +72,7 @@ public class ReflectionClassLoader {
             u.setAccessible(true);
             u.invoke(this.getClass().getClassLoader(),
                     file.toUri().toURL());
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

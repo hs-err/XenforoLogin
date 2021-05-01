@@ -97,7 +97,7 @@ public class SpongePlayer extends AbstractPlayer {
             Sponge.getScheduler().createTaskBuilder().execute(() -> {
                 try {
                     booleanCompletableFuture.complete(teleport(location).get());
-                } catch (Throwable e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }).submit(SpongeLoader.instance);

@@ -69,7 +69,7 @@ public class FabricPlayer extends AbstractPlayer {
 
         try {
             handle.teleport(world.get(), location.x, location.y, location.z, location.yaw, location.pitch);
-        } catch (Throwable throwable) {
+        } catch (Exception Exception) {
             return CompletableFuture.completedFuture(false);
         }
         return CompletableFuture.completedFuture(true);

@@ -106,9 +106,9 @@ public final class SodionAuthCore {
             //DependencyManager.checkForSQLite();
 
             new Service();
-        } catch (Throwable throwable) {
+        } catch (Exception Exception) {
             isEnabled.set(false);
-            throwable.printStackTrace();
+            Exception.printStackTrace();
         }
     }
 

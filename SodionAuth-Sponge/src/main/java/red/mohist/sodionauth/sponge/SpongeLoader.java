@@ -121,7 +121,7 @@ public class SpongeLoader implements PlatformAdapter {
                     })
                     .intervalTicks(1).submit(this);
 
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
             logger.warn("SodionAuth load fail.");
             Sponge.getServer().shutdown(Text.of("SodionAuth load fail."));

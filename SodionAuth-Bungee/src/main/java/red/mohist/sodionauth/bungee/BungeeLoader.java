@@ -76,7 +76,7 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
             getProxy().getScheduler().schedule(this, () -> {
                 new TickEvent().post();
             }, 0, 50, TimeUnit.MILLISECONDS);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
             getLogger().warning("SodionAuth load fail.");
             getProxy().stop("SodionAuth load fail.");

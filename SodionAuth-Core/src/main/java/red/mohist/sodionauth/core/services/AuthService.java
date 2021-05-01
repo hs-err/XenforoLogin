@@ -204,7 +204,7 @@ public class AuthService {
                         login(player);
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 Helper.getLogger().warn("Fail use session.");
                 e.printStackTrace();
             }

@@ -24,7 +24,7 @@ public final class SodionAuthApi {
     public static void login(AbstractPlayer player) throws AuthenticatedException {
         try {
             Service.auth.login(player);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new AuthenticatedException();
         }
     }

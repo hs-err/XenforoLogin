@@ -43,7 +43,7 @@ public class ProxyChannel {
             ByteBuffer buffer = ByteBuffer.wrap(data);
             Class<? extends ClientPacket> clazz = clientPackets.get(buffer.getInt());
             return clazz.getConstructor(byte[].class).newInstance((Object) data);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -54,7 +54,7 @@ public class ProxyChannel {
             ByteBuffer buffer = ByteBuffer.wrap(data);
             Class<? extends ServerPacket> clazz = serverPackets.get(buffer.getInt());
             return clazz.getConstructor(byte[].class).newInstance((Object) data);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
