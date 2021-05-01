@@ -25,17 +25,17 @@ import java.util.List;
 
 public class User extends Entity {
     @PrimaryKey
-    private Integer id;
+    protected Integer id;
     @NotNull
-    private String name;
+    protected String name;
     @NotNull
-    private String lowerName;
-    private String email;
-    private Boolean verified;
-    private String accessToken;
-    private String clientToken;
-    private String skinRestore;
-    private String skinHash;
+    protected String lowerName;
+    protected String email;
+    protected Boolean verified;
+    protected String accessToken;
+    protected String clientToken;
+    protected String skinRestore;
+    protected String skinHash;
 
     public static User getByName(String name) {
         return new User().setLowerName(name).first();

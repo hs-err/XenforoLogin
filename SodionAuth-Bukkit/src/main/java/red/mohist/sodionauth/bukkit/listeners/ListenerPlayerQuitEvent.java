@@ -21,7 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
@@ -31,7 +31,7 @@ public class ListenerPlayerQuitEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnQuit(PlayerQuitEvent event) {
         AbstractPlayer player = new BukkitPlayer(event.getPlayer());
-        if (Service.auth.logged_in.get(player.getUniqueId()) != StatusType.LOGGED_IN) {
+        if (Service.auth.logged_in.get(player.getUniqueId()).type != PlayerStatus.StatusType.LOGGED_IN) {
             event.setQuitMessage(null);
         }
         new QuitEvent(new BukkitPlayer(event.getPlayer())).post();

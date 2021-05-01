@@ -17,20 +17,18 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
-import me.gosimple.nbvcxz.scoring.Result;
 import org.knownspace.minitask.ITask;
-import org.knownspace.minitask.functions.Callable;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.authbackends.AuthBackends;
 import red.mohist.sodionauth.core.database.entities.AuthInfo;
 import red.mohist.sodionauth.core.database.entities.User;
-import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.hasher.HasherTools;
-import red.mohist.sodionauth.libs.commons.codec.language.bm.Languages;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -45,12 +43,12 @@ public class RegisterService {
         }
         AbstractPlayer player = event.getPlayer();
         String message = event.getMessage();
-        StatusType status = player.getStatus();
-        switch (status) {
+        PlayerStatus status = player.getStatus();
+        switch (status.type) {
             case NEED_REGISTER_EMAIL:
                 event.setCancelled(true);
                 if (isEmail(message)) {
-                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(message));
+                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(message));
                     Service.auth.sendTip(player);
                 } else {
                     player.sendMessage(player.getLang().errors.email);
@@ -60,14 +58,14 @@ public class RegisterService {
                 event.setCancelled(true);
                 Service.auth.logged_in.put(
                         player.getUniqueId(),
-                        StatusType.HANDLE);
+                        PlayerStatus.HANDLE());
                 Service.passwordStrength.verifyAsync(player, status.email, message).then((result)->{
                     if(result.isMinimumEntropyMet()) {
                         Service.auth.logged_in.put(
                                 player.getUniqueId(),
-                                StatusType.NEED_REGISTER_CONFIRM.setEmail(status.email).setPassword(message));
+                                PlayerStatus.NEED_REGISTER_CONFIRM().setEmail(status.email).setPassword(message));
                     }else{
-                        Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD.setEmail(status.email));
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
                         Service.passwordStrength.sendTip(player,result);
                     }
                     player.sendMessage("password strength: "+result.getEntropy());
@@ -82,22 +80,22 @@ public class RegisterService {
                     return;
                 }
                 Service.auth.logged_in.put(
-                        player.getUniqueId(), StatusType.HANDLE);
+                        player.getUniqueId(), PlayerStatus.HANDLE());
                 if (message.equals(status.password)) {
                     registerAsync(player, status.email, status.password).then((result) -> {
                         if (result) {
                             Service.auth.logged_in.put(
-                                    player.getUniqueId(), StatusType.LOGGED_IN);
+                                    player.getUniqueId(), PlayerStatus.LOGGED_IN());
                         } else {
                             Service.auth.logged_in.put(
-                                    player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                                    player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
                             Service.auth.sendTip(player);
                         }
                     });
                 } else {
                     player.sendMessage(player.getLang().errors.confirm);
                     Service.auth.logged_in.put(
-                            player.getUniqueId(), StatusType.NEED_REGISTER_PASSWORD);
+                            player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD());
                     Service.auth.sendTip(player);
                 }
                 break;
@@ -116,18 +114,18 @@ public class RegisterService {
     public RegisterResult register(String username, String email, String password) {
         User user = User.getByName(username);
         if (user != null) {
-            return RegisterResult.USERNAME_EXIST;
+            return RegisterResult.USERNAME_EXIST();
         }
 
         user = new User().setEmail(email.toLowerCase()).first();
         if (user != null) {
-            return RegisterResult.EMAIL_EXIST;
+            return RegisterResult.EMAIL_EXIST();
         }
 
         user = new User().setName(username).setEmail(email);
         user.save();
 
-        RegisterResult result = RegisterResult.OK;
+        RegisterResult result = RegisterResult.OK();
 
         if(Config.database.passwordHash != null){
             user.createAuthInfo()
@@ -146,32 +144,32 @@ public class RegisterService {
                         finalUser.createAuthInfo()
                                 .setType(typeName)
                                 .save();
-                        result.setChild(RegisterResult.OK.setFriendlyName(authBackend.friendlyName));
+                        result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                         break;
                     case EMAIL_EXIST:
                         getResult = authBackend.get(finalUser);
                         if(getResult.equals(AuthBackend.GetResult.SUCCESS)){
                             if (authBackend.login(finalUser, finalUser.createAuthInfo()
                                     .setType(typeName),password).equals(AuthBackend.LoginResult.SUCCESS)) {
-                                result.setChild(RegisterResult.OK.setFriendlyName(authBackend.friendlyName));
+                                result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                                 break;
                             }
                         }
-                        result.setChild(RegisterResult.EMAIL_EXIST.setFriendlyName(authBackend.friendlyName));
+                        result.setChild(RegisterResult.EMAIL_EXIST().setFriendlyName(authBackend.friendlyName));
                         break;
                     case NAME_EXIST:
                         getResult = authBackend.get(finalUser);
                         if(getResult.equals(AuthBackend.GetResult.SUCCESS)){
                             if (authBackend.login(finalUser, finalUser.createAuthInfo()
                                     .setType(typeName),password).equals(AuthBackend.LoginResult.SUCCESS)) {
-                                result.setChild(RegisterResult.OK.setFriendlyName(authBackend.friendlyName));
+                                result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                                 break;
                             }
                         }
-                        result.setChild(RegisterResult.USERNAME_EXIST.setFriendlyName(authBackend.friendlyName));
+                        result.setChild(RegisterResult.USERNAME_EXIST().setFriendlyName(authBackend.friendlyName));
                         break;
                     default:
-                        result.setChild(RegisterResult.FAILED.setFriendlyName(authBackend.friendlyName));
+                        result.setChild(RegisterResult.FAILED().setFriendlyName(authBackend.friendlyName));
                 }
             }
         });
@@ -179,40 +177,45 @@ public class RegisterService {
     }
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
-        return Service.threadPool.startup.startTask(
-                () -> Service.register.register(player.getName(), email, password)
-        ).then((result) -> {
-            switch (result) {
-                case OK:
-                    if(result.friendlyName != null){
-                        player.sendMessage("register for "+result.friendlyName+" successfully");
-                    }
-                    for (RegisterResult childResult : result.child) {
-                        player.sendMessage("register for "+childResult.friendlyName+" successfully");
-                    }
-                    Service.auth.login(player);
-                    return true;
-                case USERNAME_EXIST:
-                    player.kick(player.getLang().errors.usernameExist);
-                    return false;
-                case EMAIL_EXIST:
-                    player.kick(player.getLang().errors.email);
-                    return false;
-                default:
-                    return false;
+        return Service.threadPool.startup.startTask(() -> {
+            try{
+                return Service.register.register(player.getName(), email, password);
+            }catch (Exception e){
+                Helper.getLogger().warn("Exception during register for player "+player.getName() ,e);
+                return RegisterResult.FAILED();
             }
+        }).then((result) -> {
+            return handleResult(player,result);
         });
     }
 
     public boolean registerSync(AbstractPlayer player, String email, String password) {
         RegisterResult result = Service.register.register(player.getName(), email, password);
-        switch (result) {
+        return handleResult(player,result);
+    }
+
+    private boolean handleResult(AbstractPlayer player,RegisterResult result){
+        switch (result.type) {
             case OK:
                 if(result.friendlyName != null){
                     player.sendMessage("register for "+result.friendlyName+" successfully");
                 }
                 for (RegisterResult childResult : result.child) {
-                    player.sendMessage("register for "+childResult.friendlyName+" successfully");
+                    switch (childResult.type){
+                        case OK:
+                            if(childResult.friendlyName != null){
+                                player.sendMessage("register for "+childResult.friendlyName+" successfully");
+                            }
+                            break;
+                        case USERNAME_EXIST:
+                            player.sendMessage("register for "+childResult.friendlyName+" failed: USERNAME_EXIST");
+                            break;
+                        case EMAIL_EXIST:
+                            player.sendMessage("register for "+childResult.friendlyName+" failed: EMAIL_EXIST");
+                            break;
+                        default:
+                            player.sendMessage("register for "+childResult.friendlyName+" failed: UNKNOWN");
+                    }
                 }
                 Service.auth.login(player);
                 return true;
@@ -236,15 +239,27 @@ public class RegisterService {
         return m.matches();
     }
 
-    public enum RegisterResult {
-        OK,
-        USERNAME_EXIST,
-        EMAIL_EXIST,
-        FAILED;
-
+    public static class RegisterResult {
+        public ResultType type;
         public String friendlyName;
-
         public ArrayList<RegisterResult> child = new ArrayList<>();
+
+        public RegisterResult(ResultType type){
+            this.type = type;
+        }
+
+        public static RegisterResult OK(){
+            return new RegisterResult(ResultType.OK);
+        }
+        public static RegisterResult USERNAME_EXIST(){
+            return new RegisterResult(ResultType.USERNAME_EXIST);
+        }
+        public static RegisterResult EMAIL_EXIST(){
+            return new RegisterResult(ResultType.EMAIL_EXIST);
+        }
+        public static RegisterResult FAILED(){
+            return new RegisterResult(ResultType.FAILED);
+        }
 
         public RegisterResult setChild(RegisterResult child) {
             this.child.add(child);
@@ -254,5 +269,11 @@ public class RegisterService {
             this.friendlyName = friendlyName;
             return this;
         }
+    }
+    public enum ResultType {
+        OK,
+        USERNAME_EXIST,
+        EMAIL_EXIST,
+        FAILED;
     }
 }

@@ -22,20 +22,8 @@ public abstract class Event {
     private String name;
     private boolean async;
 
-    public Event() {
-        this(false);
-    }
-
-    public Event(boolean isAsync) {
-        this.async = isAsync;
-    }
-
-    public void asyncPost() {
-        Service.eventBus.asyncPost(this);
-    }
-
-    public boolean syncPost() {
-        Service.eventBus.syncPost(this);
+    public boolean post() {
+        Service.eventBus.post(this);
         if (this instanceof Cancellable) {
             return !((Cancellable) this).isCancelled();
         } else {
@@ -43,9 +31,6 @@ public abstract class Event {
         }
     }
 
-    public void post() {
-        Service.eventBus.post(this);
-    }
 
     public String getEventName() {
         if (name == null) {

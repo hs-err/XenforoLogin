@@ -19,11 +19,9 @@ package red.mohist.sodionauth.core.services;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import org.knownspace.minitask.ITask;
-import org.knownspace.minitask.locks.UniqueFlag;
-import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.database.entities.User;
-import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.player.*;
@@ -35,8 +33,6 @@ import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -45,7 +41,7 @@ import java.util.concurrent.ExecutionException;
 public class AuthService {
 
     public LocationInfo default_location;
-    public ConcurrentMap<UUID, StatusType> logged_in;
+    public ConcurrentMap<UUID, PlayerStatus> logged_in;
 
     @Subscribe
     public void onBoot(BootEvent event) throws IOException {
@@ -84,7 +80,7 @@ public class AuthService {
         }
         AbstractPlayer player = event.getPlayer();
         String message = event.getMessage();
-        switch (player.getStatus()) {
+        switch (player.getStatus().type) {
             case NEED_CHECK:
                 event.setCancelled(true);
                 player.sendMessage(player.getLang().needLogin);
@@ -100,7 +96,7 @@ public class AuthService {
 
                 if (user == null) {
                     //if (Config.api.allowRegister) {
-                    Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
+                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
                     //} else {
                     //    player.kick(player.getLang().errors.noUser);
                     //}
@@ -121,7 +117,7 @@ public class AuthService {
     }
 
     public void sendTip(AbstractPlayer player) {
-        switch (Service.auth.logged_in.get(player.getUniqueId())) {
+        switch (Service.auth.logged_in.get(player.getUniqueId()).type) {
             case NEED_LOGIN:
                 player.sendMessage(player.getLang().needLogin);
                 break;
@@ -138,39 +134,44 @@ public class AuthService {
     }
 
     public boolean needCancelled(AbstractPlayer player) {
-        return !logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN).equals(StatusType.LOGGED_IN);
+        return !logged_in.getOrDefault(player.getUniqueId(), PlayerStatus.NEED_LOGIN()).type.equals(PlayerStatus.StatusType.LOGGED_IN);
     }
 
     @Subscribe
     public void onCanJoin(CanJoinEvent event) throws ExecutionException, InterruptedException {
         ITask<Void> i = Service.threadPool.startup.startTask(() -> {
-            AbstractPlayer player = event.getPlayer();
-            logged_in.put(player.getUniqueId(), StatusType.HANDLE);
-            if (Service.auth.logged_in.containsKey(player.getUniqueId())
-                    && Service.auth.logged_in.get(player.getUniqueId()) != StatusType.HANDLE) {
-                return null;
-            }
-            Service.auth.logged_in.put(player.getUniqueId(), StatusType.HANDLE);
+            try{
+                AbstractPlayer player = event.getPlayer();
+                logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
+                if (Service.auth.logged_in.containsKey(player.getUniqueId())
+                        && Service.auth.logged_in.get(player.getUniqueId()).type != PlayerStatus.StatusType.HANDLE) {
+                    return null;
+                }
+                Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
 
-            User user = User.getByName(player.getName());
+                User user = User.getByName(player.getName());
 
-            if (user == null) {
-                //if (Config.api.allowRegister) {
-                Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_REGISTER_EMAIL);
-                return null;
-                //} else {
-                //    return player.getLang().errors.noUser;
-                //}
-            } else if (!user.getName().equals(player.getName())) {
-                return player.getLang().errors.getNameIncorrect(
-                        ImmutableMap.of("correct", user.getName()));
-            } else {
-                Service.auth.logged_in.put(player.getUniqueId(), StatusType.NEED_LOGIN);
-                return null;
+                if (user == null) {
+                    //if (Config.api.allowRegister) {
+                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                    return null;
+                    //} else {
+                    //    return player.getLang().errors.noUser;
+                    //}
+                } else if (!user.getName().equals(player.getName())) {
+                    return player.getLang().errors.getNameIncorrect(
+                            ImmutableMap.of("correct", user.getName()));
+                } else {
+                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
+                    return null;
+                }
+            }catch (Exception e){
+                Helper.getLogger().warn("Exception during check player "+event.getPlayer().getName() ,e);
+                return event.getPlayer().getLang().errors.server;
             }
-        }).then(result -> {
-            if (result != null) {
-                event.setCancelled(result);
+        }).then((result)->{
+            if(result != null){
+                event.setCancelled(true);
             }
         });
         if (!event.isAsynchronous()) {
@@ -189,6 +190,7 @@ public class AuthService {
             player.setGameMode(3);
         }
         LoginTicker.add(player);
+        /*
         Service.threadPool.dbUniqueFlag.lock().then(() -> {
             try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(Service.threadPool.dbUniqueFlag)) {
                 if (Config.session.enable) {
@@ -207,15 +209,16 @@ public class AuthService {
                 e.printStackTrace();
             }
         });
+        */
     }
 
     public void login(AbstractPlayer player) {
         // check if already login
-        if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), StatusType.NEED_LOGIN)
-                .equals(StatusType.LOGGED_IN)) {
+        if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), PlayerStatus.NEED_LOGIN()).type
+                .equals(PlayerStatus.StatusType.LOGGED_IN)) {
             return;
         }
-        Service.auth.logged_in.put(player.getUniqueId(), StatusType.LOGGED_IN);
+        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.LOGGED_IN());
         new LoginEvent(player).post();
     }
 }

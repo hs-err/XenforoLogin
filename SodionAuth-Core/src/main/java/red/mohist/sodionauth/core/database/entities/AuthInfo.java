@@ -21,15 +21,15 @@ import red.mohist.sodionauth.core.database.annotations.limits.PrimaryKey;
 
 public class AuthInfo extends Entity {
     @PrimaryKey
-    private Integer id;
+    protected Integer id;
 
     @NotNull
-    private Integer userId;
+    protected Integer userId;
 
     @NotNull
-    private String type;
+    protected String type;
 
-    private String data;
+    protected String data;
 
     public Integer getId() {
         return id;

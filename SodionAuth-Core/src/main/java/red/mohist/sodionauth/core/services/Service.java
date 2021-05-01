@@ -53,7 +53,7 @@ public class Service {
                 .register(register)
                 .register(login)
                 .register(unRegister);
-        if (!new BootEvent().syncPost()) {
+        if (!new BootEvent().post()) {
             new DownEvent().post();
             SodionAuthCore.instance.loadFail();
         }

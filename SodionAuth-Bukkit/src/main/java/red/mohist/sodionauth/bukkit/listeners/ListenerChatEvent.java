@@ -38,7 +38,7 @@ public class ListenerChatEvent implements BukkitAPIListener {
             } else {
                 event.setCancelled(true);
             }
-            if (!new PlayerChatEvent(player, event.getMessage()).syncPost()) {
+            if (!new PlayerChatEvent(player, event.getMessage()).post()) {
                 event.setCancelled(true);
             }
         }

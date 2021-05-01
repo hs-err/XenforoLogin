@@ -46,7 +46,7 @@ public class ListenerChatEvent implements BungeeAPIListener {
             } else {
                 event.setCancelled(true);
             }
-            if (!new PlayerChatEvent(player, event.getMessage()).syncPost()) {
+            if (!new PlayerChatEvent(player, event.getMessage()).post()) {
                 event.setCancelled(true);
             }
         }

@@ -31,13 +31,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class UserService {
 
     public UserService() {
-        if (!Service.database.mapper.isTableExist(User.class)) {
-            Service.database.mapper.createByEntity(User.class);
-        }
+        Service.database.mapper.initEntity(User.class);
 
-        if (!Service.database.mapper.isTableExist(AuthInfo.class)) {
-            Service.database.mapper.createByEntity(AuthInfo.class);
-        }
+        Service.database.mapper.initEntity(AuthInfo.class);
+
     }
 
     public boolean verifyPassword(User user, String password) {

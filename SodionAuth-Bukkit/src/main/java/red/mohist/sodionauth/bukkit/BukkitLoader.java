@@ -60,7 +60,7 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
                 @Override
                 public void warn(String info, Exception exception) {
                     getLogger().warning(info);
-                    getLogger().warning(exception.toString());
+                    exception.printStackTrace();
                 }
             });
 

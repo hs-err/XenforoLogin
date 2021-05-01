@@ -31,21 +31,6 @@ public class EventBusService {
     }
 
     public Event post(Event event) {
-        if (event.isAsynchronous()) {
-            asyncEventBus.post(event);
-        } else {
-            eventBus.post(event);
-        }
-        return event;
-    }
-
-    public Event asyncPost(Event event) {
-        event.setAsync(true);
-        asyncEventBus.post(event);
-        return event;
-    }
-
-    public Event syncPost(Event event) {
         event.setAsync(false);
         eventBus.post(event);
         return event;

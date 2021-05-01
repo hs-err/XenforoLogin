@@ -17,8 +17,16 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
+import com.google.gson.Gson;
+import red.mohist.sodionauth.core.database.entities.AuthInfo;
+import red.mohist.sodionauth.core.database.entities.LastInfo;
+import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.database.mappers.SqliteMapper;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
+import red.mohist.sodionauth.core.events.player.QuitEvent;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.sql.Connection;
@@ -27,35 +35,27 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class SessionService {
-    private Connection connection;
-
     @Subscribe
-    public void onBoot(BootEvent event) throws SQLException {
+    public void onBoot(BootEvent event) {
         Helper.getLogger().info("Initializing session service...");
-        connection = DriverManager.getConnection("jdbc:sqlite:" + Helper.getConfigPath("SodionAuth.db"));
-        if (!connection.getMetaData().getTables(null, null, "last_info", new String[]{"TABLE"}).next()) {
-            PreparedStatement pps = connection.prepareStatement("CREATE TABLE last_info (uuid NOT NULL,info,PRIMARY KEY (uuid));");
-            pps.executeUpdate();
-        }
-        if (!connection.getMetaData().getTables(null, null, "sessions", new String[]{"TABLE"}).next()) {
-            PreparedStatement pps = connection.prepareStatement("CREATE TABLE sessions (uuid NOT NULL,ip,time,PRIMARY KEY (uuid));");
-            pps.executeUpdate();
-        }
+        Service.database.mapper.initEntity(LastInfo.class);
     }
 
     @Subscribe
-    public void onDown(DownEvent event) {
-        try {
-            connection.close();
-        } catch (Throwable ignored) {
-        }
-    }
-
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public PreparedStatement prepareStatement(String var1) throws SQLException {
-        return connection.prepareStatement(var1);
+    public void onQuit(QuitEvent event) {
+        AbstractPlayer player = event.getPlayer();
+        Service.threadPool.startup.startTask(()->{
+            if (!Service.auth.needCancelled(player)) {
+                LastInfo lastInfo = LastInfo.getByUuid(player.getUniqueId());
+                if(lastInfo==null) {
+                    lastInfo = new LastInfo();
+                }
+                lastInfo.setUuid(event.getPlayer().getUniqueId())
+                        .setInfo(new Gson().toJson(event.getPlayer().getPlayerInfo()))
+                        .save();
+            }
+            player.teleport(Service.auth.default_location);
+            Service.auth.logged_in.remove(player.getUniqueId());
+        });
     }
 }

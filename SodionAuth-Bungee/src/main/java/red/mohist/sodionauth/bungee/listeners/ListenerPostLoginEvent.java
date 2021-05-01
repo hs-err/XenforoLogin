@@ -39,12 +39,12 @@ public class ListenerPostLoginEvent implements BungeeAPIListener {
 
         if (!Service.auth.logged_in.containsKey(player.getUniqueId())) {
             CanJoinEvent canJoinEvent = new CanJoinEvent(player);
-            if (!canJoinEvent.syncPost()) {
+            if (!canJoinEvent.post()) {
                 player.kick(canJoinEvent.getMessage());
             }
         }
         JoinEvent joinEvent = new JoinEvent(player);
-        if (!joinEvent.syncPost()) {
+        if (!joinEvent.post()) {
             player.kick(joinEvent.getMessage());
         }
     }

@@ -18,20 +18,13 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
-import org.knownspace.minitask.locks.UniqueFlag;
-import org.knownspace.minitask.locks.Unlocker;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.database.entities.LastInfo;
 import red.mohist.sodionauth.core.events.player.LoginEvent;
-import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
-import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class LoginService {
 
@@ -42,71 +35,18 @@ public class LoginService {
     }
 
     @Subscribe
-    public void onQuit(QuitEvent event) {
+    public void onLoginIn(LoginEvent event) {
         AbstractPlayer player = event.getPlayer();
-        LocationInfo leave_location = player.getLocation();
-        Service.threadPool.dbUniqueFlag.lock().then(() -> {
-            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(Service.threadPool.dbUniqueFlag)) {
-                if (!Service.auth.needCancelled(player)) {
-                    try {
-                        PreparedStatement pps = Service.session
-                                .prepareStatement("DELETE FROM last_info WHERE uuid = ?;");
-                        pps.setString(1, player.getUniqueId().toString());
-                        pps.executeUpdate();
-                        pps = Service.session
-                                .prepareStatement("INSERT INTO last_info(uuid, info) VALUES (?, ?);");
-                        pps.setString(1, player.getUniqueId().toString());
-                        pps.setString(2, new Gson().toJson(player.getPlayerInfo()));
-                        pps.executeUpdate();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                        Helper.getLogger().warn("Fail to save location.");
-                    }
-                }
-                player.teleport(Service.auth.default_location);
-                Service.auth.logged_in.remove(player.getUniqueId());
-            } catch (Exception ignore) {
-            }
-        });
-    }
-
-    @Subscribe
-    public void loginAsync(LoginEvent event) {
-        Service.threadPool.startup.startTask(() -> {
-            AbstractPlayer player = event.getPlayer();
-            // restore playerInfo
-            try {
-                PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM last_info WHERE uuid=? LIMIT 1;");
-                pps.setString(1, player.getUniqueId().toString());
-                ResultSet rs = pps.executeQuery();
-                if (!rs.next()) {
-                    player.setPlayerInfo(new PlayerInfo());
-                } else {
-                    player.setPlayerInfo(new Gson().fromJson(rs.getString("info"), PlayerInfo.class));
-                }
-            } catch (Throwable e) {
-                player.setGameMode(Config.security.defaultGamemode);
-                e.printStackTrace();
-            }
-
-            // remove playerInfo
-            try {
-                PreparedStatement pps = Service.session.prepareStatement("DELETE FROM sessions WHERE uuid = ?;");
-                pps.setString(1, player.getUniqueId().toString());
-                pps.executeUpdate();
-
-                pps = Service.session.prepareStatement("INSERT INTO sessions(uuid, ip, time) VALUES (?, ?, ?);");
-                pps.setString(1, player.getUniqueId().toString());
-                pps.setString(2, player.getAddress().getHostAddress());
-                pps.setInt(3, (int) (System.currentTimeMillis() / 1000));
-                pps.executeUpdate();
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-
-            SodionAuthCore.instance.api.onLogin(player);
-            Helper.getLogger().info("Logging in " + player.getUniqueId());
-            player.sendMessage(player.getLang().loginSuccess);
-        });
+        // restore playerInfo
+        LastInfo lastinfo = LastInfo.getByUuid(player.getUniqueId());
+        if(lastinfo == null){
+            player.setPlayerInfo(new PlayerInfo());
+        }else{
+            player.setPlayerInfo(new Gson().fromJson(lastinfo.getInfo(), PlayerInfo.class));
+            lastinfo.delete();
+        }
+        SodionAuthCore.instance.api.onLogin(player);
+        Helper.getLogger().info("Logging in " + player.getUniqueId());
+        player.sendMessage(player.getLang().loginSuccess);
     }
 }

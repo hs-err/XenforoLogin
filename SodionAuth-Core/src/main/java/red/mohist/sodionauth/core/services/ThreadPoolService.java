@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ThreadPoolService {
     public ExecutorService executor;
     public ITaskFactory startup;
-    public UniqueFlag dbUniqueFlag;
 
     public ThreadPoolService() {
         Helper.getLogger().info("Initializing threadPool service...");
@@ -48,8 +47,9 @@ public class ThreadPoolService {
                     }
                 });
         startup = new TaskFactory(executor);
-        dbUniqueFlag = startup.makeUniqueFlag();
     }
+
+
 
     @Subscribe
     public void onDown(DownEvent event) {

@@ -44,18 +44,18 @@ public class ListenerPlayerJoinEvent implements BukkitAPIListener {
             Helper.getLogger().warn("It's not a bug. Do NOT report this.");
             Service.threadPool.startup.startTask(() -> {
                 CanJoinEvent canJoinEvent = new CanJoinEvent(player);
-                if (!canJoinEvent.syncPost()) {
+                if (!canJoinEvent.post()) {
                     player.kick(canJoinEvent.getMessage());
                 } else {
                     JoinEvent joinEvent = new JoinEvent(player);
-                    if (!joinEvent.syncPost()) {
+                    if (!joinEvent.post()) {
                         player.kick(joinEvent.getMessage());
                     }
                 }
             });
         }else{
             JoinEvent joinEvent = new JoinEvent(player);
-            if (!joinEvent.syncPost()) {
+            if (!joinEvent.post()) {
                 player.kick(joinEvent.getMessage());
             }
         }

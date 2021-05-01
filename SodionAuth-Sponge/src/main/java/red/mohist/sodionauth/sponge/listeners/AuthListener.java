@@ -53,7 +53,7 @@ public class AuthListener implements SpongeAPIListener {
         }
 
         CanJoinEvent canJoinEvent = new CanJoinEvent(player);
-        if (!canJoinEvent.syncPost()) {
+        if (!canJoinEvent.post()) {
             player.kick(canJoinEvent.getMessage());
         }
     }

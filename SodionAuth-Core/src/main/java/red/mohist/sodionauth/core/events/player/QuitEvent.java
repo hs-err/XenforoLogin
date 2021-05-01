@@ -23,7 +23,6 @@ public class QuitEvent extends Event {
     private final AbstractPlayer player;
 
     public QuitEvent(AbstractPlayer player) {
-        super(true);
         this.player = player;
     }
 

@@ -16,7 +16,7 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 
@@ -48,7 +48,7 @@ public class LoginTickPlayer {
             return TickResult.DONE;
         }
         if (calledTimes / 20 > loginTimeout
-                && Service.auth.logged_in.get(player.getUniqueId()) == StatusType.NEED_LOGIN) {
+                && Service.auth.logged_in.get(player.getUniqueId()).type.equals(PlayerStatus.StatusType.NEED_LOGIN)) {
             player.kick(player.getLang().errors.timeOut);
             return TickResult.DONE;
         }

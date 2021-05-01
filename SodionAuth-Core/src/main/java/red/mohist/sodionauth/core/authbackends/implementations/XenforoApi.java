@@ -86,7 +86,7 @@ public class XenforoApi extends AuthBackend {
     @Override
     public RegisterResult register(User user, String password) {
         try {
-            JsonObject response = request("user",ImmutableMap.of(
+            JsonObject response = request("users",ImmutableMap.of(
                     "username", user.getName(),
                     "email", user.getEmail(),
                     "password",password
@@ -166,17 +166,13 @@ public class XenforoApi extends AuthBackend {
         switch (response.getStatusLine().getStatusCode()){
             case 200:
             case 400:
+            case 404:
                 break;
             case 401:
             case 403:
                 Helper.getLogger().warn(
                         Lang.def.errors.getKey(ImmutableMap.of(
                                 "key", key)));
-                throw new IOException("Server returns status code "+response.getStatusLine().getStatusCode());
-            case 404:
-                Helper.getLogger().warn(
-                        Lang.def.errors.getUrl(ImmutableMap.of(
-                                "url", url)));
                 throw new IOException("Server returns status code "+response.getStatusLine().getStatusCode());
             default:
                 throw new IOException("Server returns status code "+response.getStatusLine().getStatusCode());

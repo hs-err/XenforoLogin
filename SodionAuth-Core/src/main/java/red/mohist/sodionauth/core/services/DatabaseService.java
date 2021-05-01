@@ -22,7 +22,8 @@ import org.teasoft.honey.osql.core.BeeFactory;
 import org.teasoft.honey.osql.core.HoneyConfig;
 import org.teasoft.honey.osql.core.HoneyFactory;
 import red.mohist.sodionauth.core.database.Mapper;
-import red.mohist.sodionauth.core.database.sqlite.SqliteMapper;
+import red.mohist.sodionauth.core.database.mappers.MysqlMapper;
+import red.mohist.sodionauth.core.database.mappers.SqliteMapper;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -35,14 +36,8 @@ public class DatabaseService {
     public DatabaseService() {
         Helper.getLogger().info("Initializing database service...");
 
-        HoneyConfig.getHoneyConfig().dbName = "SQLite";
-        if (Config.database.sqlite.absolute) {
-            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Config.database.sqlite.path);
-        } else {
-            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Helper.getConfigPath(Config.database.sqlite.path));
-        }
         // HoneyConfig.getHoneyConfig().loggerType = "log4j2";
-        HoneyConfig.getHoneyConfig().loggerType = "noLogging";
+        // HoneyConfig.getHoneyConfig().loggerType = "noLogging";
 
         honeyFactory = BeeFactory.getHoneyFactory();
         suid = BeeFactory.getHoneyFactory().getSuid();
@@ -50,6 +45,9 @@ public class DatabaseService {
         switch (Config.database.type) {
             case "sqlite":
                 mapper = new SqliteMapper();
+                break;
+            case "mysql":
+                mapper = new MysqlMapper();
                 break;
             default:
                 mapper = null;

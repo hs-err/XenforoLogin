@@ -14,20 +14,41 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.database.sqlite;
+package red.mohist.sodionauth.core.database.mappers;
 
+import org.teasoft.honey.osql.core.BeeFactory;
+import org.teasoft.honey.osql.core.HoneyConfig;
 import red.mohist.sodionauth.core.database.Mapper;
 import red.mohist.sodionauth.core.database.annotations.Ignore;
 import red.mohist.sodionauth.core.database.annotations.limits.NotNull;
 import red.mohist.sodionauth.core.database.annotations.limits.PrimaryKey;
+import red.mohist.sodionauth.core.utils.Config;
+import red.mohist.sodionauth.core.utils.Helper;
 
 import java.lang.reflect.Field;
 
 public class SqliteMapper extends Mapper {
+    public SqliteMapper(){
+        HoneyConfig.getHoneyConfig().dbName = "SQLite";
+        if (Config.database.sqlite.absolute) {
+            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Config.database.sqlite.path);
+        } else {
+            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Helper.getConfigPath(Config.database.sqlite.path));
+        }
+        honeyFactory = BeeFactory.getHoneyFactory();
+    }
+
     @Override
     public boolean isTableExist(String name) {
         return honeyFactory.getBeeSql().select(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='" + name + "';"
+        ).size() == 1;
+    }
+
+    @Override
+    public boolean isFieldExist(String tableName, String fieldName) {
+        return honeyFactory.getBeeSql().select(
+                "SELECT name FROM sqlite_master WHERE name='" + tableName + "' AND sql='"+fieldName+"';"
         ).size() == 1;
     }
 
@@ -38,7 +59,7 @@ public class SqliteMapper extends Mapper {
 
     @Override
     public void createByEntity(Class<?> entity) {
-        String tableName = translate(entity);
+        String tableName = translateTable(entity);
         StringBuilder sql = new StringBuilder("CREATE TABLE " + tableName + " (");
         Field[] fields = entity.getDeclaredFields();
         for (int i = 0; i < fields.length; i++) {
@@ -46,10 +67,12 @@ public class SqliteMapper extends Mapper {
             if (i != 0) {
                 sql.append(",");
             }
-            sql.append(honeyFactory.getNameTranslate().toColumnName(field.getName()));
             if (field.isAnnotationPresent(Ignore.class)) {
                 break;
             }
+
+            sql.append(Mapper.translateField(field));
+
             sql.append(" ").append(getTypeName(field.getType()));
             if (field.isAnnotationPresent(PrimaryKey.class)) {
                 sql.append(" PRIMARY KEY");
@@ -59,6 +82,22 @@ public class SqliteMapper extends Mapper {
             }
         }
         sql.append(");");
+        honeyFactory.getBeeSql().modify(sql.toString());
+    }
+
+    @Override
+    public void addField(Field field) {
+        String tableName = translateTable(field);
+        StringBuilder sql = new StringBuilder("ALTER TABLE `" + tableName + "` ADD ");
+        sql.append(Mapper.translateField(field));
+
+        sql.append(" ").append(getTypeName(field.getType()));
+
+        if (field.isAnnotationPresent(NotNull.class)) {
+            sql.append(" NOT NULL");
+        }
+        sql.append(";");
+        Helper.getLogger().info(sql.toString());
         honeyFactory.getBeeSql().modify(sql.toString());
     }
 

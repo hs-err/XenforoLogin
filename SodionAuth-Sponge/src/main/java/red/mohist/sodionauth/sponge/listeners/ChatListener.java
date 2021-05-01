@@ -39,7 +39,7 @@ public class ChatListener implements SpongeAPIListener {
         } else {
             event.setCancelled(true);
         }
-        if (!new PlayerChatEvent(player, event.getRawMessage().toPlainSingle()).syncPost()) {
+        if (!new PlayerChatEvent(player, event.getRawMessage().toPlainSingle()).post()) {
             event.setCancelled(true);
         }
     }

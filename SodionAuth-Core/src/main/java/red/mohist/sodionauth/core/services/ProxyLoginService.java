@@ -18,7 +18,7 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.enums.StatusType;
+import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.player.*;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.channel.proxy.ProxyChannel;
@@ -73,7 +73,7 @@ public class ProxyLoginService {
                 String proxyToken = Helper.toStringUuid(UUID.randomUUID());
                 Service.auth.logged_in.put(
                         event.getPlayer().getUniqueId(),
-                        StatusType.PROXY_HANDLE);
+                        PlayerStatus.PROXY_HANDLE());
                 clientToken.put(event.getPlayer().getUniqueId(), proxyToken);
                 event.getPlayer().sendClientData(ProxyChannel.name,
                         new ShakeTokenPacket(proxyToken).pack());
