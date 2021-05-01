@@ -16,11 +16,13 @@
 
 package red.mohist.sodionauth.core.services;
 
+import org.teasoft.bee.osql.NameTranslate;
 import org.teasoft.bee.osql.Suid;
 import org.teasoft.bee.osql.SuidRich;
 import org.teasoft.honey.osql.core.BeeFactory;
 import org.teasoft.honey.osql.core.HoneyConfig;
 import org.teasoft.honey.osql.core.HoneyFactory;
+import org.teasoft.honey.osql.name.UnderScoreAndCamelName;
 import red.mohist.sodionauth.core.database.Mapper;
 import red.mohist.sodionauth.core.database.mappers.MysqlMapper;
 import red.mohist.sodionauth.core.database.mappers.SqliteMapper;
@@ -37,9 +39,23 @@ public class DatabaseService {
         Helper.getLogger().info("Initializing database service...");
 
         // HoneyConfig.getHoneyConfig().loggerType = "log4j2";
-        // HoneyConfig.getHoneyConfig().loggerType = "noLogging";
+        HoneyConfig.getHoneyConfig().loggerType = "noLogging";
 
         honeyFactory = BeeFactory.getHoneyFactory();
+
+        honeyFactory.setNameTranslate(new UnderScoreAndCamelName() {
+            private final String prefix = Config.database.tablePrefix;
+            @Override
+            public String toTableName(String entityName) {
+                return prefix+super.toTableName(entityName);
+            }
+
+            @Override
+            public String toEntityName(String tableName) {
+                return super.toEntityName(tableName.substring(prefix.length()));
+            }
+        });
+
         suid = BeeFactory.getHoneyFactory().getSuid();
         suidRich = BeeFactory.getHoneyFactory().getSuidRich();
         switch (Config.database.type) {
