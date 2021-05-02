@@ -27,37 +27,37 @@ import red.mohist.sodionauth.core.utils.Helper;
 
 import java.lang.reflect.Field;
 
-public class SqliteMapper extends Mapper {
-    public SqliteMapper() {
-        HoneyConfig.getHoneyConfig().dbName = "SQLite";
-        if (Config.database.sqlite.absolute) {
-            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Config.database.sqlite.path);
-        } else {
-            HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Helper.getConfigPath(Config.database.sqlite.path));
+public class H2Mapper extends Mapper {
+    public H2Mapper() {
+        HoneyConfig.getHoneyConfig().dbName = "H2";
+
+        HoneyConfig.getHoneyConfig().setUrl("jdbc:h2:" + Config.database.h2.url);
+
+        if (!Config.database.h2.username.equals("")) {
+            HoneyConfig.getHoneyConfig().setUsername(Config.database.h2.username);
         }
-        HoneyConfig.getHoneyConfig().setDriverName("org.sqlite.JDBC");
+        if (!Config.database.h2.password.equals("")) {
+            HoneyConfig.getHoneyConfig().setPassword(Config.database.h2.password);
+        }
+        HoneyConfig.getHoneyConfig().setDriverName("org.h2.Driver");
         honeyFactory = BeeFactory.getHoneyFactory();
     }
 
     @Override
     public boolean isTableExist(String name) {
         return honeyFactory.getBeeSql().select(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='" + name + "';"
+                "SELECT table_name FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = '" + name.toUpperCase() + "';"
         ).size() == 1;
     }
 
     @Override
     public boolean isFieldExist(String tableName, String fieldName) {
-        String sql = honeyFactory.getBeeSql().select(
-                "SELECT sql FROM sqlite_master WHERE name='" + tableName + "';"
-        ).get(0)[0];
-        String[] fieldSql = sql.substring(sql.indexOf("(") + 1, sql.lastIndexOf(")")).split(",");
-        for (String s : fieldSql) {
-            if (s.substring(0, s.indexOf(" ")).equals(fieldName)) {
-                return true;
-            }
-        }
-        return false;
+        return honeyFactory.getBeeSql().select(
+                "SELECT table_name FROM information_schema.columns WHERE " +
+                        "table_schema = 'PUBLIC' AND " +
+                        "table_name = '" + tableName.toUpperCase() + "' AND " +
+                        "column_name = '" + fieldName.toUpperCase() + "';"
+        ).size() == 1;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SqliteMapper extends Mapper {
 
             sql.append(" ").append(getTypeName(field.getType()));
             if (field.isAnnotationPresent(PrimaryKey.class)) {
-                sql.append(" PRIMARY KEY");
+                sql.append(" PRIMARY KEY auto_increment");
             }
             if (field.isAnnotationPresent(NotNull.class)) {
                 sql.append(" NOT NULL");
@@ -112,7 +112,7 @@ public class SqliteMapper extends Mapper {
     @Override
     protected String getTypeName(Class<?> object) {
         if (String.class.equals(object)) {
-            return "STRING";
+            return "TEXT";
         } else if (Integer.class.equals(object)) {
             return "INTEGER";
         } else if (Boolean.class.equals(object)) {

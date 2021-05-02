@@ -96,10 +96,32 @@ public class MainConfiguration extends Configure {
         public int saltLength = 6;
 
         @Expose
+        public H2Bean h2 = new H2Bean();
+
+        @Expose
         public SqliteBean sqlite = new SqliteBean();
 
         @Expose
         public MysqlBean mysql = new MysqlBean();
+
+        public static class H2Bean extends Configure {
+            // @Migrate("database.h2.path")
+            @Lore("The url to h2 database")
+            @Lore("Default is file path")
+            @Lore("Tcp likes tcp://localhost/~/test")
+            @Expose
+            public String url = "./plugins/SodionAuth/Users";
+
+            //@Migrate("database.h2.username")
+            @Lore("The username for h2.")
+            @Expose
+            public String username = "root";
+
+            //@Migrate("database.h2.password")
+            @Lore("The password for h2.")
+            @Expose
+            public String password = "";
+        }
 
         public static class SqliteBean extends Configure {
             @Migrate("database.sqlite.path")

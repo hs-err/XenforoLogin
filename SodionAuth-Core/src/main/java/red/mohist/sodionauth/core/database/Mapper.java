@@ -85,7 +85,6 @@ public abstract class Mapper {
 
     public void initEntity(Class<?> entity) {
         if (isTableExist(entity)) {
-            String tableName = translateTable(entity);
             Field[] fields = entity.getDeclaredFields();
             for (Field field : fields) {
                 if (!isFieldExist(field)) {

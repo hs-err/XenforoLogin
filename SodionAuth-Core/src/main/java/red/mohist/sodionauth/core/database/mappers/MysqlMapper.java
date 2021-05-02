@@ -33,6 +33,7 @@ public class MysqlMapper extends Mapper {
         HoneyConfig.getHoneyConfig().setUrl("jdbc:mysql://" + Config.database.mysql.host + "/" + Config.database.mysql.database);
         HoneyConfig.getHoneyConfig().setUsername(Config.database.mysql.username);
         HoneyConfig.getHoneyConfig().setPassword(Config.database.mysql.password);
+        HoneyConfig.getHoneyConfig().setDriverName("com.mysql.jdbc.Driver");
         honeyFactory = BeeFactory.getHoneyFactory();
     }
 

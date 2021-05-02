@@ -23,6 +23,7 @@ import org.teasoft.honey.osql.core.HoneyConfig;
 import org.teasoft.honey.osql.core.HoneyFactory;
 import org.teasoft.honey.osql.name.UnderScoreAndCamelName;
 import red.mohist.sodionauth.core.database.Mapper;
+import red.mohist.sodionauth.core.database.mappers.H2Mapper;
 import red.mohist.sodionauth.core.database.mappers.MysqlMapper;
 import red.mohist.sodionauth.core.database.mappers.SqliteMapper;
 import red.mohist.sodionauth.core.utils.Config;
@@ -64,6 +65,9 @@ public class DatabaseService {
                 break;
             case "mysql":
                 mapper = new MysqlMapper();
+                break;
+            case "h2":
+                mapper = new H2Mapper();
                 break;
             default:
                 mapper = null;
