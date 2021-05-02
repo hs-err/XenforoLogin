@@ -48,7 +48,7 @@ public class PostgresqlMapper extends Mapper {
     public boolean isFieldExist(String tableName, String fieldName) {
         return honeyFactory.getBeeSql().select(
                 "SELECT table_name FROM information_schema.columns WHERE " +
-                        "table_catalog='" + Config.database.postgresql.database + "\" AND " +
+                        "table_catalog='" + Config.database.postgresql.database + "' AND " +
                         "table_name='" + tableName + "' AND " +
                         "column_name='" + fieldName + "';"
         ).size() == 1;
