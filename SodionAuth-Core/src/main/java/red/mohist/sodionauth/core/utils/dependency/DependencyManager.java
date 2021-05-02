@@ -67,6 +67,7 @@ public class DependencyManager {
             .add(new Relocation("org.apache.maven", "red.mohist.sodionauth.libs.maven"))
             .add(new Relocation("org.apache.http", "red.mohist.sodionauth.libs.http"))
             .add(new Relocation("org.apache.commons", "red.mohist.sodionauth.libs.commons"))
+            .add(new Relocation("org.objectweb.asm", "red.mohist.sodionauth.libs.asm"))
             .build();
 
     static {
@@ -130,7 +131,7 @@ public class DependencyManager {
                     JarRelocator relocator = new JarRelocator(sourceFile, relocatedFile, rules);
                     try {
                         relocator.run();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         relocatedFile.delete();
                         throw new RuntimeException("Unable to relocate dependencies " + sourcePath, e);
                     }
