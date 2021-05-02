@@ -27,26 +27,20 @@ import red.mohist.sodionauth.core.utils.Helper;
 
 import java.lang.reflect.Field;
 
-public class H2Mapper extends Mapper {
-    public H2Mapper() {
-        HoneyConfig.getHoneyConfig().dbName = "H2";
-
-        HoneyConfig.getHoneyConfig().setUrl("jdbc:h2:" + Config.database.h2.url);
-
-        if (!Config.database.h2.username.equals("")) {
-            HoneyConfig.getHoneyConfig().setUsername(Config.database.h2.username);
-        }
-        if (!Config.database.h2.password.equals("")) {
-            HoneyConfig.getHoneyConfig().setPassword(Config.database.h2.password);
-        }
-        HoneyConfig.getHoneyConfig().setDriverName("org.h2.Driver");
+public class PostgresqlMapper extends Mapper {
+    public PostgresqlMapper() {
+        HoneyConfig.getHoneyConfig().dbName = "PostgreSQL";
+        HoneyConfig.getHoneyConfig().setUrl("jdbc:postgresql://" + Config.database.postgresql.host + "/" + Config.database.postgresql.database);
+        HoneyConfig.getHoneyConfig().setUsername(Config.database.postgresql.username);
+        HoneyConfig.getHoneyConfig().setPassword(Config.database.postgresql.password);
+        HoneyConfig.getHoneyConfig().setDriverName("org.postgresql.Driver");
         honeyFactory = BeeFactory.getHoneyFactory();
     }
 
     @Override
     public boolean isTableExist(String name) {
         return honeyFactory.getBeeSql().select(
-                "SELECT table_name FROM information_schema.tables WHERE table_schema = 'PUBLIC' AND table_name = '" + name.toUpperCase() + "';"
+                "SELECT table_name FROM information_schema.tables WHERE table_catalog='" + Config.database.postgresql.database + "' AND table_name='" + name + "';"
         ).size() == 1;
     }
 
@@ -54,9 +48,9 @@ public class H2Mapper extends Mapper {
     public boolean isFieldExist(String tableName, String fieldName) {
         return honeyFactory.getBeeSql().select(
                 "SELECT table_name FROM information_schema.columns WHERE " +
-                        "table_schema = 'PUBLIC' AND " +
-                        "table_name = '" + tableName.toUpperCase() + "' AND " +
-                        "column_name = '" + fieldName.toUpperCase() + "';"
+                        "table_catalog='" + Config.database.postgresql.database + "\" AND " +
+                        "table_name='" + tableName + "' AND " +
+                        "column_name='" + fieldName + "';"
         ).size() == 1;
     }
 
@@ -75,52 +69,56 @@ public class H2Mapper extends Mapper {
             if (i != 0) {
                 sql.append(",");
             }
+
             if (field.isAnnotationPresent(Ignore.class)) {
                 break;
             }
-
-            sql.append(Mapper.translateField(field));
-
-            sql.append(" ").append(getTypeName(field.getType()));
-            if (field.getName().equals("id")) {
-                sql.append(" AUTO_INCREMENT");
-            }
-            if (field.isAnnotationPresent(PrimaryKey.class)) {
-                sql.append(" PRIMARY KEY");
-            }
-            if (field.isAnnotationPresent(NotNull.class)) {
-                sql.append(" NOT NULL");
-            }
+            sql.append(getFieldSql(field, true));
         }
         sql.append(");");
+        Helper.getLogger().info(sql.toString());
         honeyFactory.getBeeSql().modify(sql.toString());
     }
 
     @Override
     public void addField(Field field) {
         String tableName = translateTable(field);
-        StringBuilder sql = new StringBuilder("ALTER TABLE `" + tableName + "` ADD ");
-        sql.append(Mapper.translateField(field));
-
-        sql.append(" ").append(getTypeName(field.getType()));
-
-        if (field.isAnnotationPresent(NotNull.class)) {
-            sql.append(" NOT NULL");
-        }
+        StringBuilder sql = new StringBuilder("ALTER TABLE " + tableName + " ADD");
+        sql.append(getFieldSql(field, false));
         sql.append(";");
         Helper.getLogger().info(sql.toString());
         honeyFactory.getBeeSql().modify(sql.toString());
     }
 
+    private String getFieldSql(Field field, boolean setPrimaryKey) {
+        StringBuilder sql = new StringBuilder();
+        sql.append(Mapper.translateField(field));
+
+        if (field.getName().equals("id")) {
+            sql.append(" serial");
+        }else{
+            sql.append(" ").append(getTypeName(field.getType()));
+        }
+        if (setPrimaryKey && field.isAnnotationPresent(PrimaryKey.class)) {
+            sql.append(" PRIMARY KEY");
+        }else{
+            if (field.isAnnotationPresent(NotNull.class)) {
+                sql.append(" NOT");
+            }
+            sql.append(" NULL");
+        }
+        return sql.toString();
+    }
+
     @Override
     protected String getTypeName(Class<?> object) {
         if (String.class.equals(object)) {
-            return "TEXT";
+            return "text";
         } else if (Integer.class.equals(object)) {
-            return "INTEGER";
+            return "integer";
         } else if (Boolean.class.equals(object)) {
-            return "BOOLEAN";
+            return "boolean";
         }
-        return "UNKNOWN";
+        return "text";
     }
 }

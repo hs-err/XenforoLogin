@@ -104,6 +104,9 @@ public class MainConfiguration extends Configure {
         @Expose
         public MysqlBean mysql = new MysqlBean();
 
+        @Expose
+        public PostgresqlBean postgresql = new PostgresqlBean();
+
         public static class H2Bean extends Configure {
             // @Migrate("database.h2.path")
             @Lore("The url to h2 database")
@@ -149,6 +152,29 @@ public class MainConfiguration extends Configure {
 
             @Migrate("database.mysql.password")
             @Lore("The password for mysql.")
+            @Expose
+            public String password = "";
+
+            @Migrate("database.mysql.database")
+            @Lore("The database should SodionAuth use.")
+            @Expose
+            public String database = "sodionauth";
+        }
+
+        public static class PostgresqlBean extends Configure {
+            @Migrate("database.postgresql.host")
+            @Lore("The hostname to postgresql.")
+            @Lore("It likes 127.0.0.1:5432")
+            @Expose
+            public String host = "localhost:5432";
+
+            @Migrate("database.postgresql.username")
+            @Lore("The username for postgresql.")
+            @Expose
+            public String username = "postgres";
+
+            @Migrate("database.postgresql.password")
+            @Lore("The password for postgresql.")
             @Expose
             public String password = "";
 

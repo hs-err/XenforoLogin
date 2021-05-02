@@ -68,6 +68,9 @@ public class Helper {
             case "h2":
                 dependencies.add("com.h2database:h2:1.4.200");
                 break;
+            case "postgresql":
+                dependencies.add("org.postgresql:postgresql:42.2.20");
+                break;
         }
         for (String dependency : dependencies) {
             String[] spilt = dependency.split(":");
