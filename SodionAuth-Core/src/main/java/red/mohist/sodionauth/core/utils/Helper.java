@@ -18,6 +18,7 @@ package red.mohist.sodionauth.core.utils;
 
 import com.google.gson.JsonElement;
 import red.mohist.sodionauth.core.modules.LogProvider;
+import red.mohist.sodionauth.core.utils.dependency.DependencyManager;
 
 import java.io.*;
 import java.net.URL;
@@ -27,10 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Helper {
     public static Helper instance;
@@ -46,6 +44,35 @@ public class Helper {
         jsonMap = new HashMap<>();
         Config.init();
         Lang.init();
+        Collection<String> dependencies = new ArrayList<>();
+        dependencies.add("com.google.guava:guava:29.0-jre");
+        dependencies.add("me.gosimple:nbvcxz:1.5.0");
+        dependencies.add("org.reflections:reflections:0.9.12");
+        dependencies.add("com.google.code.findbugs:jsr305:3.0.2");
+        dependencies.add("com.maxmind.geoip2:geoip2:2.14.0");
+        dependencies.add("org.mindrot:jbcrypt:0.4");
+        dependencies.add("io.netty:netty-all:4.1.50.Final");
+        dependencies.add("com.blinkfox:zealot:1.3.1");
+        dependencies.add("org.apache.httpcomponents:fluent-hc:4.5.11");
+        dependencies.add("org.xerial:sqlite-jdbc:3.34.0");
+        dependencies.add("org.teasoft:bee:1.8.99");
+        dependencies.add("org.teasoft:honey:1.8.99");
+        dependencies.add("org.teasoft:bee-ext:1.8.99");
+        switch (Config.database.type) {
+            case "sqlite":
+                dependencies.add("org.xerial:sqlite-jdbc:3.34.0");
+                break;
+            case "mysql":
+                dependencies.add("mysql:mysql-connector-java:8.0.24");
+                break;
+            case "h2":
+                dependencies.add("com.h2database:h2:1.4.200");
+                break;
+        }
+        for (String dependency : dependencies) {
+            String[] spilt = dependency.split(":");
+            DependencyManager.checkDependencyMaven(spilt[0], spilt[1], spilt[2]);
+        }
     }
 
     public static String getConfigPath(String filename) {

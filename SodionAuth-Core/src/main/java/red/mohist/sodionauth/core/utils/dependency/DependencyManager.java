@@ -16,6 +16,9 @@
 
 package red.mohist.sodionauth.core.utils.dependency;
 
+import com.google.common.collect.ImmutableList;
+import me.lucko.jarrelocator.JarRelocator;
+import me.lucko.jarrelocator.Relocation;
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
@@ -47,11 +50,12 @@ import red.mohist.sodionauth.core.utils.dependency.classloader.ReflectionClassLo
 import red.mohist.sodionauth.libs.maven.repository.internal.MavenRepositorySystemUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BooleanSupplier;
 
 public class DependencyManager {
 
@@ -59,6 +63,11 @@ public class DependencyManager {
     private static final RepositorySystem repositorySystem;
     private static final DefaultRepositorySystemSession repositorySystemSession;
     private static final LocalRepository localRepo;
+    private static final List<Relocation> rules = new ImmutableList.Builder<Relocation>()
+            .add(new Relocation("org.apache.maven", "red.mohist.sodionauth.libs.maven"))
+            .add(new Relocation("org.apache.http", "red.mohist.sodionauth.libs.http"))
+            .add(new Relocation("org.apache.commons", "red.mohist.sodionauth.libs.commons"))
+            .build();
 
     static {
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
@@ -67,7 +76,7 @@ public class DependencyManager {
 
         locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
             @Override
-            public void serviceCreationFailed(Class<?> type, Class<?> impl, Exception exception) {
+            public void serviceCreationFailed(Class<?> type, Class<?> impl, Throwable exception) {
                 Helper.getLogger().warn(String.format("Service creation failed for %s with implementation %s", type, impl), new Exception(exception));
             }
         });
@@ -87,30 +96,7 @@ public class DependencyManager {
         repositorySystemSession.setSystemProperty("os.detected.arch", System.getProperty("os.arch", "unknown").replaceAll("amd64", "x86_64"));
     }
 
-    public static void checkForSQLite() {
-        checkDependencyMaven("org.xerial", "sqlite-jdbc", "3.32.3.1", () -> {
-            try {
-                Class.forName("org.sqlite.JDBC");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-    }
-
-    public static void checkForMySQL() {
-        checkDependencyMaven("mysql", "mysql-connector-java", "8.0.21", () -> {
-            try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
-        });
-
-    }
-
-    public static void checkDependencyMaven(String group, String name, String version, BooleanSupplier isPresent) {
+    public static void checkDependencyMaven(String group, String name, String version) {
 
         File librariesPath = new File(Helper.getConfigPath("libraries"));
         librariesPath.mkdirs();
@@ -131,22 +117,36 @@ public class DependencyManager {
         }
 
         for (ArtifactResult artifactResult : artifactResults) {
-            Helper.getLogger().info(
-                    String.format("Injecting %s:%s:%s (%s) into classpath...",
-                            artifactResult.getArtifact().getGroupId(),
-                            artifactResult.getArtifact().getArtifactId(),
-                            artifactResult.getArtifact().getVersion(),
-                            artifactResult.getArtifact().getFile().toPath()));
-            reflectionClassLoader.addJarToClasspath(artifactResult.getArtifact().getFile().toPath());
+            if (artifactResult.isResolved()) {
+                String sourcePath = artifactResult.getArtifact().getFile().toPath().toString();
+                String relocatedPath = sourcePath.substring(0, sourcePath.length() - ".jar".length()) + "-relocated.jar";
+                File sourceFile = new File(sourcePath);
+                File relocatedFile = new File(relocatedPath);
+                if (!relocatedFile.exists()) {
+                    Helper.getLogger().info("Relocating " +
+                            artifactResult.getArtifact().getGroupId()
+                            + ":" + artifactResult.getArtifact().getArtifactId()
+                            + ":" + artifactResult.getArtifact().getVersion());
+                    JarRelocator relocator = new JarRelocator(sourceFile, relocatedFile, rules);
+                    try {
+                        relocator.run();
+                    } catch (IOException e) {
+                        relocatedFile.delete();
+                        throw new RuntimeException("Unable to relocate dependencies " + sourcePath, e);
+                    }
+                }
+                Helper.getLogger().info("Injecting " +
+                        artifactResult.getArtifact().getGroupId()
+                        + ":" + artifactResult.getArtifact().getArtifactId()
+                        + ":" + artifactResult.getArtifact().getVersion());
+                reflectionClassLoader.addJarToClasspath(Paths.get(relocatedPath));
+            } else {
+                Helper.getLogger().info("Failed " +
+                        artifactResult.getArtifact().getGroupId()
+                        + ":" + artifactResult.getArtifact().getArtifactId()
+                        + ":" + artifactResult.getArtifact().getVersion());
+            }
         }
-
-        if (!isPresent.getAsBoolean()) {
-            Helper.getLogger().warn(String.format("Error injecting depend %s:%s:%s into classpath...",
-                    group,
-                    name,
-                    version));
-        }
-
     }
 
     public static class ConsoleRepositoryListener extends AbstractRepositoryListener {
@@ -158,28 +158,28 @@ public class DependencyManager {
         }
 
         public void artifactDeployed(RepositoryEvent event) {
-            Helper.getLogger().info("Deployed " + event.getArtifact() + " to " + event.getRepository());
+            // Helper.getLogger().info("Deployed " + event.getArtifact() + " to " + event.getRepository());
         }
 
         public void artifactDeploying(RepositoryEvent event) {
-            Helper.getLogger().info("Deploying " + event.getArtifact() + " to " + event.getRepository());
+            // Helper.getLogger().info("Deploying " + event.getArtifact() + " to " + event.getRepository());
         }
 
         public void artifactDescriptorInvalid(RepositoryEvent event) {
-            Helper.getLogger().info("Invalid artifact descriptor for " + event.getArtifact() + ": "
+            Helper.getLogger().warn("Invalid artifact descriptor for " + event.getArtifact() + ": "
                     + event.getException().getMessage());
         }
 
         public void artifactDescriptorMissing(RepositoryEvent event) {
-            Helper.getLogger().info("Missing artifact descriptor for " + event.getArtifact());
+            Helper.getLogger().warn("Missing artifact descriptor for " + event.getArtifact());
         }
 
         public void artifactInstalled(RepositoryEvent event) {
-            Helper.getLogger().info("Installed " + event.getArtifact() + " to " + event.getFile());
+            // Helper.getLogger().info("Installed " + event.getArtifact() + " to " + event.getFile());
         }
 
         public void artifactInstalling(RepositoryEvent event) {
-            Helper.getLogger().info("Installing " + event.getArtifact() + " to " + event.getFile());
+            // Helper.getLogger().info("Installing " + event.getArtifact() + " to " + event.getFile());
         }
 
         public void artifactResolved(RepositoryEvent event) {
@@ -199,31 +199,31 @@ public class DependencyManager {
         }
 
         public void metadataDeployed(RepositoryEvent event) {
-            Helper.getLogger().info("Deployed " + event.getMetadata() + " to " + event.getRepository());
+            // Helper.getLogger().info("Deployed " + event.getMetadata() + " to " + event.getRepository());
         }
 
         public void metadataDeploying(RepositoryEvent event) {
-            Helper.getLogger().info("Deploying " + event.getMetadata() + " to " + event.getRepository());
+            // Helper.getLogger().info("Deploying " + event.getMetadata() + " to " + event.getRepository());
         }
 
         public void metadataInstalled(RepositoryEvent event) {
-            Helper.getLogger().info("Installed " + event.getMetadata() + " to " + event.getFile());
+            // Helper.getLogger().info("Installed " + event.getMetadata() + " to " + event.getFile());
         }
 
         public void metadataInstalling(RepositoryEvent event) {
-            Helper.getLogger().info("Installing " + event.getMetadata() + " to " + event.getFile());
+            // Helper.getLogger().info("Installing " + event.getMetadata() + " to " + event.getFile());
         }
 
         public void metadataInvalid(RepositoryEvent event) {
-            Helper.getLogger().info("Invalid metadata " + event.getMetadata());
+            Helper.getLogger().warn("Invalid metadata " + event.getMetadata());
         }
 
         public void metadataResolved(RepositoryEvent event) {
-            Helper.getLogger().info("Resolved metadata " + event.getMetadata() + " from " + event.getRepository());
+            Helper.getLogger().warn("Resolved metadata " + event.getMetadata() + " from " + event.getRepository());
         }
 
         public void metadataResolving(RepositoryEvent event) {
-            Helper.getLogger().info("Resolving metadata " + event.getMetadata() + " from " + event.getRepository());
+            // Helper.getLogger().info("Resolving metadata " + event.getMetadata() + " from " + event.getRepository());
         }
     }
 

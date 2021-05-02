@@ -34,3 +34,5 @@ include(':SodionAuth-Sponge')
 include(':SodionAuth-Libs')
 include(':SodionAuth-Bungee')
 include(':SodionAuth-Forge')
+include 'SodionAuth-Relocate'
+
