@@ -54,7 +54,6 @@ public class Helper {
         dependencies.add("io.netty:netty-all:4.1.50.Final");
         dependencies.add("com.blinkfox:zealot:1.3.1");
         dependencies.add("org.apache.httpcomponents:fluent-hc:4.5.11");
-        dependencies.add("org.xerial:sqlite-jdbc:3.34.0");
         dependencies.add("org.teasoft:bee:1.8.99");
         dependencies.add("org.teasoft:honey:1.8.99");
         dependencies.add("org.teasoft:bee-ext:1.8.99");
