@@ -20,6 +20,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.authbackends.AuthBackend;
+import red.mohist.sodionauth.core.authbackends.AuthBackends;
 import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.BootEvent;
@@ -37,6 +39,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AuthService {
 
@@ -152,12 +156,37 @@ public class AuthService {
                 User user = User.getByName(player.getName());
 
                 if (user == null) {
-                    //if (Config.api.allowRegister) {
-                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
-                    return null;
-                    //} else {
-                    //    return player.getLang().errors.noUser;
-                    //}
+                    if (!Config.database.passwordHash.equals("")) {
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                        return null;
+                    }
+                    AtomicReference<String> willReturn = new AtomicReference<>(player.getLang().errors.noUser);
+                    AtomicBoolean findFirst = new AtomicBoolean(false);
+                    AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
+                        if(findFirst.get()){
+                            return;
+                        }
+                        User fakeUser = new User().setName(event.getPlayer().getName());
+                        if(authBackend.allowLogin){
+                            AuthBackend.GetResult result = authBackend.get(fakeUser);
+                            if(result.type.equals(AuthBackend.GetResultType.NO_SUCH_USER)){
+                                willReturn.set(null);
+                                fakeUser = new User().setName(result.name)
+                                        .setEmail(result.email);
+                                fakeUser.save();
+                                fakeUser.createAuthInfo()
+                                        .setType(typeName)
+                                        .save();
+                                if(!result.name.equals(player.getName())){
+                                    willReturn.set(player.getLang().errors.getNameIncorrect(ImmutableMap.of("correct",result.name)));
+                                }else {
+                                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
+                                }
+                                findFirst.set(true);
+                            }
+                        }
+                    });
+                    return willReturn.get();
                 } else if (!user.getName().equals(player.getName())) {
                     return player.getLang().errors.getNameIncorrect(
                             ImmutableMap.of("correct", user.getName()));
@@ -190,26 +219,6 @@ public class AuthService {
             player.setGameMode(3);
         }
         LoginTicker.add(player);
-        /*
-        Service.threadPool.dbUniqueFlag.lock().then(() -> {
-            try (Unlocker<UniqueFlag> unlocker = new Unlocker<>(Service.threadPool.dbUniqueFlag)) {
-                if (Config.session.enable) {
-                    PreparedStatement pps = Service.session.prepareStatement("SELECT * FROM sessions WHERE uuid=? AND ip=? AND time>? LIMIT 1;");
-                    pps.setString(1, player.getUniqueId().toString());
-                    pps.setString(2, player.getAddress().getHostAddress());
-                    pps.setInt(3, (int) (System.currentTimeMillis() / 1000 - Config.session.timeout));
-                    ResultSet rs = pps.executeQuery();
-                    if (rs.next()) {
-                        player.sendMessage(player.getLang().session);
-                        login(player);
-                    }
-                }
-            } catch (Exception e) {
-                Helper.getLogger().warn("Fail use session.");
-                e.printStackTrace();
-            }
-        });
-        */
     }
 
     public void login(AbstractPlayer player) {

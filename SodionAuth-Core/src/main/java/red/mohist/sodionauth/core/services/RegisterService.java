@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.core.services;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
@@ -28,9 +29,11 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.Lang;
 import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +63,7 @@ public class RegisterService {
                         player.getUniqueId(),
                         PlayerStatus.HANDLE());
                 Service.passwordStrength.verifyAsync(player, status.email, message).then((result) -> {
+                    player.sendMessage(player.getLang().getPasswordStrength(ImmutableMap.of("strength",result.getEntropy().intValue())));
                     if (result.isMinimumEntropyMet()) {
                         Service.auth.logged_in.put(
                                 player.getUniqueId(),
@@ -68,7 +72,6 @@ public class RegisterService {
                         Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
                         Service.passwordStrength.sendTip(player, result);
                     }
-                    player.sendMessage("password strength: " + result.getEntropy());
                     Service.auth.sendTip(player);
                 });
                 break;
@@ -132,7 +135,7 @@ public class RegisterService {
                     .setType("password:" + Config.database.passwordHash)
                     .setData(HasherTools.getByName(Config.database.passwordHash).hash(password))
                     .save();
-            result.friendlyName = "this server";
+            result.friendlyName = Lang.def.thisServer;
         }
 
         User finalUser = user;
@@ -148,9 +151,9 @@ public class RegisterService {
                         break;
                     case EMAIL_EXIST:
                         getResult = authBackend.get(finalUser);
-                        if (getResult.equals(AuthBackend.GetResult.SUCCESS)) {
+                        if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
                             if (authBackend.login(finalUser, finalUser.createAuthInfo()
-                                    .setType(typeName), password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                    .setType(typeName), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
                                 result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                                 break;
                             }
@@ -159,9 +162,9 @@ public class RegisterService {
                         break;
                     case NAME_EXIST:
                         getResult = authBackend.get(finalUser);
-                        if (getResult.equals(AuthBackend.GetResult.SUCCESS)) {
+                        if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
                             if (authBackend.login(finalUser, finalUser.createAuthInfo()
-                                    .setType(typeName), password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                    .setType(typeName), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
                                 result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
                                 break;
                             }
@@ -198,23 +201,29 @@ public class RegisterService {
         switch (result.type) {
             case OK:
                 if (result.friendlyName != null) {
-                    player.sendMessage("register for " + result.friendlyName + " successfully");
+                    player.sendMessage(player.getLang().getRegisterSuccess(ImmutableMap.of("name",result.friendlyName)));
                 }
                 for (RegisterResult childResult : result.child) {
-                    switch (childResult.type) {
-                        case OK:
-                            if (childResult.friendlyName != null) {
-                                player.sendMessage("register for " + childResult.friendlyName + " successfully");
-                            }
-                            break;
-                        case USERNAME_EXIST:
-                            player.sendMessage("register for " + childResult.friendlyName + " failed: USERNAME_EXIST");
-                            break;
-                        case EMAIL_EXIST:
-                            player.sendMessage("register for " + childResult.friendlyName + " failed: EMAIL_EXIST");
-                            break;
-                        default:
-                            player.sendMessage("register for " + childResult.friendlyName + " failed: UNKNOWN");
+                    if (childResult.friendlyName != null) {
+                        switch (childResult.type) {
+                            case OK:
+                                player.sendMessage(player.getLang().getRegisterSuccess(ImmutableMap.of("name",childResult.friendlyName)));
+                                break;
+                            case USERNAME_EXIST:
+                                player.sendMessage(player.getLang().errors.getRegisterFailed(
+                                        ImmutableMap.of("name",childResult.friendlyName,
+                                                "reason","USERNAME_EXIST")));
+                                break;
+                            case EMAIL_EXIST:
+                                player.sendMessage(player.getLang().errors.getRegisterFailed(
+                                        ImmutableMap.of("name",childResult.friendlyName,
+                                                "reason","EMAIL_EXIST")));
+                                break;
+                            default:
+                                player.sendMessage(player.getLang().errors.getRegisterFailed(
+                                        ImmutableMap.of("name",childResult.friendlyName,
+                                                "reason","UNKNOWN")));
+                        }
                     }
                 }
                 Service.auth.login(player);

@@ -60,7 +60,7 @@ public class UserService {
                 AuthBackend authBackend = AuthBackends.getByName(authInfo.getType());
                 if (authBackend.allowLogin && authBackend
                         .login(user, authInfo, password)
-                        .equals(AuthBackend.LoginResult.SUCCESS)) {
+                        .type.equals(AuthBackend.LoginResultType.SUCCESS)) {
                     loginResult.set(true);
                 }
             }
@@ -78,9 +78,10 @@ public class UserService {
                     AuthBackend authBackend = AuthBackends.getByName(key);
                     if (authBackend.allowRegister) {
                         AuthBackend.GetResult getResult = authBackend.get(user);
-                        if (getResult.equals(AuthBackend.GetResult.SUCCESS)) {
+                        if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS) &&
+                            getResult.name.equals(user.getName())) {
                             if (authBackend.login(user, user.createAuthInfo()
-                                    .setType(key), password).equals(AuthBackend.LoginResult.SUCCESS)) {
+                                    .setType(key), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
                                 user.createAuthInfo().setType(key).save();
                             }
                         }

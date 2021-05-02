@@ -59,9 +59,11 @@ public class PasswordStrengthService {
             Feedback feedback = result.getFeedback();
             if (feedback != null) {
                 if (feedback.getWarningKey() != null) {
-                    player.sendMessage("Warning: " + feedback.getWarning());
+                    player.sendMessage(player.getLang().passwordWarnPrefix + feedback.getWarning());
                 }
-                feedback.getSuggestion().forEach(player::sendMessage);
+                feedback.getSuggestion().forEach((tip)->{
+                    player.sendMessage(player.getLang().passwordTipPrefix + tip);
+                });
             }
         }
     }

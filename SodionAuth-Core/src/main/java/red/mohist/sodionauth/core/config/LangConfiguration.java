@@ -24,12 +24,36 @@ public class LangConfiguration {
     public String registerPasswordConfirm;
     public String loggedIn;
     public String loginSuccess;
+    public String registerSuccess;
     public String unRegisterSuccess;
     public String session;
     public String needLogin;
+    public String passwordStrength;
+    public String passwordTipPrefix;
+    public String passwordWarnPrefix;
+
+    public String thisServer;
+
+    public String getPasswordStrength(Map<String, Object> data) {
+        String result = passwordStrength;
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
+        }
+        return result;
+    }
+
+    public String getRegisterSuccess(Map<String, Object> data) {
+        String result = registerSuccess;
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
+        }
+        return result;
+    }
+
     public ErrorsBean errors;
 
     public static class ErrorsBean {
+        public String registerFailed;
         public String proxy;
         public String rateLimit;
         public String countryLimit;
@@ -39,25 +63,23 @@ public class LangConfiguration {
         public String handle;
         public String password;
         public String key;
-        public String url;
         public String noUser;
         public String timeOut;
         public String nameIncorrect;
         public String unknown;
-        public String mailExist;
         public String usernameExist;
         public String loginExist;
 
-        public String getKey(Map<String, Object> data) {
-            String result = key;
+        public String getRegisterFailed(Map<String, Object> data) {
+            String result = registerFailed;
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }
             return result;
         }
 
-        public String getUrl(Map<String, Object> data) {
-            String result = url;
+        public String getKey(Map<String, Object> data) {
+            String result = key;
             for (Map.Entry<String, Object> entry : data.entrySet()) {
                 result = result.replace("[" + entry.getKey() + "]", (String) entry.getValue());
             }

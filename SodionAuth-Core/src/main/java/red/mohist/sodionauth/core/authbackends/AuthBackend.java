@@ -38,27 +38,38 @@ public abstract class AuthBackend {
 
     public abstract GetResult get(User user);
 
-    public enum LoginResult {
-        SUCCESS,
-        ERROR_NAME {
-            public String correct;
-
-            public LoginResult setCorrect(String correct) {
-                this.correct = correct;
-                return this;
-            }
-
-            public String getCorrect() {
-                return correct;
-            }
-        },
-        ERROR_PASSWORD,
-        ERROR_SERVER,
-        NO_USER;
-
+    public static class LoginResult {
+        public LoginResultType type;
+        public String correct;
+        public LoginResult(LoginResultType type){
+            this.type = type;
+        }
+        public static LoginResult SUCCESS(){
+            return new LoginResult(LoginResultType.SUCCESS);
+        }
+        public static LoginResult ERROR_NAME(){
+            return new LoginResult(LoginResultType.ERROR_NAME);
+        }
+        public static LoginResult ERROR_PASSWORD(){
+            return new LoginResult(LoginResultType.ERROR_PASSWORD);
+        }
+        public static LoginResult ERROR_SERVER(){
+            return new LoginResult(LoginResultType.ERROR_SERVER);
+        }
+        public static LoginResult NO_USER(){
+            return new LoginResult(LoginResultType.NO_USER);
+        }
         public LoginResult setCorrect(String ss) {
             return this;
         }
+    }
+
+    public enum LoginResultType{
+        SUCCESS,
+        ERROR_NAME,
+        ERROR_PASSWORD,
+        ERROR_SERVER,
+        NO_USER;
     }
 
     public enum RegisterResult {
@@ -70,30 +81,38 @@ public abstract class AuthBackend {
         ERROR_SERVER
     }
 
-    public enum GetResult {
-        SUCCESS,
-        ERROR_NAME,
-        EMAIL_DIFFERENT,
-        NO_SUCH_USER,
-        ERROR_SERVER {
-            public String correct;
+    public static class GetResult{
+        public GetResultType type;
+        public String name;
+        public String email;
 
-            public GetResult setCorrect(String correct) {
-                this.correct = correct;
-                return this;
-            }
-
-            public String getCorrect() {
-                return correct;
-            }
-        };
-
-        public String getCorrect() {
-            return null;
+        public GetResult(GetResultType type){
+            this.type = type;
+        }
+        public static GetResult SUCCESS(){
+            return new GetResult(GetResultType.SUCCESS);
+        }
+        public static GetResult NO_SUCH_USER(){
+            return new GetResult(GetResultType.NO_SUCH_USER);
+        }
+        public static GetResult ERROR_SERVER(){
+            return new GetResult(GetResultType.ERROR_SERVER);
         }
 
-        public GetResult setCorrect(String ss) {
+        public GetResult setName(String name) {
+            this.name = name;
             return this;
         }
+
+        public GetResult setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+    }
+
+    public enum GetResultType {
+        SUCCESS,
+        NO_SUCH_USER,
+        ERROR_SERVER;
     }
 }

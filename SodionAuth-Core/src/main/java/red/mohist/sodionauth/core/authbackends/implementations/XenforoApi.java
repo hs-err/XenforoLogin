@@ -62,30 +62,30 @@ public class XenforoApi extends AuthBackend {
                 response.get("user").getAsJsonObject().get("username").getAsString();
                 if (response.get("user").getAsJsonObject()
                         .get("username").getAsString().equals(user.getName())) {
-                    return LoginResult.SUCCESS;
+                    return LoginResult.SUCCESS();
                 } else {
-                    return LoginResult.ERROR_NAME.setCorrect("ss");
+                    return LoginResult.ERROR_NAME().setCorrect("ss");
                 }
             } else {
                 JsonArray errors = response.get("errors").getAsJsonArray();
                 if (errors.size() > 0) {
                     switch (errors.get(0).getAsJsonObject().get("code").getAsString()) {
                         case "incorrect_password":
-                            return LoginResult.ERROR_PASSWORD;
+                            return LoginResult.ERROR_PASSWORD();
                         case "requested_user_x_not_found":
-                            return LoginResult.NO_USER;
+                            return LoginResult.NO_USER();
                         default:
                             throw new Exception("Unknown Xenforo error: " +
                                     errors.get(0).getAsJsonObject().get("code").getAsString());
                     }
                 } else {
-                    return LoginResult.ERROR_SERVER;
+                    return LoginResult.ERROR_SERVER();
                 }
             }
         } catch (Exception e) {
             Helper.getLogger().warn(
                     "Error while login player " + user.getName() + " in xenforo " + url, e);
-            return LoginResult.ERROR_SERVER;
+            return LoginResult.ERROR_SERVER();
         }
     }
 
@@ -130,17 +130,15 @@ public class XenforoApi extends AuthBackend {
             JsonObject response = request("users/find-name?username=" +
                     URLEncoder.encode(user.getName(), "UTF-8"));
             if (response.get("exact").isJsonNull()) {
-                return GetResult.NO_SUCH_USER;
+                return GetResult.NO_SUCH_USER();
             }
-            if (!response.getAsJsonObject("exact").get("username").getAsString().equals(user.getName())) {
-                return GetResult.ERROR_NAME.setCorrect(
-                        response.getAsJsonObject("exact").get("username").getAsString());
-            }
-            return GetResult.SUCCESS;
+            return GetResult.SUCCESS()
+                    .setEmail(response.getAsJsonObject("exact").get("email").getAsString())
+                    .setName(response.getAsJsonObject("exact").get("username").getAsString());
         } catch (Exception e) {
             Helper.getLogger().warn(
                     "Error while get player " + user.getName() + " to xenforo " + url, e);
-            return GetResult.ERROR_SERVER;
+            return GetResult.ERROR_SERVER();
         }
     }
 

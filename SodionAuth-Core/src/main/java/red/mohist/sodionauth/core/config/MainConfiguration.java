@@ -86,7 +86,7 @@ public class MainConfiguration extends Configure {
         @Migrate("database.passwordHash")
         @Lore("The password hash should SodionAuth use as default.")
         @Lore("If a player with other kind of hash, It will transfer into this when he login in.")
-        @Lore("If It sets to null, sodionAuth will use Api only.")
+        @Lore("If It sets to empty string, sodionAuth will use Api only.")
         @Expose
         public String passwordHash = "BCrypt";
 
