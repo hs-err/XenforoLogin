@@ -64,12 +64,14 @@ public class SessionService {
     @Subscribe
     public void onJoin(JoinEvent event) {
         AbstractPlayer player = event.getPlayer();
-        Session session = Session.getByUuid(player.getUniqueId());
-        if (session != null) {
-            if (Long.parseLong(session.getTime()) > (System.currentTimeMillis() / 1000 - Config.session.timeout)
-                    && session.getIp().equals(player.getAddress().getHostAddress())) {
-                player.sendMessage(player.getLang().session);
-                Service.auth.login(player);
+        if (Config.session.enable) {
+            Session session = Session.getByUuid(player.getUniqueId());
+            if (session != null) {
+                if (Long.parseLong(session.getTime()) > (System.currentTimeMillis() / 1000 - Config.session.timeout)
+                        && session.getIp().equals(player.getAddress().getHostAddress())) {
+                    player.sendMessage(player.getLang().session);
+                    Service.auth.login(player);
+                }
             }
         }
     }
