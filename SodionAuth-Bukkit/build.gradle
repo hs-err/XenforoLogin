@@ -25,9 +25,7 @@ plugins {
 
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT'
-    compileOnly 'com.github.dmulloy2:ProtocolLib:4.6.0'
-    compileOnly 'org.reflections:reflections:0.9.12'
-    compileOnly 'com.github.KnownSpace:MiniTask:1.0.2-preview'
+    compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")
 }
 
@@ -36,8 +34,6 @@ processResources {
 }
 
 shadowJar {
-    dependencies {
-    }
 }
 
 assemble.dependsOn(shadowJar)

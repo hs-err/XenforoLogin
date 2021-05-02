@@ -27,7 +27,8 @@ dependencies {
     implementation project(":SodionAuth-Core")
     testImplementation group: 'junit', name: 'junit', version: '4.12'
     implementation 'org.apache.logging.log4j:log4j-core:2.8.1'
-    implementation project(path: ":SodionAuth-Libs", configuration: "shadow")
+    compileOnly project(":SodionAuth-Relocate")
+    implementation project(":SodionAuth-Core")
 }
 
 assemble.dependsOn(shadowJar)
