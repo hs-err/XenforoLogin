@@ -18,10 +18,12 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
+import com.google.gson.Gson;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.authbackends.AuthBackends;
+import red.mohist.sodionauth.core.database.entities.LastInfo;
 import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.BootEvent;
@@ -29,6 +31,7 @@ import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.player.*;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.PlayerInfo;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -211,6 +214,16 @@ public class AuthService {
     @Subscribe
     public void onJoin(JoinEvent event) {
         AbstractPlayer player = event.getPlayer();
+        PlayerInfo playerInfo = player.getPlayerInfo();
+        Service.threadPool.startup.startTask(()->{
+            if(LastInfo.getByUuid(player.getUniqueId()) == null){
+                Helper.getLogger().info("Can't find "+player.getName()+"'s info. Create one");
+                new LastInfo()
+                        .setUuid(player.getUniqueId())
+                        .setInfo(new Gson().toJson(playerInfo))
+                        .save();
+            }
+        });
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);
         if (Config.teleport.tpSpawnBeforeLogin) {
             player.teleport(default_location);
