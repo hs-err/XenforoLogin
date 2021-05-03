@@ -34,6 +34,7 @@ public class PostgresqlMapper extends Mapper {
         HoneyConfig.getHoneyConfig().setUsername(Config.database.postgresql.username);
         HoneyConfig.getHoneyConfig().setPassword(Config.database.postgresql.password);
         HoneyConfig.getHoneyConfig().setDriverName("org.postgresql.Driver");
+        HoneyConfig.getHoneyConfig().genid_forAllTableLongId = true;
         honeyFactory = BeeFactory.getHoneyFactory();
     }
 

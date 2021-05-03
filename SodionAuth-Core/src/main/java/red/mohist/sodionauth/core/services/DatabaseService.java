@@ -23,6 +23,7 @@ import org.teasoft.bee.osql.SuidRich;
 import org.teasoft.honey.osql.core.BeeFactory;
 import org.teasoft.honey.osql.core.HoneyConfig;
 import org.teasoft.honey.osql.core.HoneyFactory;
+import org.teasoft.honey.osql.core.Logger;
 import org.teasoft.honey.osql.name.UnderScoreAndCamelName;
 import red.mohist.sodionauth.core.database.Mapper;
 import red.mohist.sodionauth.core.database.mappers.H2Mapper;
