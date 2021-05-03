@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.core.authbackends;
 
+import red.mohist.sodionauth.core.authbackends.implementations.SodionApi;
 import red.mohist.sodionauth.core.authbackends.implementations.XenforoApi;
 import red.mohist.sodionauth.core.utils.Config;
 
@@ -30,7 +31,7 @@ public class AuthBackends {
             authBackendMap.put("xenforo:" + key, new XenforoApi(bean));
         });
         Config.api.web.forEach((key, bean) -> {
-            // authBackendMap.put("web:" + key, new WebApi(bean));
+            authBackendMap.put("web:" + key, new SodionApi(bean));
         });
     }
 

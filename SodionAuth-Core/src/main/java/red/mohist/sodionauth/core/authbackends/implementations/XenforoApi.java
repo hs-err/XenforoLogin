@@ -66,7 +66,8 @@ public class XenforoApi extends AuthBackend {
                         .get("username").getAsString().equals(user.getName())) {
                     return LoginResult.SUCCESS();
                 } else {
-                    return LoginResult.ERROR_NAME().setCorrect("ss");
+                    return LoginResult.ERROR_NAME().setCorrect(
+                            response.get("user").getAsJsonObject().get("username").getAsString());
                 }
             } else {
                 JsonArray errors = response.get("errors").getAsJsonArray();
@@ -178,38 +179,6 @@ public class XenforoApi extends AuthBackend {
         }
         request.addHeader("XF-Api-Key", key);
         request.addHeader("XF-Api-User", "1");
-        CloseableHttpResponse response = Service.httpClient.execute(request);
-        if (response == null) {
-            throw new IOException("No response");
-        }
-        switch (response.getStatusLine().getStatusCode()) {
-            case 200:
-            case 400:
-            case 404:
-                break;
-            case 401:
-            case 403:
-                Helper.getLogger().warn(
-                        Lang.def.errors.getKey(ImmutableMap.of(
-                                "key", key)));
-                throw new IOException("Server returns status code " + response.getStatusLine().getStatusCode());
-            default:
-                throw new IOException("Server returns status code " + response.getStatusLine().getStatusCode());
-        }
-        HttpEntity entity = response.getEntity();
-        if (entity == null) {
-            throw new IOException("Server returns no entity");
-        }
-        String content = EntityUtils.toString(entity);
-        if (content == null || content.equals("")) {
-            throw new IOException("Server returns empty entity");
-        }
-        response.close();
-        JsonObject result;
-        result = new Gson().fromJson(content, JsonObject.class);
-        if (result == null) {
-            throw new JsonSyntaxException("Server returned: " + content);
-        }
-        return result;
+        return Service.httpClient.executeAsJson(request);
     }
 }

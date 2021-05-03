@@ -16,14 +16,21 @@
 
 package red.mohist.sodionauth.core.services;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.utils.Helper;
+import red.mohist.sodionauth.core.utils.Lang;
+import red.mohist.sodionauth.libs.http.HttpEntity;
 import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
 import red.mohist.sodionauth.libs.http.client.methods.HttpUriRequest;
 import red.mohist.sodionauth.libs.http.impl.client.CloseableHttpClient;
 import red.mohist.sodionauth.libs.http.impl.client.HttpClientBuilder;
+import red.mohist.sodionauth.libs.http.util.EntityUtils;
 
 import java.io.IOException;
 
@@ -52,6 +59,36 @@ public class HttpClientService {
 
     public CloseableHttpResponse execute(HttpUriRequest request) throws IOException {
         return httpClient.execute(request);
+    }
+
+    public JsonObject executeAsJson(HttpUriRequest request) throws IOException {
+        CloseableHttpResponse response = execute(request);
+        if (response == null) {
+            throw new IOException("No response");
+        }
+        switch (response.getStatusLine().getStatusCode()) {
+            case 200:
+            case 400:
+            case 404:
+                break;
+            default:
+                throw new IOException("Server returns status code " + response.getStatusLine().getStatusCode());
+        }
+        HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            throw new IOException("Server returns no entity");
+        }
+        String content = EntityUtils.toString(entity);
+        if (content == null || content.equals("")) {
+            throw new IOException("Server returns empty entity");
+        }
+        response.close();
+        JsonObject result;
+        result = new Gson().fromJson(content, JsonObject.class);
+        if (result == null) {
+            throw new JsonSyntaxException("Server returned: " + content);
+        }
+        return result;
     }
 
 }
