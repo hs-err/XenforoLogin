@@ -20,6 +20,7 @@ import org.teasoft.bee.osql.annotation.Entity;
 import org.teasoft.bee.osql.annotation.Table;
 import org.teasoft.honey.osql.core.BeeFactory;
 import org.teasoft.honey.osql.core.HoneyFactory;
+import red.mohist.sodionauth.core.services.Service;
 
 import java.lang.reflect.Field;
 
@@ -42,7 +43,7 @@ public abstract class Mapper {
     }
 
     public static String translateTable(String name) {
-        return BeeFactory.getHoneyFactory().getNameTranslate().toTableName(name);
+        return Service.database.nameTranslate.toTableName(name);
     }
 
     public static String translateField(Field field) {
@@ -50,7 +51,7 @@ public abstract class Mapper {
     }
 
     public static String translateField(String name) {
-        return BeeFactory.getHoneyFactory().getNameTranslate().toColumnName(name);
+        return Service.database.nameTranslate.toColumnName(name);
     }
 
     public abstract boolean isTableExist(String name);

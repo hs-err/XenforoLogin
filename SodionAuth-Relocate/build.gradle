@@ -44,9 +44,9 @@ dependencies {
 
     compile 'org.xerial:sqlite-jdbc:3.34.0'
 
-    compile 'org.teasoft:bee:1.8.99'
-    compile 'org.teasoft:honey:1.8.99'
-    compile 'org.teasoft:bee-ext:1.8.99'
+    compile 'org.teasoft:bee:1.9.5'
+    compile 'org.teasoft:honey:1.9.5'
+    compile 'org.teasoft:bee-ext:1.9.5'
 }
 assemble.dependsOn(shadowJar)
 test {

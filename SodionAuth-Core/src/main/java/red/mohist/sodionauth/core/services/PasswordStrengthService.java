@@ -69,6 +69,14 @@ public class PasswordStrengthService {
     }
 
     public ITask<Result> verifyAsync(AbstractPlayer player, String email, String password) {
-        return Service.threadPool.startup.startTask(() -> verify(player, email, password));
+        return Service.threadPool.startup.startTask(() -> {
+            try{
+                return verify(player, email, password);
+            }catch (Exception e){
+                Helper.getLogger().warn("Can't check password for "+player.getName(),e);
+                player.sendMessage(player.getLang().errors.server);
+                return null;
+            }
+        });
     }
 }

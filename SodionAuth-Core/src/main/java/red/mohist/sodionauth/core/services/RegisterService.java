@@ -63,16 +63,31 @@ public class RegisterService {
                         player.getUniqueId(),
                         PlayerStatus.HANDLE());
                 Service.passwordStrength.verifyAsync(player, status.email, message).then((result) -> {
-                    player.sendMessage(player.getLang().getPasswordStrength(ImmutableMap.of("strength",result.getEntropy().intValue())));
-                    if (result.isMinimumEntropyMet()) {
-                        Service.auth.logged_in.put(
-                                player.getUniqueId(),
-                                PlayerStatus.NEED_REGISTER_CONFIRM().setEmail(status.email).setPassword(message));
-                    } else {
+                    try {
+                        if (result == null) {
+                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(message));
+                            Service.auth.sendTip(player);
+                            return;
+                        }
+                        player.sendMessage(player.getLang().getPasswordStrength(
+                                ImmutableMap.of("strength",
+                                        String.valueOf(result.getEntropy().intValue())
+                                )));
+                        if (result.isMinimumEntropyMet()) {
+                            Service.auth.logged_in.put(
+                                    player.getUniqueId(),
+                                    PlayerStatus.NEED_REGISTER_CONFIRM().setEmail(status.email).setPassword(message));
+                        } else {
+                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
+                            Service.passwordStrength.sendTip(player, result);
+                        }
+                        Service.auth.sendTip(player);
+                    }catch (Exception e){
+                        Helper.getLogger().warn("Can't check password for "+player.getName(),e);
                         Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
-                        Service.passwordStrength.sendTip(player, result);
+                        player.sendMessage(player.getLang().errors.server);
+                        Service.auth.sendTip(player);
                     }
-                    Service.auth.sendTip(player);
                 });
                 break;
             case NEED_REGISTER_CONFIRM:
@@ -188,7 +203,13 @@ public class RegisterService {
                 return RegisterResult.FAILED();
             }
         }).then((result) -> {
-            return handleResult(player, result);
+            try {
+                return handleResult(player, result);
+            } catch (Exception e) {
+                Helper.getLogger().warn("Exception during register for player " + player.getName(), e);
+                player.sendMessage(player.getLang().errors.server);
+                return false;
+            }
         });
     }
 

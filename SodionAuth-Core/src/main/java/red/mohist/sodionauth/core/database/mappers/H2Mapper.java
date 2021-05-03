@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 
 public class H2Mapper extends Mapper {
     public H2Mapper() {
-        HoneyConfig.getHoneyConfig().dbName = "H2";
+        HoneyConfig.getHoneyConfig().setDbName("H2");
 
         HoneyConfig.getHoneyConfig().setUrl("jdbc:h2:" + Config.database.h2.url);
 

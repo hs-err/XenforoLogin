@@ -47,10 +47,13 @@ public class LoginTickPlayer {
             Helper.getLogger().info("Player " + player.getName() + " haven't been checked.");
             return TickResult.DONE;
         }
-        if (calledTimes / 20 > loginTimeout
-                && Service.auth.logged_in.get(player.getUniqueId()).type.equals(PlayerStatus.StatusType.NEED_LOGIN)) {
-            player.kick(player.getLang().errors.timeOut);
-            return TickResult.DONE;
+        PlayerStatus status = Service.auth.logged_in.get(player.getUniqueId());
+        if (calledTimes / 20 > loginTimeout){
+            if(status == null
+                    || Service.auth.logged_in.get(player.getUniqueId()).type.equals(PlayerStatus.StatusType.NEED_LOGIN)) {
+                player.kick(player.getLang().errors.timeOut);
+                return TickResult.DONE;
+            }
         }
         if (calledTimes % ((showTipTime * 20)) == 0) {
             Service.auth.sendTip(player);

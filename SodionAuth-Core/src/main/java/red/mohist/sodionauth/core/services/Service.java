@@ -21,22 +21,22 @@ import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 
 public class Service {
-    public static final ConfigureService configure = new ConfigureService();
+    public static ConfigureService configure = new ConfigureService();
 
-    public static final ThreadPoolService threadPool = new ThreadPoolService();
-    public static final EventBusService eventBus = new EventBusService();
+    public static ThreadPoolService threadPool = new ThreadPoolService();
+    public static EventBusService eventBus = new EventBusService();
 
     public static final HttpClientService httpClient = new HttpClientService();
-    public static final DatabaseService database = new DatabaseService();
+    public static DatabaseService database = new DatabaseService();
 
-    public static final UserService user = new UserService();
-    public static final AuthService auth = new AuthService();
-    public static final SessionService session = new SessionService();
-    public static final ProxyLoginService proxyLogin = new ProxyLoginService();
-    public static final PasswordStrengthService passwordStrength = new PasswordStrengthService();
-    public static final RegisterService register = new RegisterService();
-    public static final LoginService login = new LoginService();
-    public static final UnRegisterService unRegister = new UnRegisterService();
+    public static UserService user = new UserService();
+    public static AuthService auth = new AuthService();
+    public static SessionService session = new SessionService();
+    public static ProxyLoginService proxyLogin = new ProxyLoginService();
+    public static PasswordStrengthService passwordStrength = new PasswordStrengthService();
+    public static RegisterService register = new RegisterService();
+    public static LoginService login = new LoginService();
+    public static UnRegisterService unRegister = new UnRegisterService();
 
     public Service() {
         eventBus.register(configure)

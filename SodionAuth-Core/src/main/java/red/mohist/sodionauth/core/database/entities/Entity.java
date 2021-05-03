@@ -30,7 +30,7 @@ public abstract class Entity implements Serializable {
                 idField.setAccessible(true);
             }
             if (idField.get(this) == null) {
-                int id = Service.database.suid.insert(this);
+                int id = (int) Service.database.suid.insertAndReturnId(this);
                 idField.set(this, id);
                 return id;
             } else {

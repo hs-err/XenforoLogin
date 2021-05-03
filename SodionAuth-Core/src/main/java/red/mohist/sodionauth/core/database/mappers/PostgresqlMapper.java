@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 
 public class PostgresqlMapper extends Mapper {
     public PostgresqlMapper() {
-        HoneyConfig.getHoneyConfig().dbName = "PostgreSQL";
+        HoneyConfig.getHoneyConfig().setDbName("PostgreSQL");
         HoneyConfig.getHoneyConfig().setUrl("jdbc:postgresql://" + Config.database.postgresql.host + "/" + Config.database.postgresql.database);
         HoneyConfig.getHoneyConfig().setUsername(Config.database.postgresql.username);
         HoneyConfig.getHoneyConfig().setPassword(Config.database.postgresql.password);

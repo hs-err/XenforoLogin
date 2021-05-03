@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 
 public class SqliteMapper extends Mapper {
     public SqliteMapper() {
-        HoneyConfig.getHoneyConfig().dbName = "SQLite";
+        HoneyConfig.getHoneyConfig().setDbName("SQLite");
         if (Config.database.sqlite.absolute) {
             HoneyConfig.getHoneyConfig().setUrl("jdbc:sqlite:" + Config.database.sqlite.path);
         } else {

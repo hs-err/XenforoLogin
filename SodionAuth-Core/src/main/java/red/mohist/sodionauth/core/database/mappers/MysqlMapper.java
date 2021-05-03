@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 
 public class MysqlMapper extends Mapper {
     public MysqlMapper() {
-        HoneyConfig.getHoneyConfig().dbName = "MySQL";
+        HoneyConfig.getHoneyConfig().setDbName("MySQL");
         HoneyConfig.getHoneyConfig().setUrl("jdbc:mysql://" + Config.database.mysql.host + "/" + Config.database.mysql.database);
         HoneyConfig.getHoneyConfig().setUsername(Config.database.mysql.username);
         HoneyConfig.getHoneyConfig().setPassword(Config.database.mysql.password);
