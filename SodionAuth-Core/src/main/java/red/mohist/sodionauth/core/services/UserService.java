@@ -26,6 +26,7 @@ import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserService {
 
@@ -41,9 +42,11 @@ public class UserService {
         for (AuthInfo authInfo : user.getAuthInfo()) {
             authInfoMap.put(authInfo.getType(), authInfo);
         }
+        AtomicReference<Boolean> hasPassword= new AtomicReference<>(false);
         AtomicBoolean loginResult = new AtomicBoolean(false);
         authInfoMap.forEach((key, authInfo) -> {
             if (authInfo.getType().startsWith("password:")) {
+                hasPassword.set(true);
                 String hashName = authInfo.getType().substring("password:".length());
                 if (HasherTools.getByName(hashName)
                         .verify(authInfo.getData(), password)) {
@@ -66,6 +69,12 @@ public class UserService {
             }
         });
         if (loginResult.get()) {
+            if(!hasPassword.get() && !Config.database.passwordHash.equals("")){
+                user.createAuthInfo()
+                        .setType("password:" + Config.database.passwordHash)
+                        .setData(HasherTools.getDefault().hash(password))
+                        .save();
+            }
             Map<String, Boolean> unLinkedTypes = new HashMap<>();
             AuthBackends.authBackendMap.forEach((key, authBackend) -> {
                 unLinkedTypes.put(key, false);

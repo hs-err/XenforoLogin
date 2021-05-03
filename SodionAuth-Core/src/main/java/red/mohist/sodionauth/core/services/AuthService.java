@@ -99,22 +99,31 @@ public class AuthService {
                     player.sendMessage(canLogin);
                     return;
                 }
-                User user = User.getByName(player.getName());
+                Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
+                Service.threadPool.startup.startTask(()->{
+                    try {
+                        User user = User.getByName(player.getName());
 
-                if (user == null) {
-                    //if (Config.api.allowRegister) {
-                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
-                    //} else {
-                    //    player.kick(player.getLang().errors.noUser);
-                    //}
-                } else if (!user.getName().equals(player.getName())) {
-                    player.kick(player.getLang().errors.getNameIncorrect(
-                            ImmutableMap.of("correct", user.getName())));
-                } else if (user.verifyPassword(message)) {
-                    Service.auth.login(player);
-                } else {
-                    player.kick(player.getLang().errors.password);
-                }
+                        if (user == null) {
+                            //if (Config.api.allowRegister) {
+                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                            //} else {
+                            //    player.kick(player.getLang().errors.noUser);
+                            //}
+                        } else if (!user.getName().equals(player.getName())) {
+                            player.kick(player.getLang().errors.getNameIncorrect(
+                                    ImmutableMap.of("correct", user.getName())));
+                        } else if (user.verifyPassword(message)) {
+                            Service.auth.login(player);
+                        } else {
+                            player.kick(player.getLang().errors.password);
+                        }
+                    }catch (Exception e){
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
+                        player.sendMessage(player.getLang().errors.server);
+                        Helper.getLogger().warn("Exception during attempt login for player " + player.getName(), e);
+                    }
+                });
                 break;
             case HANDLE:
                 event.setCancelled(true);
@@ -159,10 +168,6 @@ public class AuthService {
                 User user = User.getByName(player.getName());
 
                 if (user == null) {
-                    if (!Config.database.passwordHash.equals("")) {
-                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
-                        return null;
-                    }
                     AtomicReference<String> willReturn = new AtomicReference<>(player.getLang().errors.noUser);
                     AtomicBoolean findFirst = new AtomicBoolean(false);
                     AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
@@ -172,7 +177,7 @@ public class AuthService {
                         User fakeUser = new User().setName(event.getPlayer().getName());
                         if(authBackend.allowLogin){
                             AuthBackend.GetResult result = authBackend.get(fakeUser);
-                            if(result.type.equals(AuthBackend.GetResultType.NO_SUCH_USER)){
+                            if(result.type.equals(AuthBackend.GetResultType.SUCCESS)){
                                 willReturn.set(null);
                                 fakeUser = new User().setName(result.name)
                                         .setEmail(result.email);
@@ -189,7 +194,12 @@ public class AuthService {
                             }
                         }
                     });
-                    return willReturn.get();
+                    if(!findFirst.get() && !Config.database.passwordHash.equals("")) {
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                        return null;
+                    }else{
+                        return willReturn.get();
+                    }
                 } else if (!user.getName().equals(player.getName())) {
                     return player.getLang().errors.getNameIncorrect(
                             ImmutableMap.of("correct", user.getName()));
@@ -203,7 +213,7 @@ public class AuthService {
             }
         }).then((result) -> {
             if (result != null) {
-                event.setCancelled(true);
+                event.setCancelled(result);
             }
         });
         if (!event.isAsynchronous()) {
