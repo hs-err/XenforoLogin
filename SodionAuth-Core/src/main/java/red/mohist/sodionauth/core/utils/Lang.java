@@ -46,6 +46,7 @@ public class Lang {
         languageList.add("en");
         languageList.add("fr");
         languageList.add("pl");
+        languageList.add("ru");
         languageList.add("zh_CN");
         for (String language : languageList) {
             Helper.instance.saveResource("lang/" + language + ".json", false);
