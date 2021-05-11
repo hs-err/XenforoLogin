@@ -21,13 +21,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.TradeSelectEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.services.Service;
 
 public class ListenerTradeSelectEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnTradeSelectEvent(TradeSelectEvent event) {
-        if (Service.auth.needCancelled(BukkitLoader.instance.player2info((Player) event.getWhoClicked()))) {
+        if (Service.auth.needCancelled(new BukkitPlayer((Player) event.getWhoClicked()))) {
             event.setCancelled(true);
         }
     }

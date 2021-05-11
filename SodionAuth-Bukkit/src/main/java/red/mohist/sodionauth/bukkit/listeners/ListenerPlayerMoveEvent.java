@@ -21,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
@@ -30,7 +31,7 @@ import red.mohist.sodionauth.core.utils.Config;
 public class ListenerPlayerMoveEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnMove(PlayerMoveEvent event) {
-        final AbstractPlayer player = BukkitLoader.instance.player2info(event.getPlayer());
+        final AbstractPlayer player = new BukkitPlayer(event.getPlayer());
         if (Service.auth.needCancelled(player)) {
             Location location = event.getTo();
             if (Config.teleport.tpSpawnBeforeLogin) {

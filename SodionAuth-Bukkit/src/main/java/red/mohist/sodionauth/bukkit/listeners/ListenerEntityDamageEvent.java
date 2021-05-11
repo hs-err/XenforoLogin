@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.services.Service;
 
@@ -29,7 +30,7 @@ public class ListenerEntityDamageEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnEntityDamageEvent(EntityDamageEvent event) {
         if (event.getEntityType() == EntityType.PLAYER) {
-            if (Service.auth.needCancelled(BukkitLoader.instance.player2info((Player) event.getEntity()))) {
+            if (Service.auth.needCancelled(new BukkitPlayer((Player) event.getEntity()))) {
                 event.setCancelled(true);
             }
         }

@@ -20,14 +20,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.services.Service;
 
 public class ListenerInventoryOpenEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnInventoryOpenEvent(InventoryOpenEvent event) {
-        if (Service.auth.needCancelled(BukkitLoader.instance.player2info((Player) event.getPlayer()))) {
+        if (Service.auth.needCancelled(new BukkitPlayer((Player) event.getPlayer()))) {
             event.setCancelled(true);
         }
     }

@@ -38,7 +38,7 @@ public class User extends Entity {
     protected String skinHash;
 
     public static User getByName(String name) {
-        return new User().setLowerName(name).first();
+        return new User().setLowerName(name.toLowerCase()).first();
     }
 
     public static User get(Integer id) {

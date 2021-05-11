@@ -16,17 +16,22 @@
 
 package red.mohist.sodionauth.bukkit.listeners;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockDropItemEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.services.Service;
 
 public class ListenerBlockDropItemEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnBlockDropItemEvent(BlockDropItemEvent event) {
-        if (Service.auth.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+        if(event.getPlayer() == null || !(event.getPlayer() instanceof Player)){
+            return;
+        }
+        if (Service.auth.needCancelled(new BukkitPlayer(event.getPlayer()))) {
             event.setCancelled(true);
         }
     }

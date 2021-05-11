@@ -20,13 +20,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import red.mohist.sodionauth.bukkit.BukkitLoader;
+import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
 import red.mohist.sodionauth.core.services.Service;
 
 public class ListenerPlayerPickupArrowEvent implements BukkitAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void OnPlayerPickupArrowEvent(PlayerPickupArrowEvent event) {
-        if (Service.auth.needCancelled(BukkitLoader.instance.player2info(event.getPlayer()))) {
+        if (Service.auth.needCancelled(new BukkitPlayer(event.getPlayer()))) {
             event.setCancelled(true);
         }
     }

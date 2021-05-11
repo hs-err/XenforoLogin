@@ -68,6 +68,7 @@ public class DependencyManager {
             .add(new Relocation("org.apache.http", "red.mohist.sodionauth.libs.http"))
             .add(new Relocation("org.apache.commons", "red.mohist.sodionauth.libs.commons"))
             .add(new Relocation("org.objectweb.asm", "red.mohist.sodionauth.libs.asm"))
+            .add(new Relocation("org.codehaus.plexus", "red.mohist.sodionauth.libs.plexus"))
             .build();
 
     static {
