@@ -23,8 +23,15 @@ plugins {
     id 'com.github.johnrengelman.shadow'
 }
 
+repositories {
+    maven {
+        url = 'https://papermc.io/repo/repository/maven-public/'
+    }
+}
+
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT'
+    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Bukkit:-SNAPSHOT'
     compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")
 }

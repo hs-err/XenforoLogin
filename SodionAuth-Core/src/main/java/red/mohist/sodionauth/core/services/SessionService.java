@@ -49,7 +49,7 @@ public class SessionService {
                 lastInfo.setUuid(event.getPlayer().getUniqueId())
                         .setInfo(new Gson().toJson(player.getPlayerInfo()))
                         .save();
-                if (Config.session.enable) {
+                if (Config.session.enable && player.getAddress() != null) {
                     new Session().setUuid(player.getUniqueId())
                             .setIp(player.getAddress().getHostAddress())
                             .setTime(Long.toString(System.currentTimeMillis() / 1000))

@@ -345,6 +345,13 @@ public class MainConfiguration extends Configure {
         @Lore("It should enable when SodionAuth in auth server.")
         @Expose
         public Boolean cancelChatAfterLogin = false;
+
+        @Migrate("protection.ProxySystems.bypassCheck")
+        @Lore("Who can bypass check?")
+        @Lore("Name or UUID")
+        @Lore("Warning: DON'T ADD ANY PLAYER'S MAME")
+        @Expose
+        public String[] bypassCheck = {"[BuildCraft]","FakeThaumcraftBore","[Mekanism]"};
     }
 
     public static class ProtectionBean extends Configure {

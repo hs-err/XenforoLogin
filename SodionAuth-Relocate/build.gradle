@@ -44,14 +44,15 @@ dependencies {
 
     compile 'org.xerial:sqlite-jdbc:3.34.0'
 
-    compile 'org.teasoft:bee:1.9.5'
-    compile 'org.teasoft:honey:1.9.5'
-    compile 'org.teasoft:bee-ext:1.9.5'
+    compile 'com.github.eLoli-Community.SodionCore:SodionCore-Orm:-SNAPSHOT'
 }
+
 assemble.dependsOn(shadowJar)
+
 test {
     useJUnitPlatform()
 }
+
 shadowJar {
     relocate('org.apache.maven', 'red.mohist.sodionauth.libs.maven')
     relocate('org.apache.http', 'red.mohist.sodionauth.libs.http')

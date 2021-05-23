@@ -139,6 +139,11 @@ public class ForgeLoader implements PlatformAdapter {
     }
 
     @Override
+    public com.eloli.sodioncore.orm.AbstractSodionCore getSodionCore() {
+        return ;
+    }
+
+    @Override
     public void registerPluginMessageChannel(String channel) {
         // not need
     }

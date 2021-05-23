@@ -18,9 +18,15 @@ plugins {
     id 'war'
     id 'com.github.johnrengelman.shadow'
 }
+repositories {
+    maven {
+        url = 'https://papermc.io/repo/repository/maven-public/'
+    }
+}
 
 dependencies {
     compileOnly group: 'net.md-5', name: 'bungeecord-api', version: '1.8-SNAPSHOT'
+    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Bungee:-SNAPSHOT'
     compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")
 
@@ -30,8 +36,6 @@ processResources {
 }
 
 shadowJar {
-    dependencies {
-    }
 }
 
 assemble.dependsOn(shadowJar)

@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.core;
 
+import com.eloli.sodioncore.orm.AbstractSodionCore;
 import com.google.common.eventbus.Subscribe;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.modules.PlatformAdapter;
@@ -29,82 +30,15 @@ public final class SodionAuthCore {
     public static SodionAuthCore instance;
     private final AtomicBoolean isEnabled = new AtomicBoolean(false);
     public PlatformAdapter api;
+    public AbstractSodionCore sodionCore;
 
     public SodionAuthCore(PlatformAdapter platformAdapter) {
         try {
             instance = this;
             api = platformAdapter;
-
+            sodionCore = api.getSodionCore();
             Helper.getLogger().info("Initializing basic services...");
-            /**
-             DependencyManager.checkDependencyMaven("org.mindrot", "jbcrypt", "0.4", () -> {
-             try {
-             Class.forName("org.mindrot.jbcrypt.BCrypt");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("org.reflections", "reflections", "0.9.12", () -> {
-             try {
-             Class.forName("org.reflections.Reflections");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("org.apache.httpcomponents", "fluent-hc", "4.5.11", () -> {
-             try {
-             Class.forName("org.reflections.Reflections");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("com.maxmind.geoip2", "geoip2", "2.14.0", () -> {
-             try {
-             Class.forName("com.maxmind.geoip2.DatabaseReader");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("com.google.code.findbugs", "jsr305", "3.0.2", () -> {
-             try {
-             Class.forName("javax.annotation.Nullable");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("io.netty", "netty-all", "4.1.50.Final", () -> {
-             try {
-             Class.forName("io.netty.util.NettyRuntime");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("com.blinkfox", "zealot", "1.3.1", () -> {
-             try {
-             Class.forName("com.blinkfox.zealot.core.Zealot");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             DependencyManager.checkDependencyMaven("org.apache.logging.log4j", "log4j-slf4j-impl", "2.8.1", () -> {
-             try {
-             Class.forName("org.apache.logging.slf4j.Log4jLoggerFactory");
-             return true;
-             } catch (Exception e) {
-             return false;
-             }
-             });
-             **/
             isEnabled.set(true);
-            //DependencyManager.checkForSQLite();
-
             new Service();
         } catch (Exception e) {
             isEnabled.set(false);

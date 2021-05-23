@@ -16,6 +16,7 @@
 
 package red.mohist.sodionauth.bungee;
 
+import com.eloli.sodioncore.orm.AbstractSodionCore;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.reflections.Reflections;
@@ -123,6 +124,11 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
     @Override
     public void shutdown() {
         getProxy().stop();
+    }
+
+    @Override
+    public AbstractSodionCore getSodionCore() {
+        return (AbstractSodionCore) getProxy().getPluginManager().getPlugin("SodionCore");
     }
 
     @Override

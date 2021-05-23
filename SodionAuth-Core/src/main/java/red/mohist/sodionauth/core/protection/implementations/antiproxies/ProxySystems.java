@@ -89,6 +89,9 @@ public class ProxySystems implements SecuritySystem {
 
     @Override
     public String canJoin(AbstractPlayer player) {
+        if(player.getAddress() == null){
+            return null;
+        }
         String ip = player.getAddress().getHostAddress();
         if (ip.equals("127.0.0.1")) {
             if (Config.protection.ProxySystems.enableLocal) {

@@ -16,10 +16,14 @@
 
 package red.mohist.sodionauth.core.modules;
 
+import com.eloli.sodioncore.orm.AbstractSodionCore;
+
 import java.util.Collection;
 
 public interface PlatformAdapter {
     void shutdown();
+
+    AbstractSodionCore getSodionCore();
 
     void registerPluginMessageChannel(String channel);
 

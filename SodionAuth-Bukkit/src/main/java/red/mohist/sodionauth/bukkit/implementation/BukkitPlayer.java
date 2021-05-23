@@ -31,7 +31,6 @@ import red.mohist.sodionauth.core.utils.Helper;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,7 +38,7 @@ public class BukkitPlayer extends AbstractPlayer {
     private Player handle;
 
     public BukkitPlayer(Player handle) {
-        super(handle.getName(), handle.getUniqueId(), Objects.requireNonNull(handle.getAddress()).getAddress());
+        super(handle.getName(), handle.getUniqueId(), handle.getAddress() == null ? null : handle.getAddress().getAddress());
         this.handle = handle;
     }
 

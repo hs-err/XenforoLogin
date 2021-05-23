@@ -38,17 +38,20 @@ import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
 
 import java.io.IOException;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 public class AuthService {
 
     public LocationInfo default_location;
     public ConcurrentMap<UUID, PlayerStatus> logged_in;
+    public Set<String> skipLoginByName = new HashSet<>();
+    public Set<UUID> skipLoginByUUID = new HashSet<>();
 
     @Subscribe
     public void onBoot(BootEvent event) throws IOException {
@@ -70,6 +73,15 @@ public class AuthService {
             new CanJoinEvent(player).post();
             new JoinEvent(player).post();
         }
+
+        Pattern uuidPattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
+        for (String s : Config.security.bypassCheck) {
+            if(uuidPattern.matcher(s).matches()){
+                skipLoginByUUID.add(UUID.fromString(s));
+            }
+            skipLoginByName.add(s);
+        }
+
         Service.eventBus.register(new LoginTicker());
     }
 
@@ -150,7 +162,12 @@ public class AuthService {
     }
 
     public boolean needCancelled(AbstractPlayer player) {
-        return !logged_in.getOrDefault(player.getUniqueId(), PlayerStatus.NEED_LOGIN()).type.equals(PlayerStatus.StatusType.LOGGED_IN);
+        PlayerStatus status = logged_in.get(player.getUniqueId());
+        if(status == null){
+            return !skipLoginByUUID.contains(player.getUniqueId())
+                    && !skipLoginByName.contains(player.getName());
+        }
+        return !status.type.equals(PlayerStatus.StatusType.LOGGED_IN);
     }
 
     @Subscribe

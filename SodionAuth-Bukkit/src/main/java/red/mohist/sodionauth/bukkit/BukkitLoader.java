@@ -16,6 +16,8 @@
 
 package red.mohist.sodionauth.bukkit;
 
+import com.eloli.sodioncore.bukkit.SodionCore;
+import com.eloli.sodioncore.orm.AbstractSodionCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -91,6 +93,11 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     @Override
     public void shutdown() {
         getServer().shutdown();
+    }
+
+    @Override
+    public AbstractSodionCore getSodionCore() {
+        return getPlugin(SodionCore.class);
     }
 
     private void hookProtocolLib() {
