@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id 'war'
-    id 'maven-publish'
-}
-
 allprojects {
     group = 'red.mohist.sodionauth'
     version = '2.0-Alpha.3'
@@ -29,7 +23,6 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'maven-publish'
 
     repositories {
         mavenLocal()
@@ -47,42 +40,7 @@ subprojects {
     }
 
     sourceCompatibility = '1.8'
-
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
-
-    afterEvaluate {
-        publishing {
-            publications {
-                Library(MavenPublication) {
-                    if (!project.name.equals("SodionAuth-Fabric")) {
-                        from components.java
-                        if (project.tasks.findByName("shadowJar") != null) {
-                            artifact shadowJar
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-// configure the maven publication
-publishing {
-    publications {
-        //noinspection GroovyAssignabilityCheck
-        shadow(MavenPublication) {
-            from components.java
-            artifact shadowJar
-        }
-    }
-
-    // select the repositories you want to publish to
-    repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
-    }
+    targetCompatibility = '1.8'
 }
 
 repositories {
@@ -91,13 +49,4 @@ repositories {
 }
 
 dependencies {
-    // compile(project(path: ":SodionAuth-Core", configuration: "shadow"))
-    implementation(project(path: ":SodionAuth-Bukkit", configuration: "shadow"))
-    implementation(project(path: ":SodionAuth-Bungee", configuration: "shadow"))
-    //implementation(project(path: ":SodionAuth-Fabric", configuration: "remapShadow"))
-    implementation(project(path: ":SodionAuth-Sponge", configuration: "shadow"))
 }
-
-assemble.dependsOn(shadowJar)
-
-

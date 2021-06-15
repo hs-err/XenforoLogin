@@ -17,39 +17,29 @@
 package red.mohist.sodionauth.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.config.MainConfiguration;
-import red.mohist.sodionauth.core.database.entities.AuthInfo;
-import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.entities.AuthInfo;
+import red.mohist.sodionauth.core.entities.User;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.core.utils.Lang;
-import red.mohist.sodionauth.libs.http.HttpEntity;
-import red.mohist.sodionauth.libs.http.client.entity.UrlEncodedFormEntity;
-import red.mohist.sodionauth.libs.http.client.fluent.Form;
-import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
-import red.mohist.sodionauth.libs.http.client.methods.HttpGet;
-import red.mohist.sodionauth.libs.http.client.methods.HttpPost;
-import red.mohist.sodionauth.libs.http.client.methods.HttpUriRequest;
-import red.mohist.sodionauth.libs.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.Map;
 
 public class SodionApi extends AuthBackend {
-    private final String url;
-    private final String key;
-
     public static final String REGISTER = "register";
     public static final String LOGIN_BY_NAME = "loginByName";
     public static final String LOGIN_BY_EMAIL = "loginByEmail";
     public static final String GET_BY_NAME = "getByName";
     public static final String GET_BY_EMAIL = "getByEmail";
+    private final String url;
+    private final String key;
 
     public SodionApi(MainConfiguration.ApiBean.WebBean config) {
         super(config);
@@ -64,7 +54,7 @@ public class SodionApi extends AuthBackend {
                     "username", user.getName(),
                     "password", password
             ));
-            switch (response.get("result").getAsString()){
+            switch (response.get("result").getAsString()) {
                 case "ok":
                     return LoginResult.SUCCESS();
                 case "name_incorrect":
@@ -116,8 +106,8 @@ public class SodionApi extends AuthBackend {
     public GetResult get(User user) {
         try {
             JsonObject response = request(GET_BY_NAME,
-                    ImmutableMap.of("username",user.getName()));
-            switch (response.get("result").getAsString()){
+                    ImmutableMap.of("username", user.getName()));
+            switch (response.get("result").getAsString()) {
                 case "ok":
                     return GetResult.SUCCESS()
                             .setEmail(response.get("email").getAsString())
@@ -138,9 +128,9 @@ public class SodionApi extends AuthBackend {
         HttpUriRequest request;
         HttpPost postRequest = new HttpPost(url);
         Form form = Form.form();
-        form.add("action",action);
+        form.add("action", action);
         data.forEach(form::add);
-        form.add("key",key);
+        form.add("key", key);
         postRequest.setEntity(new UrlEncodedFormEntity(form.build()));
         request = postRequest;
         return Service.httpClient.executeAsJson(request);

@@ -14,57 +14,46 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.database.entities;
+package red.mohist.sodionauth.core.entities;
 
-import org.teasoft.honey.osql.core.ConditionImpl;
-import red.mohist.sodionauth.core.database.annotations.limits.NotNull;
-import red.mohist.sodionauth.core.database.annotations.limits.PrimaryKey;
+import com.eloli.sodioncore.orm.SodionEntity;
+import org.hibernate.Session;
 import red.mohist.sodionauth.core.services.Service;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Id;
 
-public class User extends Entity {
-    @PrimaryKey
+public class User extends SodionEntity {
+    @Id
+    @Column
     protected Integer id;
-    @NotNull
+
+    @Column(nullable = false)
     protected String name;
-    @NotNull
+
+    @Column(nullable = false)
     protected String lowerName;
+
+    @Column(nullable = false)
     protected String email;
+
+    @Column
     protected Boolean verified;
+
+    @Column
     protected String accessToken;
+
+    @Column
     protected String clientToken;
+
+    @Column
     protected String skinRestore;
+
+    @Column
     protected String skinHash;
-
-    public static User getByName(String name) {
-        return new User().setLowerName(name.toLowerCase()).first();
-    }
-
-    public static User get(Integer id) {
-        return new User().setId(id).first();
-    }
-
-    public User[] get() {
-        return (User[]) Service.database.suid.select(this).toArray();
-    }
-
-    public User first() {
-        List<User> users = Service.database.suid.select(this, new ConditionImpl().size(1));
-        if (users.size() > 0) {
-            return users.get(0);
-        } else {
-            return null;
-        }
-    }
 
     public Integer getId() {
         return id;
-    }
-
-    protected User setId(Integer id) {
-        this.id = id;
-        return this;
     }
 
     public String getName() {
@@ -73,12 +62,16 @@ public class User extends Entity {
 
     public User setName(String name) {
         this.name = name;
-        lowerName = name.toLowerCase();
+        this.lowerName = name;
         return this;
     }
 
-    public User setLowerName(String lowerName) {
-        this.lowerName = lowerName;
+    public String getLowerName() {
+        return lowerName;
+    }
+
+    public User setLowerName(String name) {
+        this.lowerName = name.toLowerCase();
         return this;
     }
 
@@ -136,26 +129,11 @@ public class User extends Entity {
         return this;
     }
 
-    public AuthInfo[] getAuthInfo() {
-        return Service.database.suid.select(new AuthInfo().setUserId(this.getId())).toArray(new AuthInfo[0]);
-    }
-
     public AuthInfo createAuthInfo() {
-        return new AuthInfo().setUserId(this.getId());
+        return new AuthInfo().setUserId(this.id);
     }
 
-    public User addAuthInfo(AuthInfo authInfo) {
-        Service.database.suid.insert(authInfo.setUserId(this.getId()));
-        return this;
-    }
-
-    public User clearAuthInfo() {
-        Service.database.suid.delete(new AuthInfo().setUserId(this.getId()));
-        return this;
-    }
-
-
-    public boolean verifyPassword(String password) {
-        return Service.user.verifyPassword(this, password);
+    public boolean verifyPassword(Session session, String password) {
+        return Service.user.verifyPassword(session, this, password);
     }
 }

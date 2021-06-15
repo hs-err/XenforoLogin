@@ -9,7 +9,7 @@
   "session": "§6§l[§eSodion§bAuth§6§l] §fAutomatycznie zalogowano.",
   "needLogin": "§6§l[§eSodion§bAuth§6§l] §fNapisz swoje hasło bezpośrednio na czacie.",
   "passwordStrength": "§6§l[§eSodion§bAuth§6§l] §fYour password's strength is [strength].",
-  "passwordTipPrefix":  "§6§l[§eSodion§bAuth§6§l] §eTip: §f",
+  "passwordTipPrefix": "§6§l[§eSodion§bAuth§6§l] §eTip: §f",
   "passwordWarnPrefix": "§6§l[§eSodion§bAuth§6§l] §cWarn: §f",
   "thisServer": "Minecraft Server",
   "errors": {

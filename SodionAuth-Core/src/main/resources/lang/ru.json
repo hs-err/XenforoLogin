@@ -9,7 +9,7 @@
   "session": "§6§l[§eSodion§bAuth§6§l] §fАвто авторизация по сессии.",
   "needLogin": "§6§l[§eSodion§bAuth§6§l] §fПожалуйста, напишите свой пароль прямо в чат.",
   "passwordStrength": "§6§l[§eSodion§bAuth§6§l] §fСложность вашего пароля: [strength].",
-  "passwordTipPrefix":  "§6§l[§eSodion§bAuth§6§l] §eПодсказка: §f",
+  "passwordTipPrefix": "§6§l[§eSodion§bAuth§6§l] §eПодсказка: §f",
   "passwordWarnPrefix": "§6§l[§eSodion§bAuth§6§l] §cПредупреждение: §f",
   "thisServer": "Сервер Minecraft",
   "errors": {

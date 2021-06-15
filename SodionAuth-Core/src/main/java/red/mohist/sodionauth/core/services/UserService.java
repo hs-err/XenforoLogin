@@ -16,10 +16,12 @@
 
 package red.mohist.sodionauth.core.services;
 
+import org.hibernate.Session;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.authbackends.AuthBackends;
-import red.mohist.sodionauth.core.database.entities.AuthInfo;
-import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.entities.AuthInfo;
+import red.mohist.sodionauth.core.entities.User;
+import red.mohist.sodionauth.core.repositories.AuthinfoRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 
@@ -31,18 +33,15 @@ import java.util.concurrent.atomic.AtomicReference;
 public class UserService {
 
     public UserService() {
-        Service.database.mapper.initEntity(User.class);
-
-        Service.database.mapper.initEntity(AuthInfo.class);
 
     }
 
-    public boolean verifyPassword(User user, String password) {
+    public boolean verifyPassword(Session session, User user, String password) {
         Map<String, AuthInfo> authInfoMap = new HashMap<>();
-        for (AuthInfo authInfo : user.getAuthInfo()) {
+        for (AuthInfo authInfo : AuthinfoRepository.getByUser(session, user)) {
             authInfoMap.put(authInfo.getType(), authInfo);
         }
-        AtomicReference<Boolean> hasPassword= new AtomicReference<>(false);
+        AtomicReference<Boolean> hasPassword = new AtomicReference<>(false);
         AtomicBoolean loginResult = new AtomicBoolean(false);
         authInfoMap.forEach((key, authInfo) -> {
             if (authInfo.getType().startsWith("password:")) {
@@ -51,11 +50,10 @@ public class UserService {
                 if (HasherTools.getByName(hashName)
                         .verify(authInfo.getData(), password)) {
                     if (!hashName.equals(Config.database.passwordHash)) {
-                        authInfo.delete();
-                        user.createAuthInfo()
+                        session.delete(authInfo);
+                        session.save(user.createAuthInfo()
                                 .setType("password:" + Config.database.passwordHash)
-                                .setData(HasherTools.getDefault().hash(password))
-                                .save();
+                                .setData(HasherTools.getDefault().hash(password)));
                     }
                     loginResult.set(true);
                 }
@@ -69,11 +67,10 @@ public class UserService {
             }
         });
         if (loginResult.get()) {
-            if(!hasPassword.get() && !Config.database.passwordHash.equals("")){
-                user.createAuthInfo()
+            if (!hasPassword.get() && !Config.database.passwordHash.equals("")) {
+                session.save(user.createAuthInfo()
                         .setType("password:" + Config.database.passwordHash)
-                        .setData(HasherTools.getDefault().hash(password))
-                        .save();
+                        .setData(HasherTools.getDefault().hash(password)));
             }
             Map<String, Boolean> unLinkedTypes = new HashMap<>();
             AuthBackends.authBackendMap.forEach((key, authBackend) -> {
@@ -88,10 +85,10 @@ public class UserService {
                     if (authBackend.allowRegister) {
                         AuthBackend.GetResult getResult = authBackend.get(user);
                         if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS) &&
-                            getResult.name.equals(user.getName())) {
+                                getResult.name.equals(user.getName())) {
                             if (authBackend.login(user, user.createAuthInfo()
                                     .setType(key), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
-                                user.createAuthInfo().setType(key).save();
+                                session.save(user.createAuthInfo().setType(key));
                             }
                         }
                     }

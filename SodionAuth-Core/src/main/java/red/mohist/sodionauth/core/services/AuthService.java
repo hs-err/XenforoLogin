@@ -19,12 +19,13 @@ package red.mohist.sodionauth.core.services;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
+import org.hibernate.Session;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.authbackends.AuthBackends;
-import red.mohist.sodionauth.core.database.entities.LastInfo;
-import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.entities.User;
 import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
@@ -33,12 +34,16 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
+import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
+import red.mohist.sodionauth.core.repositories.UserRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -76,7 +81,7 @@ public class AuthService {
 
         Pattern uuidPattern = Pattern.compile("[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}");
         for (String s : Config.security.bypassCheck) {
-            if(uuidPattern.matcher(s).matches()){
+            if (uuidPattern.matcher(s).matches()) {
                 skipLoginByUUID.add(UUID.fromString(s));
             }
             skipLoginByName.add(s);
@@ -112,9 +117,11 @@ public class AuthService {
                     return;
                 }
                 Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
-                Service.threadPool.startup.startTask(()->{
-                    try {
-                        User user = User.getByName(player.getName());
+                Service.threadPool.startup.startTask(() -> {
+                    try (Session session = Service.database.sessionFactory.openSession()) {
+                        session.beginTransaction();
+
+                        User user = UserRepository.getByName(session, player.getName());
 
                         if (user == null) {
                             //if (Config.api.allowRegister) {
@@ -125,12 +132,14 @@ public class AuthService {
                         } else if (!user.getName().equals(player.getName())) {
                             player.kick(player.getLang().errors.getNameIncorrect(
                                     ImmutableMap.of("correct", user.getName())));
-                        } else if (user.verifyPassword(message)) {
+                        } else if (user.verifyPassword(session, message)) {
                             Service.auth.login(player);
                         } else {
                             player.kick(player.getLang().errors.password);
                         }
-                    }catch (Exception e){
+
+                        session.getTransaction().commit();
+                    } catch (Exception e) {
                         Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
                         player.sendMessage(player.getLang().errors.server);
                         Helper.getLogger().warn("Exception during attempt login for player " + player.getName(), e);
@@ -163,7 +172,7 @@ public class AuthService {
 
     public boolean needCancelled(AbstractPlayer player) {
         PlayerStatus status = logged_in.get(player.getUniqueId());
-        if(status == null){
+        if (status == null) {
             return !skipLoginByUUID.contains(player.getUniqueId())
                     && !skipLoginByName.contains(player.getName());
         }
@@ -173,7 +182,9 @@ public class AuthService {
     @Subscribe
     public void onCanJoin(CanJoinEvent event) throws ExecutionException, InterruptedException {
         ITask<Void> i = Service.threadPool.startup.startTask(() -> {
-            try {
+            try (Session session = Service.database.sessionFactory.openSession()) {
+                session.beginTransaction();
+
                 AbstractPlayer player = event.getPlayer();
                 logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
                 if (Service.auth.logged_in.containsKey(player.getUniqueId())
@@ -182,48 +193,55 @@ public class AuthService {
                 }
                 Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
 
-                User user = User.getByName(player.getName());
+                User user = UserRepository.getByName(session, player.getName());
 
+                session.getTransaction().commit();
+
+                String result;
                 if (user == null) {
                     AtomicReference<String> willReturn = new AtomicReference<>(player.getLang().errors.noUser);
                     AtomicBoolean findFirst = new AtomicBoolean(false);
                     AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
-                        if(findFirst.get()){
+                        if (findFirst.get()) {
                             return;
                         }
                         User fakeUser = new User().setName(event.getPlayer().getName());
-                        if(authBackend.allowLogin){
-                            AuthBackend.GetResult result = authBackend.get(fakeUser);
-                            if(result.type.equals(AuthBackend.GetResultType.SUCCESS)){
+                        if (authBackend.allowLogin) {
+                            AuthBackend.GetResult authBackendResult = authBackend.get(fakeUser);
+                            if (authBackendResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
                                 willReturn.set(null);
-                                fakeUser = new User().setName(result.name)
-                                        .setEmail(result.email);
-                                fakeUser.save();
-                                fakeUser.createAuthInfo()
-                                        .setType(typeName)
-                                        .save();
-                                if(!result.name.equals(player.getName())){
-                                    willReturn.set(player.getLang().errors.getNameIncorrect(ImmutableMap.of("correct",result.name)));
-                                }else {
+                                fakeUser = new User().setName(authBackendResult.name)
+                                        .setEmail(authBackendResult.email);
+                                session.save(fakeUser);
+                                session.save(
+                                        fakeUser.createAuthInfo().setType(typeName));
+                                if (!authBackendResult.name.equals(player.getName())) {
+                                    willReturn.set(player.getLang().errors.getNameIncorrect(ImmutableMap.of("correct", authBackendResult.name)));
+                                } else {
                                     Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
                                 }
                                 findFirst.set(true);
                             }
                         }
                     });
-                    if(!findFirst.get() && !Config.database.passwordHash.equals("")) {
+
+                    if (!findFirst.get() && !Config.database.passwordHash.equals("")) {
                         Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
-                        return null;
-                    }else{
-                        return willReturn.get();
+                        result = null;
+                    } else {
+                        result = willReturn.get();
                     }
                 } else if (!user.getName().equals(player.getName())) {
-                    return player.getLang().errors.getNameIncorrect(
+                    result = player.getLang().errors.getNameIncorrect(
                             ImmutableMap.of("correct", user.getName()));
                 } else {
                     Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
-                    return null;
+                    result = null;
                 }
+
+                session.getTransaction().commit();
+
+                return result;
             } catch (Exception e) {
                 Helper.getLogger().warn("Exception during check player " + event.getPlayer().getName(), e);
                 return event.getPlayer().getLang().errors.server;
@@ -242,13 +260,21 @@ public class AuthService {
     public void onJoin(JoinEvent event) {
         AbstractPlayer player = event.getPlayer();
         PlayerInfo playerInfo = player.getPlayerInfo();
-        Service.threadPool.startup.startTask(()->{
-            if(LastInfo.getByUuid(player.getUniqueId()) == null){
-                Helper.getLogger().info("Can't find "+player.getName()+"'s info. Create one");
-                new LastInfo()
-                        .setUuid(player.getUniqueId())
-                        .setInfo(new Gson().toJson(playerInfo))
-                        .save();
+        Service.threadPool.startup.startTask(() -> {
+            try (Session session = Service.database.sessionFactory.openSession()) {
+                session.beginTransaction();
+
+                if (AuthLastInfoRepository.get(session, player.getUniqueId()) == null) {
+                    Helper.getLogger().info("Can't find " + player.getName() + "'s info. Create one");
+                    session.save(new AuthLastInfo()
+                            .setUuid(player.getUniqueId())
+                            .setInfo(new Gson().toJson(playerInfo)));
+                }
+
+
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                Helper.getLogger().warn("Exception during get player " + event.getPlayer().getName() + " lastInfo.", e);
             }
         });
         SodionAuthCore.instance.api.sendBlankInventoryPacket(player);

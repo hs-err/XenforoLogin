@@ -9,7 +9,7 @@
   "session": "§6§l[§e钠离子§b登录§6§l] §f自动登录。",
   "needLogin": "§6§l[§e钠离子§b登录§6§l] §f请在聊天栏输入你的密码。",
   "passwordStrength": "§6§l[§e钠离子§b登录§6§l] §f你密码的强度为 [strength] 。",
-  "passwordTipPrefix":  "§6§l[§e钠离子§b登录§6§l] §e建议: §f",
+  "passwordTipPrefix": "§6§l[§e钠离子§b登录§6§l] §e建议: §f",
   "passwordWarnPrefix": "§6§l[§e钠离子§b登录§6§l] §c警告: §f",
   "thisServer": "Minecraft Server",
   "errors": {

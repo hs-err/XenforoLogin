@@ -17,9 +17,12 @@
 package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
-import red.mohist.sodionauth.core.database.entities.AuthInfo;
-import red.mohist.sodionauth.core.database.entities.User;
+import org.hibernate.Session;
+import red.mohist.sodionauth.core.entities.AuthInfo;
+import red.mohist.sodionauth.core.entities.User;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
+import red.mohist.sodionauth.core.repositories.AuthinfoRepository;
+import red.mohist.sodionauth.core.repositories.UserRepository;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class UnRegisterService {
@@ -35,12 +38,17 @@ public class UnRegisterService {
         if (event.getMessage().equals(".unregister")) {
             if (!Service.auth.needCancelled(event.getPlayer())) {
                 event.setCancelled(true);
-                User user = User.getByName(event.getPlayer().getName());
-                for (AuthInfo authInfo : user.getAuthInfo()) {
-                    authInfo.delete();
+                try (Session session = Service.database.sessionFactory.openSession()) {
+
+                    User user = UserRepository.getByName(session, event.getPlayer().getName());
+                    for (AuthInfo authInfo : AuthinfoRepository.getByUser(session, user)) {
+                        session.delete(authInfo);
+                    }
+                    session.delete(user);
+                    event.getPlayer().kick(event.getPlayer().getLang().unRegisterSuccess);
+
+                    session.getTransaction().commit();
                 }
-                user.delete();
-                event.getPlayer().kick(event.getPlayer().getLang().unRegisterSuccess);
             }
         }
     }

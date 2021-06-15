@@ -16,22 +16,28 @@
 
 package red.mohist.sodionauth.bungee;
 
+import com.eloli.sodioncore.bungee.BungeeLogger;
+import com.eloli.sodioncore.bungee.SodionCore;
+import com.eloli.sodioncore.file.BaseFileService;
 import com.eloli.sodioncore.orm.AbstractSodionCore;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.reflections.Reflections;
 import red.mohist.sodionauth.bungee.implementation.BungeePlayer;
 import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
+import red.mohist.sodionauth.bungee.listeners.ListenerChatEvent;
+import red.mohist.sodionauth.bungee.listeners.ListenerPlayerDisconnectEvent;
+import red.mohist.sodionauth.bungee.listeners.ListenerPluginMessageEvent;
+import red.mohist.sodionauth.bungee.listeners.ListenerServerSwitchEvent;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
-import red.mohist.sodionauth.core.modules.LogProvider;
 import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.TimeUnit;
@@ -43,29 +49,9 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
     @Override
     public void onEnable() {
         try {
-            new Helper(getDataFolder().toString(), new LogProvider() {
-                @Override
-                public void info(String info) {
-                    getLogger().info(info);
-                }
-
-                @Override
-                public void info(String info, Exception exception) {
-                    getLogger().info(info);
-                    getLogger().info(exception.toString());
-                }
-
-                @Override
-                public void warn(String info) {
-                    getLogger().warning(info);
-                }
-
-                @Override
-                public void warn(String info, Exception exception) {
-                    getLogger().warning(info);
-                    getLogger().warning(exception.toString());
-                }
-            });
+            new Helper(new BaseFileService(getDataFolder().toString()),
+                    new BungeeLogger(this),
+                    ((SodionCore) getSodionCore()).getDependencyManager(this));
 
             instance = this;
             Helper.getLogger().info("Hello, SodionAuth!");
@@ -86,8 +72,13 @@ public class BungeeLoader extends Plugin implements PlatformAdapter {
 
     private void registerListeners() {
         int unavailableCount = 0;
-        Set<Class<? extends BungeeAPIListener>> classes = new Reflections("red.mohist.sodionauth.bungee.listeners")
-                .getSubTypesOf(BungeeAPIListener.class);
+
+        Set<Class<? extends BungeeAPIListener>> classes = new HashSet<>();
+        classes.add(ListenerChatEvent.class);
+        classes.add(ListenerPlayerDisconnectEvent.class);
+        classes.add(ListenerPluginMessageEvent.class);
+        classes.add(ListenerServerSwitchEvent.class);
+
         for (Class<? extends BungeeAPIListener> clazz : classes) {
             BungeeAPIListener listener;
             try {

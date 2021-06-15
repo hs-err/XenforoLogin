@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package red.mohist.sodionauth.core.database.entities;
+package red.mohist.sodionauth.core.entities;
 
-import red.mohist.sodionauth.core.database.annotations.limits.NotNull;
-import red.mohist.sodionauth.core.database.annotations.limits.PrimaryKey;
+import com.eloli.sodioncore.orm.SodionEntity;
 
-public class AuthInfo extends Entity {
-    @PrimaryKey
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class AuthInfo extends SodionEntity {
+    @Id
+    @Column
     protected Integer id;
 
-    @NotNull
+    @Column(nullable = false)
     protected Integer userId;
 
-    @NotNull
+    @Column(nullable = false)
     protected String type;
 
+    @Column
     protected String data;
 
     public Integer getId() {

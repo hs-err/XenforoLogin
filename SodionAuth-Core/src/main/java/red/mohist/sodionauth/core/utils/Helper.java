@@ -16,16 +16,13 @@
 
 package red.mohist.sodionauth.core.utils;
 
+import com.eloli.sodioncore.file.BaseFileService;
+import com.eloli.sodioncore.logger.AbstractLogger;
 import com.google.gson.JsonElement;
-import red.mohist.sodionauth.core.modules.LogProvider;
-import red.mohist.sodionauth.core.utils.dependency.DependencyManager;
 
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -33,55 +30,36 @@ import java.util.*;
 public class Helper {
     public static Helper instance;
 
-    public final String basePath;
-    public final LogProvider log;
+    public final BaseFileService baseFileService;
+    public final AbstractLogger log;
     public final Map<String, JsonElement> jsonMap;
 
-    public Helper(String path, LogProvider log) throws IOException {
+    public Helper(BaseFileService baseFileService, AbstractLogger log, com.eloli.sodioncore.dependency.DependencyManager dependencyManager) throws Exception {
         instance = this;
+        this.baseFileService = baseFileService;
+
         this.log = log;
-        basePath = path;
         jsonMap = new HashMap<>();
         Config.init();
         Lang.init();
         Collection<String> dependencies = new ArrayList<>();
-        dependencies.add("com.google.guava:guava:29.0-jre");
-        dependencies.add("me.gosimple:nbvcxz:1.5.0");
-        dependencies.add("org.reflections:reflections:0.9.12");
-        dependencies.add("com.google.code.findbugs:jsr305:3.0.2");
-        dependencies.add("com.maxmind.geoip2:geoip2:2.14.0");
-        dependencies.add("org.mindrot:jbcrypt:0.4");
-        dependencies.add("io.netty:netty-all:4.1.50.Final");
-        dependencies.add("com.blinkfox:zealot:1.3.1");
-        dependencies.add("org.apache.httpcomponents:fluent-hc:4.5.11");
-        dependencies.add("org.teasoft:bee:1.9.5");
-        dependencies.add("org.teasoft:honey:1.9.5");
-        dependencies.add("org.teasoft:bee-ext:1.9.5");
-        switch (Config.database.type) {
-            case "sqlite":
-                dependencies.add("org.xerial:sqlite-jdbc:3.34.0");
-                break;
-            case "mysql":
-                dependencies.add("mysql:mysql-connector-java:8.0.24");
-                break;
-            case "h2":
-                dependencies.add("com.h2database:h2:1.4.200");
-                break;
-            case "postgresql":
-                dependencies.add("org.postgresql:postgresql:42.2.20");
-                break;
-        }
+        dependencies.add("com.google.guava:guava:29.0-jre:com.google.common.eventbus.EventBus");
+        dependencies.add("me.gosimple:nbvcxz:1.5.0:me.gosimple.nbvcxz.Nbvcxz");
+        dependencies.add("com.maxmind.geoip2:geoip2:2.14.0:com.maxmind.geoip2.DatabaseReader");
+        dependencies.add("org.mindrot:jbcrypt:0.4:org.mindrot.jbcrypt.BCrypt");
+        dependencies.add("io.netty:netty-all:4.1.50.Final:io.netty.bootstrap.ServerBootstrap");
+        dependencies.add("org.apache.httpcomponents:fluent-hc:4.5.11:org.apache.http.client.fluent.Request");
         for (String dependency : dependencies) {
             String[] spilt = dependency.split(":");
-            DependencyManager.checkDependencyMaven(spilt[0], spilt[1], spilt[2]);
+            dependencyManager.checkDependencyMaven(dependency);
         }
     }
 
     public static String getConfigPath(String filename) {
-        return Paths.get(instance.basePath, filename).toString();
+        return Helper.instance.baseFileService.getConfigPath(filename);
     }
 
-    public static LogProvider getLogger() {
+    public static AbstractLogger getLogger() {
         return Helper.instance.log;
     }
 
@@ -92,6 +70,10 @@ public class Helper {
     public static String toStringUuid(UUID uuid) {
         String str = uuid.toString();
         return str.substring(0, 8) + str.substring(9, 13) + str.substring(14, 18) + str.substring(19, 23) + str.substring(24);
+    }
+
+    public static UUID fromStringUuid(String data) {
+        return UUID.fromString(data.substring(0, 8) + "-" + data.substring(8, 12) + "-" + data.substring(12, 16) + "-" + data.substring(16, 20) + "-" + data.substring(20));
     }
 
     public static String toStringUuid(String name) {
@@ -129,56 +111,7 @@ public class Helper {
         }
     }
 
-    public void saveResource(String resourcePath, boolean replace) {
-        if (resourcePath == null || resourcePath.equals("")) {
-            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
-        }
-
-        resourcePath = resourcePath.replace('\\', '/');
-        InputStream in = getResource(resourcePath);
-        if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found");
-        }
-
-        File outFile = new File(basePath, resourcePath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(basePath, resourcePath.substring(0, Math.max(lastIndex, 0)));
-
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
-
-        try {
-            if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
-            }
-        } catch (IOException ex) {
-            Helper.getLogger().warn("Could not save " + outFile.getName() + " to " + outFile, ex);
-        }
-    }
-
-    public InputStream getResource(String filename) {
-        if (filename == null) {
-            throw new IllegalArgumentException("Filename cannot be null");
-        }
-
-        try {
-            URL url = this.getClass().getClassLoader().getResource(filename);
-            if (url == null) {
-                return null;
-            }
-            URLConnection connection = url.openConnection();
-            connection.setUseCaches(false);
-            return connection.getInputStream();
-        } catch (IOException ex) {
-            return null;
-        }
+    public void saveResource(String resourcePath, boolean replace) throws IOException {
+        baseFileService.saveResource(resourcePath, replace);
     }
 }

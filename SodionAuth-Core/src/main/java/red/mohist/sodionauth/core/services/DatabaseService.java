@@ -16,82 +16,36 @@
 
 package red.mohist.sodionauth.core.services;
 
-import com.google.common.eventbus.Subscribe;
-import org.teasoft.bee.osql.NameTranslate;
-import org.teasoft.bee.osql.Suid;
-import org.teasoft.bee.osql.SuidRich;
-import org.teasoft.honey.osql.core.BeeFactory;
-import org.teasoft.honey.osql.core.HoneyConfig;
-import org.teasoft.honey.osql.core.HoneyFactory;
-import org.teasoft.honey.osql.core.Logger;
-import org.teasoft.honey.osql.name.UnderScoreAndCamelName;
-import red.mohist.sodionauth.core.database.Mapper;
-import red.mohist.sodionauth.core.database.mappers.H2Mapper;
-import red.mohist.sodionauth.core.database.mappers.MysqlMapper;
-import red.mohist.sodionauth.core.database.mappers.PostgresqlMapper;
-import red.mohist.sodionauth.core.database.mappers.SqliteMapper;
-import red.mohist.sodionauth.core.events.BootEvent;
-import red.mohist.sodionauth.core.utils.Config;
+import com.eloli.sodioncore.orm.OrmService;
+import com.eloli.sodioncore.orm.SodionEntity;
+import org.hibernate.SessionFactory;
+import red.mohist.sodionauth.core.SodionAuthCore;
+import red.mohist.sodionauth.core.entities.AuthInfo;
+import red.mohist.sodionauth.core.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.entities.AuthSession;
+import red.mohist.sodionauth.core.entities.User;
 import red.mohist.sodionauth.core.utils.Helper;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseService {
-    public HoneyFactory honeyFactory;
-    public Suid suid;
-    public SuidRich suidRich;
-    public Mapper mapper;
-    public NameTranslate nameTranslate;
+    public final OrmService ormService;
+    public final SessionFactory sessionFactory;
 
     public DatabaseService() {
         Service.database = this;
         Helper.getLogger().info("Initializing database service...");
 
-        HoneyConfig.getHoneyConfig().loggerType = "log4j2";
-        // HoneyConfig.getHoneyConfig().loggerType = "noLogging";
+        ormService = SodionAuthCore.instance.sodionCore.getOrmService();
 
-        honeyFactory = BeeFactory.getHoneyFactory();
+        List<Class<? extends SodionEntity>> entities = new ArrayList<>();
+        entities.add(AuthInfo.class);
+        entities.add(AuthLastInfo.class);
+        entities.add(AuthSession.class);
+        entities.add(User.class);
+        ormService.addEntities(entities);
 
-        nameTranslate=new UnderScoreAndCamelName() {
-            private final String prefix = Config.database.tablePrefix;
-
-            @Override
-            public String toTableName(String entityName) {
-                return prefix + super.toTableName(entityName);
-            }
-
-            @Override
-            public String toEntityName(String tableName) {
-                return super.toEntityName(tableName.substring(prefix.length()));
-            }
-        };
-
-        try {
-            Field nameTranslateField = HoneyFactory.class.getDeclaredField("nameTranslate");
-            nameTranslateField.setAccessible(true);
-            nameTranslateField.set(honeyFactory,nameTranslate);
-        }catch (Exception e){
-            Helper.getLogger().info("nameTranslate init failed");
-        }
-
-        suid = BeeFactory.getHoneyFactory().getSuid();
-        suidRich = BeeFactory.getHoneyFactory().getSuidRich();
-        switch (Config.database.type) {
-            case "sqlite":
-                mapper = new SqliteMapper();
-                break;
-            case "mysql":
-                mapper = new MysqlMapper();
-                break;
-            case "h2":
-                mapper = new H2Mapper();
-                break;
-            case "postgresql":
-                mapper = new PostgresqlMapper();
-                break;
-            default:
-                mapper = null;
-        }
+        sessionFactory = ormService.sessionFactory;
     }
 }

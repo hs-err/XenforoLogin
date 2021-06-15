@@ -16,8 +16,11 @@
 
 package red.mohist.sodionauth.sponge;
 
+import com.eloli.sodioncore.file.BaseFileService;
+import com.eloli.sodioncore.orm.AbstractSodionCore;
+import com.eloli.sodioncore.sponge.SodionCore;
+import com.eloli.sodioncore.sponge.SpongeLogger;
 import com.google.inject.Inject;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.spongepowered.api.Platform;
 import org.spongepowered.api.Sponge;
@@ -27,6 +30,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.network.PlayerConnection;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
@@ -34,11 +38,15 @@ import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
-import red.mohist.sodionauth.core.modules.*;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.FoodInfo;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.sponge.implementation.SpongePlayer;
 import red.mohist.sodionauth.sponge.interfaces.SpongeAPIListener;
+import red.mohist.sodionauth.sponge.listeners.*;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -47,7 +55,10 @@ import java.util.*;
         id = "sodionauth",
         name = "SodionAuth",
         description = "A new generation of authentication plugin for Minecraft",
-        version = "2.0-Alpha.3"
+        version = "2.0-Alpha.3",
+        dependencies = {
+                @Dependency(id = "sodioncore")
+        }
 )
 public class SpongeLoader implements PlatformAdapter {
     public static SpongeLoader instance;
@@ -61,37 +72,36 @@ public class SpongeLoader implements PlatformAdapter {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         try {
-            new Helper(privateConfigDir.toString(), new LogProvider() {
-                @Override
-                public void info(String info) {
-                    logger.info(info);
-                }
-
-                @Override
-                public void info(String info, Exception exception) {
-                    logger.info(info, exception.toString());
-                }
-
-                @Override
-                public void warn(String info) {
-                    logger.warn(info);
-                }
-
-                @Override
-                public void warn(String info, Exception exception) {
-                    logger.warn(info, exception);
-                }
-            });
-
             instance = this;
+            new Helper(new BaseFileService(privateConfigDir.toString()),
+                    new SpongeLogger(logger),
+                    ((SodionCore) getSodionCore()).getDependencyManager(this));
+
             Helper.getLogger().info("Hello, SodionAuth!");
 
             sodionAuthCore = new SodionAuthCore(this);
 
             {
                 int unavailableCount = 0;
-                Set<Class<? extends SpongeAPIListener>> classes = new Reflections("red.mohist.sodionauth.sponge.listeners")
-                        .getSubTypesOf(SpongeAPIListener.class);
+                List<Class<? extends SpongeAPIListener>> classes = new ArrayList<>();
+
+                classes.add(AuthListener.class);
+                classes.add(ChangeInventoryListener.class);
+                classes.add(ChatListener.class);
+                classes.add(ClickInventoryListener.class);
+                classes.add(DamageEntityListener.class);
+                classes.add(DisconnectListener.class);
+                classes.add(DropItemListener.class);
+                classes.add(InteractBlockListener.class);
+                classes.add(InteractEntityListener.class);
+                classes.add(InteractInventoryListener.class);
+                classes.add(InteractItemListener.class);
+                classes.add(JoinListener.class);
+                classes.add(MoveEntityListener.class);
+                classes.add(PickupListener.class);
+                classes.add(SendCommandListener.class);
+                classes.add(StartListener.class);
+
                 for (Class<? extends SpongeAPIListener> clazz : classes) {
                     SpongeAPIListener listener;
                     try {
@@ -150,6 +160,11 @@ public class SpongeLoader implements PlatformAdapter {
     @Override
     public void shutdown() {
         Sponge.getServer().shutdown(Text.of("SodionAuth load fail."));
+    }
+
+    @Override
+    public AbstractSodionCore getSodionCore() {
+        return (AbstractSodionCore) Sponge.getPluginManager().getPlugin("sodioncore").get().getInstance().get();
     }
 
 

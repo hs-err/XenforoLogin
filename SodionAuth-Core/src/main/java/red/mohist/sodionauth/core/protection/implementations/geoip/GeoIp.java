@@ -47,7 +47,7 @@ public class GeoIp implements SecuritySystem {
 
     @Override
     public String canJoin(AbstractPlayer player) {
-        if(player.getAddress() == null){
+        if (player.getAddress() == null) {
             return null;
         }
         String country = "UNKNOWN";

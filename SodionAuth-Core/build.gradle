@@ -15,6 +15,6 @@
  */
 
 dependencies {
-    compile project(path: ":SodionAuth-Libs", configuration: "shadow")
-    compileOnly project(path: ":SodionAuth-Relocate", configuration: "shadow")
+    compile project(":SodionAuth-Libs")
+    compileOnly project(":SodionAuth-Relocate")
 }

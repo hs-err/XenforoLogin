@@ -9,7 +9,7 @@
   "session": "§6§l[§eSodion§bAuth§6§l] §fConnexion automatique à partir de votre session.",
   "needLogin": "§6§l[§eSodion§bAuth§6§l] §fVeuillez entrer votre mot de passe directement dans le chat.",
   "passwordStrength": "§6§l[§eSodion§bAuth§6§l] §fLa force de votre mot de passe est [strength].",
-  "passwordTipPrefix":  "§6§l[§eSodion§bAuth§6§l] §eConseil: §f",
+  "passwordTipPrefix": "§6§l[§eSodion§bAuth§6§l] §eConseil: §f",
   "passwordWarnPrefix": "§6§l[§eSodion§bAuth§6§l] §cAvertissement: §f",
   "thisServer": "Serveur Minecraft",
   "errors": {

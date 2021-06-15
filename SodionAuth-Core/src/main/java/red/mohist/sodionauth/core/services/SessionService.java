@@ -18,12 +18,15 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
-import red.mohist.sodionauth.core.database.entities.LastInfo;
-import red.mohist.sodionauth.core.database.entities.Session;
+import org.hibernate.Session;
+import red.mohist.sodionauth.core.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.entities.AuthSession;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
+import red.mohist.sodionauth.core.repositories.AuthSessionRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -31,48 +34,56 @@ public class SessionService {
     @Subscribe
     public void onBoot(BootEvent event) {
         Helper.getLogger().info("Initializing session service...");
-        Service.database.mapper.initEntity(LastInfo.class);
-        if (Config.session.enable) {
-            Service.database.mapper.initEntity(Session.class);
-        }
     }
 
     @Subscribe
     public void onQuit(QuitEvent event) {
         AbstractPlayer player = event.getPlayer();
         Service.threadPool.startup.startTask(() -> {
-            if (!Service.auth.needCancelled(player)) {
-                LastInfo lastInfo = LastInfo.getByUuid(player.getUniqueId());
-                if (lastInfo == null) {
-                    lastInfo = new LastInfo();
+            try (Session session = Service.database.sessionFactory.openSession()) {
+                session.beginTransaction();
+
+                if (!Service.auth.needCancelled(player)) {
+                    AuthLastInfo authLastInfo = AuthLastInfoRepository.get(session, player.getUniqueId());
+                    if (authLastInfo == null) {
+                        authLastInfo = new AuthLastInfo();
+                    }
+                    session.save(authLastInfo.setUuid(event.getPlayer().getUniqueId())
+                            .setInfo(new Gson().toJson(player.getPlayerInfo())));
+                    if (Config.session.enable && player.getAddress() != null) {
+                        session.save(new AuthSession().setUuid(player.getUniqueId())
+                                .setIp(player.getAddress().getHostAddress())
+                                .setTime(Long.toString(System.currentTimeMillis() / 1000)));
+                    }
                 }
-                lastInfo.setUuid(event.getPlayer().getUniqueId())
-                        .setInfo(new Gson().toJson(player.getPlayerInfo()))
-                        .save();
-                if (Config.session.enable && player.getAddress() != null) {
-                    new Session().setUuid(player.getUniqueId())
-                            .setIp(player.getAddress().getHostAddress())
-                            .setTime(Long.toString(System.currentTimeMillis() / 1000))
-                            .save();
-                }
+                player.teleport(Service.auth.default_location);
+                Service.auth.logged_in.remove(player.getUniqueId());
+
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                Helper.getLogger().warn("Exception during save player " + event.getPlayer().getName() + " lastInfo.", e);
             }
-            player.teleport(Service.auth.default_location);
-            Service.auth.logged_in.remove(player.getUniqueId());
         });
     }
 
     @Subscribe
     public void onJoin(JoinEvent event) {
-        AbstractPlayer player = event.getPlayer();
-        if (Config.session.enable) {
-            Session session = Session.getByUuid(player.getUniqueId());
-            if (session != null) {
-                if (Long.parseLong(session.getTime()) > (System.currentTimeMillis() / 1000 - Config.session.timeout)
-                        && session.getIp().equals(player.getAddress().getHostAddress())) {
-                    player.sendMessage(player.getLang().session);
-                    Service.auth.login(player);
+        try (Session session = Service.database.sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            AbstractPlayer player = event.getPlayer();
+            if (Config.session.enable) {
+                AuthSession authSession = AuthSessionRepository.get(session, player.getUniqueId());
+                if (authSession != null) {
+                    if (Long.parseLong(authSession.getTime()) > (System.currentTimeMillis() / 1000 - Config.session.timeout)
+                            && authSession.getIp().equals(player.getAddress().getHostAddress())) {
+                        player.sendMessage(player.getLang().session);
+                        Service.auth.login(player);
+                    }
                 }
             }
+
+            session.getTransaction().commit();
         }
     }
 }

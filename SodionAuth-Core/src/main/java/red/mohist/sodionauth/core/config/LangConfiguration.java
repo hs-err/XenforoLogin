@@ -33,6 +33,7 @@ public class LangConfiguration {
     public String passwordWarnPrefix;
 
     public String thisServer;
+    public ErrorsBean errors;
 
     public String getPasswordStrength(Map<String, Object> data) {
         String result = passwordStrength;
@@ -49,8 +50,6 @@ public class LangConfiguration {
         }
         return result;
     }
-
-    public ErrorsBean errors;
 
     public static class ErrorsBean {
         public String registerFailed;

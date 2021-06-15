@@ -16,8 +16,7 @@
 
 plugins {
     id 'org.spongepowered.plugin' version '0.9.0'
-    id 'war'
-    id 'com.github.johnrengelman.shadow'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 sourceCompatibility = '1.8'
@@ -31,7 +30,7 @@ repositories {
 
 dependencies {
     compileOnly 'org.spongepowered:spongeapi:7.2.0'
-    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Sponge:-SNAPSHOT'
+    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Sponge:3b8262cc29'
     annotationProcessor 'org.spongepowered:spongeapi:7.2.0'
     compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")
@@ -43,6 +42,11 @@ processResources {
 }
 
 shadowJar {
+    relocate('org.apache.maven', 'red.mohist.sodionauth.libs.maven')
+    relocate('org.apache.http', 'red.mohist.sodionauth.libs.http')
+    relocate('org.apache.commons', 'red.mohist.sodionauth.libs.commons')
+    relocate('org.objectweb.asm', 'red.mohist.sodionauth.libs.asm')
+    relocate('org.codehaus.plexus', 'red.mohist.sodionauth.libs.plexus')
     exclude("module-info.class")
 }
 

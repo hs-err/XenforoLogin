@@ -48,8 +48,8 @@ public class LoginTickPlayer {
             return TickResult.DONE;
         }
         PlayerStatus status = Service.auth.logged_in.get(player.getUniqueId());
-        if (calledTimes / 20 > loginTimeout){
-            if(status == null
+        if (calledTimes / 20 > loginTimeout) {
+            if (status == null
                     || Service.auth.logged_in.get(player.getUniqueId()).type.equals(PlayerStatus.StatusType.NEED_LOGIN)) {
                 player.kick(player.getLang().errors.timeOut);
                 return TickResult.DONE;

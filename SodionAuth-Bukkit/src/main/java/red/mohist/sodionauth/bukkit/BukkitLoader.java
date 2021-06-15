@@ -17,6 +17,8 @@
 package red.mohist.sodionauth.bukkit;
 
 import com.eloli.sodioncore.bukkit.SodionCore;
+import com.eloli.sodioncore.bukkit.logger.BukkitLogger;
+import com.eloli.sodioncore.file.BaseFileService;
 import com.eloli.sodioncore.orm.AbstractSodionCore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,7 +31,10 @@ import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
-import red.mohist.sodionauth.core.modules.*;
+import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.modules.FoodInfo;
+import red.mohist.sodionauth.core.modules.LocationInfo;
+import red.mohist.sodionauth.core.modules.PlatformAdapter;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
@@ -42,32 +47,13 @@ public class BukkitLoader extends JavaPlugin implements PlatformAdapter {
     @Override
     public void onEnable() {
         try {
-            new Helper(getDataFolder().toString(), new LogProvider() {
-                @Override
-                public void info(String info) {
-                    getLogger().info(info);
-                }
-
-                @Override
-                public void info(String info, Exception exception) {
-                    getLogger().info(info);
-                    getLogger().info(exception.toString());
-                }
-
-                @Override
-                public void warn(String info) {
-                    getLogger().warning(info);
-                }
-
-                @Override
-                public void warn(String info, Exception exception) {
-                    getLogger().warning(info);
-                    exception.printStackTrace();
-                }
-            });
-
             instance = this;
             Helper.getLogger().info("Hello, SodionAuth!");
+
+            new Helper(
+                    new BaseFileService(getDataFolder().toString()),
+                    new BukkitLogger(this),
+                    getPlugin(SodionCore.class).getDependencyManager(this));
 
             sodionAuthCore = new SodionAuthCore(this);
 

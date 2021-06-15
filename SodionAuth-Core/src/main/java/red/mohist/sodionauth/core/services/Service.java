@@ -21,12 +21,10 @@ import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 
 public class Service {
+    public static final HttpClientService httpClient = new HttpClientService();
     public static ConfigureService configure = new ConfigureService();
-
     public static ThreadPoolService threadPool = new ThreadPoolService();
     public static EventBusService eventBus = new EventBusService();
-
-    public static final HttpClientService httpClient = new HttpClientService();
     public static DatabaseService database = new DatabaseService();
 
     public static UserService user = new UserService();

@@ -61,7 +61,7 @@ public class PasswordStrengthService {
                 if (feedback.getWarningKey() != null) {
                     player.sendMessage(player.getLang().passwordWarnPrefix + feedback.getWarning());
                 }
-                feedback.getSuggestion().forEach((tip)->{
+                feedback.getSuggestion().forEach((tip) -> {
                     player.sendMessage(player.getLang().passwordTipPrefix + tip);
                 });
             }
@@ -70,10 +70,10 @@ public class PasswordStrengthService {
 
     public ITask<Result> verifyAsync(AbstractPlayer player, String email, String password) {
         return Service.threadPool.startup.startTask(() -> {
-            try{
+            try {
                 return verify(player, email, password);
-            }catch (Exception e){
-                Helper.getLogger().warn("Can't check password for "+player.getName(),e);
+            } catch (Exception e) {
+                Helper.getLogger().warn("Can't check password for " + player.getName(), e);
                 player.sendMessage(player.getLang().errors.server);
                 return null;
             }

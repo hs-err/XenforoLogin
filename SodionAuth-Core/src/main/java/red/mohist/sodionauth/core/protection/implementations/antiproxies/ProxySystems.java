@@ -17,17 +17,18 @@
 package red.mohist.sodionauth.core.protection.implementations.antiproxies;
 
 import com.google.common.eventbus.Subscribe;
-import org.reflections.Reflections;
 import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystem;
+import red.mohist.sodionauth.core.protection.implementations.antiproxies.implementations.LiuLiu;
+import red.mohist.sodionauth.core.protection.implementations.antiproxies.implementations.QiYun;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProxySystems implements SecuritySystem {
@@ -38,8 +39,9 @@ public class ProxySystems implements SecuritySystem {
     public ProxySystems() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends ProxySystem>> classes = new Reflections("red.mohist.sodionauth.core.protection.implementations.antiproxies.implementations", ProxySystems.class.getClassLoader())
-                    .getSubTypesOf(ProxySystem.class);
+            List<Class<? extends ProxySystem>> classes = new ArrayList<>();
+            classes.add(LiuLiu.class);
+            classes.add(QiYun.class);
             for (Class<? extends ProxySystem> clazz : classes) {
                 try {
                     if (Config.protection.ProxySystems.proxiesProvider.getOrDefault(
@@ -89,7 +91,7 @@ public class ProxySystems implements SecuritySystem {
 
     @Override
     public String canJoin(AbstractPlayer player) {
-        if(player.getAddress() == null){
+        if (player.getAddress() == null) {
             return null;
         }
         String ip = player.getAddress().getHostAddress();

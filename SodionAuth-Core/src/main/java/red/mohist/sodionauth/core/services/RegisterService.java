@@ -18,22 +18,22 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
+import org.hibernate.Session;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.authbackends.AuthBackends;
-import red.mohist.sodionauth.core.database.entities.AuthInfo;
-import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.entities.User;
 import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
+import red.mohist.sodionauth.core.repositories.UserRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.Lang;
 import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,8 +82,8 @@ public class RegisterService {
                             Service.passwordStrength.sendTip(player, result);
                         }
                         Service.auth.sendTip(player);
-                    }catch (Exception e){
-                        Helper.getLogger().warn("Can't check password for "+player.getName(),e);
+                    } catch (Exception e) {
+                        Helper.getLogger().warn("Can't check password for " + player.getName(), e);
                         Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
                         player.sendMessage(player.getLang().errors.server);
                         Service.auth.sendTip(player);
@@ -120,78 +120,71 @@ public class RegisterService {
         }
     }
 
-    public boolean verifyPassword(User user, String password) {
-        for (AuthInfo authInfo : user.getAuthInfo()) {
-            if (password.equals(authInfo.getData())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public RegisterResult register(String username, String email, String password) {
-        User user = User.getByName(username);
-        if (user != null) {
-            return RegisterResult.USERNAME_EXIST();
-        }
-
-        user = new User().setEmail(email.toLowerCase()).first();
-        if (user != null) {
-            return RegisterResult.EMAIL_EXIST();
-        }
-
-        user = new User().setName(username).setEmail(email);
-        user.save();
-
-        RegisterResult result = RegisterResult.OK();
-
-        if (Config.database.passwordHash != null) {
-            user.createAuthInfo()
-                    .setType("password:" + Config.database.passwordHash)
-                    .setData(HasherTools.getByName(Config.database.passwordHash).hash(password))
-                    .save();
-            result.friendlyName = Lang.def.thisServer;
-        }
-
-        User finalUser = user;
-        AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
-            if (authBackend.allowRegister) {
-                AuthBackend.GetResult getResult;
-                switch (authBackend.register(finalUser, password)) {
-                    case SUCCESS:
-                        finalUser.createAuthInfo()
-                                .setType(typeName)
-                                .save();
-                        result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
-                        break;
-                    case EMAIL_EXIST:
-                        getResult = authBackend.get(finalUser);
-                        if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
-                            if (authBackend.login(finalUser, finalUser.createAuthInfo()
-                                    .setType(typeName), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
-                                result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
-                                break;
-                            }
-                        }
-                        result.setChild(RegisterResult.EMAIL_EXIST().setFriendlyName(authBackend.friendlyName));
-                        break;
-                    case NAME_EXIST:
-                        getResult = authBackend.get(finalUser);
-                        if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
-                            if (authBackend.login(finalUser, finalUser.createAuthInfo()
-                                    .setType(typeName), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
-                                result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
-                                break;
-                            }
-                        }
-                        result.setChild(RegisterResult.USERNAME_EXIST().setFriendlyName(authBackend.friendlyName));
-                        break;
-                    default:
-                        result.setChild(RegisterResult.FAILED().setFriendlyName(authBackend.friendlyName));
-                }
+        try (Session session = Service.database.sessionFactory.openSession()) {
+            User user = UserRepository.getByName(session, username);
+            if (user != null) {
+                return RegisterResult.USERNAME_EXIST();
             }
-        });
-        return result;
+
+            user = UserRepository.getByEmail(session, username);
+            if (user != null) {
+                return RegisterResult.EMAIL_EXIST();
+            }
+
+            user = new User().setName(username).setEmail(email);
+            session.save(user);
+
+            RegisterResult result = RegisterResult.OK();
+
+            if (Config.database.passwordHash != null) {
+                session.save(user.createAuthInfo()
+                        .setType("password:" + Config.database.passwordHash)
+                        .setData(HasherTools.getByName(Config.database.passwordHash).hash(password)));
+                result.friendlyName = Lang.def.thisServer;
+            }
+
+            User finalUser = user;
+            AuthBackends.authBackendMap.forEach((typeName, authBackend) -> {
+                if (authBackend.allowRegister) {
+                    AuthBackend.GetResult getResult;
+                    switch (authBackend.register(finalUser, password)) {
+                        case SUCCESS:
+                            session.save(finalUser.createAuthInfo()
+                                    .setType(typeName));
+                            result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
+                            break;
+                        case EMAIL_EXIST:
+                            getResult = authBackend.get(finalUser);
+                            if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
+                                if (authBackend.login(finalUser, finalUser.createAuthInfo()
+                                        .setType(typeName), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
+                                    result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
+                                    break;
+                                }
+                            }
+                            result.setChild(RegisterResult.EMAIL_EXIST().setFriendlyName(authBackend.friendlyName));
+                            break;
+                        case NAME_EXIST:
+                            getResult = authBackend.get(finalUser);
+                            if (getResult.type.equals(AuthBackend.GetResultType.SUCCESS)) {
+                                if (authBackend.login(finalUser, finalUser.createAuthInfo()
+                                        .setType(typeName), password).type.equals(AuthBackend.LoginResultType.SUCCESS)) {
+                                    result.setChild(RegisterResult.OK().setFriendlyName(authBackend.friendlyName));
+                                    break;
+                                }
+                            }
+                            result.setChild(RegisterResult.USERNAME_EXIST().setFriendlyName(authBackend.friendlyName));
+                            break;
+                        default:
+                            result.setChild(RegisterResult.FAILED().setFriendlyName(authBackend.friendlyName));
+                    }
+                }
+            });
+
+            session.getTransaction().commit();
+            return result;
+        }
     }
 
     public ITask<Boolean> registerAsync(AbstractPlayer player, String email, String password) {
@@ -222,28 +215,28 @@ public class RegisterService {
         switch (result.type) {
             case OK:
                 if (result.friendlyName != null) {
-                    player.sendMessage(player.getLang().getRegisterSuccess(ImmutableMap.of("name",result.friendlyName)));
+                    player.sendMessage(player.getLang().getRegisterSuccess(ImmutableMap.of("name", result.friendlyName)));
                 }
                 for (RegisterResult childResult : result.child) {
                     if (childResult.friendlyName != null) {
                         switch (childResult.type) {
                             case OK:
-                                player.sendMessage(player.getLang().getRegisterSuccess(ImmutableMap.of("name",childResult.friendlyName)));
+                                player.sendMessage(player.getLang().getRegisterSuccess(ImmutableMap.of("name", childResult.friendlyName)));
                                 break;
                             case USERNAME_EXIST:
                                 player.sendMessage(player.getLang().errors.getRegisterFailed(
-                                        ImmutableMap.of("name",childResult.friendlyName,
-                                                "reason","USERNAME_EXIST")));
+                                        ImmutableMap.of("name", childResult.friendlyName,
+                                                "reason", "USERNAME_EXIST")));
                                 break;
                             case EMAIL_EXIST:
                                 player.sendMessage(player.getLang().errors.getRegisterFailed(
-                                        ImmutableMap.of("name",childResult.friendlyName,
-                                                "reason","EMAIL_EXIST")));
+                                        ImmutableMap.of("name", childResult.friendlyName,
+                                                "reason", "EMAIL_EXIST")));
                                 break;
                             default:
                                 player.sendMessage(player.getLang().errors.getRegisterFailed(
-                                        ImmutableMap.of("name",childResult.friendlyName,
-                                                "reason","UNKNOWN")));
+                                        ImmutableMap.of("name", childResult.friendlyName,
+                                                "reason", "UNKNOWN")));
                         }
                     }
                 }

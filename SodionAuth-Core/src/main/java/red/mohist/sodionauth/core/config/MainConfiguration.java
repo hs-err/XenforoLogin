@@ -16,6 +16,10 @@
 
 package red.mohist.sodionauth.core.config;
 
+import com.eloli.sodioncore.config.Configure;
+import com.eloli.sodioncore.config.Lore;
+import com.eloli.sodioncore.config.Migrate;
+import com.eloli.sodioncore.config.Name;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.Expose;
 import red.mohist.sodionauth.core.utils.Helper;
@@ -351,7 +355,7 @@ public class MainConfiguration extends Configure {
         @Lore("Name or UUID")
         @Lore("Warning: DON'T ADD ANY PLAYER'S MAME")
         @Expose
-        public String[] bypassCheck = {"[BuildCraft]","FakeThaumcraftBore","[Mekanism]"};
+        public String[] bypassCheck = {"[BuildCraft]", "FakeThaumcraftBore", "[Mekanism]"};
     }
 
     public static class ProtectionBean extends Configure {

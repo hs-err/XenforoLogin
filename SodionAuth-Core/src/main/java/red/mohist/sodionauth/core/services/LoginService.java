@@ -18,12 +18,14 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
+import org.hibernate.Session;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.database.entities.LastInfo;
+import red.mohist.sodionauth.core.entities.AuthLastInfo;
 import red.mohist.sodionauth.core.events.player.LoginEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
+import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class LoginService {
@@ -36,17 +38,20 @@ public class LoginService {
 
     @Subscribe
     public void onLoginIn(LoginEvent event) {
-        AbstractPlayer player = event.getPlayer();
-        // restore playerInfo
-        LastInfo lastinfo = LastInfo.getByUuid(player.getUniqueId());
-        if (lastinfo == null) {
-            player.setPlayerInfo(new PlayerInfo());
-        } else {
-            player.setPlayerInfo(new Gson().fromJson(lastinfo.getInfo(), PlayerInfo.class));
-            lastinfo.delete();
+        try (Session session = Service.database.sessionFactory.openSession()) {
+            session.beginTransaction();
+            AbstractPlayer player = event.getPlayer();
+            // restore playerInfo
+            AuthLastInfo lastinfo = AuthLastInfoRepository.get(session, player.getUniqueId());
+            if (lastinfo == null) {
+                player.setPlayerInfo(new PlayerInfo());
+            } else {
+                player.setPlayerInfo(new Gson().fromJson(lastinfo.getInfo(), PlayerInfo.class));
+                AuthLastInfoRepository.delete(session, lastinfo);
+            }
+            SodionAuthCore.instance.api.onLogin(player);
+            Helper.getLogger().info("Logging in " + player.getUniqueId());
+            player.sendMessage(player.getLang().loginSuccess);
         }
-        SodionAuthCore.instance.api.onLogin(player);
-        Helper.getLogger().info("Logging in " + player.getUniqueId());
-        player.sendMessage(player.getLang().loginSuccess);
     }
 }

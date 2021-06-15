@@ -17,15 +17,17 @@
 package red.mohist.sodionauth.core.protection;
 
 
-import org.reflections.Reflections;
 import red.mohist.sodionauth.core.config.MainConfiguration;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
+import red.mohist.sodionauth.core.protection.implementations.antiproxies.ProxySystems;
+import red.mohist.sodionauth.core.protection.implementations.geoip.GeoIp;
+import red.mohist.sodionauth.core.protection.implementations.ratelimit.RateLimit;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 
 public class SecuritySystems {
     private static final ArrayList<SecuritySystem> currentSystem = new ArrayList<>();
@@ -33,8 +35,10 @@ public class SecuritySystems {
     public static void reloadConfig() {
         {
             int unavailableCount = 0;
-            Set<Class<? extends SecuritySystem>> classes = new Reflections("red.mohist.sodionauth.core.protection.implementations", SecuritySystems.class.getClassLoader())
-                    .getSubTypesOf(SecuritySystem.class);
+            List<Class<? extends SecuritySystem>> classes = new ArrayList<>();
+            classes.add(ProxySystems.class);
+            classes.add(GeoIp.class);
+            classes.add(RateLimit.class);
             for (Class<? extends SecuritySystem> clazz : classes) {
                 try {
                     final Object systemBean = MainConfiguration.ProtectionBean.class

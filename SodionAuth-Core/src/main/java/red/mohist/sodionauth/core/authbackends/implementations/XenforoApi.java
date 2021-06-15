@@ -17,31 +17,23 @@
 package red.mohist.sodionauth.core.authbackends.implementations;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.fluent.Form;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import red.mohist.sodionauth.core.authbackends.AuthBackend;
 import red.mohist.sodionauth.core.config.MainConfiguration;
-import red.mohist.sodionauth.core.database.entities.AuthInfo;
-import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.entities.AuthInfo;
+import red.mohist.sodionauth.core.entities.User;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Helper;
-import red.mohist.sodionauth.core.utils.Lang;
-import red.mohist.sodionauth.libs.http.HttpEntity;
-import red.mohist.sodionauth.libs.http.client.entity.UrlEncodedFormEntity;
-import red.mohist.sodionauth.libs.http.client.fluent.Form;
-import red.mohist.sodionauth.libs.http.client.methods.CloseableHttpResponse;
-import red.mohist.sodionauth.libs.http.client.methods.HttpGet;
-import red.mohist.sodionauth.libs.http.client.methods.HttpPost;
-import red.mohist.sodionauth.libs.http.client.methods.HttpUriRequest;
-import red.mohist.sodionauth.libs.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
-import java.util.Set;
 
 public class XenforoApi extends AuthBackend {
     private final String url;
@@ -131,7 +123,7 @@ public class XenforoApi extends AuthBackend {
     public GetResult get(User user) {
         try {
             JsonObject response = request("users/find-name",
-                    ImmutableMap.of("username",user.getName()),true);
+                    ImmutableMap.of("username", user.getName()), true);
             if (response.get("exact").isJsonNull()) {
                 return GetResult.NO_SUCH_USER();
             }
@@ -156,17 +148,17 @@ public class XenforoApi extends AuthBackend {
     protected JsonObject request(String path, Map<String, String> data, boolean isGet) throws IOException {
         HttpUriRequest request;
         if (isGet) {
-            StringBuilder requestUrl= new StringBuilder(url + "/" + path);
-            if(data != null){
+            StringBuilder requestUrl = new StringBuilder(url + "/" + path);
+            if (data != null) {
                 requestUrl.append(url.contains("?") ? "&" : "?");
                 String[] keys = data.keySet().toArray(new String[]{});
                 for (int i = 0; i < keys.length; i++) {
-                    if(i!=0){
+                    if (i != 0) {
                         requestUrl.append("&");
                     }
-                    requestUrl.append(URLEncoder.encode(keys[i],"UTF-8"));
+                    requestUrl.append(URLEncoder.encode(keys[i], "UTF-8"));
                     requestUrl.append("=");
-                    requestUrl.append(URLEncoder.encode(data.get(keys[i]),"UTF-8"));
+                    requestUrl.append(URLEncoder.encode(data.get(keys[i]), "UTF-8"));
                 }
             }
             request = new HttpGet(requestUrl.toString());
