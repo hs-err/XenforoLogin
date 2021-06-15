@@ -37,6 +37,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import red.mohist.sodionauth.core.SodionAuthCore;
 import red.mohist.sodionauth.core.events.DownEvent;
+import red.mohist.sodionauth.core.events.TickEvent;
 import red.mohist.sodionauth.core.events.player.ClientMessageEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.FoodInfo;
@@ -127,7 +128,7 @@ public class SpongeLoader implements PlatformAdapter {
             Sponge.getScheduler()
                     .createTaskBuilder()
                     .execute(() -> {
-                        //new TickEvent().post();
+                        new TickEvent().post();
                     })
                     .intervalTicks(1).submit(this);
 
