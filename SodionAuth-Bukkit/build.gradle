@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT'
-    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Bukkit:3b8262cc29'
+    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Bukkit:29cc62f3f0'
     compile 'org.reflections:reflections:0.9.12'
     compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")

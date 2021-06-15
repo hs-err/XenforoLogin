@@ -23,6 +23,6 @@ dependencies {
     compile 'io.netty:netty-all:4.1.50.Final'
     compile 'org.apache.httpcomponents:fluent-hc:4.5.11'
 
-    compile 'com.github.eLoli-Community.SodionCore:SodionCore-Orm:087f6413db'
+    compile 'com.github.eLoli-Community.SodionCore:SodionCore-Orm:29cc62f3f0'
     compile 'org.hibernate.orm:hibernate-core:6.0.0.Alpha7'
 }

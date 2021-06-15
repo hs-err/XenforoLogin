@@ -122,6 +122,8 @@ public class RegisterService {
 
     public RegisterResult register(String username, String email, String password) {
         try (Session session = Service.database.sessionFactory.openSession()) {
+            session.beginTransaction();
+
             User user = UserRepository.getByName(session, username);
             if (user != null) {
                 return RegisterResult.USERNAME_EXIST();

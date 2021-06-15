@@ -30,6 +30,8 @@ import red.mohist.sodionauth.core.repositories.AuthSessionRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 
+import java.nio.charset.StandardCharsets;
+
 public class SessionService {
     @Subscribe
     public void onBoot(BootEvent event) {
@@ -49,7 +51,10 @@ public class SessionService {
                         authLastInfo = new AuthLastInfo();
                     }
                     session.save(authLastInfo.setUuid(event.getPlayer().getUniqueId())
-                            .setInfo(new Gson().toJson(player.getPlayerInfo())));
+                            .setInfo(
+                                    session.getLobHelper().createBlob(
+                                            new Gson().toJson(player.getPlayerInfo()).getBytes(StandardCharsets.UTF_8))
+                            ));
                     if (Config.session.enable && player.getAddress() != null) {
                         session.save(new AuthSession().setUuid(player.getUniqueId())
                                 .setIp(player.getAddress().getHostAddress())

@@ -22,6 +22,7 @@ import red.mohist.sodionauth.core.entities.User;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.List;
 
 public class UserRepository {
     private UserRepository() {
@@ -33,7 +34,12 @@ public class UserRepository {
         CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
         Root<User> root = criteriaQuery.from(User.class);
         criteriaQuery.where(builder.equal(root.get("lowerName"), name.toLowerCase()));
-        return session.createQuery(criteriaQuery).getSingleResult();
+        List<User> resultList = session.createQuery(criteriaQuery).getResultList();
+        if(resultList.size() != 0){
+            return resultList.get(0);
+        }else{
+            return null;
+        }
     }
 
     public static User getByEmail(Session session, String email) {
@@ -41,6 +47,11 @@ public class UserRepository {
         CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
         Root<User> root = criteriaQuery.from(User.class);
         criteriaQuery.where(builder.equal(root.get("email"), email.toLowerCase()));
-        return session.createQuery(criteriaQuery).getSingleResult();
+        List<User> resultList = session.createQuery(criteriaQuery).getResultList();
+        if(resultList.size() != 0){
+            return resultList.get(0);
+        }else{
+            return null;
+        }
     }
 }

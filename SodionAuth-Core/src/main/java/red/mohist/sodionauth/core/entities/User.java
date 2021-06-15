@@ -20,11 +20,12 @@ import com.eloli.sodioncore.orm.SodionEntity;
 import org.hibernate.Session;
 import red.mohist.sodionauth.core.services.Service;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+@Entity
 public class User extends SodionEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     protected Integer id;
 

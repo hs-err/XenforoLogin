@@ -41,6 +41,7 @@ import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -195,8 +196,6 @@ public class AuthService {
 
                 User user = UserRepository.getByName(session, player.getName());
 
-                session.getTransaction().commit();
-
                 String result;
                 if (user == null) {
                     AtomicReference<String> willReturn = new AtomicReference<>(player.getLang().errors.noUser);
@@ -240,7 +239,6 @@ public class AuthService {
                 }
 
                 session.getTransaction().commit();
-
                 return result;
             } catch (Exception e) {
                 Helper.getLogger().warn("Exception during check player " + event.getPlayer().getName(), e);
@@ -268,7 +266,9 @@ public class AuthService {
                     Helper.getLogger().info("Can't find " + player.getName() + "'s info. Create one");
                     session.save(new AuthLastInfo()
                             .setUuid(player.getUniqueId())
-                            .setInfo(new Gson().toJson(playerInfo)));
+                            .setInfo(
+                                    session.getLobHelper().createBlob(
+                                            new Gson().toJson(playerInfo).getBytes(StandardCharsets.UTF_8))));
                 }
 
 

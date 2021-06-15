@@ -28,6 +28,9 @@ import red.mohist.sodionauth.core.modules.PlayerInfo;
 import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
 import red.mohist.sodionauth.core.utils.Helper;
 
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+
 public class LoginService {
 
     public LocationInfo spawn_location;
@@ -37,7 +40,7 @@ public class LoginService {
     }
 
     @Subscribe
-    public void onLoginIn(LoginEvent event) {
+    public void onLoginIn(LoginEvent event) throws SQLException {
         try (Session session = Service.database.sessionFactory.openSession()) {
             session.beginTransaction();
             AbstractPlayer player = event.getPlayer();
@@ -46,7 +49,9 @@ public class LoginService {
             if (lastinfo == null) {
                 player.setPlayerInfo(new PlayerInfo());
             } else {
-                player.setPlayerInfo(new Gson().fromJson(lastinfo.getInfo(), PlayerInfo.class));
+                player.setPlayerInfo(new Gson().fromJson(
+                        new String(lastinfo.getInfo().getBytes(0, (int) lastinfo.getInfo().length()), StandardCharsets.UTF_8),
+                        PlayerInfo.class));
                 AuthLastInfoRepository.delete(session, lastinfo);
             }
             SodionAuthCore.instance.api.onLogin(player);

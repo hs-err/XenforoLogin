@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     compileOnly 'org.spongepowered:spongeapi:7.2.0'
-    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Sponge:3b8262cc29'
+    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Sponge:29cc62f3f0'
     annotationProcessor 'org.spongepowered:spongeapi:7.2.0'
     compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")

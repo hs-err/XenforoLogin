@@ -43,16 +43,20 @@ public class Helper {
         Config.init();
         Lang.init();
         Collection<String> dependencies = new ArrayList<>();
-        dependencies.add("com.google.guava:guava:29.0-jre:com.google.common.eventbus.EventBus");
-        dependencies.add("me.gosimple:nbvcxz:1.5.0:me.gosimple.nbvcxz.Nbvcxz");
-        dependencies.add("com.maxmind.geoip2:geoip2:2.14.0:com.maxmind.geoip2.DatabaseReader");
-        dependencies.add("org.mindrot:jbcrypt:0.4:org.mindrot.jbcrypt.BCrypt");
-        dependencies.add("io.netty:netty-all:4.1.50.Final:io.netty.bootstrap.ServerBootstrap");
-        dependencies.add("org.apache.httpcomponents:fluent-hc:4.5.11:org.apache.http.client.fluent.Request");
+        dependencies.add(unrelocate("com{}google{}guava:guava:29.0-jre:com.google.common.eventbus.EventBus"));
+        dependencies.add(unrelocate("me{}gosimple:nbvcxz:1.5.0:me.gosimple.nbvcxz.Nbvcxz"));
+        dependencies.add(unrelocate("com{}maxmind{}geoip2:geoip2:2.14.0:com.maxmind.geoip2.DatabaseReader"));
+        dependencies.add(unrelocate("org{}mindrot:jbcrypt:0.4:org.mindrot.jbcrypt.BCrypt"));
+        dependencies.add(unrelocate("io{}netty:netty-all:4.1.50.Final:io.netty.bootstrap.ServerBootstrap"));
+        dependencies.add(unrelocate("org{}apache{}httpcomponents:fluent-hc:4.5.11:org.apache.http.client.fluent.Request"));
         for (String dependency : dependencies) {
             String[] spilt = dependency.split(":");
             dependencyManager.checkDependencyMaven(dependency);
         }
+    }
+
+    private String unrelocate(String input){
+        return input.replace("{}",".");
     }
 
     public static String getConfigPath(String filename) {

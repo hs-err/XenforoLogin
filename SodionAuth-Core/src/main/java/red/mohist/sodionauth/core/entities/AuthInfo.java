@@ -18,13 +18,12 @@ package red.mohist.sodionauth.core.entities;
 
 import com.eloli.sodioncore.orm.SodionEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class AuthInfo extends SodionEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     protected Integer id;
 

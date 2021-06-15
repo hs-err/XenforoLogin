@@ -1,5 +1,5 @@
 .idea/libraries
 .gradle/
 build/
-/run/
+run
 .idea/compiler.xml

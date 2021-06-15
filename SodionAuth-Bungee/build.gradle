@@ -26,7 +26,7 @@ repositories {
 
 dependencies {
     compileOnly group: 'net.md-5', name: 'bungeecord-api', version: '1.8-SNAPSHOT'
-    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Bungee:3b8262cc29'
+    compileOnly 'com.github.eLoli-Community.SodionCore:SodionCore-Bungee:29cc62f3f0'
     compileOnly project(":SodionAuth-Relocate")
     implementation project(":SodionAuth-Core")
 

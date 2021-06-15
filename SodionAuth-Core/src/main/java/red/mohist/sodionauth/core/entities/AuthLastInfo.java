@@ -23,6 +23,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import java.sql.Blob;
 import java.util.UUID;
 
 @Entity
@@ -37,7 +38,7 @@ public class AuthLastInfo extends SodionEntity {
     protected String serverId = Config.serverId;
 
     @Column
-    protected String info;
+    protected Blob info;
 
     public UUID getUuid() {
         return uuid;
@@ -57,11 +58,11 @@ public class AuthLastInfo extends SodionEntity {
         return this;
     }
 
-    public String getInfo() {
+    public Blob getInfo() {
         return info;
     }
 
-    public AuthLastInfo setInfo(String info) {
+    public AuthLastInfo setInfo(Blob info) {
         this.info = info;
         return this;
     }

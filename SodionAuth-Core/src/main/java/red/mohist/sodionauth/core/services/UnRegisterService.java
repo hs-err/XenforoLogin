@@ -39,6 +39,7 @@ public class UnRegisterService {
             if (!Service.auth.needCancelled(event.getPlayer())) {
                 event.setCancelled(true);
                 try (Session session = Service.database.sessionFactory.openSession()) {
+                    session.beginTransaction();
 
                     User user = UserRepository.getByName(session, event.getPlayer().getName());
                     for (AuthInfo authInfo : AuthinfoRepository.getByUser(session, user)) {
