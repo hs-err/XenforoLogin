@@ -20,12 +20,12 @@ import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import org.hibernate.Session;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.database.entities.AuthLastInfo;
 import red.mohist.sodionauth.core.events.player.LoginEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
-import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
+import red.mohist.sodionauth.core.database.repositories.AuthLastInfoRepository;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.nio.charset.StandardCharsets;

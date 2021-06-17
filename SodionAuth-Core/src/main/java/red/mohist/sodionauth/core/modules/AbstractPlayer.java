@@ -18,7 +18,6 @@ package red.mohist.sodionauth.core.modules;
 
 
 import red.mohist.sodionauth.core.config.LangConfiguration;
-import red.mohist.sodionauth.core.enums.PlayerStatus;
 import red.mohist.sodionauth.core.services.Service;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Lang;

@@ -20,14 +20,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import org.hibernate.Session;
 import org.knownspace.minitask.ITask;
-import red.mohist.sodionauth.core.authbackends.AuthBackend;
-import red.mohist.sodionauth.core.authbackends.AuthBackends;
-import red.mohist.sodionauth.core.entities.User;
-import red.mohist.sodionauth.core.enums.PlayerStatus;
+import red.mohist.sodionauth.core.utils.authbackends.AuthBackend;
+import red.mohist.sodionauth.core.utils.authbackends.AuthBackends;
+import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.modules.PlayerStatus;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
-import red.mohist.sodionauth.core.repositories.UserRepository;
+import red.mohist.sodionauth.core.database.repositories.UserRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.Lang;
@@ -51,7 +51,7 @@ public class RegisterService {
             case NEED_REGISTER_EMAIL:
                 event.setCancelled(true);
                 if (isEmail(message)) {
-                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(message));
+                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needRegisterPassword().setEmail(message));
                     Service.auth.sendTip(player);
                 } else {
                     player.sendMessage(player.getLang().errors.email);
@@ -61,11 +61,11 @@ public class RegisterService {
                 event.setCancelled(true);
                 Service.auth.logged_in.put(
                         player.getUniqueId(),
-                        PlayerStatus.HANDLE());
+                        PlayerStatus.handle());
                 Service.passwordStrength.verifyAsync(player, status.email, message).then((result) -> {
                     try {
                         if (result == null) {
-                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(message));
+                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needRegisterPassword().setEmail(message));
                             Service.auth.sendTip(player);
                             return;
                         }
@@ -76,15 +76,15 @@ public class RegisterService {
                         if (result.isMinimumEntropyMet()) {
                             Service.auth.logged_in.put(
                                     player.getUniqueId(),
-                                    PlayerStatus.NEED_REGISTER_CONFIRM().setEmail(status.email).setPassword(message));
+                                    PlayerStatus.needRegisterConfirm().setEmail(status.email).setPassword(message));
                         } else {
-                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
+                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needRegisterPassword().setEmail(status.email));
                             Service.passwordStrength.sendTip(player, result);
                         }
                         Service.auth.sendTip(player);
                     } catch (Exception e) {
                         Helper.getLogger().warn("Can't check password for " + player.getName(), e);
-                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD().setEmail(status.email));
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needRegisterPassword().setEmail(status.email));
                         player.sendMessage(player.getLang().errors.server);
                         Service.auth.sendTip(player);
                     }
@@ -98,22 +98,22 @@ public class RegisterService {
                     return;
                 }
                 Service.auth.logged_in.put(
-                        player.getUniqueId(), PlayerStatus.HANDLE());
+                        player.getUniqueId(), PlayerStatus.handle());
                 if (message.equals(status.password)) {
                     registerAsync(player, status.email, status.password).then((result) -> {
                         if (result) {
                             Service.auth.logged_in.put(
-                                    player.getUniqueId(), PlayerStatus.LOGGED_IN());
+                                    player.getUniqueId(), PlayerStatus.loggedIn());
                         } else {
                             Service.auth.logged_in.put(
-                                    player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                                    player.getUniqueId(), PlayerStatus.needRegisterEmail());
                             Service.auth.sendTip(player);
                         }
                     });
                 } else {
                     player.sendMessage(player.getLang().errors.confirm);
                     Service.auth.logged_in.put(
-                            player.getUniqueId(), PlayerStatus.NEED_REGISTER_PASSWORD());
+                            player.getUniqueId(), PlayerStatus.needRegisterPassword());
                     Service.auth.sendTip(player);
                 }
                 break;

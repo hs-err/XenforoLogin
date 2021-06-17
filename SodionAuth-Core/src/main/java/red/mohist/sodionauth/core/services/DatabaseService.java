@@ -20,10 +20,10 @@ import com.eloli.sodioncore.orm.OrmService;
 import com.eloli.sodioncore.orm.SodionEntity;
 import org.hibernate.SessionFactory;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.entities.AuthInfo;
-import red.mohist.sodionauth.core.entities.AuthLastInfo;
-import red.mohist.sodionauth.core.entities.AuthSession;
-import red.mohist.sodionauth.core.entities.User;
+import red.mohist.sodionauth.core.database.entities.AuthInfo;
+import red.mohist.sodionauth.core.database.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.database.entities.AuthSession;
+import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.utils.Helper;
 
 import java.util.ArrayList;

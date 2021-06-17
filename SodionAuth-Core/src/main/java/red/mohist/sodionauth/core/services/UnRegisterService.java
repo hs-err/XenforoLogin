@@ -18,11 +18,11 @@ package red.mohist.sodionauth.core.services;
 
 import com.google.common.eventbus.Subscribe;
 import org.hibernate.Session;
-import red.mohist.sodionauth.core.entities.AuthInfo;
-import red.mohist.sodionauth.core.entities.User;
+import red.mohist.sodionauth.core.database.entities.AuthInfo;
+import red.mohist.sodionauth.core.database.entities.User;
 import red.mohist.sodionauth.core.events.player.PlayerChatEvent;
-import red.mohist.sodionauth.core.repositories.AuthinfoRepository;
-import red.mohist.sodionauth.core.repositories.UserRepository;
+import red.mohist.sodionauth.core.database.repositories.AuthinfoRepository;
+import red.mohist.sodionauth.core.database.repositories.UserRepository;
 import red.mohist.sodionauth.core.utils.Helper;
 
 public class UnRegisterService {

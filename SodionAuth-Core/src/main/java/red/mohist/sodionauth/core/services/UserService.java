@@ -17,11 +17,11 @@
 package red.mohist.sodionauth.core.services;
 
 import org.hibernate.Session;
-import red.mohist.sodionauth.core.authbackends.AuthBackend;
-import red.mohist.sodionauth.core.authbackends.AuthBackends;
-import red.mohist.sodionauth.core.entities.AuthInfo;
-import red.mohist.sodionauth.core.entities.User;
-import red.mohist.sodionauth.core.repositories.AuthinfoRepository;
+import red.mohist.sodionauth.core.utils.authbackends.AuthBackend;
+import red.mohist.sodionauth.core.utils.authbackends.AuthBackends;
+import red.mohist.sodionauth.core.database.entities.AuthInfo;
+import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.database.repositories.AuthinfoRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.hasher.HasherTools;
 

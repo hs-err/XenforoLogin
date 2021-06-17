@@ -19,14 +19,14 @@ package red.mohist.sodionauth.core.services;
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
 import org.hibernate.Session;
-import red.mohist.sodionauth.core.entities.AuthLastInfo;
-import red.mohist.sodionauth.core.entities.AuthSession;
+import red.mohist.sodionauth.core.database.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.database.entities.AuthSession;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.player.JoinEvent;
 import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
-import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
-import red.mohist.sodionauth.core.repositories.AuthSessionRepository;
+import red.mohist.sodionauth.core.database.repositories.AuthLastInfoRepository;
+import red.mohist.sodionauth.core.database.repositories.AuthSessionRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 

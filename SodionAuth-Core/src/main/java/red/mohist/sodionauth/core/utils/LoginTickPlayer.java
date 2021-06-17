@@ -16,7 +16,7 @@
 
 package red.mohist.sodionauth.core.utils;
 
-import red.mohist.sodionauth.core.enums.PlayerStatus;
+import red.mohist.sodionauth.core.modules.PlayerStatus;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
 

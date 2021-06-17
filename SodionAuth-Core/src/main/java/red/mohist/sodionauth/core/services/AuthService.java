@@ -22,11 +22,11 @@ import com.google.gson.Gson;
 import org.hibernate.Session;
 import org.knownspace.minitask.ITask;
 import red.mohist.sodionauth.core.SodionAuthCore;
-import red.mohist.sodionauth.core.authbackends.AuthBackend;
-import red.mohist.sodionauth.core.authbackends.AuthBackends;
-import red.mohist.sodionauth.core.entities.AuthLastInfo;
-import red.mohist.sodionauth.core.entities.User;
-import red.mohist.sodionauth.core.enums.PlayerStatus;
+import red.mohist.sodionauth.core.utils.authbackends.AuthBackend;
+import red.mohist.sodionauth.core.utils.authbackends.AuthBackends;
+import red.mohist.sodionauth.core.database.entities.AuthLastInfo;
+import red.mohist.sodionauth.core.database.entities.User;
+import red.mohist.sodionauth.core.modules.PlayerStatus;
 import red.mohist.sodionauth.core.events.BootEvent;
 import red.mohist.sodionauth.core.events.DownEvent;
 import red.mohist.sodionauth.core.events.player.*;
@@ -34,8 +34,8 @@ import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.modules.LocationInfo;
 import red.mohist.sodionauth.core.modules.PlayerInfo;
 import red.mohist.sodionauth.core.protection.SecuritySystems;
-import red.mohist.sodionauth.core.repositories.AuthLastInfoRepository;
-import red.mohist.sodionauth.core.repositories.UserRepository;
+import red.mohist.sodionauth.core.database.repositories.AuthLastInfoRepository;
+import red.mohist.sodionauth.core.database.repositories.UserRepository;
 import red.mohist.sodionauth.core.utils.Config;
 import red.mohist.sodionauth.core.utils.Helper;
 import red.mohist.sodionauth.core.utils.LoginTicker;
@@ -117,7 +117,7 @@ public class AuthService {
                     player.sendMessage(canLogin);
                     return;
                 }
-                Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
+                Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.handle());
                 Service.threadPool.startup.startTask(() -> {
                     try (Session session = Service.database.sessionFactory.openSession()) {
                         session.beginTransaction();
@@ -126,7 +126,7 @@ public class AuthService {
 
                         if (user == null) {
                             //if (Config.api.allowRegister) {
-                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                            Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needRegisterEmail());
                             //} else {
                             //    player.kick(player.getLang().errors.noUser);
                             //}
@@ -141,7 +141,7 @@ public class AuthService {
 
                         session.getTransaction().commit();
                     } catch (Exception e) {
-                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needLogin());
                         player.sendMessage(player.getLang().errors.server);
                         Helper.getLogger().warn("Exception during attempt login for player " + player.getName(), e);
                     }
@@ -187,12 +187,12 @@ public class AuthService {
                 session.beginTransaction();
 
                 AbstractPlayer player = event.getPlayer();
-                logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
+                logged_in.put(player.getUniqueId(), PlayerStatus.handle());
                 if (Service.auth.logged_in.containsKey(player.getUniqueId())
                         && Service.auth.logged_in.get(player.getUniqueId()).type != PlayerStatus.StatusType.HANDLE) {
                     return null;
                 }
-                Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.HANDLE());
+                Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.handle());
 
                 User user = UserRepository.getByName(session, player.getName());
 
@@ -217,7 +217,7 @@ public class AuthService {
                                 if (!authBackendResult.name.equals(player.getName())) {
                                     willReturn.set(player.getLang().errors.getNameIncorrect(ImmutableMap.of("correct", authBackendResult.name)));
                                 } else {
-                                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
+                                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needLogin());
                                 }
                                 findFirst.set(true);
                             }
@@ -225,7 +225,7 @@ public class AuthService {
                     });
 
                     if (!findFirst.get() && !Config.database.passwordHash.equals("")) {
-                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_REGISTER_EMAIL());
+                        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needRegisterEmail());
                         result = null;
                     } else {
                         result = willReturn.get();
@@ -234,7 +234,7 @@ public class AuthService {
                     result = player.getLang().errors.getNameIncorrect(
                             ImmutableMap.of("correct", user.getName()));
                 } else {
-                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.NEED_LOGIN());
+                    Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.needLogin());
                     result = null;
                 }
 
@@ -289,11 +289,11 @@ public class AuthService {
 
     public void login(AbstractPlayer player) {
         // check if already login
-        if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), PlayerStatus.NEED_LOGIN()).type
+        if (Service.auth.logged_in.getOrDefault(player.getUniqueId(), PlayerStatus.needLogin()).type
                 .equals(PlayerStatus.StatusType.LOGGED_IN)) {
             return;
         }
-        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.LOGGED_IN());
+        Service.auth.logged_in.put(player.getUniqueId(), PlayerStatus.loggedIn());
         new LoginEvent(player).post();
     }
 }

@@ -22,16 +22,17 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import red.mohist.sodionauth.bungee.interfaces.BungeeAPIListener;
 import red.mohist.sodionauth.core.services.Service;
-import red.mohist.sodionauth.core.utils.channel.proxy.ProxyChannel;
-import red.mohist.sodionauth.core.utils.channel.proxy.clientPacket.HelloServerPacket;
+import red.mohist.sodionauth.core.utils.proxychannel.clientPacket.HelloServerPacket;
 
 public class ListenerServerSwitchEvent implements BungeeAPIListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onServerSwitchEvent(ServerSwitchEvent event) {
         Service.proxyLogin.serverToken.remove(event.getPlayer().getUniqueId());
         event.getPlayer().getServer().sendData(
-                ProxyChannel.name,
-                new HelloServerPacket().pack());
+                Service.proxyLogin.channel.name,
+                Service.proxyLogin.channel.getClientFactory(HelloServerPacket.class).encode(
+                        new HelloServerPacket()
+                ));
     }
 
     @Override

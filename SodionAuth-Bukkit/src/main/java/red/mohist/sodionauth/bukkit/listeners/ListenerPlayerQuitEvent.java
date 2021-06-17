@@ -21,7 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import red.mohist.sodionauth.bukkit.implementation.BukkitPlayer;
 import red.mohist.sodionauth.bukkit.interfaces.BukkitAPIListener;
-import red.mohist.sodionauth.core.enums.PlayerStatus;
+import red.mohist.sodionauth.core.modules.PlayerStatus;
 import red.mohist.sodionauth.core.events.player.QuitEvent;
 import red.mohist.sodionauth.core.modules.AbstractPlayer;
 import red.mohist.sodionauth.core.services.Service;
